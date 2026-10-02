@@ -1,6 +1,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.contrib.staticfiles import finders
+import json
 from feedback.models import Funcionario, Avaliacao
 
 
@@ -74,6 +76,23 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Recepção")
         self.assertContains(response, "Academia Principal")
         self.assertContains(response, "Vestiários")
+
+    def test_pwa_manifest_and_root_scoped_service_worker(self):
+        response = self.client.get(reverse("avaliar"))
+        self.assertContains(response, 'rel="manifest"', html=False)
+        self.assertContains(response, "pwa-install-button")
+
+        manifest_path = finders.find("feedback/manifest.webmanifest")
+        self.assertIsNotNone(manifest_path)
+        with open(manifest_path, encoding="utf-8") as manifest_file:
+            manifest = json.load(manifest_file)
+        self.assertEqual(manifest["scope"], "/")
+        self.assertEqual({icon["sizes"] for icon in manifest["icons"]}, {"192x192", "512x512"})
+
+        worker = self.client.get(reverse("service_worker"))
+        self.assertEqual(worker.status_code, 200)
+        self.assertEqual(worker["Service-Worker-Allowed"], "/")
+        self.assertContains(worker, 'request.method !== "GET"')
 
     def test_pagina_avaliar_post_valido(self):
         dados = {

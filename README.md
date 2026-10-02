@@ -39,7 +39,13 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
    - Suporte inteligente para IP local na rede Wi-Fi, permitindo testes práticos em smartphones.
    - Layout preparado para impressão direta em cartazes para totens e balcões.
 
-5. **🛡️ Painel Administrativo Completo (`/admin/`):**
+5. **📲 PWA instalável em Android e iPhone:**
+   - No Android, o navegador pode instalar o Polo Feedback como aplicativo.
+   - No iPhone, o Safari orienta a adicionar o sistema à Tela de Início.
+   - Sem conexão, mostra uma tela informativa; avaliações e dados privados não são armazenados offline.
+   - A instalação exige que o site esteja publicado em um domínio com HTTPS. Esta PWA não é, por si só, um pacote publicado na Play Store ou App Store.
+
+6. **🛡️ Painel Administrativo Completo (`/admin/`):**
    - Gestão de colaboradores com fotos e status ativo.
    - Gestão e auditoria de avaliações.
 
@@ -155,7 +161,7 @@ O projeto possui suíte de testes cobrindo modelos, validações, autenticação
 python manage.py test
 ```
 
-> ✅ 10 testes — todos passando.
+> ✅ 13 testes — todos passando.
 
 ---
 
@@ -195,13 +201,13 @@ Após o primeiro deploy, vá em **Environment → Environment Variables** e adic
 PoloFeedback/
 ├── feedback/                   # App principal
 │   ├── migrations/             # Migrações do banco
-│   ├── static/feedback/        # Imagens e assets estáticos
+│   ├── static/feedback/        # Imagens, ícones e arquivos da PWA
 │   ├── templates/
 │   │   ├── feedback/           # Templates: avaliar, dashboard, qrcode, sucesso
 │   │   └── registration/       # Template de login
 │   ├── admin.py                # Configuração do painel admin
 │   ├── models.py               # Modelos: Funcionario, Avaliacao
-│   ├── tests.py                # Testes automatizados (10 testes)
+│   ├── tests.py                # Testes automatizados (13 testes)
 │   └── views.py                # Views: avaliar, dashboard, qrcode, ia
 ├── polofeedback/               # Configuração do projeto Django
 │   ├── settings.py
@@ -224,7 +230,7 @@ PoloFeedback/
 O projeto já está funcional e com boa base para evoluir. A validação atual foi feita com testes automatizados e o sistema está em estado estável.
 
 ### Status verificado
-- 10 testes executados com sucesso
+- 13 testes executados com sucesso
 - sistema de avaliação funcional
 - dashboard operacional com filtros e rankings
 - IA com fallback local

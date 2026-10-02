@@ -1,0 +1,21 @@
+{% load static %}
+<div id="pwa-install-area" class="fixed bottom-4 right-4 z-[100] hidden">
+    <button id="pwa-install-button" type="button" class="rounded-xl bg-lime-300 px-4 py-3 text-sm font-bold text-slate-950 shadow-xl shadow-black/30 hover:bg-lime-200 focus:outline-none focus:ring-2 focus:ring-white">
+        Instalar Polo Feedback
+    </button>
+</div>
+
+<dialog id="pwa-install-help" class="w-[min(92vw,26rem)] rounded-2xl border border-slate-200 p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/70">
+    <div class="p-6">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[0.18em] text-green-700">Polo Feedback</p>
+                <h2 class="mt-2 text-xl font-black">Adicionar à tela inicial</h2>
+            </div>
+            <button id="pwa-install-close" type="button" aria-label="Fechar instruções" class="rounded-lg px-2 py-1 text-xl text-slate-500 hover:bg-slate-100">&times;</button>
+        </div>
+        <p id="pwa-install-instructions" class="mt-4 text-sm leading-6 text-slate-700"></p>
+    </div>
+</dialog>
+
+<script src="{% static 'feedback/pwa-install.js' %}" defer></script>

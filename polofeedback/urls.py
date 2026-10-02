@@ -8,10 +8,11 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from feedback.views import avaliar, dashboard, gerar_qrcode, ia_analisar, ia_chat
+from feedback.views import avaliar, dashboard, gerar_qrcode, ia_analisar, ia_chat, service_worker
 
 
 urlpatterns = [
+    path("service-worker.js", service_worker, name="service_worker"),
     path("admin/", admin.site.urls),
     path("", avaliar, name="inicio"),
     path("avaliar/", avaliar, name="avaliar"),

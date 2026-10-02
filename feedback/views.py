@@ -11,11 +11,25 @@ from collections import Counter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.contrib.staticfiles import finders
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.utils import timezone
 from django.conf import settings
 
 from .models import Avaliacao, Funcionario
+
+
+def service_worker(request):
+    worker_path = finders.find("feedback/service-worker.js")
+    if not worker_path:
+        return HttpResponseNotFound()
+
+    with open(worker_path, encoding="utf-8") as worker_file:
+        response = HttpResponse(
+            worker_file.read(), content_type="application/javascript"
+        )
+    response["Service-Worker-Allowed"] = "/"
+    return response
 
 
 def _obter_ip_local():
