@@ -2,7 +2,7 @@ databases:
   - name: polofeedback-db
     databaseName: polofeedback
     user: polo
-    plan: 0.1c-256mb
+    plan: free
 
 services:
   - type: web
