@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar QR Code — Polo Fit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 60%, #0d2a00 100%);
+            border-bottom: 2px solid #33FF00;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block !important;
+            }
+
+            body {
+                background: white !important;
+            }
+
+            .cartaz-impressao {
+                border: 2px solid #111;
+                border-radius: 1.5rem;
+                padding: 2.5rem;
+                text-align: center;
+                max-width: 500px;
+                margin: 2rem auto;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f0f2f5] min-h-screen">
+
+    <!-- CABEÇALHO -->
+    <header class="header-gradient shadow-xl sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
+                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-10 w-auto object-contain">
+                <span class="text-white font-bold text-lg hidden sm:inline">Polo Feedback</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <a href="{% url 'dashboard' %}"
+                    class="flex items-center gap-1.5 border border-[#33FF00] text-[#33FF00] hover:bg-[#33FF00] hover:text-black font-semibold px-4 py-2 rounded-lg text-sm transition">
+                    ← Voltar ao Dashboard
+                </a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2 rounded-lg text-sm transition">
+                        Sair
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 md:px-6 py-8">
+
+        <!-- FORMULÁRIO DE GERAÇÃO -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 no-print">
+            <h2 class="text-2xl font-black text-gray-900 mb-1">Gerador de QR Code</h2>
+            <p class="text-gray-500 text-sm mb-6">
+                Informe o identificador da unidade ou setor para gerar a placa de avaliação que os alunos irão escanear.
+            </p>
+
+            <form method="get" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nome da Unidade / Localização</label>
+                    <input
+                        type="text"
+                        name="localizacao"
+                        value="{{ localizacao }}"
+                        placeholder="Ex: Polo Fit Centro, Musculação, Recepção, polo1..."
+                        required
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition"
+                    >
+                </div>
+
+                <!-- OPÇÃO DE IP LOCAL PARA TESTES EM CELULAR -->
+                {% if ip_local and ip_local != "127.0.0.1" %}
+                <div class="bg-green-50/70 border border-green-200 rounded-xl p-3.5 flex items-start gap-3">
+                    <input type="checkbox" id="usar_ip" name="usar_ip" value="1" {% if usando_ip %}checked{% endif %}
+                        class="mt-1 w-4 h-4 text-green-600 rounded focus:ring-green-500">
+                    <label for="usar_ip" class="text-xs text-green-900 cursor-pointer">
+                        <strong class="font-semibold">Gerar URL com IP de rede ({{ ip_local }})</strong><br>
+                        Marque esta opção para permitir que smartphones conectados ao mesmo Wi-Fi consigam escanear e abrir o formulário sem erro.
+                    </label>
+                </div>
+                {% endif %}
+
+                <button type="submit"
+                    class="w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-sm hover:shadow-md">
+                    ⚡ Gerar QR Code
+                </button>
+            </form>
+
+            {% if not qrcode_base64 %}
+            <div class="mt-8 bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-8 text-center">
+                <span class="text-4xl block mb-2">📱</span>
+                <p class="text-gray-800 font-semibold">O QR Code aparecerá aqui</p>
+                <p class="text-gray-400 text-xs mt-1">Preencha o campo acima e clique em Gerar.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- RESULTADO DO QR CODE -->
+        {% if qrcode_base64 %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
+
+            <!-- CABEÇALHO DE IMPRESSÃO -->
+            <div class="print-only text-center mb-6">
+                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-16 mx-auto mb-3 object-contain">
+                <h2 class="text-3xl font-black text-gray-900 uppercase tracking-wide">Polo Fit</h2>
+                <p class="text-gray-600 font-medium mt-1">Unidade / Ponto: <span class="font-bold text-black">{{ localizacao }}</span></p>
+            </div>
+
+            <div class="text-center">
+                <div class="no-print mb-4">
+                    <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
+                        QR Code Pronto
+                    </span>
+                    <h3 class="text-xl font-bold text-gray-900 mt-2">{{ localizacao }}</h3>
+                </div>
+
+                <div class="flex justify-center mb-6">
+                    <div class="p-4 bg-white border-4 border-[#0a0a0a] rounded-3xl inline-block shadow-lg">
+                        <img
+                            src="data:image/png;base64,{{ qrcode_base64 }}"
+                            alt="QR Code para {{ localizacao }}"
+                            class="w-60 h-60"
+                        >
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <h4 class="text-xl font-extrabold text-gray-900">Escaneie com a câmera e avalie!</h4>
+                    <p class="text-gray-500 text-sm mt-1">Sua opinião é fundamental para evoluirmos juntos.</p>
+                </div>
+
+                <div class="mt-6 bg-gray-50 rounded-xl p-3.5 no-print text-left border border-gray-200">
+                    <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Destino do Link:</p>
+                    <p class="text-xs text-gray-700 font-mono break-all">{{ url_gerada }}</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center mt-6 no-print">
+                    <button onclick="window.print()"
+                        class="bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white font-bold px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow">
+                        🖨️ Imprimir Cartaz de Avaliação
+                    </button>
+                    <a href="{% url 'gerar_qrcode' %}"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-5 py-3 rounded-xl transition flex items-center justify-center">
+                        Gerar Outro
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- GUIA DE USO -->
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mt-6 no-print">
+            <h3 class="font-bold text-amber-900 flex items-center gap-2 mb-2">
+                💡 Como implantar na academia:
+            </h3>
+            <ol class="text-xs text-amber-800 space-y-2 list-decimal list-inside leading-relaxed">
+                <li>Defina o nome da unidade ou setor (ex: <strong>Recepção - Polo Centro</strong>).</li>
+                <li>Clique em <strong>Gerar QR Code</strong> e confira a pré-visualização.</li>
+                <li>Clique em <strong>Imprimir Cartaz</strong> para imprimir diretamente em folha A4.</li>
+                <li>Fixe os cartazes em pontos estratégicos (totens, balcão de entrada, saída de vestiários).</li>
+                <li>Os alunos escaneiam instantaneamente sem necessidade de baixar aplicativo!</li>
+            </ol>
+        </div>
+
+    </main>
+
+</body>
+
+</html>

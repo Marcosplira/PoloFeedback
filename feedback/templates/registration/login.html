@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Polo Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fundo-principal {
+            background-image: url("{% static 'feedback/academia1.png' %}");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center fundo-principal relative p-4">
+    <!-- OVERLAY ESCURO -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+
+    <div class="relative w-full max-w-md">
+        <!-- LOGO / TÍTULO EM CIMA -->
+        <div class="text-center mb-6">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-16 mx-auto mb-2 object-contain drop-shadow-lg">
+            <h1 class="text-3xl font-black text-white drop-shadow-lg tracking-wide">POLO FIT</h1>
+            <p class="text-white/80 mt-1 font-medium">Polo Feedback</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-xl font-bold text-gray-800">Área Administrativa</h2>
+                <p class="text-gray-500 text-sm mt-1">Acesse o dashboard de avaliações</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+                {% elif next %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+
+                <div class="mb-5">
+                    <label for="id_username" class="block text-sm font-semibold text-gray-700 mb-2">Usuário</label>
+                    <input type="text" name="username" id="id_username" required autofocus
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition"
+                        placeholder="Digite seu usuário">
+                </div>
+
+                <div class="mb-6">
+                    <label for="id_password" class="block text-sm font-semibold text-gray-700 mb-2">Senha</label>
+                    <input type="password" name="password" id="id_password" required
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition"
+                        placeholder="Digite sua senha">
+                </div>
+
+                {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 mb-5 flex items-start gap-3">
+                    <span class="text-xl">⚠️</span>
+                    <p class="font-medium text-sm">Usuário ou senha incorretos. Tente novamente.</p>
+                </div>
+                {% endif %}
+
+                <button type="submit"
+                    class="w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-lg hover:shadow-green-500/10">
+                    Entrar no Dashboard
+                </button>
+            </form>
+
+            <p class="text-center text-xs text-gray-400 mt-6">Acesso restrito à gerência Polo Fit</p>
+        </div>
+
+        <p class="text-center text-white/60 text-xs mt-6">© 2026 Polo Fit • Sua opinião faz a diferença</p>
+    </div>
+</body>
+
+</html>

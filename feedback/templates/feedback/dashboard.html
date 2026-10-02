@@ -1,0 +1,2056 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Dashboard de avaliações Polo Fit — análise completa de feedbacks dos alunos.">
+
+    <title>Dashboard — Polo Fit</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, #f4f7f3 0%, #edf3ef 100%);
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #0a0a0a 0%, #121a11 42%, #0b2b00 100%);
+            border-bottom: 2px solid rgba(163, 230, 53, 0.85);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .executive-panel {
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.98) 0%, rgba(16, 25, 13, 0.95) 100%);
+            border: 1px solid rgba(163, 230, 53, 0.35);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .card-stat {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(15, 23, 42, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-stat::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #a3e635, #4ade80, #22c55e);
+        }
+
+        .card-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+        }
+
+        .tabela-container {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+        }
+
+        thead tr {
+            background: #0a0a0a;
+            color: white;
+        }
+
+        thead th {
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        tbody td {
+            padding: 0.85rem 1.25rem;
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-pendente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-analise {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-resolvida {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-elogio {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-reclamacao {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-sugestao {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .btn-detalhes {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: #33FF00;
+            border: 1px solid #33FF00;
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-detalhes:hover {
+            background: #33FF00;
+            color: #0a0a0a;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+        }
+
+        .modal-overlay.ativo {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 1.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            transform: translateY(24px) scale(0.97);
+            transition: transform 0.25s;
+        }
+
+        .modal-overlay.ativo .modal-box {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: white;
+            padding: 1.5rem 1.75rem;
+            border-radius: 1.5rem 1.5rem 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 1.75rem;
+        }
+
+        .modal-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .modal-row:last-child {
+            border-bottom: none;
+        }
+
+        .modal-icon {
+            font-size: 1.25rem;
+            min-width: 28px;
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        .modal-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #9ca3af;
+            margin-bottom: 2px;
+        }
+
+        .modal-value {
+            font-size: 0.9rem;
+            color: #111827;
+            font-weight: 500;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .ia-card {
+            background: linear-gradient(135deg, #0a0a0a 0%, #0d1f00 100%);
+            border: 1px solid #33FF00;
+            border-radius: 1.25rem;
+            color: white;
+        }
+
+        .ia-resultado {
+            background: rgba(51, 255, 0, 0.08);
+            border: 1px solid rgba(51, 255, 0, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #e5e7eb;
+            min-height: 80px;
+            white-space: pre-wrap;
+        }
+
+        .ia-loading {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .ia-loading span {
+            width: 7px;
+            height: 7px;
+            background: #33FF00;
+            border-radius: 50%;
+            animation: bounce 0.9s infinite;
+        }
+
+        .ia-loading span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .ia-loading span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: translateY(0)
+            }
+
+            40% {
+                transform: translateY(-8px)
+            }
+        }
+
+        .card-ranking {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #edf2f7;
+            border-radius: 1.2rem;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+        }
+
+        .card-ranking:hover {
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .ranking-1 {
+            border-top: 3px solid #f59e0b;
+        }
+
+        .ranking-2 {
+            border-top: 3px solid #9ca3af;
+        }
+
+        .ranking-3 {
+            border-top: 3px solid #b45309;
+        }
+
+        select {
+            border: 1.5px solid #e5e7eb;
+            border-radius: 0.6rem;
+            padding: 0.65rem 1rem;
+            font-size: 0.875rem;
+            background: white;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #33FF00;
+            box-shadow: 0 0 0 3px rgba(51, 255, 0, 0.15);
+        }
+
+        .star-on {
+            color: #f59e0b;
+        }
+
+        .star-off {
+            color: #d1d5db;
+        }
+    </style>
+</head>
+
+
+<body class="min-h-screen">
+
+
+    <!-- ========================================================= -->
+    <!-- CABEÇALHO -->
+    <!-- ========================================================= -->
+
+    <header class="header-gradient shadow-xl sticky top-0 z-50">
+
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+            <div class="flex items-center gap-4">
+                <a href="{% url 'dashboard' %}" class="flex items-center">
+                    <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-12 w-auto object-contain">
+                </a>
+                <div class="hidden md:block text-left">
+                    <p class="text-[10px] uppercase tracking-[0.22em] text-lime-300/80">Painel executivo</p>
+                    <p class="text-sm font-semibold text-white">Polo Feedback</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <a href="{% url 'avaliar' %}" class="hidden sm:inline-flex items-center gap-2 bg-white/8 border border-white/10 text-white hover:bg-white/12 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                    ← Início
+                </a>
+
+                <span class="text-gray-300 text-sm hidden md:block">
+                    👤 {{ request.user.username }}
+                </span>
+
+                <a href="{% url 'gerar_qrcode' %}" id="btn-qrcode"
+                    class="flex items-center gap-2 bg-transparent border border-[#33FF00] text-[#33FF00] hover:bg-[#33FF00] hover:text-black font-semibold px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                    📱 QR Code
+                </a>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" id="btn-sair"
+                        class="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                        Sair
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================================= -->
+    <!-- CONTEÚDO -->
+    <!-- ========================================================= -->
+
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
+
+
+        <!-- ===================================================== -->
+        <!-- CARDS DE RESUMO -->
+        <!-- ===================================================== -->
+
+        <section class="executive-panel rounded-3xl p-6 md:p-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.22em] text-lime-300/80 mb-2">Resumo operacional</p>
+                    <h1 class="text-2xl md:text-3xl font-black text-white">Dashboard de desempenho</h1>
+                </div>
+                <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-2 text-sm text-gray-200">
+                    <span class="w-2.5 h-2.5 rounded-full bg-lime-400"></span>
+                    Sistema ativo e atualizado
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+
+                <!-- TOTAL -->
+
+                <div class="card-stat">
+
+                    <div class="flex items-center gap-3 mb-3">
+
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-xl">
+                            📋
+                        </div>
+
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            Total
+                        </p>
+
+                    </div>
+
+                    <p class="text-4xl font-extrabold text-gray-900">
+                        {{ total_avaliacoes }}
+                    </p>
+
+                    <p class="text-xs text-gray-400 mt-1">
+                        avaliações registradas
+                    </p>
+
+                </div>
+
+
+
+                <!-- MÉDIA -->
+
+                <div class="card-stat">
+
+                    <div class="flex items-center gap-3 mb-3">
+
+                        <div class="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
+                            ⭐
+                        </div>
+
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            Média
+                        </p>
+
+                    </div>
+
+                    <p class="text-4xl font-extrabold text-yellow-500">
+                        {{ media_notas }}
+                    </p>
+
+                    <p class="text-xs text-gray-400 mt-1">
+                        nota média geral
+                    </p>
+
+                </div>
+
+
+
+                <!-- ELOGIOS -->
+
+                <div class="card-stat">
+
+                    <div class="flex items-center gap-3 mb-3">
+
+                        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-xl">
+                            👍
+                        </div>
+
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            Elogios
+                        </p>
+
+                    </div>
+
+                    <p class="text-4xl font-extrabold text-green-600">
+                        {{ total_elogios }}
+                    </p>
+
+                    <p class="text-xs text-gray-400 mt-1">
+                        feedbacks positivos
+                    </p>
+
+                </div>
+
+
+
+                <!-- RECLAMAÇÕES -->
+
+                <div class="card-stat">
+
+                    <div class="flex items-center gap-3 mb-3">
+
+                        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-xl">
+                            ⚠️
+                        </div>
+
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            Reclamações
+                        </p>
+
+                    </div>
+
+                    <p class="text-4xl font-extrabold text-red-600">
+                        {{ total_reclamacoes }}
+                    </p>
+
+                    <p class="text-xs text-gray-400 mt-1">
+                        pontos a melhorar
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- ANÁLISE COM IA -->
+        <!-- ===================================================== -->
+
+        <section class="ia-card p-6">
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+                <div>
+
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        🤖 Análise Inteligente com IA
+                    </h2>
+
+                    <p class="text-gray-400 text-sm mt-1">
+                        Gera um resumo executivo baseado nas avaliações atuais.
+                    </p>
+
+                </div>
+
+
+                <button id="btn-ia" onclick="analisarComIA()"
+                    class="flex items-center gap-2 bg-[#33FF00] text-black font-bold px-5 py-2.5 rounded-xl hover:bg-[#28cc00] transition-all duration-200 whitespace-nowrap">
+                    ✨ Gerar Análise
+                </button>
+
+            </div>
+
+
+            <div id="ia-resultado" class="ia-resultado hidden">
+
+                <div id="ia-texto"></div>
+
+            </div>
+
+        </section>
+
+        <section class="bg-slate-900 rounded-2xl p-6 border border-lime-500/20 shadow-lg">
+            <div class="flex items-center justify-between gap-3 mb-5">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.22em] text-lime-300/80 mb-2">Assistente do gerente</p>
+                    <h2 class="text-xl font-bold text-white">💬 Chatbot executivo</h2>
+                </div>
+                <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">IA disponível</span>
+            </div>
+
+            <div id="chat-mensagens" class="space-y-3 mb-4 max-h-72 overflow-y-auto pr-2">
+                <div class="bg-slate-800 rounded-xl p-3 text-sm text-slate-100 border border-slate-700">
+                    Olá! Posso ajudar no diagnóstico da academia, responder dúvidas sobre avaliações, reclamações, ranking e ações de melhoria.
+                </div>
+            </div>
+
+            <form id="chat-form" class="flex flex-col md:flex-row gap-3">
+                <input id="chat-input" type="text" placeholder="Pergunte ao assistente sobre funcionários, reclamações, metas ou desempenho..." class="flex-1 rounded-xl border border-slate-700 bg-slate-800 text-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-lime-500">
+                <button type="submit" class="bg-lime-400 hover:bg-lime-300 text-black font-bold px-5 py-3 rounded-xl transition-all duration-200">
+                    Enviar
+                </button>
+            </form>
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- GRÁFICOS -->
+        <!-- ===================================================== -->
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+            <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
+
+                <h3 class="font-bold text-gray-800 mb-1">
+                    📊 Avaliações por Categoria
+                </h3>
+
+                <p class="text-xs text-gray-400 mb-4">
+                    Distribuição dos feedbacks
+                </p>
+
+                <canvas id="graficoCategorias"></canvas>
+
+            </div>
+
+
+            <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
+
+                <h3 class="font-bold text-gray-800 mb-1">
+                    ⭐ Avaliações por Nota
+                </h3>
+
+                <p class="text-xs text-gray-400 mb-4">
+                    Quantidade por estrelas
+                </p>
+
+                <canvas id="graficoNotas"></canvas>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- FILTROS -->
+        <!-- ===================================================== -->
+
+        <section class="bg-white rounded-2xl shadow p-6 border border-slate-100">
+
+            <div class="flex items-center justify-between gap-3 mb-4">
+                <h3 class="font-bold text-gray-800">
+                    🔍 Filtrar Avaliações
+                </h3>
+                <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">filtros ativos</span>
+            </div>
+
+
+            <form method="get" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+
+
+                <!-- CATEGORIA -->
+
+                <select name="categoria" id="filtro-categoria">
+
+                    <option value="">
+                        Todas categorias
+                    </option>
+
+                    {% for codigo, nome in categorias %}
+                    <option value="{{ codigo }}" {% if categoria_filtro == codigo %}selected{% endif %}>
+                        {{ nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select name="tipo" id="filtro-tipo">
+                    <option value="">
+                        Todos tipos
+                    </option>
+                    {% for codigo, nome in tipos_feedback %}
+                    <option value="{{ codigo }}" {% if tipo_filtro == codigo %}selected{% endif %}>
+                        {{ nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select name="status" id="filtro-status">
+                    <option value="">
+                        Todos status
+                    </option>
+                    {% for codigo, nome in status_choices %}
+                    <option value="{{ codigo }}" {% if status_filtro == codigo %}selected{% endif %}>
+                        {{ nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select name="funcionario" id="filtro-funcionario">
+                    <option value="">
+                        Todos funcionários
+                    </option>
+                    {% for func in funcionarios %}
+                    <option value="{{ func.id }}" {% if funcionario_filtro == func.id|stringformat:"s" %}selected{% endif %}>
+                        {{ func.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+
+
+                <!-- BOTÕES -->
+
+                <div class="flex gap-3 sm:col-span-2 md:col-span-4">
+
+                    <button type="submit" id="btn-filtrar"
+                        class="flex-1 bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-2.5 rounded-xl transition-all duration-200">
+                        Filtrar
+                    </button>
+
+
+                    <a href="{% url 'dashboard' %}" id="btn-limpar"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-center transition-all duration-200">
+                        Limpar Filtros
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- TABELA DE AVALIAÇÕES -->
+        <!-- ===================================================== -->
+
+        <section>
+
+            <div class="flex items-center justify-between mb-4">
+
+                <h2 class="text-xl font-bold text-gray-800">
+                    📝 Avaliações Recentes
+                </h2>
+
+
+                <span class="text-sm text-gray-400 bg-white px-3 py-1 rounded-full shadow">
+
+                    {{ total_avaliacoes }}
+
+                    resultado{% if total_avaliacoes != 1 %}s{% endif %}
+
+                </span>
+
+            </div>
+
+
+            <div class="tabela-container overflow-x-auto">
+
+                <table class="w-full text-sm text-left">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Categoria
+                            </th>
+
+                            <th>
+                                Funcionário
+                            </th>
+
+                            <th>
+                                Nota
+                            </th>
+
+                            <th>
+                                Tipo
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Data
+                            </th>
+
+                            <th class="text-center">
+                                Detalhes
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        {% for a in avaliacoes %}
+
+
+                        <tr>
+
+
+                            <!-- CATEGORIA -->
+
+                            <td>
+
+                                <span class="font-medium text-gray-800">
+                                    {{ a.get_categoria_display }}
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- FUNCIONÁRIO -->
+
+                            <td>
+
+                                {% if a.funcionario %}
+
+                                <div class="flex items-center gap-2">
+
+                                    {% if a.funcionario.foto %}
+
+                                    <img src="{{ a.funcionario.foto.url }}" alt="{{ a.funcionario.nome }}"
+                                        class="w-7 h-7 rounded-full object-cover border border-gray-200">
+
+                                    {% else %}
+
+                                    <div
+                                        class="w-7 h-7 rounded-full bg-gradient-to-br from-gray-800 to-green-600 flex items-center justify-center text-white text-xs font-bold">
+                                        {{ a.funcionario.nome|slice:":1" }}
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <span class="font-medium">
+                                        {{ a.funcionario.nome }}
+                                    </span>
+
+                                </div>
+
+                                {% else %}
+
+                                <span class="text-gray-400 italic">
+                                    Não informado
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- NOTA -->
+
+                            <td>
+
+                                <span>
+
+                                    {% for i in "12345" %}
+
+                                    {% if forloop.counter <= a.nota %} <span class="star-on">★</span>
+
+                                {% else %}
+
+                                <span class="star-off">★</span>
+
+                                {% endif %}
+
+                                {% endfor %}
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- TIPO -->
+
+                            <td>
+
+                                {% if a.tipo_feedback == "elogio" %}
+
+                                <span class="badge badge-elogio">
+                                    👍 Elogio
+                                </span>
+
+                                {% elif a.tipo_feedback == "reclamacao" %}
+
+                                <span class="badge badge-reclamacao">
+                                    ⚠️ Reclamação
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge badge-sugestao">
+                                    💡 Sugestão
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if a.status == "resolvida" %}
+
+                                <span class="badge badge-resolvida">
+                                    ✅ Resolvida
+                                </span>
+
+                                {% elif a.status == "em_analise" %}
+
+                                <span class="badge badge-analise">
+                                    🔍 Em análise
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge badge-pendente">
+                                    🕐 Pendente
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- DATA -->
+
+                            <td class="text-gray-500 whitespace-nowrap">
+
+                                {{ a.data_criacao|date:"d/m/Y H:i" }}
+
+                            </td>
+
+
+
+                            <!-- DETALHES -->
+
+                            <td class="text-center">
+
+                                <button class="btn-detalhes" id="btn-detalhes-{{ a.pk }}"
+                                    onclick="abrirModal({{ a.pk }})" title="Ver detalhes">
+                                    🔎 Ver detalhes
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+
+                        <!-- DADOS DO MODAL -->
+
+                        <script type="application/json" id="avaliacao-{{ a.pk }}">
+                        {
+                            "id": {{ a.pk }},
+                            "categoria": "{{ a.get_categoria_display|escapejs }}",
+                            "nota": {{ a.nota }},
+                            "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}👍 Elogio{% elif a.tipo_feedback == 'reclamacao' %}⚠️ Reclamação{% else %}💡 Sugestão{% endif %}",
+                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} — {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}Não informado{% endif %}",
+                            "comentario": "{{ a.comentario|default:'Sem comentário'|escapejs }}",
+                            "localizacao": "{{ a.localizacao|default:'Não informada'|escapejs }}",
+                            "data_criacao": "{{ a.data_criacao|date:'d/m/Y H:i' }}",
+                            "status": "{% if a.status == 'resolvida' %}✅ Resolvida{% elif a.status == 'em_analise' %}🔍 Em Análise{% else %}🕐 Pendente{% endif %}",
+                            "status_raw": "{{ a.status }}",
+                            "resolvido_por": "{% if a.resolvido_por %}{{ a.resolvido_por.username|escapejs }}{% endif %}",
+                            "data_resolucao": "{% if a.data_resolucao %}{{ a.data_resolucao|date:'d/m/Y H:i' }}{% endif %}",
+                            "origem": "{% if a.origem == 'gerente' %}Gerente/Admin{% else %}Aluno (QR Code){% endif %}"
+                        }
+                        </script>
+
+
+                        {% empty %}
+
+
+                        <tr>
+
+                            <td colspan="7" class="py-16 text-center text-gray-400">
+
+                                <div class="text-4xl mb-3">
+                                    📭
+                                </div>
+
+                                <p class="font-medium">
+                                    Nenhuma avaliação encontrada
+                                </p>
+
+                                <p class="text-sm mt-1">
+                                    Tente remover algum filtro
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- RANKING -->
+        <!-- ===================================================== -->
+
+        <section>
+
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                🏆 Ranking de Funcionários
+            </h2>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+
+                {% for item in ranking_funcionarios %}
+
+
+                <div class="card-ranking
+                    {% if forloop.counter == 1 %}
+                        ranking-1
+                    {% elif forloop.counter == 2 %}
+                        ranking-2
+                    {% elif forloop.counter == 3 %}
+                        ranking-3
+                    {% endif %}">
+
+
+                    <div class="flex items-center gap-3 mb-4">
+
+                        <span class="text-2xl">
+
+                            {% if forloop.counter == 1 %}
+                            🥇
+                            {% elif forloop.counter == 2 %}
+                            🥈
+                            {% elif forloop.counter == 3 %}
+                            🥉
+                            {% else %}
+                            #{{ forloop.counter }}
+                            {% endif %}
+
+                        </span>
+
+
+                        {% if item.foto %}
+
+                        <img src="{{ item.foto }}" alt="{{ item.nome }}"
+                            class="w-12 h-12 rounded-full object-cover border-2 border-gray-100">
+
+                        {% else %}
+
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-800 to-green-600 flex items-center justify-center text-white font-bold text-lg">
+                            {{ item.nome|slice:":1" }}
+                        </div>
+
+                        {% endif %}
+
+
+                        <div>
+
+                            <p class="font-bold text-gray-900">
+                                {{ item.nome }}
+                            </p>
+
+
+                            {% if item.cargo %}
+
+                            <p class="text-xs text-gray-400">
+                                {{ item.cargo }}
+                            </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="grid grid-cols-3 gap-2 text-center mb-3">
+
+
+                        <div class="bg-green-50 rounded-lg p-2">
+
+                            <p class="text-green-700 font-bold text-lg">
+                                {{ item.elogios }}
+                            </p>
+
+                            <p class="text-xs text-green-600">
+                                Elogios
+                            </p>
+
+                        </div>
+
+
+                        <div class="bg-red-50 rounded-lg p-2">
+
+                            <p class="text-red-700 font-bold text-lg">
+                                {{ item.reclamacoes }}
+                            </p>
+
+                            <p class="text-xs text-red-600">
+                                Reclamações
+                            </p>
+
+                        </div>
+
+
+                        <div class="bg-purple-50 rounded-lg p-2">
+
+                            <p class="text-purple-700 font-bold text-lg">
+                                {{ item.sugestoes }}
+                            </p>
+
+                            <p class="text-xs text-purple-600">
+                                Sugestões
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="flex items-center justify-between text-sm pt-2 border-t border-gray-100">
+
+                        <span class="text-gray-500">
+                            ⭐ Média:
+                            <strong>{{ item.media }}</strong>
+                        </span>
+
+                        <span class="text-gray-500">
+                            📊 Total:
+                            <strong>{{ item.total }}</strong>
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                {% empty %}
+
+
+                <div class="col-span-3 text-center text-gray-400 py-10">
+
+                    <div class="text-3xl mb-2">
+                        👤
+                    </div>
+
+                    <p>
+                        Nenhum funcionário cadastrado.
+                    </p>
+
+                </div>
+
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ========================================================= -->
+    <!-- MODAL DE DETALHES -->
+    <!-- ========================================================= -->
+
+    <div id="modal-detalhes" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo"
+        onclick="fecharModalExterno(event)">
+
+        <div class="modal-box">
+
+
+            <div class="modal-header">
+
+                <div>
+
+                    <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">
+                        Avaliação
+                    </p>
+
+                    <h2 id="modal-titulo" class="text-lg font-bold text-white">
+                        Detalhes da Avaliação
+                    </h2>
+
+                </div>
+
+
+                <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">
+                    ✕
+                </button>
+
+            </div>
+
+
+            <div class="modal-body" id="modal-corpo"></div>
+
+
+            <div class="px-6 pb-6" id="modal-acoes"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================= -->
+    <!-- DADOS DOS GRÁFICOS -->
+    <!-- ========================================================= -->
+
+    {{ avaliacoes_categoria|json_script:"dados-categorias" }}
+
+    {{ avaliacoes_nota|json_script:"dados-notas" }}
+
+
+
+    <!-- ========================================================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================================================= -->
+
+    <script>
+
+
+        /* ======================================================= */
+        /* GRÁFICOS */
+        /* ======================================================= */
+
+        const dc =
+            JSON.parse(
+                document.getElementById("dados-categorias").textContent
+            );
+
+
+        const dn =
+            JSON.parse(
+                document.getElementById("dados-notas").textContent
+            );
+
+
+        const ctxCat =
+            document.getElementById("graficoCategorias");
+
+
+        if (ctxCat) {
+
+            new Chart(ctxCat, {
+
+                type: "bar",
+
+                data: {
+
+                    labels: dc.map(
+                        i => i.nome
+                    ),
+
+                    datasets: [{
+
+                        label: "Avaliações",
+
+                        data: dc.map(
+                            i => i.quantidade
+                        ),
+
+                        backgroundColor: [
+                            "rgba(51,255,0,0.8)",
+                            "rgba(51,255,0,0.65)",
+                            "rgba(51,255,0,0.5)",
+                            "rgba(51,255,0,0.38)",
+                            "rgba(51,255,0,0.25)",
+                            "rgba(51,255,0,0.15)"
+                        ],
+
+                        borderColor: "#33FF00",
+
+                        borderWidth: 1,
+
+                        borderRadius: 6
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: "#f3f4f6"
+                            }
+                        },
+
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+
+        const ctxNot =
+            document.getElementById("graficoNotas");
+
+
+        if (ctxNot) {
+
+            new Chart(ctxNot, {
+
+                type: "bar",
+
+                data: {
+
+                    labels: dn.map(
+                        i => i.nota + " ★"
+                    ),
+
+                    datasets: [{
+
+                        label: "Avaliações",
+
+                        data: dn.map(
+                            i => i.quantidade
+                        ),
+
+                        backgroundColor: [
+                            "rgba(239,68,68,0.75)",
+                            "rgba(249,115,22,0.75)",
+                            "rgba(234,179,8,0.75)",
+                            "rgba(132,204,22,0.75)",
+                            "rgba(34,197,94,0.75)"
+                        ],
+
+                        borderWidth: 1,
+
+                        borderRadius: 6
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: "#f3f4f6"
+                            }
+                        },
+
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+
+        /* ======================================================= */
+        /* MODAL DE DETALHES */
+        /* ======================================================= */
+
+        function estrelas(nota) {
+
+            let s = "";
+
+            for (let i = 1; i <= 5; i++) {
+
+                s += i <= nota
+
+                    ? '<span style="color:#f59e0b;font-size:1.2rem">★</span>'
+
+                    : '<span style="color:#d1d5db;font-size:1.2rem">★</span>';
+
+            }
+
+            return s;
+
+        }
+
+
+
+        function abrirModal(id) {
+
+            const el =
+                document.getElementById(
+                    "avaliacao-" + id
+                );
+
+
+            if (!el) return;
+
+
+            const d =
+                JSON.parse(
+                    el.textContent
+                );
+
+
+            let corpo = "";
+
+
+            corpo += modalLinha(
+                "📂",
+                "Categoria",
+                d.categoria
+            );
+
+
+            corpo += modalLinha(
+                "⭐",
+                "Nota",
+                estrelas(d.nota) +
+                ' <span style="color:#6b7280;font-size:0.8rem">(' +
+                d.nota +
+                '/5)</span>'
+            );
+
+
+            corpo += modalLinha(
+                "💬",
+                "Tipo de Feedback",
+                d.tipo_feedback
+            );
+
+
+            corpo += modalLinha(
+                "👤",
+                "Funcionário Avaliado",
+                d.funcionario
+            );
+
+
+            corpo += modalLinha(
+                "📍",
+                "Localização",
+                d.localizacao
+            );
+
+
+            corpo += modalLinha(
+                "🕐",
+                "Data e Hora",
+                d.data_criacao
+            );
+
+
+            corpo += modalLinha(
+                "🌐",
+                "Origem",
+                d.origem
+            );
+
+
+            corpo += `
+                <div
+                    class="modal-row"
+                    style="flex-direction:column;align-items:flex-start"
+                >
+
+                    <div
+                        style="display:flex;align-items:flex-start;gap:0.75rem;width:100%"
+                    >
+
+                        <span class="modal-icon">
+                            📝
+                        </span>
+
+                        <div style="flex:1">
+
+                            <p class="modal-label">
+                                Comentário do Aluno
+                            </p>
+
+                            <p
+                                class="modal-value"
+                                style="white-space:pre-wrap;line-height:1.6"
+                            >
+                                ${d.comentario}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+
+            corpo += modalLinha(
+                "🔖",
+                "Status Atual",
+                d.status
+            );
+
+
+            if (
+                d.status_raw === "resolvida" &&
+                d.resolvido_por
+            ) {
+
+                corpo += modalLinha(
+                    "✅",
+                    "Resolvida por",
+                    "<strong>" +
+                    d.resolvido_por +
+                    "</strong>"
+                );
+
+
+                if (d.data_resolucao) {
+
+                    corpo += modalLinha(
+                        "📅",
+                        "Data de Resolução",
+                        d.data_resolucao
+                    );
+
+                }
+
+            }
+
+
+            document.getElementById(
+                "modal-corpo"
+            ).innerHTML = corpo;
+
+
+            const filtrosAtivos =
+                window.location.search.replace(
+                    "?",
+                    ""
+                );
+
+
+            document.getElementById(
+                "modal-acoes"
+            ).innerHTML = `
+
+                <div
+                    style="
+                        border-top:1px solid #f3f4f6;
+                        padding-top:1rem
+                    "
+                >
+
+                    <p
+                        style="
+                            font-size:0.75rem;
+                            font-weight:700;
+                            color:#9ca3af;
+                            text-transform:uppercase;
+                            letter-spacing:0.07em;
+                            margin-bottom:0.75rem
+                        "
+                    >
+                        Alterar Status
+                    </p>
+
+
+                    <form
+                        method="post"
+                        action="/dashboard/"
+                        style="
+                            display:flex;
+                            gap:0.5rem;
+                            flex-wrap:wrap
+                        "
+                    >
+
+                        <input
+                            type="hidden"
+                            name="csrfmiddlewaretoken"
+                            value="${getCookie('csrftoken')}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="avaliacao_id"
+                            value="${d.id}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="filtros_ativos"
+                            value="${filtrosAtivos}"
+                        >
+
+
+                        <button
+                            type="submit"
+                            name="novo_status"
+                            value="pendente"
+                            style="
+                                flex:1;
+                                padding:0.5rem;
+                                border-radius:0.5rem;
+                                font-size:0.8rem;
+                                font-weight:600;
+                                border:1px solid #fcd34d;
+                                background:#fef3c7;
+                                color:#92400e;
+                                cursor:pointer
+                            "
+                        >
+                            🕐 Pendente
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            name="novo_status"
+                            value="em_analise"
+                            style="
+                                flex:1;
+                                padding:0.5rem;
+                                border-radius:0.5rem;
+                                font-size:0.8rem;
+                                font-weight:600;
+                                border:1px solid #93c5fd;
+                                background:#dbeafe;
+                                color:#1e40af;
+                                cursor:pointer
+                            "
+                        >
+                            🔍 Em Análise
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            name="novo_status"
+                            value="resolvida"
+                            style="
+                                flex:1;
+                                padding:0.5rem;
+                                border-radius:0.5rem;
+                                font-size:0.8rem;
+                                font-weight:600;
+                                border:1px solid #6ee7b7;
+                                background:#d1fae5;
+                                color:#065f46;
+                                cursor:pointer
+                            "
+                        >
+                            ✅ Resolvida
+                        </button>
+
+                    </form>
+
+                </div>
+
+            `;
+
+
+            document
+                .getElementById("modal-detalhes")
+                .classList.add("ativo");
+
+
+            document.body.style.overflow = "hidden";
+
+        }
+
+
+
+        function modalLinha(
+            icon,
+            label,
+            value
+        ) {
+
+            return `
+
+                <div class="modal-row">
+
+                    <span class="modal-icon">
+                        ${icon}
+                    </span>
+
+                    <div>
+
+                        <p class="modal-label">
+                            ${label}
+                        </p>
+
+                        <p class="modal-value">
+                            ${value}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+
+        function fecharModal() {
+
+            document
+                .getElementById("modal-detalhes")
+                .classList.remove("ativo");
+
+
+            document.body.style.overflow = "";
+
+        }
+
+
+
+        function fecharModalExterno(e) {
+
+            if (
+                e.target ===
+                document.getElementById("modal-detalhes")
+            ) {
+
+                fecharModal();
+
+            }
+
+        }
+
+
+
+        document.addEventListener(
+            "keydown",
+            e => {
+
+                if (e.key === "Escape") {
+
+                    fecharModal();
+
+                }
+
+            }
+        );
+
+
+
+        function getCookie(name) {
+
+            let v = null;
+
+
+            if (
+                document.cookie &&
+                document.cookie !== ""
+            ) {
+
+                document.cookie
+                    .split(";")
+                    .forEach(c => {
+
+                        c = c.trim();
+
+
+                        if (
+                            c.startsWith(
+                                name + "="
+                            )
+                        ) {
+
+                            v = decodeURIComponent(
+                                c.slice(
+                                    name.length + 1
+                                )
+                            );
+
+                        }
+
+                    });
+
+            }
+
+
+            return v;
+
+        }
+
+
+
+        /* ======================================================= */
+        /* ANÁLISE COM IA */
+        /* ======================================================= */
+
+        async function analisarComIA() {
+
+            const btn =
+                document.getElementById(
+                    "btn-ia"
+                );
+
+
+            const resultDiv =
+                document.getElementById(
+                    "ia-resultado"
+                );
+
+
+            const textoDiv =
+                document.getElementById(
+                    "ia-texto"
+                );
+
+
+            btn.disabled = true;
+
+
+            btn.innerHTML = `
+                <span class="ia-loading">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+                Analisando...
+            `;
+
+
+            resultDiv.classList.remove(
+                "hidden"
+            );
+
+
+            textoDiv.innerHTML = `
+                <span class="ia-loading">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+                Processando os dados com Inteligência Artificial...
+            `;
+
+
+            try {
+
+                const resp =
+                    await fetch(
+                        "/ia/analisar/"
+                    );
+
+
+                if (!resp.ok) {
+
+                    throw new Error(
+                        "Erro " + resp.status
+                    );
+
+                }
+
+
+                const data =
+                    await resp.json();
+
+
+                textoDiv.innerHTML =
+                    formatarTextoIA(
+                        data.analise ||
+                        "Sem resposta da IA."
+                    );
+
+
+            } catch (err) {
+
+                textoDiv.innerHTML =
+                    "❌ Não foi possível conectar à IA. Verifique a configuração da chave de API.";
+
+            }
+
+
+            btn.disabled = false;
+
+
+            btn.innerHTML =
+                "✨ Gerar Análise";
+
+        }
+
+
+
+        function formatarTextoIA(texto) {
+
+            return texto
+
+                .replace(
+                    /\*\*(.*?)\*\*/g,
+                    "<strong>$1</strong>"
+                )
+
+                .replace(
+                    /\*(.*?)\*/g,
+                    "<em>$1</em>"
+                )
+
+                .replace(
+                    /\n/g,
+                    "<br>"
+                );
+
+        }
+
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.getElementById("chat-input");
+        const chatMessages = document.getElementById("chat-mensagens");
+
+        if (chatForm && chatInput && chatMessages) {
+            chatForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const mensagem = chatInput.value.trim();
+                if (!mensagem) return;
+
+                const msgUsuario = document.createElement("div");
+                msgUsuario.className = "bg-lime-400 text-black rounded-xl p-3 text-sm font-medium ml-auto max-w-[85%]";
+                msgUsuario.textContent = mensagem;
+                chatMessages.appendChild(msgUsuario);
+
+                chatInput.value = "";
+                chatInput.disabled = true;
+
+                const msgIA = document.createElement("div");
+                msgIA.className = "bg-slate-800 rounded-xl p-3 text-sm text-slate-100 border border-slate-700 max-w-[85%]";
+                msgIA.innerHTML = '<span class="inline-flex gap-1 align-middle"><span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse"></span><span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse" style="animation-delay:0.15s"></span><span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse" style="animation-delay:0.3s"></span></span> Pensando...';
+                chatMessages.appendChild(msgIA);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                try {
+                    const response = await fetch("/ia/chat/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": getCookie("csrftoken")
+                        },
+                        body: JSON.stringify({ mensagem })
+                    });
+
+                    const data = await response.json();
+                    msgIA.innerHTML = formatarTextoIA(data.resposta || "Não foi possível responder no momento.");
+                } catch (error) {
+                    msgIA.textContent = "Não foi possível conectar ao assistente no momento. Tente novamente em instantes.";
+                } finally {
+                    chatInput.disabled = false;
+                    chatInput.focus();
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            });
+        }
+
+    </script>
+
+
+</body>
+
+</html>

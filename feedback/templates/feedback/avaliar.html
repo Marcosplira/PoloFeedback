@@ -1,0 +1,351 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polo Feedback - Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* FUNDO FIXO IGUAL AO PRINT */
+        .fundo-principal {
+            background-image: url("{% static 'feedback/academia1.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .fundo-overlay {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Card de funcionário */
+        .card-func input[type="radio"] {
+            display: none;
+        }
+        .card-func input[type="radio"]:checked + .func-inner {
+            border-color: #16a34a;
+            background-color: #f0fdf4;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
+        }
+        .card-func .func-inner {
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 0.75rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        .card-func .func-inner:hover {
+            border-color: #86efac;
+        }
+        .func-foto {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+        }
+        .func-foto-placeholder {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0A0A0A, #33FF00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+        .premium-card {
+            background: rgba(9, 13, 20, 0.32);
+            border: 1px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        }
+        .premium-button-primary {
+            background: linear-gradient(135deg, #bef264 0%, #a3e635 100%);
+            box-shadow: 0 12px 25px rgba(163,230,53,0.35);
+        }
+        .premium-button-secondary {
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen fundo-principal relative">
+    <!-- OVERLAY ESCURO POR CIMA DO FUNDO -->
+    <div class="fixed inset-0 fundo-overlay -z-10"></div>
+
+    <!-- CARROSSEL IGUAL AO PRINT -->
+    <div class="max-w-4xl mx-auto px-4 pt-6">
+        <div class="relative overflow-hidden rounded-2xl shadow-2xl border border-white/20">
+            <img id="imagemCarrossel" src="{% static 'feedback/academia3.png' %}" alt="Polo Fit"
+                class="w-full h-64 md:h-80 object-cover">
+
+            <button type="button" onclick="imagemAnterior()"
+                class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center">❮</button>
+            <button type="button" onclick="proximaImagem()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center">❯</button>
+
+            <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                <button type="button" onclick="mostrarImagem(0)"
+                    class="indicador w-3 h-3 rounded-full bg-white"></button>
+                <button type="button" onclick="mostrarImagem(1)"
+                    class="indicador w-3 h-3 rounded-full bg-white/50"></button>
+                <button type="button" onclick="mostrarImagem(2)"
+                    class="indicador w-3 h-3 rounded-full bg-white/50"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imagens = [
+            "{% static 'feedback/academia3.png' %}",
+            "{% static 'feedback/academia1.png' %}",
+            "{% static 'feedback/academia2.png' %}"
+        ];
+        let imagemAtual = 0;
+        function mostrarImagem(numero) {
+            imagemAtual = numero;
+            document.getElementById("imagemCarrossel").src = imagens[imagemAtual];
+            document.querySelectorAll(".indicador").forEach((ind, i) => {
+                ind.classList.toggle("bg-white", i === imagemAtual);
+                ind.classList.toggle("bg-white/50", i !== imagemAtual);
+            });
+        }
+        function proximaImagem() { mostrarImagem((imagemAtual + 1) % imagens.length); }
+        function imagemAnterior() { mostrarImagem((imagemAtual - 1 + imagens.length) % imagens.length); }
+        setInterval(proximaImagem, 5000);
+    </script>
+
+    <!-- TÍTULO E FORMULÁRIO -->
+    <div class="max-w-md mx-auto px-4 py-8">
+        <div class="text-center mb-8 premium-card rounded-3xl p-5">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-14 mx-auto mb-3 object-contain drop-shadow-lg">
+            <h1 class="text-3xl font-black text-white drop-shadow-lg">Polo Feedback</h1>
+            <p class="text-gray-100 mt-2 text-sm drop-shadow">Sua opinião fortalece a experiência e impulsiona a melhoria continua.</p>
+            {% if localizacao %}
+            <span class="inline-block mt-3 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/20">
+                📍 {{ localizacao }}
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <a href="#formulario" class="premium-button-primary block text-center text-black font-black py-3 px-4 rounded-xl transition duration-200 hover:scale-[1.01]">
+                Avaliar agora
+            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="premium-button-secondary block text-center text-gray-900 font-black py-3 px-4 rounded-xl transition duration-200 hover:scale-[1.01] border border-white/30">
+                    Área do gerente
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'dashboard' %}" class="premium-button-secondary block text-center text-gray-900 font-black py-3 px-4 rounded-xl transition duration-200 hover:scale-[1.01] border border-white/30">
+                    Área do gerente
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-white">
+            <div class="premium-card rounded-2xl p-4 text-center">
+                <div class="text-2xl mb-2">⚡</div>
+                <p class="font-bold text-sm">Feedback em tempo real</p>
+            </div>
+            <div class="premium-card rounded-2xl p-4 text-center">
+                <div class="text-2xl mb-2">🤖</div>
+                <p class="font-bold text-sm">IA para gestão</p>
+            </div>
+            <div class="premium-card rounded-2xl p-4 text-center">
+                <div class="text-2xl mb-2">📍</div>
+                <p class="font-bold text-sm">QR Code por local</p>
+            </div>
+        </div>
+
+        <div class="mb-6 premium-card rounded-2xl p-4 text-white">
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <div>
+                    <p class="text-[10px] uppercase tracking-[0.24em] text-lime-200/80">Selecione o local</p>
+                    <h2 class="text-lg font-black text-white">Direcione a avaliação ao ponto certo</h2>
+                </div>
+                {% if localizacao %}
+                    <span class="rounded-full border border-lime-300/40 bg-lime-400/10 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-lime-100">
+                        {{ localizacao }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <a href="?localizacao=Recepção" class="rounded-xl border {% if localizacao == 'Recepção' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
+                    Recepção
+                </a>
+                <a href="?localizacao=Academia Principal" class="rounded-xl border {% if localizacao == 'Academia Principal' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
+                    Academia Principal
+                </a>
+                <a href="?localizacao=Vestiários" class="rounded-xl border {% if localizacao == 'Vestiários' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
+                    Vestiários
+                </a>
+                <a href="?localizacao=Studio de Pilates" class="rounded-xl border {% if localizacao == 'Studio de Pilates' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
+                    Studio
+                </a>
+                <a href="?localizacao=Área de Musculação" class="rounded-xl border {% if localizacao == 'Área de Musculação' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
+                    Área de Musculação
+                </a>
+                <a href="?localizacao=Treinamento Funcional" class="rounded-xl border {% if localizacao == 'Treinamento Funcional' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
+                    Funcional
+                </a>
+            </div>
+        </div>
+
+        <div id="formulario" class="bg-white rounded-2xl shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 text-center">Como está sendo sua experiência na Polo Fit?</h2>
+
+            {% if erros %}
+            <div class="mt-4 bg-red-50 border border-red-300 rounded-xl p-4">
+                <p class="text-sm font-semibold text-red-700 mb-2">⚠️ Por favor, atente-se às opções:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    {% for erro in erros %}
+                    <li class="text-sm text-red-600">{{ erro }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="localizacao" value="{{ localizacao }}">
+
+                <!-- SEÇÃO: FUNCIONÁRIO -->
+                {% if funcionarios %}
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Quem te atendeu?</label>
+                    <p class="text-xs text-gray-500 mb-3">Opcional — selecione o funcionário para avaliar individualmente.</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        {% for func in funcionarios %}
+                        <label class="card-func">
+                            <input type="radio" name="funcionario_id" value="{{ func.pk }}"
+                                {% if funcionario_id_selecionado == func.pk|stringformat:"s" %}checked{% endif %}>
+                            <div class="func-inner">
+                                {% if func.foto %}
+                                <img src="{{ func.foto.url }}" alt="{{ func.nome }}" class="func-foto">
+                                {% else %}
+                                <div class="func-foto-placeholder">{{ func.nome|slice:":1" }}</div>
+                                {% endif %}
+                                <span class="text-xs font-bold text-gray-800 text-center leading-tight">{{ func.nome }}</span>
+                                {% if func.cargo %}
+                                <span class="text-xs text-gray-500 text-center leading-tight">{{ func.cargo }}</span>
+                                {% endif %}
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">O que você deseja avaliar?</label>
+                    <p class="text-xs text-gray-500 mb-3">Você pode escolher mais de uma opção.</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="atendimento"
+                                {% if 'atendimento' in categorias_selecionadas %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Atendimento</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="limpeza"
+                                {% if 'limpeza' in categorias_selecionadas %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Limpeza</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="equipamentos"
+                                {% if 'equipamentos' in categorias_selecionadas %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Equipamentos</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="professores"
+                                {% if 'professores' in categorias_selecionadas %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Professores</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="estrutura"
+                                {% if 'estrutura' in categorias_selecionadas %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Estrutura</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="geral"
+                                {% if 'geral' in categorias_selecionadas %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Geral</span></label>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Como você avalia?</label>
+                    <div class="grid grid-cols-5 gap-2">
+                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="1" required
+                                {% if nota_selecionada == '1' %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
+                                    class="text-3xl">★</span><span class="text-xs mt-1">1</span></span></label>
+                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="2"
+                                {% if nota_selecionada == '2' %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
+                                    class="text-3xl">★</span><span class="text-xs mt-1">2</span></span></label>
+                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="3"
+                                {% if nota_selecionada == '3' %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
+                                    class="text-3xl">★</span><span class="text-xs mt-1">3</span></span></label>
+                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="4"
+                                {% if nota_selecionada == '4' %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
+                                    class="text-3xl">★</span><span class="text-xs mt-1">4</span></span></label>
+                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="5"
+                                {% if nota_selecionada == '5' %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
+                                    class="text-3xl">★</span><span class="text-xs mt-1">5</span></span></label>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Tipo de feedback</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer"><input type="checkbox" name="tipos_feedback" value="elogio"
+                                {% if 'elogio' in tipos_selecionados %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl py-3 px-2 font-semibold text-gray-700 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 transition">👍<span
+                                    class="block text-sm mt-1">Elogio</span></span></label>
+                        <label class="cursor-pointer"><input type="checkbox" name="tipos_feedback" value="sugestao"
+                                {% if 'sugestao' in tipos_selecionados %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl py-3 px-2 font-semibold text-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 transition">💡<span
+                                    class="block text-sm mt-1">Sugestão</span></span></label>
+                        <label class="cursor-pointer"><input type="checkbox" name="tipos_feedback" value="reclamacao"
+                                {% if 'reclamacao' in tipos_selecionados %}checked{% endif %}
+                                class="sr-only peer"><span
+                                class="block text-center border-2 border-gray-200 rounded-xl py-3 px-2 font-semibold text-gray-700 peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700 transition">⚠️<span
+                                    class="block text-sm mt-1">Reclamação</span></span></label>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Quer deixar um comentário?</label>
+                    <textarea name="comentario" rows="4" placeholder="Escreva aqui sua opinião..."
+                        class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00]">{{ comentario }}</textarea>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-md mt-6">
+                    Enviar Avaliação
+                </button>
+            </form>
+        </div>
+        <p class="text-center text-xs text-white/70 mt-6">Polo Fit • Sua opinião faz a diferença.</p>
+    </div>
+</body>
+
+</html>
