@@ -8,6 +8,7 @@
     {% include "feedback/pwa_meta.html" %}
     <title>Gerar QR Code — Polo Fit</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -86,15 +87,11 @@
 
             <form method="get" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nome da Unidade / Localização</label>
-                    <input
-                        type="text"
-                        name="localizacao"
-                        value="{{ localizacao }}"
-                        placeholder="Ex: Polo Fit Centro, Musculação, Recepção, polo1..."
-                        required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition"
-                    >
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nome da Unidade
+                        / Localização</label>
+                    <input type="text" name="localizacao" value="{{ localizacao }}"
+                        placeholder="Ex: Polo Fit Centro, Musculação, Recepção, polo1..." required
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition">
                 </div>
 
                 <!-- OPÇÃO DE IP LOCAL PARA TESTES EM CELULAR -->
@@ -104,7 +101,8 @@
                         class="mt-1 w-4 h-4 text-green-600 rounded focus:ring-green-500">
                     <label for="usar_ip" class="text-xs text-green-900 cursor-pointer">
                         <strong class="font-semibold">Gerar URL com IP de rede ({{ ip_local }})</strong><br>
-                        Marque esta opção para permitir que smartphones conectados ao mesmo Wi-Fi consigam escanear e abrir o formulário sem erro.
+                        Marque esta opção para permitir que smartphones conectados ao mesmo Wi-Fi consigam escanear e
+                        abrir o formulário sem erro.
                     </label>
                 </div>
                 {% endif %}
@@ -126,13 +124,14 @@
 
         <!-- RESULTADO DO QR CODE -->
         {% if qrcode_base64 %}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
+        <div class="cartaz-impressao bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
 
             <!-- CABEÇALHO DE IMPRESSÃO -->
             <div class="print-only text-center mb-6">
                 <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-16 mx-auto mb-3 object-contain">
                 <h2 class="text-3xl font-black text-gray-900 uppercase tracking-wide">Polo Fit</h2>
-                <p class="text-gray-600 font-medium mt-1">Unidade / Ponto: <span class="font-bold text-black">{{ localizacao }}</span></p>
+                <p class="text-gray-600 font-medium mt-1">Unidade / Ponto: <span class="font-bold text-black">{{
+                        localizacao }}</span></p>
             </div>
 
             <div class="text-center">
@@ -145,11 +144,8 @@
 
                 <div class="flex justify-center mb-6">
                     <div class="p-4 bg-white border-4 border-[#0a0a0a] rounded-3xl inline-block shadow-lg">
-                        <img
-                            src="data:image/png;base64,{{ qrcode_base64 }}"
-                            alt="QR Code para {{ localizacao }}"
-                            class="w-60 h-60"
-                        >
+                        <img src="data:image/png;base64,{{ qrcode_base64 }}" alt="QR Code para {{ localizacao }}"
+                            class="w-60 h-60">
                     </div>
                 </div>
 
@@ -159,7 +155,8 @@
                 </div>
 
                 <div class="mt-6 bg-gray-50 rounded-xl p-3.5 no-print text-left border border-gray-200">
-                    <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Destino do Link:</p>
+                    <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Destino do Link:
+                    </p>
                     <p class="text-xs text-gray-700 font-mono break-all">{{ url_gerada }}</p>
                 </div>
 
