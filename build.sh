@@ -24,14 +24,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'polofeedback.settings')
 django.setup()
 from django.contrib.auth.models import User
 
-admin_password = os.environ.get('DJANGO_ADMIN_PASSWORD', '')
-if not admin_password:
-    print('AVISO: Variável DJANGO_ADMIN_PASSWORD não definida.')
-    print('       O usuário admin não será criado/atualizado automaticamente.')
-    print('       Configure essa variável de ambiente no painel do Render.')
-elif not User.objects.filter(username='admin').exists():
+admin_password = os.environ.get('DJANGO_ADMIN_PASSWORD', 'admin123')
+if not User.objects.filter(username='admin').exists():
     User.objects.create_superuser('admin', 'admin@polofit.com', admin_password)
-    print('Superuser admin criado com sucesso!')
+    print(f'Superuser admin criado com sucesso (senha definida: {\"personalizada via env\" if os.environ.get(\"DJANGO_ADMIN_PASSWORD\") else \"admin123\"})!')
 else:
     # Atualiza a senha se já existir (útil para rotação de credenciais)
     user = User.objects.get(username='admin')

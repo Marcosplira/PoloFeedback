@@ -767,9 +767,9 @@
 
                 <select name="periodo" id="filtro-periodo">
                     <option value="">Todo período</option>
-                    <option value="hoje" {% if periodo_filtro=='hoje' %}selected{% endif %}>📅 Hoje</option>
-                    <option value="semana" {% if periodo_filtro=='semana' %}selected{% endif %}>📅 Esta semana</option>
-                    <option value="mes" {% if periodo_filtro=='mes' %}selected{% endif %}>📅 Últimos 30 dias</option>
+                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>📅 Hoje</option>
+                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>📅 Esta semana</option>
+                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>📅 Últimos 30 dias</option>
                 </select>
 
 
@@ -782,7 +782,7 @@
                     </option>
 
                     {% for codigo, nome in categorias %}
-                    <option value="{{ codigo }}" {% if categoria_filtro==codigo %}selected{% endif %}>
+                    <option value="{{ codigo }}" {% if categoria_filtro == codigo %}selected{% endif %}>
                         {{ nome }}
                     </option>
                     {% endfor %}
@@ -793,7 +793,7 @@
                         Todos tipos
                     </option>
                     {% for codigo, nome in tipos_feedback %}
-                    <option value="{{ codigo }}" {% if tipo_filtro==codigo %}selected{% endif %}>
+                    <option value="{{ codigo }}" {% if tipo_filtro == codigo %}selected{% endif %}>
                         {{ nome }}
                     </option>
                     {% endfor %}
@@ -804,7 +804,7 @@
                         Todos status
                     </option>
                     {% for codigo, nome in status_choices %}
-                    <option value="{{ codigo }}" {% if status_filtro==codigo %}selected{% endif %}>
+                    <option value="{{ codigo }}" {% if status_filtro == codigo %}selected{% endif %}>
                         {{ nome }}
                     </option>
                     {% endfor %}
@@ -815,8 +815,7 @@
                         Todos funcionários
                     </option>
                     {% for func in funcionarios %}
-                    <option value="{{ func.id }}" {% if funcionario_filtro==func.id|stringformat:"s" %}selected{% endif
-                        %}>
+                    <option value="{{ func.id }}" {% if funcionario_filtro == func.id|stringformat:"s" %}selected{% endif %}>
                         {{ func.nome }}
                     </option>
                     {% endfor %}
