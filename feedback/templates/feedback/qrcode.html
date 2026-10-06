@@ -82,15 +82,46 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 no-print">
             <h2 class="text-2xl font-black text-gray-900 mb-1">Gerador de QR Code</h2>
             <p class="text-gray-500 text-sm mb-6">
-                Informe o identificador da unidade ou setor para gerar a placa de avaliação que os alunos irão escanear.
+                Clique em um local abaixo para gerar o QR Code instantaneamente, ou digite um nome personalizado.
             </p>
+
+            <!-- ATALHOS RÁPIDOS DE LOCALIZAÇÃO -->
+            <div class="mb-6">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">⚡ Locais da academia — clique para gerar</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <a href="?localizacao=Recep%C3%A7%C3%A3o{% if usando_ip %}&usar_ip=1{% endif %}"
+                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Recepção' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
+                        📍 Recepção
+                    </a>
+                    <a href="?localizacao=Academia+Principal{% if usando_ip %}&usar_ip=1{% endif %}"
+                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Academia Principal' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
+                        📍 Academia Principal
+                    </a>
+                    <a href="?localizacao=Vesti%C3%A1rios{% if usando_ip %}&usar_ip=1{% endif %}"
+                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Vestiários' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
+                        📍 Vestiários
+                    </a>
+                    <a href="?localizacao=Studio+de+Pilates{% if usando_ip %}&usar_ip=1{% endif %}"
+                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Studio de Pilates' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
+                        📍 Studio de Pilates
+                    </a>
+                    <a href="?localizacao=%C3%81rea+de+Muscula%C3%A7%C3%A3o{% if usando_ip %}&usar_ip=1{% endif %}"
+                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Área de Musculação' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
+                        📍 Área de Musculação
+                    </a>
+                    <a href="?localizacao=Treinamento+Funcional{% if usando_ip %}&usar_ip=1{% endif %}"
+                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Treinamento Funcional' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
+                        📍 Treinamento Funcional
+                    </a>
+                </div>
+            </div>
 
             <form method="get" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nome da Unidade
-                        / Localização</label>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Ou digite um local personalizado</label>
                     <input type="text" name="localizacao" value="{{ localizacao }}"
-                        placeholder="Ex: Polo Fit Centro, Musculação, Recepção, polo1..." required
+                        id="input-localizacao"
+                        placeholder="Ex: Polo Fit Centro, Sala VIP, Espaço Kids..." required
                         class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition">
                 </div>
 

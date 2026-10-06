@@ -8,50 +8,80 @@
     {% include "feedback/pwa_meta.html" %}
     <title>Avaliação Enviada — Polo Fit</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-
+        * { font-family: 'Inter', sans-serif; }
         body {
             background-image: url("{% static 'feedback/academia1.png' %}");
             background-size: cover;
             background-position: center;
         }
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .check-anim { animation: pop 0.5s ease-out forwards; }
+
+        @keyframes fadeUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .fade-up { animation: fadeUp 0.6s ease-out 0.2s both; }
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center relative p-4">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+<body class="min-h-screen flex flex-col items-center justify-center relative p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-[3px]"></div>
 
-    <div class="relative max-w-md w-full">
+    <div class="relative max-w-sm w-full">
+
+        <!-- LOGO -->
         <div class="text-center mb-6">
-            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-14 mx-auto mb-2 object-contain drop-shadow-lg">
-            <h2 class="text-2xl font-black text-white drop-shadow tracking-wide">POLO FIT</h2>
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-12 mx-auto mb-2 object-contain drop-shadow-lg">
+            <h2 class="text-lg font-black text-white drop-shadow tracking-wide">POLO FIT</h2>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-2xl p-8 text-center border border-gray-100">
-            <div class="w-16 h-16 bg-[#f0fdf4] border-2 border-[#16a34a] text-[#16a34a] rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-sm">
+        <!-- CARD SUCESSO -->
+        <div class="fade-up bg-white rounded-3xl shadow-2xl p-8 text-center border border-gray-100">
+
+            <!-- ÍCONE ANIMADO -->
+            <div class="check-anim w-20 h-20 bg-gradient-to-br from-[#a3e635] to-[#4ade80] rounded-full flex items-center justify-center text-4xl mx-auto mb-5 shadow-lg">
                 ✓
             </div>
 
-            <h1 class="text-2xl font-bold text-gray-900">Muito Obrigado!</h1>
-            <p class="text-gray-600 mt-2 text-sm leading-relaxed">
-                Sua avaliação foi registrada com sucesso e ajuda nossa equipe a elevar o padrão dos treinos e do atendimento.
+            <h1 class="text-2xl font-black text-gray-900">Obrigado pela avaliação!</h1>
+            <p class="text-2xl mt-1">💚</p>
+
+            <p class="text-gray-500 mt-3 text-sm leading-relaxed">
+                Sua opinião ajuda a <strong class="text-gray-700">Polo Fit</strong> a melhorar cada vez mais.
+                Agradecemos por dedicar seu tempo para nos dar um retorno.
             </p>
 
-            <a href="{% url 'avaliar' %}{% if localizacao %}?localizacao={{ localizacao }}{% endif %}"
-                class="block w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-sm hover:shadow-md mt-6">
-                Fazer Outra Avaliação
-            </a>
+            {% if localizacao %}
+            <div class="mt-4 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 inline-block">
+                <p class="text-xs text-gray-400">Local avaliado</p>
+                <p class="text-sm font-bold text-gray-700">📍 {{ localizacao }}</p>
+            </div>
+            {% endif %}
+
+            <!-- BOTÕES -->
+            <div class="mt-6 space-y-3">
+                <a href="{% url 'avaliar' %}{% if localizacao %}?localizacao={{ localizacao }}{% endif %}"
+                    class="flex items-center justify-center gap-2 w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#a3e635] border border-[#a3e635] font-bold py-3.5 rounded-xl transition shadow-sm">
+                    📝 Fazer outra avaliação
+                </a>
+                <a href="{% url 'avaliar' %}"
+                    class="flex items-center justify-center gap-2 w-full bg-gray-50 hover:bg-gray-100 text-gray-600 font-semibold py-3 rounded-xl transition border border-gray-200 text-sm">
+                    🏠 Voltar ao início
+                </a>
+            </div>
         </div>
 
-        <p class="text-center text-white/70 text-xs mt-6">
-            Polo Fit • Sua opinião faz a diferença
-        </p>
+        <p class="text-center text-white/40 text-xs mt-6">Polo Fit • Sua opinião faz a diferença</p>
     </div>
+
     {% include "feedback/pwa_install.html" %}
 </body>
 

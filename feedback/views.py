@@ -350,6 +350,37 @@ def dashboard(request):
     ranking_funcionarios.sort(key=lambda x: (x["elogios"], x["media"]), reverse=True)
 
     # ==========================================================
+    # AVALIAÇÕES POR LOCAL
+    # ==========================================================
+
+    LOCAIS_DEFINIDOS = [
+        ("Geral", "🌐"),
+        ("Recepção", "🧑‍💼"),
+        ("Academia Principal", "🏋️"),
+        ("Vestiários", "🚿"),
+        ("Studio de Pilates", "🧘"),
+        ("Área de Musculação", "💪"),
+        ("Treinamento Funcional", "🏃"),
+    ]
+
+    locais_ranking = []
+    # Usa TODAS as avaliações (sem filtro de período) para o ranking de locais
+    todas_avs = Avaliacao.objects.all()
+    for nome_local, icone in LOCAIS_DEFINIDOS:
+        avs_local = todas_avs.filter(localizacao=nome_local)
+        total_local = avs_local.count()
+        if total_local == 0:
+            continue
+        media_local = avs_local.aggregate(m=models.Avg("nota"))["m"] or 0
+        locais_ranking.append({
+            "nome": nome_local,
+            "icone": icone,
+            "total": total_local,
+            "media": round(media_local, 1),
+        })
+    locais_ranking.sort(key=lambda x: x["total"], reverse=True)
+
+    # ==========================================================
     # DASHBOARD
     # ==========================================================
 
@@ -380,6 +411,8 @@ def dashboard(request):
             "funcionarios": todos_funcionarios,
             # Ranking
             "ranking_funcionarios": ranking_funcionarios,
+            # Locais
+            "locais_ranking": locais_ranking,
         },
     )
 

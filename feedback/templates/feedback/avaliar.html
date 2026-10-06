@@ -7,25 +7,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
     <title>Polo Feedback - Polo Fit</title>
+    <meta name="description" content="Avalie sua experiência na Polo Fit. Sua opinião ajuda a academia a melhorar.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* FUNDO FIXO IGUAL AO PRINT */
+        * { font-family: 'Inter', sans-serif; }
+
         .fundo-principal {
             background-image: url("{% static 'feedback/academia1.png' %}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
-
         .fundo-overlay {
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(2px);
+            background: rgba(0, 0, 0, 0.52);
+            backdrop-filter: blur(3px);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(163, 230, 53, 0.25);
+        }
+
+        /* CARD DE LOCAL */
+        .local-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 1rem 0.5rem;
+            border-radius: 1rem;
+            border: 2px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: white;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .local-btn:hover {
+            border-color: rgba(163,230,53,0.6);
+            background: rgba(163,230,53,0.08);
+            transform: translateY(-2px);
+        }
+        .local-btn.ativo {
+            border-color: #a3e635;
+            background: rgba(163,230,53,0.15);
+            color: #d9f99d;
+            box-shadow: 0 0 0 3px rgba(163,230,53,0.18);
+        }
+        .local-btn .icone {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        /* BANNER LOCAL SELECIONADO */
+        .banner-local {
+            background: linear-gradient(135deg, rgba(10,10,10,0.92), rgba(15,30,5,0.92));
+            border: 1px solid rgba(163,230,53,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 1.25rem;
+        }
+
+        /* CARD DO FORMULÁRIO */
+        .form-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
         }
 
         /* Card de funcionário */
-        .card-func input[type="radio"] {
-            display: none;
-        }
+        .card-func input[type="radio"] { display: none; }
         .card-func input[type="radio"]:checked + .func-inner {
             border-color: #16a34a;
             background-color: #f0fdf4;
@@ -42,71 +99,81 @@
             gap: 0.4rem;
             transition: all 0.2s;
         }
-        .card-func .func-inner:hover {
-            border-color: #86efac;
-        }
+        .card-func .func-inner:hover { border-color: #86efac; }
         .func-foto {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            object-fit: cover;
+            width: 64px; height: 64px;
+            border-radius: 50%; object-fit: cover;
             border: 2px solid #e5e7eb;
         }
         .func-foto-placeholder {
-            width: 64px;
-            height: 64px;
+            width: 64px; height: 64px;
             border-radius: 50%;
             background: linear-gradient(135deg, #0A0A0A, #33FF00);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white; font-weight: bold;
         }
-        .premium-card {
-            background: rgba(9, 13, 20, 0.32);
-            border: 1px solid rgba(255,255,255,0.18);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+
+        /* SEÇÃO DO LOCAL — STEP CARD */
+        .step-card {
+            background: rgba(9, 13, 20, 0.45);
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
         }
-        .premium-button-primary {
-            background: linear-gradient(135deg, #bef264 0%, #a3e635 100%);
-            box-shadow: 0 12px 25px rgba(163,230,53,0.35);
-        }
-        .premium-button-secondary {
-            background: rgba(255,255,255,0.9);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.18);
-        }
+
+        /* RODAPÉ DISCRETO */
+        footer a { transition: color 0.2s; }
+        footer a:hover { color: #a3e635; }
     </style>
 </head>
 
 <body class="min-h-screen fundo-principal relative">
-    <!-- OVERLAY ESCURO POR CIMA DO FUNDO -->
     <div class="fixed inset-0 fundo-overlay -z-10"></div>
 
-    <!-- CARROSSEL IGUAL AO PRINT -->
-    <div class="max-w-4xl mx-auto px-4 pt-6">
-        <div class="relative overflow-hidden rounded-2xl shadow-2xl border border-white/20">
+    <!-- ========================================================= -->
+    <!-- NAVBAR                                                    -->
+    <!-- ========================================================= -->
+    <nav class="navbar sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-2xl mx-auto flex items-center justify-between">
+            <a href="{% url 'avaliar' %}" class="flex items-center gap-2">
+                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-9 object-contain drop-shadow">
+                <span class="text-white font-black text-base hidden sm:block tracking-tight">Polo Feedback</span>
+            </a>
+            <div class="flex items-center gap-2 text-sm">
+                <a href="{% url 'avaliar' %}"
+                   class="text-white/80 hover:text-[#a3e635] font-semibold px-3 py-1.5 rounded-lg transition">
+                    🏠 Início
+                </a>
+                <a href="#escolher-local"
+                   class="text-white/80 hover:text-[#a3e635] font-semibold px-3 py-1.5 rounded-lg transition">
+                    📍 Local
+                </a>
+                <a href="#formulario"
+                   class="bg-[#a3e635] hover:bg-[#bef264] text-black font-black px-4 py-1.5 rounded-lg transition">
+                    📝 Avaliar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================================= -->
+    <!-- CARROSSEL                                                 -->
+    <!-- ========================================================= -->
+    <div class="max-w-2xl mx-auto px-4 pt-5">
+        <div class="relative overflow-hidden rounded-2xl shadow-2xl border border-white/15">
             <img id="imagemCarrossel" src="{% static 'feedback/academia3.png' %}" alt="Polo Fit"
-                class="w-full h-64 md:h-80 object-cover">
-
+                class="w-full h-52 md:h-72 object-cover">
             <button type="button" onclick="imagemAnterior()"
-                class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center">❮</button>
+                class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-9 h-9 flex items-center justify-center text-sm">❮</button>
             <button type="button" onclick="proximaImagem()"
-                class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center">❯</button>
-
+                class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-9 h-9 flex items-center justify-center text-sm">❯</button>
             <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-                <button type="button" onclick="mostrarImagem(0)"
-                    class="indicador w-3 h-3 rounded-full bg-white"></button>
-                <button type="button" onclick="mostrarImagem(1)"
-                    class="indicador w-3 h-3 rounded-full bg-white/50"></button>
-                <button type="button" onclick="mostrarImagem(2)"
-                    class="indicador w-3 h-3 rounded-full bg-white/50"></button>
+                <button type="button" onclick="mostrarImagem(0)" class="indicador w-2.5 h-2.5 rounded-full bg-white"></button>
+                <button type="button" onclick="mostrarImagem(1)" class="indicador w-2.5 h-2.5 rounded-full bg-white/50"></button>
+                <button type="button" onclick="mostrarImagem(2)" class="indicador w-2.5 h-2.5 rounded-full bg-white/50"></button>
             </div>
         </div>
     </div>
-
     <script>
         const imagens = [
             "{% static 'feedback/academia3.png' %}",
@@ -114,12 +181,12 @@
             "{% static 'feedback/academia2.png' %}"
         ];
         let imagemAtual = 0;
-        function mostrarImagem(numero) {
-            imagemAtual = numero;
-            document.getElementById("imagemCarrossel").src = imagens[imagemAtual];
-            document.querySelectorAll(".indicador").forEach((ind, i) => {
-                ind.classList.toggle("bg-white", i === imagemAtual);
-                ind.classList.toggle("bg-white/50", i !== imagemAtual);
+        function mostrarImagem(n) {
+            imagemAtual = n;
+            document.getElementById("imagemCarrossel").src = imagens[n];
+            document.querySelectorAll(".indicador").forEach((el, i) => {
+                el.classList.toggle("bg-white", i === n);
+                el.classList.toggle("bg-white/50", i !== n);
             });
         }
         function proximaImagem() { mostrarImagem((imagemAtual + 1) % imagens.length); }
@@ -127,96 +194,120 @@
         setInterval(proximaImagem, 5000);
     </script>
 
-    <!-- TÍTULO E FORMULÁRIO -->
-    <div class="max-w-md mx-auto px-4 py-8">
-        <div class="text-center mb-8 premium-card rounded-3xl p-5">
-            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-14 mx-auto mb-3 object-contain drop-shadow-lg">
+    <!-- ========================================================= -->
+    <!-- CONTEÚDO PRINCIPAL                                        -->
+    <!-- ========================================================= -->
+    <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- HERO -->
+        <div class="text-center">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-12 mx-auto mb-3 object-contain drop-shadow-lg">
             <h1 class="text-3xl font-black text-white drop-shadow-lg">Polo Feedback</h1>
-            <p class="text-gray-100 mt-2 text-sm drop-shadow">Sua opinião fortalece a experiência e impulsiona a melhoria continua.</p>
-            {% if localizacao %}
-            <span class="inline-block mt-3 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/20">
-                📍 {{ localizacao }}
-            </span>
-            {% endif %}
+            <p class="text-white/75 mt-2 text-sm max-w-xs mx-auto">
+                Sua opinião fortalece a experiência e impulsiona a melhoria contínua.
+            </p>
         </div>
 
-        <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <a href="#formulario" class="premium-button-primary block text-center text-black font-black py-3 px-4 rounded-xl transition duration-200 hover:scale-[1.01]">
-                Avaliar agora
-            </a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="premium-button-secondary block text-center text-gray-900 font-black py-3 px-4 rounded-xl transition duration-200 hover:scale-[1.01] border border-white/30">
-                    Área do gerente
-                </a>
-            {% else %}
-                <a href="{% url 'login' %}?next={% url 'dashboard' %}" class="premium-button-secondary block text-center text-gray-900 font-black py-3 px-4 rounded-xl transition duration-200 hover:scale-[1.01] border border-white/30">
-                    Área do gerente
-                </a>
-            {% endif %}
-        </div>
-
-        <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-white">
-            <div class="premium-card rounded-2xl p-4 text-center">
-                <div class="text-2xl mb-2">⚡</div>
-                <p class="font-bold text-sm">Feedback em tempo real</p>
-            </div>
-            <div class="premium-card rounded-2xl p-4 text-center">
-                <div class="text-2xl mb-2">🤖</div>
-                <p class="font-bold text-sm">IA para gestão</p>
-            </div>
-            <div class="premium-card rounded-2xl p-4 text-center">
-                <div class="text-2xl mb-2">📍</div>
-                <p class="font-bold text-sm">QR Code por local</p>
-            </div>
-        </div>
-
-        <div class="mb-6 premium-card rounded-2xl p-4 text-white">
-            <div class="flex items-center justify-between gap-3 mb-3">
+        <!-- BANNER: LOCAL SELECIONADO -->
+        {% if localizacao and localizacao != 'Geral' %}
+        <div class="banner-local p-4 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">
+                    {% if localizacao == 'Recepção' %}🧑‍💼
+                    {% elif localizacao == 'Academia Principal' %}🏋️
+                    {% elif localizacao == 'Vestiários' %}🚿
+                    {% elif localizacao == 'Studio de Pilates' %}🧘
+                    {% elif localizacao == 'Área de Musculação' %}💪
+                    {% elif localizacao == 'Treinamento Funcional' %}🏃
+                    {% else %}📍{% endif %}
+                </span>
                 <div>
-                    <p class="text-[10px] uppercase tracking-[0.24em] text-lime-200/80">Selecione o local</p>
-                    <h2 class="text-lg font-black text-white">Direcione a avaliação ao ponto certo</h2>
+                    <p class="text-[10px] uppercase tracking-[0.2em] text-lime-300/70">Você está avaliando</p>
+                    <p class="text-white font-black text-base leading-tight">{{ localizacao }}</p>
+                    <p class="text-white/50 text-xs">Sua opinião sobre este espaço ajuda a Polo Fit a melhorar.</p>
                 </div>
-                {% if localizacao %}
-                    <span class="rounded-full border border-lime-300/40 bg-lime-400/10 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-lime-100">
-                        📍 {{ localizacao }}
-                    </span>
-                {% endif %}
+            </div>
+            <a href="#escolher-local"
+               class="flex-shrink-0 text-xs border border-white/20 text-white/70 hover:border-lime-300/60 hover:text-lime-200 px-3 py-1.5 rounded-lg transition font-semibold">
+                📍 Trocar local
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- ===================================================== -->
+        <!-- ETAPA: ESCOLHER LOCAL                                 -->
+        <!-- ===================================================== -->
+        <div id="escolher-local" class="step-card p-5">
+            <div class="mb-4">
+                <p class="text-[10px] uppercase tracking-[0.24em] text-lime-200/70 mb-1">Etapa 1 de 2</p>
+                <h2 class="text-xl font-black text-white">📍 Onde você está avaliando?</h2>
+                <p class="text-white/60 text-sm mt-1">Selecione o local onde deseja deixar sua avaliação.</p>
             </div>
 
-            {% if localizacao == 'Geral' %}
-            <p class="text-xs text-lime-200/60 mb-3 italic">📌 Localização padrão. Escaneie um QR Code ou selecione um local específico abaixo.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <a href="?localizacao=Geral#escolher-local"
+                   class="local-btn {% if localizacao == 'Geral' %}ativo{% endif %}">
+                    <span class="icone">🌐</span>
+                    <span>Geral</span>
+                </a>
+                <a href="?localizacao=Recep%C3%A7%C3%A3o#escolher-local"
+                   class="local-btn {% if localizacao == 'Recepção' %}ativo{% endif %}">
+                    <span class="icone">🧑‍💼</span>
+                    <span>Recepção</span>
+                </a>
+                <a href="?localizacao=Academia+Principal#escolher-local"
+                   class="local-btn {% if localizacao == 'Academia Principal' %}ativo{% endif %}">
+                    <span class="icone">🏋️</span>
+                    <span>Academia Principal</span>
+                </a>
+                <a href="?localizacao=Vesti%C3%A1rios#escolher-local"
+                   class="local-btn {% if localizacao == 'Vestiários' %}ativo{% endif %}">
+                    <span class="icone">🚿</span>
+                    <span>Vestiários</span>
+                </a>
+                <a href="?localizacao=Studio+de+Pilates#escolher-local"
+                   class="local-btn {% if localizacao == 'Studio de Pilates' %}ativo{% endif %}">
+                    <span class="icone">🧘</span>
+                    <span>Studio de Pilates</span>
+                </a>
+                <a href="?localizacao=%C3%81rea+de+Muscula%C3%A7%C3%A3o#escolher-local"
+                   class="local-btn {% if localizacao == 'Área de Musculação' %}ativo{% endif %}">
+                    <span class="icone">💪</span>
+                    <span>Área de Musculação</span>
+                </a>
+                <a href="?localizacao=Treinamento+Funcional#escolher-local"
+                   class="local-btn {% if localizacao == 'Treinamento Funcional' %}ativo{% endif %}">
+                    <span class="icone">🏃</span>
+                    <span>Treinamento Funcional</span>
+                </a>
+            </div>
+
+            {% if localizacao %}
+            <div class="mt-4 flex items-center justify-between bg-lime-400/10 border border-lime-300/30 rounded-xl px-4 py-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-lime-300 font-bold text-sm">✓ Local selecionado:</span>
+                    <span class="text-white font-black text-sm">{{ localizacao }}</span>
+                </div>
+                <a href="#formulario"
+                   class="bg-[#a3e635] hover:bg-[#bef264] text-black font-black text-sm px-4 py-2 rounded-lg transition shadow">
+                    Continuar →
+                </a>
+            </div>
             {% endif %}
-
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                <a href="?localizacao=Geral" class="rounded-xl border {% if localizacao == 'Geral' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
-                    🌐 Geral
-                </a>
-                <a href="?localizacao=Recepção" class="rounded-xl border {% if localizacao == 'Recepção' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
-                    Recepção
-                </a>
-                <a href="?localizacao=Academia Principal" class="rounded-xl border {% if localizacao == 'Academia Principal' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
-                    Academia Principal
-                </a>
-                <a href="?localizacao=Vestiários" class="rounded-xl border {% if localizacao == 'Vestiários' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
-                    Vestiários
-                </a>
-                <a href="?localizacao=Studio de Pilates" class="rounded-xl border {% if localizacao == 'Studio de Pilates' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
-                    Studio
-                </a>
-                <a href="?localizacao=Área de Musculação" class="rounded-xl border {% if localizacao == 'Área de Musculação' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
-                    Área de Musculação
-                </a>
-                <a href="?localizacao=Treinamento Funcional" class="rounded-xl border {% if localizacao == 'Treinamento Funcional' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
-                    Funcional
-                </a>
-            </div>
         </div>
 
-        <div id="formulario" class="bg-white rounded-2xl shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-800 text-center">Como está sendo sua experiência na Polo Fit?</h2>
+        <!-- ===================================================== -->
+        <!-- ETAPA: FORMULÁRIO DE AVALIAÇÃO                        -->
+        <!-- ===================================================== -->
+        <div id="formulario" class="form-card p-6">
+            <p class="text-[10px] uppercase tracking-[0.22em] text-gray-400 mb-1">Etapa 2 de 2</p>
+            <h2 class="text-xl font-bold text-gray-800 mb-1">Como está sendo sua experiência?</h2>
+            <p class="text-xs text-gray-400 mb-5">
+                📍 Avaliando: <strong class="text-gray-700">{{ localizacao }}</strong>
+            </p>
 
             {% if erros %}
-            <div class="mt-4 bg-red-50 border border-red-300 rounded-xl p-4">
+            <div class="mb-5 bg-red-50 border border-red-300 rounded-xl p-4">
                 <p class="text-sm font-semibold text-red-700 mb-2">⚠️ Por favor, atente-se às opções:</p>
                 <ul class="list-disc list-inside space-y-1">
                     {% for erro in erros %}
@@ -226,15 +317,15 @@
             </div>
             {% endif %}
 
-            <form method="POST">
+            <form method="POST" id="form-avaliacao">
                 {% csrf_token %}
                 <input type="hidden" name="localizacao" value="{{ localizacao }}">
 
-                <!-- SEÇÃO: FUNCIONÁRIO -->
+                <!-- FUNCIONÁRIO -->
                 {% if funcionarios %}
-                <div class="mt-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Quem te atendeu?</label>
-                    <p class="text-xs text-gray-500 mb-3">Opcional — selecione o funcionário para avaliar individualmente.</p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-800 mb-1">Quem te atendeu?</label>
+                    <p class="text-xs text-gray-400 mb-3">Opcional — selecione o funcionário para avaliar individualmente.</p>
                     <div class="grid grid-cols-3 gap-3">
                         {% for func in funcionarios %}
                         <label class="card-func">
@@ -257,70 +348,59 @@
                 </div>
                 {% endif %}
 
-                <div class="mt-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">O que você deseja avaliar?</label>
-                    <p class="text-xs text-gray-500 mb-3">Você pode escolher mais de uma opção.</p>
+                <!-- CATEGORIAS -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-800 mb-1">O que você deseja avaliar?</label>
+                    <p class="text-xs text-gray-400 mb-3">Você pode escolher mais de uma opção.</p>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="cursor-pointer"><input type="checkbox" name="categorias" value="atendimento"
                                 {% if 'atendimento' in categorias_selecionadas %}checked{% endif %}
                                 class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Atendimento</span></label>
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🧑‍💼 Atendimento</span></label>
                         <label class="cursor-pointer"><input type="checkbox" name="categorias" value="limpeza"
                                 {% if 'limpeza' in categorias_selecionadas %}checked{% endif %}
                                 class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Limpeza</span></label>
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🧹 Limpeza</span></label>
                         <label class="cursor-pointer"><input type="checkbox" name="categorias" value="equipamentos"
                                 {% if 'equipamentos' in categorias_selecionadas %}checked{% endif %}
                                 class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Equipamentos</span></label>
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🏋️ Equipamentos</span></label>
                         <label class="cursor-pointer"><input type="checkbox" name="categorias" value="professores"
                                 {% if 'professores' in categorias_selecionadas %}checked{% endif %}
                                 class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Professores</span></label>
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">👨‍🏫 Professores</span></label>
                         <label class="cursor-pointer"><input type="checkbox" name="categorias" value="estrutura"
                                 {% if 'estrutura' in categorias_selecionadas %}checked{% endif %}
                                 class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Estrutura</span></label>
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🏢 Estrutura</span></label>
                         <label class="cursor-pointer"><input type="checkbox" name="categorias" value="geral"
                                 {% if 'geral' in categorias_selecionadas %}checked{% endif %}
                                 class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">Geral</span></label>
+                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">⭐ Geral</span></label>
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">Como você avalia?</label>
+                <!-- NOTA -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-800 mb-3">Como você avalia? <span class="text-gray-400 font-normal">(1 a 5 estrelas)</span></label>
                     <div class="grid grid-cols-5 gap-2">
-                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="1" required
-                                {% if nota_selecionada == '1' %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
-                                    class="text-3xl">★</span><span class="text-xs mt-1">1</span></span></label>
-                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="2"
-                                {% if nota_selecionada == '2' %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
-                                    class="text-3xl">★</span><span class="text-xs mt-1">2</span></span></label>
-                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="3"
-                                {% if nota_selecionada == '3' %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
-                                    class="text-3xl">★</span><span class="text-xs mt-1">3</span></span></label>
-                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="4"
-                                {% if nota_selecionada == '4' %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
-                                    class="text-3xl">★</span><span class="text-xs mt-1">4</span></span></label>
-                        <label class="cursor-pointer text-center"><input type="radio" name="nota" value="5"
-                                {% if nota_selecionada == '5' %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition"><span
-                                    class="text-3xl">★</span><span class="text-xs mt-1">5</span></span></label>
+                        {% for n in "12345" %}
+                        <label class="cursor-pointer text-center">
+                            <input type="radio" name="nota" value="{{ n }}" required
+                                {% if nota_selecionada == n %}checked{% endif %}
+                                class="sr-only peer">
+                            <span class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition">
+                                <span class="text-2xl text-yellow-400">★</span>
+                                <span class="text-xs font-bold mt-1 text-gray-600">{{ n }}</span>
+                            </span>
+                        </label>
+                        {% endfor %}
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">Tipo de feedback</label>
+                <!-- TIPO DE FEEDBACK -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-800 mb-3">Tipo de feedback</label>
                     <div class="grid grid-cols-3 gap-2">
                         <label class="cursor-pointer"><input type="checkbox" name="tipos_feedback" value="elogio"
                                 {% if 'elogio' in tipos_selecionados %}checked{% endif %}
@@ -340,20 +420,57 @@
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Quer deixar um comentário?</label>
-                    <textarea name="comentario" rows="4" placeholder="Escreva aqui sua opinião..."
-                        class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00]">{{ comentario }}</textarea>
+                <!-- COMENTÁRIO -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-800 mb-2">Quer deixar um comentário? <span class="font-normal text-gray-400">(opcional)</span></label>
+                    <textarea name="comentario" id="comentario" rows="4"
+                        placeholder="Escreva aqui sua opinião, elogio ou sugestão..."
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#a3e635] text-sm resize-none">{{ comentario }}</textarea>
                 </div>
 
-                <button type="submit"
-                    class="w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-md mt-6">
-                    Enviar Avaliação
-                </button>
+                <!-- AÇÕES -->
+                <div class="flex gap-3">
+                    <button type="button" onclick="limparFormulario()"
+                        class="flex-shrink-0 border border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-700 font-semibold px-4 py-3 rounded-xl transition text-sm">
+                        🔄 Limpar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#a3e635] border border-[#a3e635] font-black py-3.5 rounded-xl transition shadow-md text-base">
+                        ✅ Enviar Avaliação
+                    </button>
+                </div>
             </form>
         </div>
-        <p class="text-center text-xs text-white/70 mt-6">Polo Fit • Sua opinião faz a diferença.</p>
-    </div>
+
+    </div><!-- fim conteúdo -->
+
+    <!-- ========================================================= -->
+    <!-- RODAPÉ DISCRETO                                           -->
+    <!-- ========================================================= -->
+    <footer class="max-w-2xl mx-auto px-4 py-8 text-center">
+        <p class="text-white/40 text-xs">Polo Fit • Sua opinião faz a diferença.</p>
+        <div class="mt-3">
+            {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="text-white/30 hover:text-white/60 text-xs transition">
+                🔐 Painel do gerente
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}?next={% url 'dashboard' %}" class="text-white/30 hover:text-white/60 text-xs transition">
+                🔐 Acesso administrativo
+            </a>
+            {% endif %}
+        </div>
+    </footer>
+
+    <script>
+        function limparFormulario() {
+            if (!confirm('Limpar todas as respostas do formulário?')) return;
+            document.querySelectorAll('#form-avaliacao input[type="checkbox"]').forEach(el => el.checked = false);
+            document.querySelectorAll('#form-avaliacao input[type="radio"]').forEach(el => el.checked = false);
+            document.getElementById('comentario').value = '';
+        }
+    </script>
+
     {% include "feedback/pwa_install.html" %}
 </body>
 
