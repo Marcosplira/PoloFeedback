@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>Enquete de Satisfação — Polo Fit</title>
+    <meta name="description" content="Participe da nossa Enquete de Satisfação sobre aulas coletivas e novos espaços na Polo Fit.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+
+        .fundo-principal {
+            background-image: url("{% static 'feedback/academia1.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .fundo-overlay {
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+        }
+
+        .navbar {
+            background: rgba(10, 10, 10, 0.90);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(163, 230, 53, 0.25);
+        }
+
+        .enquete-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+        }
+
+        /* Checkbox & Radio cards customizados */
+        .option-pill input { display: none; }
+        .option-pill .inner {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+        .option-pill .inner:hover {
+            border-color: #a3e635;
+            background: #f7fee7;
+        }
+        .option-pill input:checked + .inner {
+            border-color: #16a34a;
+            background: #f0fdf4;
+            color: #15803d;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+        }
+
+        /* Card colaborador */
+        .card-func input { display: none; }
+        .card-func input:checked + .func-inner {
+            border-color: #16a34a;
+            background-color: #f0fdf4;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
+        }
+        .card-func .func-inner {
+            cursor: pointer;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 0.75rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        .card-func .func-inner:hover { border-color: #86efac; }
+        .func-foto-placeholder {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0A0A0A, #33FF00);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; color: white; font-weight: bold;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen fundo-principal relative">
+    <div class="fixed inset-0 fundo-overlay -z-10"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-2xl mx-auto flex items-center justify-between">
+            <a href="{% url 'avaliar' %}" class="flex items-center gap-2">
+                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-9 object-contain drop-shadow">
+                <span class="text-white font-black text-base hidden sm:block tracking-tight">Polo Feedback</span>
+            </a>
+            <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                <a href="{% url 'avaliar' %}"
+                   class="text-white/80 hover:text-[#a3e635] font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition">
+                    🏠 Início
+                </a>
+                <a href="{% url 'avaliar' %}#formulario"
+                   class="text-white/80 hover:text-[#a3e635] font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition">
+                    📝 Avaliar
+                </a>
+                <a href="{% url 'enquete' %}"
+                   class="bg-[#a3e635] text-black font-black px-2.5 sm:px-3.5 py-1.5 rounded-lg transition">
+                    📋 Enquete
+                </a>
+                <a href="{% url 'dashboard' %}"
+                   class="bg-white/10 hover:bg-white/20 text-[#a3e635] border border-[#a3e635]/40 hover:border-[#a3e635] font-black px-2.5 sm:px-3.5 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1"
+                   title="Acessar o Painel do Gerente">
+                    📊 Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- CABEÇALHO HERO -->
+        <div class="text-center">
+            <span class="inline-block bg-[#a3e635]/20 text-[#d9f99d] border border-[#a3e635]/40 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2">
+                Pesquisa Oficial Polo Fit
+            </span>
+            <h1 class="text-3xl font-black text-white drop-shadow-lg">Enquete de Satisfação</h1>
+            <p class="text-white/80 mt-2 text-sm max-w-md mx-auto">
+                Ajude a direção da academia a planejar novas aulas, melhorias de espaços e ouvir você de verdade!
+            </p>
+        </div>
+
+        <!-- FORMULÁRIO -->
+        <div class="enquete-card p-6 sm:p-8">
+
+            <form method="POST" id="form-enquete" class="space-y-8">
+                {% csrf_token %}
+
+                <!-- QUESTÃO 1 (ORDEM DO GERENTE): Aulas mais gosta / participa -->
+                <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-7 h-7 rounded-lg bg-[#a3e635] text-black font-black flex items-center justify-center text-sm">1</span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Quais aulas você MAIS gosta ou participa?</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 ml-9">Você pode marcar mais de uma opção.</p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 ml-0 sm:ml-2">
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Funcional">
+                            <div class="inner"><span>🏃</span> Funcional</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Dança">
+                            <div class="inner"><span>💃</span> Dança</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Jump">
+                            <div class="inner"><span>🤸</span> Jump</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Bike">
+                            <div class="inner"><span>🚴</span> Bike</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Step">
+                            <div class="inner"><span>🪜</span> Step</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Pump">
+                            <div class="inner"><span>🏋️</span> Pump</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="HIIT">
+                            <div class="inner"><span>⚡</span> HIIT</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Abdominais">
+                            <div class="inner"><span>🎯</span> Abdominais</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="checkbox" name="aulas_favoritas" value="Glúteos">
+                            <div class="inner"><span>🍑</span> Glúteos</div>
+                        </label>
+                    </div>
+
+                    <div class="mt-3 ml-0 sm:ml-2">
+                        <input type="text" name="aulas_favoritas_outra" placeholder="Outra aula? Digite aqui..."
+                            class="w-full text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#a3e635]">
+                    </div>
+                </div>
+
+                <!-- QUESTÃO 2 (ORDEM DO GERENTE): Participa de aulas coletivas? -->
+                <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-7 h-7 rounded-lg bg-[#a3e635] text-black font-black flex items-center justify-center text-sm">2</span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Você participa das aulas coletivas da academia?</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 ml-9">Selecione a frequência que melhor descreve você.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 ml-0 sm:ml-2">
+                        <label class="option-pill">
+                            <input type="radio" name="participa_aulas" value="Sim, com frequência">
+                            <div class="inner"><span>🔥</span> Sim, com frequência</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="participa_aulas" value="Às vezes">
+                            <div class="inner"><span>🗓️</span> Às vezes</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="participa_aulas" value="Ainda não, mas tenho interesse">
+                            <div class="inner"><span>👀</span> Ainda não, mas tenho interesse</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="participa_aulas" value="Não participo">
+                            <div class="inner"><span>❌</span> Não participo</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- QUESTÃO 3 (ORDEM DO GERENTE): Novos espaços na academia -->
+                <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-7 h-7 rounded-lg bg-[#a3e635] text-black font-black flex items-center justify-center text-sm">3</span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Sobre novos espaços na academia</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 ml-9">Qual espaço você acha que faria MAIS diferença se tivéssemos?</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 ml-0 sm:ml-2">
+                        <label class="option-pill">
+                            <input type="radio" name="novo_espaco" value="Cross / Treinamento funcional avançado">
+                            <div class="inner"><span>🏋️‍♂️</span> Cross / Funcional Avançado</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="novo_espaco" value="Yoga">
+                            <div class="inner"><span>🧘‍♀️</span> Yoga</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="novo_espaco" value="Pilates">
+                            <div class="inner"><span>🧘</span> Studio de Pilates</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="novo_espaco" value="Espaço Kids">
+                            <div class="inner"><span>🧸</span> Espaço Kids</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="novo_espaco" value="Alongamento e mobilidade">
+                            <div class="inner"><span>🤸‍♂️</span> Alongamento e Mobilidade</div>
+                        </label>
+                        <label class="option-pill">
+                            <input type="radio" name="novo_espaco" value="Lutas">
+                            <div class="inner"><span>🥊</span> Lutas / Artes Marciais</div>
+                        </label>
+                    </div>
+
+                    <div class="mt-3 ml-0 sm:ml-2">
+                        <input type="text" name="novo_espaco_outro" placeholder="Outro espaço desejado? Digite aqui..."
+                            class="w-full text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#a3e635]">
+                    </div>
+                </div>
+
+                <!-- QUESTÃO 4 (ORDEM DO GERENTE): Melhorias & Aulas em falta -->
+                <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-7 h-7 rounded-lg bg-[#a3e635] text-black font-black flex items-center justify-center text-sm">4</span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Qual aula precisa de MAIS atenção ou melhorias?</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 ml-9">Selecione uma aula ou indique que todas estão boas.</p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 ml-0 sm:ml-2">
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Funcional"><div class="inner text-xs">🏃 Funcional</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Dança"><div class="inner text-xs">💃 Dança</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Jump"><div class="inner text-xs">🤸 Jump</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Bike"><div class="inner text-xs">🚴 Bike</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Step"><div class="inner text-xs">🪜 Step</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Pump"><div class="inner text-xs">🏋️ Pump</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="HIIT"><div class="inner text-xs">⚡ HIIT</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Abdominais"><div class="inner text-xs">🎯 Abdominais</div></label>
+                        <label class="option-pill"><input type="radio" name="aula_melhoria" value="Glúteos"><div class="inner text-xs">🍑 Glúteos</div></label>
+                        <label class="option-pill col-span-2 sm:col-span-3"><input type="radio" name="aula_melhoria" value="Nenhuma / todas estão ótimas"><div class="inner text-xs">✨ Nenhuma / todas estão ótimas!</div></label>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-200">
+                        <label class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
+                            Qual aula você sente FALTA na academia? <span class="text-slate-400 font-normal">(Resposta aberta)</span>
+                        </label>
+                        <input type="text" name="aula_falta" placeholder="Ex: Spinning temático, Mat Pilates, Muay Thai..."
+                            class="w-full text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#a3e635]">
+                    </div>
+                </div>
+
+                <!-- QUESTÃO 5 (ORDEM DO GERENTE): Pensando em agregações e melhorias -->
+                <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-7 h-7 rounded-lg bg-[#a3e635] text-black font-black flex items-center justify-center text-sm">5</span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Pensando em agregações e melhorias</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-3 ml-9">O que você acha que agregaria MAIS valor à academia? <span class="text-slate-400 font-normal">(Resposta aberta)</span></p>
+
+                    <textarea name="sugestao_valor" rows="3"
+                        placeholder="Ex: Novos horários de aula, climatização extra, aplicativo de treinos, mais anilhas..."
+                        class="w-full text-sm border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#a3e635] resize-none"></textarea>
+                </div>
+
+                <!-- QUESTÃO 6 (ORDEM DO GERENTE): Elogio para colaboradores -->
+                <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-7 h-7 rounded-lg bg-[#a3e635] text-black font-black flex items-center justify-center text-sm">6</span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Deixe aqui um elogio para nossos colaboradores</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 ml-9">Reconheça o atendimento de quem faz a diferença no seu dia a dia.</p>
+
+                    {% if funcionarios %}
+                    <div class="mb-4">
+                        <p class="text-xs font-bold text-slate-700 mb-2">Selecione quem você deseja elogiar (opcional):</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            {% for f in funcionarios %}
+                            <label class="card-func">
+                                <input type="radio" name="funcionario_id" value="{{ f.id }}">
+                                <div class="func-inner">
+                                    {% if f.foto %}
+                                    <img src="{{ f.foto.url }}" alt="{{ f.nome }}" class="w-12 h-12 rounded-full object-cover">
+                                    {% else %}
+                                    <div class="func-foto-placeholder">{{ f.nome|first }}</div>
+                                    {% endif %}
+                                    <span class="text-[11px] font-bold text-slate-800 text-center leading-tight truncate w-full">{{ f.nome }}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <textarea name="elogio_colaborador" rows="3"
+                        placeholder="Escreva aqui seu elogio, mensagem de carinho ou agradecimento..."
+                        class="w-full text-sm border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#a3e635] resize-none"></textarea>
+                </div>
+
+                <!-- BOTÕES DE SUBMISSÃO -->
+                <div class="flex gap-3 pt-2">
+                    <a href="{% url 'avaliar' %}"
+                        class="flex-shrink-0 border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold px-4 py-3.5 rounded-xl transition text-sm flex items-center justify-center">
+                        ← Voltar
+                    </a>
+                    <button type="submit"
+                        class="flex-1 bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#a3e635] border border-[#a3e635] font-black py-4 rounded-xl transition shadow-lg text-base flex items-center justify-center gap-2">
+                        ✅ Enviar Enquete de Satisfação
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <!-- RODAPÉ -->
+    <footer class="max-w-2xl mx-auto px-4 py-8 text-center">
+        <p class="text-white/40 text-xs">Polo Fit • Sua opinião transforma nossos treinos.</p>
+    </footer>
+
+    {% include "feedback/pwa_install.html" %}
+</body>
+</html>

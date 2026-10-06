@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 import json
-from feedback.models import Funcionario, Avaliacao
+from feedback.models import Funcionario, Avaliacao, RespostaEnquete
 
 
 class FeedbackModelTests(TestCase):
@@ -160,9 +160,52 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(av.resolvido_por, self.user)
         self.assertIsNotNone(av.data_resolucao)
 
+    def test_pagina_avaliar_possui_botao_dashboard_navbar(self):
+        response = self.client.get(reverse("avaliar"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Dashboard")
+        self.assertNotContains(response, "{{")
+
     def test_gerar_qrcode_view(self):
         self.client.login(username="gerente_teste", password="senha_segura_123")
         response = self.client.get(reverse("gerar_qrcode") + "?localizacao=polo_norte")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "polo_norte")
+        self.assertContains(response, "Unidade / Ponto: <span class=\"font-bold text-black\">polo_norte</span>")
+        self.assertNotContains(response, "{{")
         self.assertIsNotNone(response.context["qrcode_base64"])
+
+    def test_enquete_get(self):
+        response = self.client.get(reverse("enquete"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Enquete de Satisfação")
+        self.assertContains(response, "Quais aulas você MAIS gosta ou participa?")
+        self.assertContains(response, "Você participa das aulas coletivas da academia?")
+        self.assertContains(response, "Sobre novos espaços na academia")
+        self.assertContains(response, "Qual aula precisa de MAIS atenção ou melhorias?")
+        self.assertContains(response, "Pensando em agregações e melhorias")
+        self.assertContains(response, "Deixe aqui um elogio para nossos colaboradores")
+        self.assertNotContains(response, "{{")
+
+    def test_enquete_post(self):
+        dados = {
+            "aulas_favoritas": ["Funcional", "Dança"],
+            "aulas_favoritas_outra": "Zumba",
+            "participa_aulas": "Sim, com frequência",
+            "novo_espaco": "Cross / Treinamento funcional avançado",
+            "aula_melhoria": "Jump",
+            "aula_falta": "Boxe",
+            "sugestao_valor": "Mais esteiras no horário de pico",
+            "elogio_colaborador": "Parabéns ao Carlos pelo ótimo treino!",
+            "funcionario_id": self.funcionario.pk,
+        }
+        response = self.client.post(reverse("enquete"), dados)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Enquete Enviada com Sucesso")
+        self.assertEqual(RespostaEnquete.objects.count(), 1)
+        r = RespostaEnquete.objects.first()
+        self.assertEqual(r.participa_aulas, "Sim, com frequência")
+        self.assertIn("Funcional", r.aulas_favoritas)
+        self.assertEqual(r.novo_espaco, "Cross / Treinamento funcional avançado")
+        self.assertEqual(r.aula_melhoria, "Jump")
+        self.assertEqual(r.aula_falta, "Boxe")

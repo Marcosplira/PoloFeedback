@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Avaliacao, Funcionario
+from .models import Avaliacao, Funcionario, RespostaEnquete
 
 
 admin.site.site_header = "Polo Fit — Painel Administrativo"
@@ -75,3 +75,25 @@ class AvaliacaoAdmin(admin.ModelAdmin):
             obj.data_resolucao = timezone.now()
 
         super().save_model(request, obj, form, change)
+
+
+@admin.register(RespostaEnquete)
+class RespostaEnqueteAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "participa_aulas",
+        "get_favoritas",
+        "aula_melhoria",
+        "novo_espaco",
+        "data_criacao",
+    )
+    list_filter = ("participa_aulas", "aula_melhoria", "novo_espaco", "data_criacao")
+    search_fields = ("aula_falta", "sugestao_valor", "elogio_colaborador", "aulas_favoritas_outra")
+    ordering = ("-data_criacao",)
+
+    @admin.display(description="Aulas Favoritas")
+    def get_favoritas(self, obj):
+        itens = list(obj.aulas_favoritas or [])
+        if obj.aulas_favoritas_outra:
+            itens.append(f"Outra: {obj.aulas_favoritas_outra}")
+        return ", ".join(itens) or "—"

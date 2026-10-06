@@ -8,7 +8,15 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from feedback.views import avaliar, dashboard, gerar_qrcode, ia_analisar, ia_chat, service_worker
+from feedback.views import (
+    avaliar,
+    dashboard,
+    enquete,
+    gerar_qrcode,
+    ia_analisar,
+    ia_chat,
+    service_worker,
+)
 
 
 urlpatterns = [
@@ -16,6 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", avaliar, name="inicio"),
     path("avaliar/", avaliar, name="avaliar"),
+    path("enquete/", enquete, name="enquete"),
     path(
         "login/",
         auth_views.LoginView.as_view(template_name="registration/login.html"),

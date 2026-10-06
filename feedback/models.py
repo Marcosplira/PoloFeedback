@@ -100,3 +100,65 @@ class Avaliacao(models.Model):
 
     def __str__(self):
         return f"{self.categoria} - {self.nota}★ - {self.status}"
+
+
+class RespostaEnquete(models.Model):
+    # 1. Sobre as aulas coletivas - Participação
+    participa_aulas = models.CharField(
+        max_length=60,
+        blank=True,
+        verbose_name="Participa das aulas coletivas",
+    )
+    # 2. Aulas que mais gosta ou participa (múltipla escolha)
+    aulas_favoritas = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Aulas favoritas",
+    )
+    aulas_favoritas_outra = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Outra aula favorita",
+    )
+    # 3. Qual aula precisa de mais atenção ou melhorias
+    aula_melhoria = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Aula que precisa de melhorias",
+    )
+    # 4. Qual aula sente falta na academia (resposta aberta)
+    aula_falta = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Aula que sente falta",
+    )
+    # 5. Sobre novos espaços na academia
+    novo_espaco = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Novo espaço mais desejado",
+    )
+    novo_espaco_outro = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Outro novo espaço",
+    )
+    # 6. O que agregaria mais valor à academia (resposta aberta)
+    sugestao_valor = models.TextField(
+        blank=True,
+        verbose_name="O que agregaria mais valor",
+    )
+    # Elogio para colaboradores
+    elogio_colaborador = models.TextField(
+        blank=True,
+        verbose_name="Elogio para colaboradores",
+    )
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Resposta da Enquete"
+        verbose_name_plural = "Respostas da Enquete"
+        ordering = ["-data_criacao"]
+
+    def __str__(self):
+        return f"Enquete #{self.id} - {self.data_criacao.strftime('%d/%m/%Y %H:%M')}"

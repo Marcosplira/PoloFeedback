@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
-    <title>Avaliação Enviada — Polo Fit</title>
+    <title>Enquete Enviada com Sucesso — Polo Fit</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +23,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
         .check-anim { animation: pop 0.5s ease-out forwards; }
-
         @keyframes fadeUp {
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
@@ -33,7 +32,7 @@
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-center relative p-4">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-[3px]"></div>
+    <div class="absolute inset-0 bg-black/65 backdrop-blur-[3px]"></div>
 
     <div class="relative max-w-sm w-full">
 
@@ -51,48 +50,33 @@
                 ✓
             </div>
 
-            <h1 class="text-2xl font-black text-gray-900">Muito Obrigado pela avaliação!</h1>
-            <p class="text-2xl mt-1">💚</p>
+            <h1 class="text-2xl font-black text-gray-900">Enquete Enviada com Sucesso!</h1>
+            <p class="text-2xl mt-1">🎉</p>
 
-            <p class="text-gray-500 mt-3 text-sm leading-relaxed">
-                Sua opinião ajuda a <strong class="text-gray-700">Polo Fit</strong> a melhorar cada vez mais.
-                Agradecemos por dedicar seu tempo para nos dar um retorno.
+            <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+                Suas respostas são fundamentais para o planejamento das novas aulas e melhorias na estrutura da <strong class="text-gray-800">Polo Fit</strong>.
             </p>
 
-            {% if localizacao %}
-            <div class="mt-4 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 inline-block">
-                <p class="text-xs text-gray-400">Local avaliado</p>
-                <p class="text-sm font-bold text-gray-700">📍 {{ localizacao }}</p>
-            </div>
-            {% endif %}
-
-            <!-- CONVITE ENQUETE -->
-            <div class="mt-5 p-3.5 bg-lime-50 border border-lime-200 rounded-2xl text-left">
-                <p class="text-xs font-bold text-lime-900">📋 Enquete de Aulas & Novos Espaços</p>
-                <p class="text-[11px] text-lime-800 mt-0.5">Ajude a definir as próximas aulas e espaços da Polo Fit!</p>
-                <a href="{% url 'enquete' %}"
-                   class="mt-2.5 flex items-center justify-center gap-1.5 text-xs font-black text-black bg-[#a3e635] hover:bg-[#bef264] px-3.5 py-2 rounded-xl transition shadow-sm">
-                    Responder Enquete de Satisfação ➔
-                </a>
+            <div class="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-emerald-800 text-xs font-semibold">
+                ✨ Sua opinião já foi registrada e enviada à gerência!
             </div>
 
             <!-- BOTÕES -->
             <div class="mt-6 space-y-3">
-                <a href="{% url 'avaliar' %}{% if localizacao %}?localizacao={{ localizacao }}{% endif %}"
-                    class="flex items-center justify-center gap-2 w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#a3e635] border border-[#a3e635] font-bold py-3.5 rounded-xl transition shadow-sm">
-                    📝 Fazer outra avaliação
-                </a>
                 <a href="{% url 'avaliar' %}"
-                    class="flex items-center justify-center gap-2 w-full bg-gray-50 hover:bg-gray-100 text-gray-600 font-semibold py-3 rounded-xl transition border border-gray-200 text-sm">
-                    🏠 Voltar ao início
+                    class="flex items-center justify-center gap-2 w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#a3e635] border border-[#a3e635] font-black py-3.5 rounded-xl transition shadow-sm text-sm">
+                    🏠 Voltar à Página Inicial
+                </a>
+                <a href="{% url 'dashboard' %}"
+                    class="flex items-center justify-center gap-2 w-full bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold py-3 rounded-xl transition border border-gray-200 text-xs">
+                    📊 Acesso ao Dashboard do Gerente
                 </a>
             </div>
         </div>
 
-        <p class="text-center text-white/40 text-xs mt-6">Polo Fit • Sua opinião faz a diferença</p>
+        <p class="text-center text-white/40 text-xs mt-6">Polo Fit • Treinando juntos pela excelência</p>
     </div>
 
     {% include "feedback/pwa_install.html" %}
 </body>
-
 </html>

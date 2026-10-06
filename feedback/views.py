@@ -17,7 +17,7 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.utils import timezone
 from django.conf import settings
 
-from .models import Avaliacao, Funcionario
+from .models import Avaliacao, Funcionario, RespostaEnquete
 
 
 def service_worker(request):
@@ -112,6 +112,81 @@ def avaliar(request):
         "feedback/avaliar.html",
         {
             "localizacao": localizacao_get,
+            "funcionarios": funcionarios,
+        },
+    )
+
+
+def enquete(request):
+    """
+    Página da Enquete de Satisfação com as 6 perguntas oficiais reordenadas pelo gerente.
+    1. Quais aulas você MAIS gosta ou participa?
+    2. Você participa das aulas coletivas da academia?
+    3. Sobre novos espaços na academia (Qual faria mais diferença?)
+    4. Qual aula precisa de mais atenção ou melhorias? / Sente falta?
+    5. Pensando em agregações e melhorias (O que agregaria mais valor?)
+    6. Deixe aqui um elogio para nossos colaboradores.
+    """
+    funcionarios = Funcionario.objects.filter(ativo=True).order_by("nome")
+
+    if request.method == "POST":
+        # 1. Quais aulas você MAIS gosta ou participa? (múltipla escolha)
+        aulas_favoritas = request.POST.getlist("aulas_favoritas")
+        aulas_favoritas_outra = request.POST.get("aulas_favoritas_outra", "").strip()
+
+        # 2. Você participa das aulas coletivas da academia?
+        participa_aulas = request.POST.get("participa_aulas", "").strip()
+
+        # 3. Sobre novos espaços na academia
+        novo_espaco = request.POST.get("novo_espaco", "").strip()
+        novo_espaco_outro = request.POST.get("novo_espaco_outro", "").strip()
+
+        # 4. Qual aula precisa de atenção e qual sente falta
+        aula_melhoria = request.POST.get("aula_melhoria", "").strip()
+        aula_falta = request.POST.get("aula_falta", "").strip()
+
+        # 5. Pensando em agregações e melhorias
+        sugestao_valor = request.POST.get("sugestao_valor", "").strip()
+
+        # 6. Elogio para colaboradores
+        elogio_colaborador = request.POST.get("elogio_colaborador", "").strip()
+        funcionario_id = request.POST.get("funcionario_id")
+
+        resposta = RespostaEnquete.objects.create(
+            participa_aulas=participa_aulas,
+            aulas_favoritas=aulas_favoritas,
+            aulas_favoritas_outra=aulas_favoritas_outra,
+            aula_melhoria=aula_melhoria,
+            aula_falta=aula_falta,
+            novo_espaco=novo_espaco,
+            novo_espaco_outro=novo_espaco_outro,
+            sugestao_valor=sugestao_valor,
+            elogio_colaborador=elogio_colaborador,
+        )
+
+        # Se deixou elogio e selecionou funcionário, integra com ranking de avaliações
+        if elogio_colaborador and funcionario_id:
+            try:
+                func = Funcionario.objects.get(pk=funcionario_id, ativo=True)
+                Avaliacao.objects.create(
+                    categoria="professores",
+                    categorias=["professores"],
+                    nota=5,
+                    tipo_feedback="elogio",
+                    tipos_feedback=["elogio"],
+                    comentario=f"[Enquete] {elogio_colaborador}",
+                    funcionario=func,
+                    origem="aluno",
+                )
+            except Exception:
+                pass
+
+        return render(request, "feedback/enquete_sucesso.html", {"resposta": resposta})
+
+    return render(
+        request,
+        "feedback/enquete.html",
+        {
             "funcionarios": funcionarios,
         },
     )
@@ -413,6 +488,13 @@ def dashboard(request):
             "ranking_funcionarios": ranking_funcionarios,
             # Locais
             "locais_ranking": locais_ranking,
+            # Estatísticas da Enquete de Satisfação
+            "total_enquetes": RespostaEnquete.objects.count(),
+            "favoritas_ranking": Counter([a for r in RespostaEnquete.objects.exclude(aulas_favoritas=[]) for a in (r.aulas_favoritas or [])]).most_common(6),
+            "espacos_ranking": Counter(RespostaEnquete.objects.exclude(novo_espaco="").values_list("novo_espaco", flat=True)).most_common(6),
+            "melhorias_ranking": Counter(RespostaEnquete.objects.exclude(aula_melhoria="").values_list("aula_melhoria", flat=True)).most_common(5),
+            "participacao_ranking": Counter(RespostaEnquete.objects.exclude(participa_aulas="").values_list("participa_aulas", flat=True)).most_common(4),
+            "ultimas_enquetes": RespostaEnquete.objects.all().order_by("-data_criacao")[:6],
         },
     )
 
@@ -439,7 +521,10 @@ def gerar_qrcode(request):
             host = request.get_host()
 
         protocolo = "https" if request.is_secure() else "http"
-        url_gerada = f"{protocolo}://{host}/?localizacao={localizacao}"
+        if "enquete" in localizacao.lower():
+            url_gerada = f"{protocolo}://{host}/enquete/"
+        else:
+            url_gerada = f"{protocolo}://{host}/?localizacao={localizacao}"
 
         # Cria QR Code
         qr = qrcode.QRCode(

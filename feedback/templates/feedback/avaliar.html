@@ -139,18 +139,28 @@
                 <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-9 object-contain drop-shadow">
                 <span class="text-white font-black text-base hidden sm:block tracking-tight">Polo Feedback</span>
             </a>
-            <div class="flex items-center gap-2 text-sm">
+            <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <a href="{% url 'avaliar' %}"
-                   class="text-white/80 hover:text-[#a3e635] font-semibold px-3 py-1.5 rounded-lg transition">
+                   class="text-white/80 hover:text-[#a3e635] font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition">
                     🏠 Início
                 </a>
                 <a href="#escolher-local"
-                   class="text-white/80 hover:text-[#a3e635] font-semibold px-3 py-1.5 rounded-lg transition">
+                   class="text-white/80 hover:text-[#a3e635] font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition">
                     📍 Local
                 </a>
                 <a href="#formulario"
-                   class="bg-[#a3e635] hover:bg-[#bef264] text-black font-black px-4 py-1.5 rounded-lg transition">
+                   class="bg-[#a3e635] hover:bg-[#bef264] text-black font-black px-2.5 sm:px-3.5 py-1.5 rounded-lg transition">
                     📝 Avaliar
+                </a>
+                <a href="{% url 'enquete' %}"
+                   class="text-white/80 hover:text-[#a3e635] border border-white/20 hover:border-[#a3e635] font-bold px-2.5 sm:px-3.5 py-1.5 rounded-lg transition"
+                   title="Responder Enquete de Satisfação">
+                    📋 Enquete
+                </a>
+                <a href="{% url 'dashboard' %}"
+                   class="bg-white/10 hover:bg-white/20 text-[#a3e635] border border-[#a3e635]/40 hover:border-[#a3e635] font-black px-2.5 sm:px-3.5 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1"
+                   title="Acessar o Painel do Gerente">
+                    📊 Dashboard
                 </a>
             </div>
         </div>
@@ -206,6 +216,22 @@
             <p class="text-white/75 mt-2 text-sm max-w-xs mx-auto">
                 Sua opinião fortalece a experiência e impulsiona a melhoria contínua.
             </p>
+            <div class="mt-4 flex items-center justify-center gap-2.5 flex-wrap">
+                <a href="#escolher-local"
+                   class="bg-[#a3e635] hover:bg-[#bef264] text-black font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+                    📝 Fazer Avaliação
+                </a>
+                <a href="{% url 'enquete' %}"
+                   class="bg-lime-400/20 hover:bg-lime-400/30 text-[#d9f99d] border border-[#a3e635]/60 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow flex items-center gap-1.5"
+                   title="Responder Enquete sobre Aulas e Espaços">
+                    📋 Responder Enquete (Aulas & Novos Espaços)
+                </a>
+                <a href="{% url 'dashboard' %}"
+                   class="bg-black/60 hover:bg-black/85 text-[#a3e635] border border-[#a3e635]/60 hover:border-[#a3e635] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow backdrop-blur-sm flex items-center gap-1.5"
+                   title="Acessar o Painel do Gerente">
+                    📊 Dashboard
+                </a>
+            </div>
         </div>
 
         <!-- BANNER: LOCAL SELECIONADO -->
