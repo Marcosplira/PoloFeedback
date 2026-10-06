@@ -178,12 +178,19 @@
                 </div>
                 {% if localizacao %}
                     <span class="rounded-full border border-lime-300/40 bg-lime-400/10 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-lime-100">
-                        {{ localizacao }}
+                        📍 {{ localizacao }}
                     </span>
                 {% endif %}
             </div>
 
+            {% if localizacao == 'Geral' %}
+            <p class="text-xs text-lime-200/60 mb-3 italic">📌 Localização padrão. Escaneie um QR Code ou selecione um local específico abaixo.</p>
+            {% endif %}
+
             <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <a href="?localizacao=Geral" class="rounded-xl border {% if localizacao == 'Geral' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
+                    🌐 Geral
+                </a>
                 <a href="?localizacao=Recepção" class="rounded-xl border {% if localizacao == 'Recepção' %}border-lime-300 bg-lime-400/10 text-lime-50{% else %}border-white/10 bg-white/5 text-white{% endif %} px-3 py-2 text-center text-sm font-semibold transition hover:border-lime-300/60 hover:bg-lime-400/10">
                     Recepção
                 </a>

@@ -678,11 +678,31 @@
                 <h3 class="font-bold text-gray-800">
                     🔍 Filtrar Avaliações
                 </h3>
-                <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">filtros ativos</span>
+                <div class="flex items-center gap-2">
+                    {% if periodo_filtro == 'hoje' %}
+                        <span class="text-xs font-semibold bg-lime-100 text-lime-700 px-2.5 py-1 rounded-full">📅 Hoje</span>
+                    {% elif periodo_filtro == 'semana' %}
+                        <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">📅 Esta semana</span>
+                    {% elif periodo_filtro == 'mes' %}
+                        <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">📅 Últimos 30 dias</span>
+                    {% else %}
+                        <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">filtros ativos</span>
+                    {% endif %}
+                </div>
             </div>
 
 
-            <form method="get" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <form method="get" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+
+
+                <!-- PERÍODO -->
+
+                <select name="periodo" id="filtro-periodo">
+                    <option value="">Todo período</option>
+                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>📅 Hoje</option>
+                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>📅 Esta semana</option>
+                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>📅 Últimos 30 dias</option>
+                </select>
 
 
                 <!-- CATEGORIA -->
@@ -737,7 +757,7 @@
 
                 <!-- BOTÕES -->
 
-                <div class="flex gap-3 sm:col-span-2 md:col-span-4">
+                <div class="flex gap-3 sm:col-span-2 md:col-span-3 lg:col-span-5">
 
                     <button type="submit" id="btn-filtrar"
                         class="flex-1 bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-2.5 rounded-xl transition-all duration-200">

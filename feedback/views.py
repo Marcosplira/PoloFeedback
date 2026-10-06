@@ -5,6 +5,7 @@ import socket
 import urllib.request
 import urllib.error
 import qrcode
+from datetime import timedelta
 
 from collections import Counter
 
@@ -102,12 +103,15 @@ def avaliar(request):
 
         return render(request, "feedback/sucesso.html", {"localizacao": localizacao})
 
-    # GET
+    # GET — localização padrão "Geral" quando o aluno acessa sem QR Code
+    localizacao_get = request.GET.get("localizacao", "").strip()
+    if not localizacao_get:
+        localizacao_get = "Geral"
     return render(
         request,
         "feedback/avaliar.html",
         {
-            "localizacao": request.GET.get("localizacao", ""),
+            "localizacao": localizacao_get,
             "funcionarios": funcionarios,
         },
     )
@@ -177,11 +181,26 @@ def dashboard(request):
 
     funcionario_filtro = request.GET.get("funcionario", "")
 
+    periodo_filtro = request.GET.get("periodo", "")
+
     # ==========================================================
     # AVALIAÇÕES
     # ==========================================================
 
     avaliacoes = Avaliacao.objects.all()
+
+    # Período
+    if periodo_filtro:
+        agora = timezone.now()
+        if periodo_filtro == "hoje":
+            inicio = agora.replace(hour=0, minute=0, second=0, microsecond=0)
+            avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
+        elif periodo_filtro == "semana":
+            inicio = agora - timedelta(days=7)
+            avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
+        elif periodo_filtro == "mes":
+            inicio = agora - timedelta(days=30)
+            avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
 
     # Categoria
     if categoria_filtro:
@@ -348,6 +367,7 @@ def dashboard(request):
             "tipo_filtro": tipo_filtro,
             "status_filtro": status_filtro,
             "funcionario_filtro": funcionario_filtro,
+            "periodo_filtro": periodo_filtro,
             # Gráficos
             "avaliacoes_categoria": avaliacoes_categoria,
             "avaliacoes_nota": avaliacoes_nota,
