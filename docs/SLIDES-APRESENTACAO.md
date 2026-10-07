@@ -129,11 +129,13 @@
 ---
 
 ## 📌 SLIDE 12 — NOVA PROPOSTA: TREINO PELO QR CODE
-### **Orientação do exercício no aparelho**
+### **Treino e orientação no aparelho**
 - O aluno lê o QR Code instalado na máquina.
 - A página mostra o equipamento e instruções aprovadas.
 - Após entrar na conta, o aluno consulta apenas o próprio plano.
-- Séries, repetições, descanso e carga são definidos pelo professor.
+- Vídeo demonstrativo, regulagem, execução, séries, repetições e descanso.
+- A carga de referência é definida/aprovada pelo professor; o sistema não prescreve automaticamente.
+- Recursos futuros: marcar séries concluídas, cronômetro de descanso, histórico, favoritos e alternativas previamente aprovadas.
 - Este módulo é uma proposta e ainda não está implementado no Polo Feedback.
 - **Responsável pela proposta:** Marcos Paulo Santos Lira.
 
@@ -142,11 +144,21 @@
 1. Conversar com gerente, professores e alunos.
 2. Escolher uma área e um piloto pequeno com a academia.
 3. Desenhar e testar as telas com os três perfis.
-4. Definir permissões, privacidade, equipamentos e conteúdo autorizado.
+4. Definir permissões, privacidade, conteúdo autorizado e como apoiar quem não tem celular/conexão.
 5. Aprovar custos, responsáveis, critérios de sucesso e suporte.
-6. Iniciar o MVP somente após aprovar os requisitos e os protótipos.
+6. Construir cadastro e conteúdo; depois autenticação, planos e consulta via QR.
+7. Fazer piloto supervisionado, medir resultados e decidir se amplia.
 
-## 📌 SLIDE 14 — SEGURANÇA E RESPONSABILIDADE
+## 📌 SLIDE 14 — COMO APRESENTAR O VALOR DO PROJETO
+### **Uma proposta para simplificar a orientação, não substituir o professor**
+- **Aluno:** encontra instruções e seu próprio plano no celular.
+- **Professor:** revisa conteúdo e planos; continua responsável por exercícios e carga.
+- **Gerência:** acompanha atualização do conteúdo, uso e dúvidas recorrentes.
+- **Piloto:** medir se alunos encontram e compreendem a orientação, e se diminuem dúvidas repetidas; definir linha de base e metas antes do teste.
+- **Decisão solicitada:** aprovar descoberta e protótipo, indicar responsáveis e escolher a área piloto. Custo e prazo ficam para estimativa após requisitos.
+- O módulo é uma proposta futura; não está implementado no Polo Feedback.
+
+## 📌 SLIDE 15 — SEGURANÇA E RESPONSABILIDADE
 ### **QR público não pode expor um treino particular**
 - QR Code identifica a máquina, não o aluno nem seu plano.
 - Login e autorização verificam o acesso individual.
@@ -154,10 +166,12 @@
 - Vídeos devem ser próprios ou licenciados; Next Fit e MFIT são referências de fluxo, não material para copiar.
 - Coletar apenas dados necessários e documentar privacidade e retenção.
 
-## 📌 SLIDE 15 — WHATSAPP E EVOLUÇÃO COM APROVAÇÃO
+## 📌 SLIDE 16 — WHATSAPP E EVOLUÇÃO COM APROVAÇÃO
 ### **Contato direto hoje; notificações automáticas no futuro**
 - O botão de WhatsApp abre uma conversa iniciada pelo usuário.
 - Alertas automáticos exigem a WhatsApp Business Platform/API oficial.
 - Começar, se aprovado, com alertas gerenciais mínimos para feedbacks críticos.
 - Definir credenciais, custos, opt-in/opt-out, acesso e auditoria antes de enviar mensagens.
-- **Contato da academia:** (83) 98671-9438 • Rua Projetada, Bairro Cenecista, nº 62.
+- **Contato:** (83) 98671-9438 • Rua Projetada, nº 62, Bairro Cenecista, Picuí - PB • CEP 58187-000.
+- **Instagram:** [@polofitacademias](https://www.instagram.com/polofitacademias/)
+- **Horários:** segunda a sexta, 05h às 22h; sábado, 11h às 19h.

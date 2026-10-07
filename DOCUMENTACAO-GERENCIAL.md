@@ -171,8 +171,10 @@ O repositório inclui configurações para publicação no **Render.com** (`rend
 ## 9. Contato e autoria
 
 **Academia Polo Fit**
-Rua Projetada, Bairro Cenecista, nº 62
+Rua Projetada, nº 62, Bairro Cenecista, Picuí - PB, CEP 58187-000
 Telefone/WhatsApp: (83) 98671-9438
+Instagram: [@polofitacademias](https://www.instagram.com/polofitacademias/)
+Horários: segunda a sexta, 05h às 22h; sábado, 11h às 19h.
 
 **Software e proposta:** Marcos Paulo Santos Lira
 

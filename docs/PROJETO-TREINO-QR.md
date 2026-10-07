@@ -8,6 +8,18 @@
 
 > Este é um módulo proposto para uma nova etapa. O sistema Polo Feedback existente ainda não cadastra treinos, máquinas ou alunos e não oferece instruções de exercícios por QR Code.
 
+## Resumo executivo para apresentar à gerência
+
+**Proposta:** criar um módulo web responsivo da Academia Polo Fit para o aluno escanear o QR Code de um aparelho, assistir a uma demonstração aprovada e, após autenticação, consultar o exercício e o plano individual elaborado pelo professor.
+
+**Problema:** dúvidas sobre regulagem e execução, explicações repetidas, fichas perdidas ou desatualizadas e falta de padronização das orientações.
+
+**Benefício esperado:** facilitar o acesso às orientações e apoiar o trabalho dos professores, mantendo o acompanhamento profissional. Os resultados devem ser medidos num piloto; não se promete redução de custos ou melhora de retenção antes de haver evidências.
+
+**Pedido de decisão:** aprovar a etapa de descoberta e protótipo, indicar um gerente patrocinador e professores revisores, e escolher uma área pequena para o piloto. A programação, custos e prazo só devem ser confirmados depois de validar os requisitos e a infraestrutura.
+
+**Importante:** esta proposta é um projeto futuro; não é uma funcionalidade já disponível no Polo Feedback.
+
 ## 1. Problema a resolver
 
 - O aluno pode ter dúvida sobre a regulagem e a execução correta dos aparelhos.
@@ -25,7 +37,10 @@ Uma orientação de exercício pode incluir:
 - vídeo próprio da academia ou vídeo de terceiro com autorização de uso;
 - instruções de preparação, execução e encerramento;
 - séries, repetições, intervalo e observações prescritas pelo professor;
-- carga definida pelo professor, sem cálculo ou prescrição automática pelo sistema.
+- carga prescrita ou carga de referência sugerida e aprovada pelo professor, nunca calculada automaticamente pelo sistema;
+- alertas de segurança e indicação para chamar o professor em caso de dúvida ou desconforto.
+
+Funcionalidades adicionais podem ser avaliadas após a validação do MVP: marcar séries/exercícios como concluídos, cronômetro de descanso, histórico de treinos concluídos, favoritos, busca e filtros, alternativas de exercício previamente aprovadas pelo professor, acessibilidade (texto ampliado e vídeos legendados), aviso de treino desatualizado e retorno do aluno sobre a clareza da instrução. Esses recursos não devem alterar a prescrição profissional nem incentivar treino com dor.
 
 O QR identifica a máquina, não a pessoa. As informações particulares do treino só ficam disponíveis após autenticação e verificação de que o plano pertence ao aluno autenticado.
 
@@ -59,16 +74,20 @@ O sistema não deve permitir que um aluno consulte treinos de outra pessoa. Perm
 - plano individual com ordenação de exercícios;
 - séries, repetições, intervalo, observações e carga prescrita;
 - tela mobile-first com controles grandes, vídeo e instruções legíveis;
+- estado atual do plano, data de atualização e professor responsável;
 - histórico simples de alterações e identificação do profissional responsável;
 - interface administrativa para ativar/inativar conteúdo desatualizado;
 - testes de autenticação, autorização e privacidade entre contas.
 
 **Deixar para versões posteriores**
 
+- marcação de exercícios concluídos, cronômetro de descanso e histórico de sessões;
+- busca, favoritos e alternativas previamente autorizadas pelo professor;
+- lembretes internos configuráveis e resumo de progresso, sem exposição pública;
 - integração com o sistema comercial/ERP da academia;
 - pagamentos, agenda de aulas e chat entre professor e aluno;
 - integração com relógios, sensores ou máquinas;
-- recomendação automática de carga ou treino;
+- recomendação automática de carga ou treino (não recomendada sem avaliação e validação profissional específicas);
 - aplicativo nativo publicado nas lojas;
 - notificações automáticas por WhatsApp.
 
@@ -110,6 +129,10 @@ Antes do desenvolvimento, escreva como demonstrar que:
 Apresente ao gerente as entregas, custos de hospedagem, domínio, produção/armazenamento de vídeo, suporte, operação e manutenção. Combine prazo, responsável por aprovação técnica, participantes do teste e como decidir a continuidade.
 
 Só depois da aprovação dos requisitos, protótipos e critérios de aceite, iniciar a implementação e criar tarefas técnicas.
+
+### Etapa 8 — Construir, testar e avaliar em ciclos
+
+Implemente primeiro o cadastro de equipamentos e conteúdo revisado; depois autenticação e permissões, planos individuais e a experiência mobile do QR. Faça testes com contas de aluno, professor e gerente, incluindo tentativas de acesso indevido. Rode um piloto supervisionado, registre problemas e só então decida com a gerência se amplia o escopo.
 
 ## 7. Estrutura técnica sugerida
 

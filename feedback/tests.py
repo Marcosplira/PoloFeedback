@@ -63,6 +63,7 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(inicio_response.status_code, 200)
         self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
         self.assertContains(inicio_response, reverse("avaliar"))
+        self.assertContains(inicio_response, 'from-lime-500/20')
 
         avaliacao_response = self.client.get(reverse("avaliar"))
         self.assertEqual(avaliacao_response.status_code, 200)
@@ -71,9 +72,13 @@ class FeedbackViewsTests(TestCase):
 
     def test_rodape_exibe_contato_e_creditos(self):
         response = self.client.get(reverse("inicio"))
-        self.assertContains(response, "Rua Projetada, Bairro Cenecista, nº 62")
+        self.assertContains(response, "Rua Projetada, nº 62, Bairro Cenecista, Picuí - PB, CEP 58187-000")
         self.assertContains(response, "(83) 98671-9438")
         self.assertContains(response, "https://wa.me/5583986719438")
+        self.assertContains(response, "https://www.instagram.com/polofitacademias/")
+        self.assertContains(response, "Segunda a sexta: 05h às 22h")
+        self.assertContains(response, "Sábado: 11h às 19h")
+        self.assertContains(response, "mensalidades")
         self.assertContains(response, "Marcos Paulo Santos Lira")
         self.assertContains(response, "Instituto Federal de Educação")
 
