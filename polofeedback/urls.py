@@ -18,7 +18,6 @@ from feedback.views import (
     service_worker,
 )
 
-
 urlpatterns = [
     path("service-worker.js", service_worker, name="service_worker"),
     path("admin/", admin.site.urls),
@@ -41,9 +40,9 @@ urlpatterns = [
     path("ia/chat/", ia_chat, name="ia_chat"),
 ]
 
+
 # Em desenvolvimento (DEBUG=True), o Django serve arquivos de mídia diretamente.
 # Em produção, configure um servidor web ou storage (S3, Cloudflare R2, etc.)
 # para servir os arquivos de /media/.
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

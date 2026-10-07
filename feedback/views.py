@@ -59,11 +59,15 @@ def avaliar(request):
         # Validação detalhada
         erros = []
         if not categorias:
-            erros.append("Selecione pelo menos um aspecto para avaliar (Atendimento, Limpeza, etc.).")
+            erros.append(
+                "Selecione pelo menos um aspecto para avaliar (Atendimento, Limpeza, etc.)."
+            )
         if not nota:
             erros.append("Avalie atribuindo uma nota de 1 a 5 estrelas.")
         if not tipos_feedback:
-            erros.append("Selecione o tipo de feedback (Elogio, Sugestão ou Reclamação).")
+            erros.append(
+                "Selecione o tipo de feedback (Elogio, Sugestão ou Reclamação)."
+            )
 
         if erros:
             return render(
@@ -280,13 +284,15 @@ def dashboard(request):
     # Categoria
     if categoria_filtro:
         avaliacoes = avaliacoes.filter(
-            models.Q(categoria=categoria_filtro) | models.Q(categorias__icontains=categoria_filtro)
+            models.Q(categoria=categoria_filtro)
+            | models.Q(categorias__icontains=categoria_filtro)
         )
 
     # Tipo
     if tipo_filtro:
         avaliacoes = avaliacoes.filter(
-            models.Q(tipo_feedback=tipo_filtro) | models.Q(tipos_feedback__icontains=tipo_filtro)
+            models.Q(tipo_feedback=tipo_filtro)
+            | models.Q(tipos_feedback__icontains=tipo_filtro)
         )
 
     # Status
@@ -313,7 +319,8 @@ def dashboard(request):
     ).count()
 
     total_reclamacoes = avaliacoes.filter(
-        models.Q(tipo_feedback="reclamacao") | models.Q(tipos_feedback__icontains="reclamacao")
+        models.Q(tipo_feedback="reclamacao")
+        | models.Q(tipos_feedback__icontains="reclamacao")
     ).count()
 
     # ==========================================================
@@ -372,7 +379,9 @@ def dashboard(request):
     # FUNCIONÁRIOS
     # ==========================================================
 
-    todos_funcionarios = Funcionario.objects.filter(ativo=True).prefetch_related("avaliacoes")
+    todos_funcionarios = Funcionario.objects.filter(ativo=True).prefetch_related(
+        "avaliacoes"
+    )
 
     # ==========================================================
     # RANKING DE FUNCIONÁRIOS
@@ -447,12 +456,14 @@ def dashboard(request):
         if total_local == 0:
             continue
         media_local = avs_local.aggregate(m=models.Avg("nota"))["m"] or 0
-        locais_ranking.append({
-            "nome": nome_local,
-            "icone": icone,
-            "total": total_local,
-            "media": round(media_local, 1),
-        })
+        locais_ranking.append(
+            {
+                "nome": nome_local,
+                "icone": icone,
+                "total": total_local,
+                "media": round(media_local, 1),
+            }
+        )
     locais_ranking.sort(key=lambda x: x["total"], reverse=True)
 
     # ==========================================================
@@ -490,11 +501,31 @@ def dashboard(request):
             "locais_ranking": locais_ranking,
             # Estatísticas da Enquete de Satisfação
             "total_enquetes": RespostaEnquete.objects.count(),
-            "favoritas_ranking": Counter([a for r in RespostaEnquete.objects.exclude(aulas_favoritas=[]) for a in (r.aulas_favoritas or [])]).most_common(6),
-            "espacos_ranking": Counter(RespostaEnquete.objects.exclude(novo_espaco="").values_list("novo_espaco", flat=True)).most_common(6),
-            "melhorias_ranking": Counter(RespostaEnquete.objects.exclude(aula_melhoria="").values_list("aula_melhoria", flat=True)).most_common(5),
-            "participacao_ranking": Counter(RespostaEnquete.objects.exclude(participa_aulas="").values_list("participa_aulas", flat=True)).most_common(4),
-            "ultimas_enquetes": RespostaEnquete.objects.all().order_by("-data_criacao")[:6],
+            "favoritas_ranking": Counter(
+                [
+                    a
+                    for r in RespostaEnquete.objects.exclude(aulas_favoritas=[])
+                    for a in (r.aulas_favoritas or [])
+                ]
+            ).most_common(6),
+            "espacos_ranking": Counter(
+                RespostaEnquete.objects.exclude(novo_espaco="").values_list(
+                    "novo_espaco", flat=True
+                )
+            ).most_common(6),
+            "melhorias_ranking": Counter(
+                RespostaEnquete.objects.exclude(aula_melhoria="").values_list(
+                    "aula_melhoria", flat=True
+                )
+            ).most_common(5),
+            "participacao_ranking": Counter(
+                RespostaEnquete.objects.exclude(participa_aulas="").values_list(
+                    "participa_aulas", flat=True
+                )
+            ).most_common(4),
+            "ultimas_enquetes": RespostaEnquete.objects.all().order_by("-data_criacao")[
+                :6
+            ],
         },
     )
 
@@ -516,7 +547,11 @@ def gerar_qrcode(request):
 
         if usar_ip and ip_local != "127.0.0.1":
             porta = request.get_port()
-            host = f"{ip_local}:{porta}" if porta and porta not in ["80", "443"] else ip_local
+            host = (
+                f"{ip_local}:{porta}"
+                if porta and porta not in ["80", "443"]
+                else ip_local
+            )
         else:
             host = request.get_host()
 
@@ -561,7 +596,9 @@ def gerar_qrcode(request):
     )
 
 
-def _gerar_resumo_executivo_local(avaliacoes, total, elogios, reclamacoes, sugestoes, media, pendentes, resolvidas):
+def _gerar_resumo_executivo_local(
+    avaliacoes, total, elogios, reclamacoes, sugestoes, media, pendentes, resolvidas
+):
     """
     Gera um relatório executivo analítico e profissional diretamente
     a partir dos dados reais do banco, garantindo que o gerente sempre receba
@@ -576,13 +613,18 @@ def _gerar_resumo_executivo_local(avaliacoes, total, elogios, reclamacoes, suges
         elif a.categoria:
             cats.append(a.categoria)
     cont_cat = Counter(cats)
-    principais_cats = [dict(Avaliacao.CATEGORIA_CHOICES).get(c, c.capitalize()) for c, _ in cont_cat.most_common(2)]
+    principais_cats = [
+        dict(Avaliacao.CATEGORIA_CHOICES).get(c, c.capitalize())
+        for c, _ in cont_cat.most_common(2)
+    ]
     setores_txt = " e ".join(principais_cats) if principais_cats else "Geral"
 
     comentarios = [a.comentario.strip() for a in avaliacoes if a.comentario.strip()][:3]
     amostra_comentarios = ""
     if comentarios:
-        amostra_comentarios = "\n\n**O que os alunos estão dizendo:**\n" + "\n".join(f'• *"{c}"*' for c in comentarios)
+        amostra_comentarios = "\n\n**O que os alunos estão dizendo:**\n" + "\n".join(
+            f'• *"{c}"*' for c in comentarios
+        )
 
     return f"""**📊 Resumo Executivo: Experiência e Qualidade — Polo Fit**
 
@@ -615,7 +657,9 @@ def ia_analisar(request):
         Avaliacao.objects.order_by("-data_criacao").values_list("id", flat=True)[:50]
     )
     if not ids_recentes:
-        return JsonResponse({"analise": "Nenhuma avaliação cadastrada ainda para analisar."})
+        return JsonResponse(
+            {"analise": "Nenhuma avaliação cadastrada ainda para analisar."}
+        )
 
     avaliacoes = Avaliacao.objects.filter(id__in=ids_recentes)
     total = avaliacoes.count()
@@ -624,10 +668,12 @@ def ia_analisar(request):
         models.Q(tipo_feedback="elogio") | models.Q(tipos_feedback__icontains="elogio")
     ).count()
     reclamacoes = avaliacoes.filter(
-        models.Q(tipo_feedback="reclamacao") | models.Q(tipos_feedback__icontains="reclamacao")
+        models.Q(tipo_feedback="reclamacao")
+        | models.Q(tipos_feedback__icontains="reclamacao")
     ).count()
     sugestoes = avaliacoes.filter(
-        models.Q(tipo_feedback="sugestao") | models.Q(tipos_feedback__icontains="sugestao")
+        models.Q(tipo_feedback="sugestao")
+        | models.Q(tipos_feedback__icontains="sugestao")
     ).count()
     media = avaliacoes.aggregate(m=models.Avg("nota"))["m"] or 0
 
@@ -636,10 +682,11 @@ def ia_analisar(request):
 
     # Comentários mais recentes
     comentarios = list(
-        avaliacoes.exclude(comentario="")
-        .values_list("comentario", flat=True)[:10]
+        avaliacoes.exclude(comentario="").values_list("comentario", flat=True)[:10]
     )
-    comentarios_txt = "\n".join(f'- "{c}"' for c in comentarios) or "Nenhum comentário registrado."
+    comentarios_txt = (
+        "\n".join(f'- "{c}"' for c in comentarios) or "Nenhum comentário registrado."
+    )
 
     prompt = f"""Você é um consultor especialista em qualidade para a academia Polo Fit.
 Gere um resumo executivo direto e profissional para o gerente com base nos dados reais:
@@ -659,7 +706,9 @@ Máximo 250 palavras."""
     api_key = getattr(settings, "GEMINI_API_KEY", "")
     # Modelos em ordem de preferência (mais rápido primeiro)
     modelo_cfg = getattr(settings, "GEMINI_MODEL", "gemini-1.5-flash")
-    modelos_ativos = list(dict.fromkeys([modelo_cfg, "gemini-1.5-flash", "gemini-1.5-pro"]))
+    modelos_ativos = list(
+        dict.fromkeys([modelo_cfg, "gemini-1.5-flash", "gemini-1.5-pro"])
+    )
 
     if api_key:
         for modelo in modelos_ativos:
@@ -701,14 +750,38 @@ Máximo 250 palavras."""
     return JsonResponse({"analise": analise_local})
 
 
-def _gerar_resposta_conversacional_local(pergunta, total, media, elogios, reclamacoes, sugestoes, pendentes, resolvidas, ranking_txt, comentarios):
+def _gerar_resposta_conversacional_local(
+    pergunta,
+    total,
+    media,
+    elogios,
+    reclamacoes,
+    sugestoes,
+    pendentes,
+    resolvidas,
+    ranking_txt,
+    comentarios,
+):
     """
     Motor local de resposta inteligente para responder perguntas do gerente sobre o feedback
     mesmo quando a API de IA externa não estiver conectada.
     """
     p = pergunta.lower()
 
-    if any(k in p for k in ["professor", "professores", "funcionario", "funcionarios", "equipe", "ranking", "quem", "instrutor", "atendente"]):
+    if any(
+        k in p
+        for k in [
+            "professor",
+            "professores",
+            "funcionario",
+            "funcionarios",
+            "equipe",
+            "ranking",
+            "quem",
+            "instrutor",
+            "atendente",
+        ]
+    ):
         return f"""**🏆 Análise da Equipe e Professores — Polo Fit**
 
 Com base nas avaliações recentes dos alunos:
@@ -718,9 +791,34 @@ Com base nas avaliações recentes dos alunos:
 • Os alunos apontam grande empatia, atenção às posturas corretas e incentivo nos treinos.
 • **Recomendação para a Gerência:** Crie um reconhecimento mensal ou bonificação para os colaboradores mais elogiados no ranking."""
 
-    if any(k in p for k in ["reclamacao", "reclamacoes", "reclamação", "reclamações", "problema", "critica", "queixa", "ruim", "defeito"]):
-        coments_rec = [c for c in comentarios if any(w in c.lower() for w in ["quebrado", "demora", "ar", "limpeza", "espera", "ruim"])]
-        amostra = f"\n*Comentários relacionados:* " + "; ".join(f'"{c}"' for c in coments_rec[:2]) if coments_rec else ""
+    if any(
+        k in p
+        for k in [
+            "reclamacao",
+            "reclamacoes",
+            "reclamação",
+            "reclamações",
+            "problema",
+            "critica",
+            "queixa",
+            "ruim",
+            "defeito",
+        ]
+    ):
+        coments_rec = [
+            c
+            for c in comentarios
+            if any(
+                w in c.lower()
+                for w in ["quebrado", "demora", "ar", "limpeza", "espera", "ruim"]
+            )
+        ]
+        amostra = (
+            f"\n*Comentários relacionados:* "
+            + "; ".join(f'"{c}"' for c in coments_rec[:2])
+            if coments_rec
+            else ""
+        )
         return f"""**⚠️ Panorama de Reclamações e Pontos Críticos**
 
 • **Total de Reclamações Registradas:** {reclamacoes} ocorrência(s).
@@ -732,7 +830,20 @@ Com base nas avaliações recentes dos alunos:
 2. Atue preventivamente na manutenção de equipamentos antes dos horários de pico (18h às 21h).
 3. Sinalize a resolução diretamente aos alunos assim que o ajuste for feito."""
 
-    if any(k in p for k in ["sugestao", "sugestoes", "sugestão", "sugestões", "melhorar", "ideia", "plano", "acao", "ação"]):
+    if any(
+        k in p
+        for k in [
+            "sugestao",
+            "sugestoes",
+            "sugestão",
+            "sugestões",
+            "melhorar",
+            "ideia",
+            "plano",
+            "acao",
+            "ação",
+        ]
+    ):
         return f"""**💡 Ideias e Recomendações Estratégicas para a Polo Fit**
 
 Com base nas {sugestoes} sugestões e no índice de satisfação atual ({round(media, 1)}/5.0):
@@ -771,9 +882,17 @@ def ia_chat(request):
 
     avaliacoes = Avaliacao.objects.all().order_by("-data_criacao")[:100]
     total = Avaliacao.objects.count()  # contagem real sem o limite
-    elogios = Avaliacao.objects.filter(models.Q(tipo_feedback="elogio") | models.Q(tipos_feedback__icontains="elogio")).count()
-    reclamacoes = Avaliacao.objects.filter(models.Q(tipo_feedback="reclamacao") | models.Q(tipos_feedback__icontains="reclamacao")).count()
-    sugestoes = Avaliacao.objects.filter(models.Q(tipo_feedback="sugestao") | models.Q(tipos_feedback__icontains="sugestao")).count()
+    elogios = Avaliacao.objects.filter(
+        models.Q(tipo_feedback="elogio") | models.Q(tipos_feedback__icontains="elogio")
+    ).count()
+    reclamacoes = Avaliacao.objects.filter(
+        models.Q(tipo_feedback="reclamacao")
+        | models.Q(tipos_feedback__icontains="reclamacao")
+    ).count()
+    sugestoes = Avaliacao.objects.filter(
+        models.Q(tipo_feedback="sugestao")
+        | models.Q(tipos_feedback__icontains="sugestao")
+    ).count()
     media = Avaliacao.objects.aggregate(m=models.Avg("nota"))["m"] or 0
     pendentes = Avaliacao.objects.filter(status="pendente").count()
     resolvidas = Avaliacao.objects.filter(status="resolvida").count()
@@ -781,14 +900,26 @@ def ia_chat(request):
     ranking = []
     for f in Funcionario.objects.filter(ativo=True):
         f_avs = Avaliacao.objects.filter(funcionario=f)
-        f_el = f_avs.filter(models.Q(tipo_feedback="elogio") | models.Q(tipos_feedback__icontains="elogio")).count()
-        f_rec = f_avs.filter(models.Q(tipo_feedback="reclamacao") | models.Q(tipos_feedback__icontains="reclamacao")).count()
+        f_el = f_avs.filter(
+            models.Q(tipo_feedback="elogio")
+            | models.Q(tipos_feedback__icontains="elogio")
+        ).count()
+        f_rec = f_avs.filter(
+            models.Q(tipo_feedback="reclamacao")
+            | models.Q(tipos_feedback__icontains="reclamacao")
+        ).count()
         f_med = f_avs.aggregate(m=models.Avg("nota"))["m"] or 0
-        ranking.append(f"{f.nome} ({f.cargo or 'Instrutor'}): {f_el} elogios, {f_rec} reclamações, nota média {round(f_med, 1)}")
+        ranking.append(
+            f"{f.nome} ({f.cargo or 'Instrutor'}): {f_el} elogios, {f_rec} reclamações, nota média {round(f_med, 1)}"
+        )
     ranking_txt = "\n".join(ranking) or "Nenhum funcionário cadastrado."
 
-    comentarios = list(avaliacoes.exclude(comentario="").values_list("comentario", flat=True)[:15])
-    comentarios_txt = "\n".join(f'- "{c}"' for c in comentarios) or "Nenhum comentário registrado."
+    comentarios = list(
+        avaliacoes.exclude(comentario="").values_list("comentario", flat=True)[:15]
+    )
+    comentarios_txt = (
+        "\n".join(f'- "{c}"' for c in comentarios) or "Nenhum comentário registrado."
+    )
 
     prompt = f"""Você é o Consultor Executivo de Inteligência Artificial da Academia Polo Fit.
 Você está conversando diretamente com o Gerente da academia para auxiliá-lo a tomar as melhores decisões operacionais e estratégicas.
@@ -810,7 +941,9 @@ Responda em português brasileiro de forma direta, executiva, cordial e orientad
     api_key = getattr(settings, "GEMINI_API_KEY", "")
     # Modelos em ordem de preferência
     modelo_cfg = getattr(settings, "GEMINI_MODEL", "gemini-1.5-flash")
-    modelos_ativos = list(dict.fromkeys([modelo_cfg, "gemini-1.5-flash", "gemini-1.5-pro"]))
+    modelos_ativos = list(
+        dict.fromkeys([modelo_cfg, "gemini-1.5-flash", "gemini-1.5-pro"])
+    )
 
     if api_key:
         for modelo in modelos_ativos:
