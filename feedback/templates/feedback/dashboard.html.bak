@@ -7,10 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
 
-    <meta name="description"
-        content="Dashboard de avaliaÃƒÂ§ÃƒÂµes Polo Fit Ã¢â‚¬â€ anÃƒÂ¡lise completa de feedbacks dos alunos.">
+    <meta name="description" content="Dashboard de avaliaÃ§Ãµes Polo Fit â€” anÃ¡lise completa de feedbacks dos alunos.">
 
-    <title>Dashboard Ã¢â‚¬â€ Polo Fit</title>
+    <title>Dashboard â€” Polo Fit</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -377,7 +376,7 @@
 
 
     <!-- ========================================================= -->
-    <!-- CABEÃƒâ€¡ALHO -->
+    <!-- CABEÃ‡ALHO -->
     <!-- ========================================================= -->
 
     <header class="header-gradient shadow-xl sticky top-0 z-50">
@@ -396,7 +395,7 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-gray-400 text-xs hidden md:block">Ã°Å¸â€˜Â¤ {{ request.user.username }}</span>
+                    <span class="text-gray-400 text-xs hidden md:block">ðŸ‘¤ {{ request.user.username }}</span>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" id="btn-sair"
@@ -407,35 +406,35 @@
                 </div>
             </div>
 
-            <!-- MENU DE NAVEGAÃƒâ€¡ÃƒÆ’O -->
+            <!-- MENU DE NAVEGAÃ‡ÃƒO -->
             <nav class="flex items-center gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
                 <a href="{% url 'avaliar' %}"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸ÂÂ  InÃƒÂ­cio
+                    ðŸ  InÃ­cio
                 </a>
                 <a href="{% url 'dashboard' %}"
                     class="flex-shrink-0 flex items-center gap-1.5 bg-white/10 text-[#a3e635] font-bold px-3 py-1.5 rounded-lg text-xs border border-[#a3e635]/30">
-                    Ã°Å¸â€œÅ  Dashboard
+                    ðŸ“Š Dashboard
                 </a>
                 <a href="{% url 'dashboard' %}#tabela-avaliacoes"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€œâ€¹ AvaliaÃƒÂ§ÃƒÂµes
+                    ðŸ“‹ AvaliaÃ§Ãµes
                 </a>
                 <a href="{% url 'dashboard' %}#ranking"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€˜Â¥ FuncionÃƒÂ¡rios
+                    ðŸ‘¥ FuncionÃ¡rios
                 </a>
                 <a href="#secao-enquete"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€œâ€¹ Enquete
+                    ðŸ“‹ Enquete
                 </a>
                 <a href="{% url 'gerar_qrcode' %}" id="btn-qrcode"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€œÂ± QR Codes
+                    ðŸ“± QR Codes
                 </a>
                 <a href="{% url 'admin:index' %}"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã¢Å¡â„¢Ã¯Â¸Â AdministraÃƒÂ§ÃƒÂ£o
+                    âš™ï¸ AdministraÃ§Ã£o
                 </a>
             </nav>
 
@@ -446,7 +445,7 @@
 
 
     <!-- ========================================================= -->
-    <!-- CONTEÃƒÅ¡DO -->
+    <!-- CONTEÃšDO -->
     <!-- ========================================================= -->
 
     <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
@@ -479,7 +478,7 @@
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-xl">
-                            Ã°Å¸â€œâ€¹
+                            ðŸ“‹
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -493,25 +492,25 @@
                     </p>
 
                     <p class="text-xs text-gray-400 mt-1">
-                        avaliaÃƒÂ§ÃƒÂµes registradas
+                        avaliaÃ§Ãµes registradas
                     </p>
 
                 </div>
 
 
 
-                <!-- MÃƒâ€°DIA -->
+                <!-- MÃ‰DIA -->
 
                 <div class="card-stat">
 
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
-                            Ã¢Â­Â
+                            â­
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            MÃƒÂ©dia
+                            MÃ©dia
                         </p>
 
                     </div>
@@ -521,7 +520,7 @@
                     </p>
 
                     <p class="text-xs text-gray-400 mt-1">
-                        nota mÃƒÂ©dia geral
+                        nota mÃ©dia geral
                     </p>
 
                 </div>
@@ -535,7 +534,7 @@
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-xl">
-                            Ã°Å¸â€˜Â
+                            ðŸ‘
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -556,18 +555,18 @@
 
 
 
-                <!-- RECLAMAÃƒâ€¡Ãƒâ€¢ES -->
+                <!-- RECLAMAÃ‡Ã•ES -->
 
                 <div class="card-stat">
 
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-xl">
-                            Ã¢Å¡Â Ã¯Â¸Â
+                            âš ï¸
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            ReclamaÃƒÂ§ÃƒÂµes
+                            ReclamaÃ§Ãµes
                         </p>
 
                     </div>
@@ -600,7 +599,7 @@
                 class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none">
             </div>
 
-            <!-- CABEÃƒâ€¡ALHO -->
+            <!-- CABEÃ‡ALHO -->
             <div class="relative flex items-center justify-between px-5 md:px-7 py-5 border-b border-slate-800">
 
                 <div class="flex items-center gap-4">
@@ -610,7 +609,7 @@
 
                         <div
                             class="w-12 h-12 rounded-2xl bg-gradient-to-br from-lime-300 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/20">
-                            <span class="text-2xl">Ã°Å¸Â¤â€“</span>
+                            <span class="text-2xl">ðŸ¤–</span>
                         </div>
 
                         <span
@@ -634,7 +633,7 @@
                         </div>
 
                         <p class="text-xs md:text-sm text-slate-400 mt-0.5">
-                            Seu assistente para analisar a academia e tomar decisÃƒÂµes.
+                            Seu assistente para analisar a academia e tomar decisÃµes.
                         </p>
 
                     </div>
@@ -642,7 +641,7 @@
                 </div>
 
 
-                <!-- AÃƒâ€¡Ãƒâ€¢ES -->
+                <!-- AÃ‡Ã•ES -->
                 <div class="flex items-center gap-2">
 
                     <span
@@ -654,7 +653,7 @@
                     <button type="button" id="limpar-chat"
                         class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition"
                         title="Limpar conversa">
-                        Ã°Å¸â€”â€˜Ã¯Â¸Â
+                        ðŸ—‘ï¸
                     </button>
 
                 </div>
@@ -662,7 +661,7 @@
             </div>
 
 
-            <!-- ÃƒÂREA DA CONVERSA -->
+            <!-- ÃREA DA CONVERSA -->
             <div id="chat-mensagens"
                 class="relative h-[360px] md:h-[400px] overflow-y-auto px-4 md:px-6 py-5 space-y-5 scrollbar-thin">
 
@@ -671,7 +670,7 @@
 
                     <div
                         class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-                        Ã°Å¸Â¤â€“
+                        ðŸ¤–
                     </div>
 
                     <div class="max-w-[85%]">
@@ -690,12 +689,12 @@
                             class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
 
                             <p class="mb-2">
-                                OlÃƒÂ¡! Ã°Å¸â€˜â€¹ Sou o assistente inteligente da <strong class="text-white">Polo Fit</strong>.
+                                OlÃ¡! ðŸ‘‹ Sou o assistente inteligente da <strong class="text-white">Polo Fit</strong>.
                             </p>
 
                             <p class="text-slate-400">
-                                Posso ajudar vocÃƒÂª a analisar avaliaÃƒÂ§ÃƒÂµes, reclamaÃƒÂ§ÃƒÂµes,
-                                sugestÃƒÂµes, funcionÃƒÂ¡rios, desempenho e oportunidades de melhoria.
+                                Posso ajudar vocÃª a analisar avaliaÃ§Ãµes, reclamaÃ§Ãµes,
+                                sugestÃµes, funcionÃ¡rios, desempenho e oportunidades de melhoria.
                             </p>
 
                         </div>
@@ -705,37 +704,37 @@
                 </div>
 
 
-                <!-- SUGESTÃƒâ€¢ES -->
+                <!-- SUGESTÃ•ES -->
                 <div id="chat-sugestoes" class="pl-11">
 
                     <p class="text-[11px] text-slate-500 mb-2">
-                        SugestÃƒÂµes para comeÃƒÂ§ar
+                        SugestÃµes para comeÃ§ar
                     </p>
 
                     <div class="flex flex-wrap gap-2">
 
                         <button type="button"
                             class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
-                            data-pergunta="Como estÃƒÂ¡ a satisfaÃƒÂ§ÃƒÂ£o dos alunos atualmente?">
-                            Ã°Å¸â€œÅ  SatisfaÃƒÂ§ÃƒÂ£o dos alunos
+                            data-pergunta="Como estÃ¡ a satisfaÃ§Ã£o dos alunos atualmente?">
+                            ðŸ“Š SatisfaÃ§Ã£o dos alunos
                         </button>
 
                         <button type="button"
                             class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
-                            data-pergunta="Quais sÃƒÂ£o as principais reclamaÃƒÂ§ÃƒÂµes dos alunos?">
-                            Ã¢Å¡Â Ã¯Â¸Â Principais reclamaÃƒÂ§ÃƒÂµes
+                            data-pergunta="Quais sÃ£o as principais reclamaÃ§Ãµes dos alunos?">
+                            âš ï¸ Principais reclamaÃ§Ãµes
                         </button>
 
                         <button type="button"
                             class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
-                            data-pergunta="Quais funcionÃƒÂ¡rios estÃƒÂ£o se destacando nas avaliaÃƒÂ§ÃƒÂµes?">
-                            Ã°Å¸Ââ€  FuncionÃƒÂ¡rios destaque
+                            data-pergunta="Quais funcionÃ¡rios estÃ£o se destacando nas avaliaÃ§Ãµes?">
+                            ðŸ† FuncionÃ¡rios destaque
                         </button>
 
                         <button type="button"
                             class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
                             data-pergunta="Quais melhorias deveriam ser priorizadas pela academia?">
-                            Ã°Å¸â€™Â¡ Melhorias prioritÃƒÂ¡rias
+                            ðŸ’¡ Melhorias prioritÃ¡rias
                         </button>
 
                     </div>
@@ -759,7 +758,7 @@
                                 class="w-full resize-none rounded-2xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 px-4 py-3.5 pr-12 text-sm focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/10 transition"></textarea>
 
                             <div class="absolute right-3 bottom-3 text-[10px] text-slate-600">
-                                Enter Ã¢â€ Âµ
+                                Enter â†µ
                             </div>
 
                         </div>
@@ -768,7 +767,7 @@
                         <button id="chat-enviar" type="submit"
                             class="flex-shrink-0 w-12 h-12 rounded-2xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-black flex items-center justify-center shadow-lg shadow-lime-500/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Enviar mensagem">
-                            Ã¢Å¾Â¤
+                            âž¤
                         </button>
 
                     </div>
@@ -776,7 +775,7 @@
                     <div class="flex items-center justify-between mt-2 px-1">
 
                         <span class="text-[10px] text-slate-600">
-                            O assistente utiliza os dados disponÃƒÂ­veis no sistema.
+                            O assistente utiliza os dados disponÃ­veis no sistema.
                         </span>
 
                         <span id="chat-contador" class="text-[10px] text-slate-600">
@@ -795,7 +794,7 @@
 
 
         <!-- ===================================================== -->
-        <!-- GRÃƒÂFICOS -->
+        <!-- GRÃFICOS -->
         <!-- ===================================================== -->
 
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -804,11 +803,11 @@
             <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
 
                 <h3 class="font-bold text-gray-800 mb-1">
-                    Ã°Å¸â€œÅ  AvaliaÃƒÂ§ÃƒÂµes por Categoria
+                    ðŸ“Š AvaliaÃ§Ãµes por Categoria
                 </h3>
 
                 <p class="text-xs text-gray-400 mb-4">
-                    DistribuiÃƒÂ§ÃƒÂ£o dos feedbacks
+                    DistribuiÃ§Ã£o dos feedbacks
                 </p>
 
                 <canvas id="graficoCategorias"></canvas>
@@ -819,7 +818,7 @@
             <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
 
                 <h3 class="font-bold text-gray-800 mb-1">
-                    Ã¢Â­Â AvaliaÃƒÂ§ÃƒÂµes por Nota
+                    â­ AvaliaÃ§Ãµes por Nota
                 </h3>
 
                 <p class="text-xs text-gray-400 mb-4">
@@ -835,7 +834,7 @@
 
 
         <!-- ===================================================== -->
-        <!-- AVALIAÃƒâ€¡Ãƒâ€¢ES POR LOCAL                                  -->
+        <!-- AVALIAÃ‡Ã•ES POR LOCAL                                  -->
         <!-- ===================================================== -->
 
         {% if locais_ranking %}
@@ -843,12 +842,12 @@
 
             <div class="flex items-center justify-between mb-5">
                 <div>
-                    <h3 class="font-bold text-gray-800">Ã°Å¸â€œÂ AvaliaÃƒÂ§ÃƒÂµes por Local</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Qual espaÃƒÂ§o estÃƒÂ¡ recebendo mais feedback?</p>
+                    <h3 class="font-bold text-gray-800">ðŸ“ AvaliaÃ§Ãµes por Local</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Qual espaÃ§o estÃ¡ recebendo mais feedback?</p>
                 </div>
                 <a href="{% url 'gerar_qrcode' %}"
                     class="text-xs font-semibold text-[#33FF00] border border-[#33FF00] px-3 py-1.5 rounded-lg hover:bg-[#0a0a0a] transition">
-                    Ã°Å¸â€œÂ± Gerar QR Codes
+                    ðŸ“± Gerar QR Codes
                 </a>
             </div>
 
@@ -860,12 +859,12 @@
                         <div class="flex items-center justify-between mb-1">
                             <span class="text-sm font-semibold text-gray-700 truncate">{{ local.nome }}</span>
                             <div class="flex items-center gap-2 flex-shrink-0 ml-2">
-                                <span class="text-xs text-yellow-500 font-bold">Ã¢Â­Â {{ local.media }}</span>
+                                <span class="text-xs text-yellow-500 font-bold">â­ {{ local.media }}</span>
                                 <span class="text-xs text-gray-400">{{ local.total }} aval.</span>
                                 <a href="{% url 'gerar_qrcode' %}?localizacao={{ local.nome|urlencode }}"
                                     class="text-[11px] font-bold text-[#33FF00] bg-[#0a0a0a] hover:bg-[#1a1a1a] px-2 py-0.5 rounded transition shadow-sm"
                                     title="Gerar QR Code para {{ local.nome }}">
-                                    Ã°Å¸â€œÂ± QR Code
+                                    ðŸ“± QR Code
                                 </a>
                             </div>
                         </div>
@@ -882,49 +881,48 @@
         {% endif %}
 
         <!-- ===================================================== -->
-        <!-- SEÃƒâ€¡ÃƒÆ’O: ENQUETE DE SATISFAÃƒâ€¡ÃƒÆ’O (AULAS & NOVOS ESPAÃƒâ€¡OS)  -->
+        <!-- SEÃ‡ÃƒO: ENQUETE DE SATISFAÃ‡ÃƒO (AULAS & NOVOS ESPAÃ‡OS)  -->
         <!-- ===================================================== -->
         <section id="secao-enquete" class="bg-white rounded-2xl shadow p-6 border border-slate-100">
             <div
                 class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="text-xl">Ã°Å¸â€œâ€¹</span>
-                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de SatisfaÃƒÂ§ÃƒÂ£o Ã¢â‚¬â€ Aulas Coletivas &
-                            Novos
-                            EspaÃƒÂ§os</h3>
+                        <span class="text-xl">ðŸ“‹</span>
+                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de SatisfaÃ§Ã£o â€” Aulas Coletivas & Novos
+                            EspaÃ§os</h3>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Resultados da pesquisa oficial dos alunos sobre preferÃƒÂªncias de modalidades e expansÃƒÂµes da
+                        Resultados da pesquisa oficial dos alunos sobre preferÃªncias de modalidades e expansÃµes da
                         academia.
                     </p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <span
                         class="inline-flex items-center gap-1.5 bg-lime-100 text-lime-900 text-xs font-bold px-3 py-1.5 rounded-xl border border-lime-300">
-                        Ã¢Å¡Â¡ {{ total_enquetes }} respostas coletadas
+                        âš¡ {{ total_enquetes }} respostas coletadas
                     </span>
                     <a href="{% url 'gerar_qrcode' %}?localizacao=Enquete+de+Satisfa%C3%A7%C3%A3o"
                         class="text-xs font-bold text-black bg-[#a3e635] hover:bg-[#bef264] px-3 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1">
-                        Ã°Å¸â€œÂ± QR Code da Enquete
+                        ðŸ“± QR Code da Enquete
                     </a>
                     <a href="{% url 'enquete' %}" target="_blank"
                         class="text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
-                        Ã°Å¸â€â€” Abrir FormulÃƒÂ¡rio Ã¢â€ â€”
+                        ðŸ”— Abrir FormulÃ¡rio â†—
                     </a>
                 </div>
             </div>
 
             {% if total_enquetes == 0 %}
             <div class="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-8 text-center">
-                <span class="text-3xl block mb-2">Ã°Å¸â€œâ€¹</span>
+                <span class="text-3xl block mb-2">ðŸ“‹</span>
                 <p class="font-bold text-gray-700 text-sm">Nenhuma resposta de enquete registrada ainda.</p>
                 <p class="text-xs text-gray-400 mt-1">Imprima o QR Code da Enquete e divulgue para os alunos responderem
                     pelo celular!</p>
                 <div class="mt-4 flex justify-center gap-2">
                     <a href="{% url 'enquete' %}" target="_blank"
                         class="text-xs font-bold text-[#33FF00] bg-[#0a0a0a] px-3.5 py-2 rounded-xl transition">
-                        Responder Primeiro Teste Ã¢Å¾â€
+                        Responder Primeiro Teste âž”
                     </a>
                 </div>
             </div>
@@ -935,7 +933,7 @@
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã°Å¸â€Â¥</span> 1. Aulas Mais Populares / Favoritas
+                        <span>ðŸ”¥</span> 1. Aulas Mais Populares / Favoritas
                     </h4>
                     <div class="space-y-2.5">
                         {% for aula, qtd in favoritas_ranking %}
@@ -955,11 +953,11 @@
                     </div>
                 </div>
 
-                <!-- 3. NOVOS ESPAÃƒâ€¡OS DESEJADOS -->
+                <!-- 3. NOVOS ESPAÃ‡OS DESEJADOS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã°Å¸Ââ€”Ã¯Â¸Â</span> 3. Novos EspaÃƒÂ§os Mais Desejados
+                        <span>ðŸ—ï¸</span> 3. Novos EspaÃ§os Mais Desejados
                     </h4>
                     <div class="space-y-2.5">
                         {% for espaco, qtd in espacos_ranking %}
@@ -979,11 +977,11 @@
                     </div>
                 </div>
 
-                <!-- 2. PARTICIPAÃƒâ€¡ÃƒÆ’O EM AULAS COLETIVAS -->
+                <!-- 2. PARTICIPAÃ‡ÃƒO EM AULAS COLETIVAS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã°Å¸â€˜Â¥</span> 2. FrequÃƒÂªncia em Aulas Coletivas
+                        <span>ðŸ‘¥</span> 2. FrequÃªncia em Aulas Coletivas
                     </h4>
                     <div class="space-y-2">
                         {% for item, qtd in participacao_ranking %}
@@ -998,11 +996,11 @@
                     </div>
                 </div>
 
-                <!-- 4. AULAS QUE PRECISAM DE ATENÃƒâ€¡ÃƒÆ’O -->
+                <!-- 4. AULAS QUE PRECISAM DE ATENÃ‡ÃƒO -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã¢Å¡Â Ã¯Â¸Â</span> 4. Aulas que Precisam de Mais AtenÃƒÂ§ÃƒÂ£o
+                        <span>âš ï¸</span> 4. Aulas que Precisam de Mais AtenÃ§Ã£o
                     </h4>
                     <div class="space-y-2">
                         {% for aula, qtd in melhorias_ranking %}
@@ -1027,11 +1025,11 @@
 
             </div>
 
-            <!-- MURAL DE SUGESTÃƒâ€¢ES E ELOGIOS RECENTES DA ENQUETE -->
+            <!-- MURAL DE SUGESTÃ•ES E ELOGIOS RECENTES DA ENQUETE -->
             {% if ultimas_enquetes %}
             <div class="mt-6 pt-5 border-t border-slate-200">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
-                    Ã°Å¸â€™Â¬ ÃƒÅ¡ltimas ContribuiÃƒÂ§ÃƒÂµes dos Alunos (Perguntas 5 e 6):
+                    ðŸ’¬ Ãšltimas ContribuiÃ§Ãµes dos Alunos (Perguntas 5 e 6):
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {% for resp in ultimas_enquetes %}
@@ -1059,7 +1057,7 @@
 
                         {% if resp.elogio_colaborador %}
                         <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg">
-                            <strong>Ã°Å¸â€™Å¡ Elogio:</strong>
+                            <strong>ðŸ’š Elogio:</strong>
                             {{ resp.elogio_colaborador }}
                         </p>
                         {% endif %}
@@ -1084,18 +1082,18 @@
 
             <div class="flex items-center justify-between gap-3 mb-4">
                 <h3 class="font-bold text-gray-800">
-                    Ã°Å¸â€Â Filtrar AvaliaÃƒÂ§ÃƒÂµes
+                    ðŸ” Filtrar AvaliaÃ§Ãµes
                 </h3>
                 <div class="flex items-center gap-2">
                     {% if periodo_filtro == 'hoje' %}
-                    <span class="text-xs font-semibold bg-lime-100 text-lime-700 px-2.5 py-1 rounded-full">Ã°Å¸â€œâ€¦
+                    <span class="text-xs font-semibold bg-lime-100 text-lime-700 px-2.5 py-1 rounded-full">ðŸ“…
                         Hoje</span>
                     {% elif periodo_filtro == 'semana' %}
-                    <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">Ã°Å¸â€œâ€¦ Esta
+                    <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">ðŸ“… Esta
                         semana</span>
                     {% elif periodo_filtro == 'mes' %}
-                    <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">Ã°Å¸â€œâ€¦
-                        ÃƒÅ¡ltimos 30 dias</span>
+                    <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">ðŸ“…
+                        Ãšltimos 30 dias</span>
                     {% else %}
                     <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">filtros ativos</span>
                     {% endif %}
@@ -1106,14 +1104,13 @@
             <form method="get" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
 
 
-                <!-- PERÃƒÂODO -->
+                <!-- PERÃODO -->
 
                 <select name="periodo" id="filtro-periodo">
-                    <option value="">Todo perÃƒÂ­odo</option>
-                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>Ã°Å¸â€œâ€¦ Hoje</option>
-                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>Ã°Å¸â€œâ€¦ Esta semana
-                    </option>
-                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>Ã°Å¸â€œâ€¦ ÃƒÅ¡ltimos 30 dias</option>
+                    <option value="">Todo perÃ­odo</option>
+                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>ðŸ“… Hoje</option>
+                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>ðŸ“… Esta semana</option>
+                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>ðŸ“… Ãšltimos 30 dias</option>
                 </select>
 
 
@@ -1156,10 +1153,10 @@
 
                 <select name="funcionario" id="filtro-funcionario">
                     <option value="">
-                        Todos funcionÃƒÂ¡rios
+                        Todos funcionÃ¡rios
                     </option>
                     {% for func in funcionarios %}
-                    <option value="{{ func.id }} {% if funcionario_filtro == func.id|stringformat:s %}selected{% endif %}>{{ func.nome }}</option>
+ <option value={{ func.id }} {% if funcionario_filtro == func.id|stringformat:s %}selected{% endif %}>
                         %}>
                         {{ func.nome }}
                     </option>
@@ -1168,7 +1165,7 @@
 
 
 
-                <!-- BOTÃƒâ€¢ES -->
+                <!-- BOTÃ•ES -->
 
                 <div class="flex gap-3 sm:col-span-2 md:col-span-3 lg:col-span-5">
 
@@ -1192,7 +1189,7 @@
 
 
         <!-- ===================================================== -->
-        <!-- TABELA DE AVALIAÃƒâ€¡Ãƒâ€¢ES -->
+        <!-- TABELA DE AVALIAÃ‡Ã•ES -->
         <!-- ===================================================== -->
 
         <section id="tabela-avaliacoes">
@@ -1200,7 +1197,7 @@
             <div class="flex items-center justify-between mb-4">
 
                 <h2 class="text-xl font-bold text-gray-800">
-                    Ã°Å¸â€œÂ AvaliaÃƒÂ§ÃƒÂµes Recentes
+                    ðŸ“ AvaliaÃ§Ãµes Recentes
                 </h2>
 
 
@@ -1229,7 +1226,7 @@
                             </th>
 
                             <th>
-                                FuncionÃƒÂ¡rio
+                                FuncionÃ¡rio
                             </th>
 
                             <th>
@@ -1278,7 +1275,7 @@
 
 
 
-                            <!-- FUNCIONÃƒÂRIO -->
+                            <!-- FUNCIONÃRIO -->
 
                             <td>
 
@@ -1310,7 +1307,7 @@
                                 {% else %}
 
                                 <span class="text-gray-400 italic">
-                                    NÃƒÂ£o informado
+                                    NÃ£o informado
                                 </span>
 
                                 {% endif %}
@@ -1327,11 +1324,11 @@
 
                                     {% for i in "12345" %}
 
-                                    {% if forloop.counter <= a.nota %} <span class="star-on">Ã¢Ëœâ€¦</span>
+                                    {% if forloop.counter <= a.nota %} <span class="star-on">â˜…</span>
 
                                 {% else %}
 
-                                <span class="star-off">Ã¢Ëœâ€¦</span>
+                                <span class="star-off">â˜…</span>
 
                                 {% endif %}
 
@@ -1350,19 +1347,19 @@
                                 {% if a.tipo_feedback == "elogio" %}
 
                                 <span class="badge badge-elogio">
-                                    Ã°Å¸â€˜Â Elogio
+                                    ðŸ‘ Elogio
                                 </span>
 
                                 {% elif a.tipo_feedback == "reclamacao" %}
 
                                 <span class="badge badge-reclamacao">
-                                    Ã¢Å¡Â Ã¯Â¸Â ReclamaÃƒÂ§ÃƒÂ£o
+                                    âš ï¸ ReclamaÃ§Ã£o
                                 </span>
 
                                 {% else %}
 
                                 <span class="badge badge-sugestao">
-                                    Ã°Å¸â€™Â¡ SugestÃƒÂ£o
+                                    ðŸ’¡ SugestÃ£o
                                 </span>
 
                                 {% endif %}
@@ -1378,19 +1375,19 @@
                                 {% if a.status == "resolvida" %}
 
                                 <span class="badge badge-resolvida">
-                                    Ã¢Å“â€¦ Resolvida
+                                    âœ… Resolvida
                                 </span>
 
                                 {% elif a.status == "em_analise" %}
 
                                 <span class="badge badge-analise">
-                                    Ã°Å¸â€Â Em anÃƒÂ¡lise
+                                    ðŸ” Em anÃ¡lise
                                 </span>
 
                                 {% else %}
 
                                 <span class="badge badge-pendente">
-                                    Ã°Å¸â€¢Â Pendente
+                                    ðŸ• Pendente
                                 </span>
 
                                 {% endif %}
@@ -1415,7 +1412,7 @@
 
                                 <button class="btn-detalhes" id="btn-detalhes-{{ a.pk }}"
                                     onclick="abrirModal({{ a.pk }})" title="Ver detalhes">
-                                    Ã°Å¸â€Å½ Ver detalhes
+                                    ðŸ”Ž Ver detalhes
                                 </button>
 
                             </td>
@@ -1431,12 +1428,12 @@
                             "id": {{ a.pk }},
                             "categoria": "{{ a.get_categoria_display|escapejs }}",
                             "nota": {{ a.nota }},
-                            "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}Ã°Å¸â€˜Â Elogio{% elif a.tipo_feedback == 'reclamacao' %}Ã¢Å¡Â Ã¯Â¸Â ReclamaÃƒÂ§ÃƒÂ£o{% else %}Ã°Å¸â€™Â¡ SugestÃƒÂ£o{% endif %}",
-                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} Ã¢â‚¬â€ {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}NÃƒÂ£o informado{% endif %}",
-                            "comentario": "{{ a.comentario|default:'Sem comentÃƒÂ¡rio'|escapejs }}",
-                            "localizacao": "{{ a.localizacao|default:'NÃƒÂ£o informada'|escapejs }}",
+                            "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}ðŸ‘ Elogio{% elif a.tipo_feedback == 'reclamacao' %}âš ï¸ ReclamaÃ§Ã£o{% else %}ðŸ’¡ SugestÃ£o{% endif %}",
+                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} â€” {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}NÃ£o informado{% endif %}",
+                            "comentario": "{{ a.comentario|default:'Sem comentÃ¡rio'|escapejs }}",
+                            "localizacao": "{{ a.localizacao|default:'NÃ£o informada'|escapejs }}",
                             "data_criacao": "{{ a.data_criacao|date:'d/m/Y H:i' }}",
-                            "status": "{% if a.status == 'resolvida' %}Ã¢Å“â€¦ Resolvida{% elif a.status == 'em_analise' %}Ã°Å¸â€Â Em AnÃƒÂ¡lise{% else %}Ã°Å¸â€¢Â Pendente{% endif %}",
+                            "status": "{% if a.status == 'resolvida' %}âœ… Resolvida{% elif a.status == 'em_analise' %}ðŸ” Em AnÃ¡lise{% else %}ðŸ• Pendente{% endif %}",
                             "status_raw": "{{ a.status }}",
                             "resolvido_por": "{% if a.resolvido_por %}{{ a.resolvido_por.username|escapejs }}{% endif %}",
                             "data_resolucao": "{% if a.data_resolucao %}{{ a.data_resolucao|date:'d/m/Y H:i' }}{% endif %}",
@@ -1453,11 +1450,11 @@
                             <td colspan="7" class="py-16 text-center text-gray-400">
 
                                 <div class="text-4xl mb-3">
-                                    Ã°Å¸â€œÂ­
+                                    ðŸ“­
                                 </div>
 
                                 <p class="font-medium">
-                                    Nenhuma avaliaÃƒÂ§ÃƒÂ£o encontrada
+                                    Nenhuma avaliaÃ§Ã£o encontrada
                                 </p>
 
                                 <p class="text-sm mt-1">
@@ -1489,7 +1486,7 @@
         <section id="ranking">
 
             <h2 class="text-xl font-bold text-gray-800 mb-4">
-                Ã°Å¸Ââ€  Ranking de FuncionÃƒÂ¡rios
+                ðŸ† Ranking de FuncionÃ¡rios
             </h2>
 
 
@@ -1514,11 +1511,11 @@
                         <span class="text-2xl">
 
                             {% if forloop.counter == 1 %}
-                            Ã°Å¸Â¥â€¡
+                            ðŸ¥‡
                             {% elif forloop.counter == 2 %}
-                            Ã°Å¸Â¥Ë†
+                            ðŸ¥ˆ
                             {% elif forloop.counter == 3 %}
-                            Ã°Å¸Â¥â€°
+                            ðŸ¥‰
                             {% else %}
                             #{{ forloop.counter }}
                             {% endif %}
@@ -1585,7 +1582,7 @@
                             </p>
 
                             <p class="text-xs text-red-600">
-                                ReclamaÃƒÂ§ÃƒÂµes
+                                ReclamaÃ§Ãµes
                             </p>
 
                         </div>
@@ -1598,7 +1595,7 @@
                             </p>
 
                             <p class="text-xs text-purple-600">
-                                SugestÃƒÂµes
+                                SugestÃµes
                             </p>
 
                         </div>
@@ -1609,12 +1606,12 @@
                     <div class="flex items-center justify-between text-sm pt-2 border-t border-gray-100">
 
                         <span class="text-gray-500">
-                            Ã¢Â­Â MÃƒÂ©dia:
+                            â­ MÃ©dia:
                             <strong>{{ item.media }}</strong>
                         </span>
 
                         <span class="text-gray-500">
-                            Ã°Å¸â€œÅ  Total:
+                            ðŸ“Š Total:
                             <strong>{{ item.total }}</strong>
                         </span>
 
@@ -1629,11 +1626,11 @@
                 <div class="col-span-3 text-center text-gray-400 py-10">
 
                     <div class="text-3xl mb-2">
-                        Ã°Å¸â€˜Â¤
+                        ðŸ‘¤
                     </div>
 
                     <p>
-                        Nenhum funcionÃƒÂ¡rio cadastrado.
+                        Nenhum funcionÃ¡rio cadastrado.
                     </p>
 
                 </div>
@@ -1665,18 +1662,18 @@
                 <div>
 
                     <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">
-                        AvaliaÃƒÂ§ÃƒÂ£o
+                        AvaliaÃ§Ã£o
                     </p>
 
                     <h2 id="modal-titulo" class="text-lg font-bold text-white">
-                        Detalhes da AvaliaÃƒÂ§ÃƒÂ£o
+                        Detalhes da AvaliaÃ§Ã£o
                     </h2>
 
                 </div>
 
 
                 <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">
-                    Ã¢Å“â€¢
+                    âœ•
                 </button>
 
             </div>
@@ -1694,7 +1691,7 @@
 
 
     <!-- ========================================================= -->
-    <!-- DADOS DOS GRÃƒÂFICOS -->
+    <!-- DADOS DOS GRÃFICOS -->
     <!-- ========================================================= -->
 
     {{ avaliacoes_categoria|json_script:"dados-categorias" }}
@@ -1711,7 +1708,7 @@
 
 
         /* ======================================================= */
-        /* GRÃƒÂFICOS */
+        /* GRÃFICOS */
         /* ======================================================= */
 
         const dc =
@@ -1744,7 +1741,7 @@
 
                     datasets: [{
 
-                        label: "AvaliaÃƒÂ§ÃƒÂµes",
+                        label: "AvaliaÃ§Ãµes",
 
                         data: dc.map(
                             i => i.quantidade
@@ -1822,12 +1819,12 @@
                 data: {
 
                     labels: dn.map(
-                        i => i.nota + " Ã¢Ëœâ€¦"
+                        i => i.nota + " â˜…"
                     ),
 
                     datasets: [{
 
-                        label: "AvaliaÃƒÂ§ÃƒÂµes",
+                        label: "AvaliaÃ§Ãµes",
 
                         data: dn.map(
                             i => i.quantidade
@@ -1901,9 +1898,9 @@
 
                 s += i <= nota
 
-                    ? '<span style="color:#f59e0b;font-size:1.2rem">Ã¢Ëœâ€¦</span>'
+                    ? '<span style="color:#f59e0b;font-size:1.2rem">â˜…</span>'
 
-                    : '<span style="color:#d1d5db;font-size:1.2rem">Ã¢Ëœâ€¦</span>';
+                    : '<span style="color:#d1d5db;font-size:1.2rem">â˜…</span>';
 
             }
 
@@ -1934,14 +1931,14 @@
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€œâ€š",
+                "ðŸ“‚",
                 "Categoria",
                 d.categoria
             );
 
 
             corpo += modalLinha(
-                "Ã¢Â­Â",
+                "â­",
                 "Nota",
                 estrelas(d.nota) +
                 ' <span style="color:#6b7280;font-size:0.8rem">(' +
@@ -1951,35 +1948,35 @@
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€™Â¬",
+                "ðŸ’¬",
                 "Tipo de Feedback",
                 d.tipo_feedback
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€˜Â¤",
-                "FuncionÃƒÂ¡rio Avaliado",
+                "ðŸ‘¤",
+                "FuncionÃ¡rio Avaliado",
                 d.funcionario
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€œÂ",
-                "LocalizaÃƒÂ§ÃƒÂ£o",
+                "ðŸ“",
+                "LocalizaÃ§Ã£o",
                 d.localizacao
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€¢Â",
+                "ðŸ•",
                 "Data e Hora",
                 d.data_criacao
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸Å’Â",
+                "ðŸŒ",
                 "Origem",
                 d.origem
             );
@@ -1996,13 +1993,13 @@
                     >
 
                         <span class="modal-icon">
-                            Ã°Å¸â€œÂ
+                            ðŸ“
                         </span>
 
                         <div style="flex:1">
 
                             <p class="modal-label">
-                                ComentÃƒÂ¡rio do Aluno
+                                ComentÃ¡rio do Aluno
                             </p>
 
                             <p
@@ -2021,7 +2018,7 @@
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€â€“",
+                "ðŸ”–",
                 "Status Atual",
                 d.status
             );
@@ -2033,7 +2030,7 @@
             ) {
 
                 corpo += modalLinha(
-                    "Ã¢Å“â€¦",
+                    "âœ…",
                     "Resolvida por",
                     "<strong>" +
                     d.resolvido_por +
@@ -2044,8 +2041,8 @@
                 if (d.data_resolucao) {
 
                     corpo += modalLinha(
-                        "Ã°Å¸â€œâ€¦",
-                        "Data de ResoluÃƒÂ§ÃƒÂ£o",
+                        "ðŸ“…",
+                        "Data de ResoluÃ§Ã£o",
                         d.data_resolucao
                     );
 
@@ -2136,7 +2133,7 @@
                                 cursor:pointer
                             "
                         >
-                            Ã°Å¸â€¢Â Pendente
+                            ðŸ• Pendente
                         </button>
 
 
@@ -2156,7 +2153,7 @@
                                 cursor:pointer
                             "
                         >
-                            Ã°Å¸â€Â Em AnÃƒÂ¡lise
+                            ðŸ” Em AnÃ¡lise
                         </button>
 
 
@@ -2176,7 +2173,7 @@
                                 cursor:pointer
                             "
                         >
-                            Ã¢Å“â€¦ Resolvida
+                            âœ… Resolvida
                         </button>
 
                     </form>
@@ -2317,7 +2314,7 @@
 
 
         /* ======================================================= */
-        /* ANÃƒÂLISE COM IA */
+        /* ANÃLISE COM IA */
         /* ======================================================= */
 
         async function analisarComIA() {
@@ -2364,7 +2361,7 @@
                     <span></span>
                     <span></span>
                 </span>
-                Processando os dados com InteligÃƒÂªncia Artificial...
+                Processando os dados com InteligÃªncia Artificial...
             `;
 
 
@@ -2399,7 +2396,7 @@
             } catch (err) {
 
                 textoDiv.innerHTML =
-                    "Ã¢ÂÅ’ NÃƒÂ£o foi possÃƒÂ­vel conectar ÃƒÂ  IA. Verifique a configuraÃƒÂ§ÃƒÂ£o da chave de API.";
+                    "âŒ NÃ£o foi possÃ­vel conectar Ã  IA. Verifique a configuraÃ§Ã£o da chave de API.";
 
             }
 
@@ -2408,7 +2405,7 @@
 
 
             btn.innerHTML =
-                "Ã¢Å“Â¨ Gerar AnÃƒÂ¡lise";
+                "âœ¨ Gerar AnÃ¡lise";
 
         }
 
@@ -2437,7 +2434,7 @@
 
 
         /* =========================================================
-                    ASSISTENTE IA Ã¢â‚¬â€ POLO FIT
+                    ASSISTENTE IA â€” POLO FIT
                     ========================================================= */
 
         const chatForm = document.getElementById("chat-form");
@@ -2450,16 +2447,16 @@
 
 
         /* =========================================================
-           FORMATAÃƒâ€¡ÃƒÆ’O SEGURA DA RESPOSTA DA IA
+           FORMATAÃ‡ÃƒO SEGURA DA RESPOSTA DA IA
            ========================================================= */
 
         function formatarTextoIA(texto) {
 
             if (!texto) {
-                return "NÃƒÂ£o consegui gerar uma resposta no momento.";
+                return "NÃ£o consegui gerar uma resposta no momento.";
             }
 
-            // Protege o conteÃƒÂºdo antes de inserir HTML
+            // Protege o conteÃºdo antes de inserir HTML
             let seguro = String(texto)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -2473,13 +2470,13 @@
                 "<strong class='text-white font-bold'>$1</strong>"
             );
 
-            // ItÃƒÂ¡lico
+            // ItÃ¡lico
             seguro = seguro.replace(
                 /\*(.*?)\*/g,
                 "<em>$1</em>"
             );
 
-            // TÃƒÂ­tulos simples
+            // TÃ­tulos simples
             seguro = seguro.replace(
                 /^### (.*?)$/gm,
                 "<div class='font-bold text-lime-300 text-sm mt-3 mb-1'>$1</div>"
@@ -2492,11 +2489,11 @@
 
             // Listas
             seguro = seguro.replace(
-                /^[-Ã¢â‚¬Â¢] (.*?)$/gm,
-                "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400'>Ã¢â‚¬Â¢</span><span>$1</span></div>"
+                /^[-â€¢] (.*?)$/gm,
+                "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400'>â€¢</span><span>$1</span></div>"
             );
 
-            // NÃƒÂºmeros
+            // NÃºmeros
             seguro = seguro.replace(
                 /^(\d+)\. (.*?)$/gm,
                 "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400 font-bold'>$1.</span><span>$2</span></div>"
@@ -2527,7 +2524,7 @@
 
 
         /* =========================================================
-           ADICIONAR MENSAGEM DO USUÃƒÂRIO
+           ADICIONAR MENSAGEM DO USUÃRIO
            ========================================================= */
 
         function adicionarMensagemUsuario(mensagem) {
@@ -2546,7 +2543,7 @@
                 </span>
 
                 <span class="text-xs font-bold text-slate-300">
-                    VocÃƒÂª
+                    VocÃª
                 </span>
 
             </div>
@@ -2558,7 +2555,7 @@
         </div>
 
         <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
-            Ã°Å¸â€˜Â¤
+            ðŸ‘¤
         </div>
     `;
 
@@ -2581,7 +2578,7 @@
 
             wrapper.innerHTML = `
         <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-            Ã°Å¸Â¤â€“
+            ðŸ¤–
         </div>
 
         <div class="max-w-[88%]">
@@ -2626,7 +2623,7 @@
 
             wrapper.innerHTML = `
         <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-            Ã°Å¸Â¤â€“
+            ðŸ¤–
         </div>
 
         <div>
@@ -2752,7 +2749,7 @@
                     adicionarMensagemIA(
                         data.resposta ||
                         data.erro ||
-                        "NÃƒÂ£o foi possÃƒÂ­vel processar sua pergunta."
+                        "NÃ£o foi possÃ­vel processar sua pergunta."
                     );
 
                     return;
@@ -2761,7 +2758,7 @@
 
                 adicionarMensagemIA(
                     data.resposta ||
-                    "NÃƒÂ£o consegui encontrar uma resposta para essa pergunta."
+                    "NÃ£o consegui encontrar uma resposta para essa pergunta."
                 );
 
 
@@ -2774,7 +2771,7 @@
                 }
 
                 adicionarMensagemIA(
-                    "NÃƒÂ£o consegui conectar ao assistente neste momento. Verifique a conexÃƒÂ£o e tente novamente."
+                    "NÃ£o consegui conectar ao assistente neste momento. Verifique a conexÃ£o e tente novamente."
                 );
 
                 console.error("Erro no chatbot:", error);
@@ -2794,7 +2791,7 @@
 
 
         /* =========================================================
-           FORMULÃƒÂRIO
+           FORMULÃRIO
            ========================================================= */
 
         if (chatForm && chatInput) {
@@ -2858,7 +2855,7 @@
 
 
         /* =========================================================
-           SUGESTÃƒâ€¢ES
+           SUGESTÃ•ES
            ========================================================= */
 
         document.querySelectorAll(".sugestao-chat").forEach(function (botao) {
@@ -2890,7 +2887,7 @@
             <div class="flex items-start gap-3">
 
                 <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-                    Ã°Å¸Â¤â€“
+                    ðŸ¤–
                 </div>
 
                 <div class="max-w-[85%]">
@@ -2909,7 +2906,7 @@
 
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200">
 
-                        OlÃƒÂ¡! Ã°Å¸â€˜â€¹ Como posso ajudar vocÃƒÂª hoje?
+                        OlÃ¡! ðŸ‘‹ Como posso ajudar vocÃª hoje?
 
                     </div>
 
