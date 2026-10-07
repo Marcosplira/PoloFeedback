@@ -12,7 +12,7 @@ services:
     buildCommand: bash build.sh
     # --workers 2: adequado para o plano free do Render (512 MB RAM)
     # --timeout 60: evita que requests lentos (ex: Gemini) causem erro 502
-    startCommand: gunicorn polofeedback.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60 --log-level info
+    startCommand: python manage.py migrate && gunicorn polofeedback.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60 --log-level info
     envVars:
       - key: DEBUG
         value: "False"
@@ -32,7 +32,3 @@ services:
       #   value: "SUA_CHAVE_AQUI"
       - key: GEMINI_MODEL
         value: "gemini-1.5-flash"
-      # DJANGO_ADMIN_PASSWORD: configure manualmente no painel do Render
-      # para definir a senha do usuário admin em produção.
-      # - key: DJANGO_ADMIN_PASSWORD
-      #   value: "SUA_SENHA_SEGURA_AQUI"

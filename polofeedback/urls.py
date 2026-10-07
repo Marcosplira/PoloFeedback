@@ -13,6 +13,7 @@ from feedback.views import (
     dashboard,
     enquete,
     gerar_qrcode,
+    inicio,
     ia_analisar,
     ia_chat,
     service_worker,
@@ -21,7 +22,7 @@ from feedback.views import (
 urlpatterns = [
     path("service-worker.js", service_worker, name="service_worker"),
     path("admin/", admin.site.urls),
-    path("", avaliar, name="inicio"),
+    path("", inicio, name="inicio"),
     path("avaliar/", avaliar, name="avaliar"),
     path("enquete/", enquete, name="enquete"),
     path(

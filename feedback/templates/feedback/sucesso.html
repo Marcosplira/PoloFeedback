@@ -82,16 +82,16 @@
                     class="flex items-center justify-center gap-2 w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#a3e635] border border-[#a3e635] font-bold py-3.5 rounded-xl transition shadow-sm">
                     📝 Fazer outra avaliação
                 </a>
-                <a href="{% url 'avaliar' %}"
+                <a href="{% url 'inicio' %}"
                     class="flex items-center justify-center gap-2 w-full bg-gray-50 hover:bg-gray-100 text-gray-600 font-semibold py-3 rounded-xl transition border border-gray-200 text-sm">
                     🏠 Voltar ao início
                 </a>
             </div>
         </div>
 
-        <p class="text-center text-white/40 text-xs mt-6">Polo Fit • Sua opinião faz a diferença</p>
     </div>
 
+    {% include "feedback/rodape.html" %}
     {% include "feedback/pwa_install.html" %}
 </body>
 

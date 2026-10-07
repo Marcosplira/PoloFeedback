@@ -475,32 +475,32 @@
 
             <!-- MENU DE NAVEGAÇÃO -->
             <nav class="flex items-center gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
-                <a href="{% url 'avaliar' %}"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
+                <a href="{% url 'inicio' %}"
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     🏠 Início
                 </a>
                 <a href="{% url 'dashboard' %}"
-                    class="flex-shrink-0 flex items-center gap-1.5 bg-white/10 text-[#a3e635] font-bold px-3 py-1.5 rounded-lg text-xs border border-[#a3e635]/30">
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap bg-white/10 text-[#a3e635] font-bold px-3 py-2 rounded-lg text-xs border border-[#a3e635]/30">
                     📊 Dashboard
                 </a>
                 <a href="{% url 'dashboard' %}#tabela-avaliacoes"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     📋 Avaliações
                 </a>
                 <a href="{% url 'dashboard' %}#ranking"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     👥 Funcionários
                 </a>
                 <a href="#secao-enquete"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     📋 Enquete
                 </a>
                 <a href="{% url 'gerar_qrcode' %}" id="btn-qrcode"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     📱 QR Codes
                 </a>
                 <a href="{% url 'admin:index' %}"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     ⚙️ Administração
                 </a>
             </nav>
@@ -2732,6 +2732,7 @@
         }
     </script>
 
+    {% include "feedback/rodape.html" %}
     {% include "feedback/pwa_install.html" %}
 </body>
 

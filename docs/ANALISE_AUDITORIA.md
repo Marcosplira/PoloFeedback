@@ -1,171 +1,60 @@
-# Auditoria do projeto Polo Feedback
+# Revisão técnica e de produto — Polo Feedback
 
-## 1. Visão geral
+## Resumo
 
-O projeto já está em uma etapa muito boa: ele possui backend em Django, fluxo de avaliação, dashboard administrativo, QR Code, IA com fallback e testes automatizados. Isso mostra que a ideia está funcional e com potencial real de negócio.
+O repositório contém um produto web Django para coletar feedback, exibir avaliações e uma enquete, gerar QR Codes e apoiar a gestão com um dashboard e recursos de IA. Esta revisão distingue a base existente das propostas futuras; configurações de deploy, por si só, não comprovam que um serviço foi publicado ou validado em produção.
 
-## 2. Estado atual verificado
+## Melhorias implementadas nesta revisão
 
-Validação executada:
+- Separação da página inicial e da página de avaliação para os links terem destinos distintos.
+- Inclusão de endereço, telefone, conversa manual por WhatsApp e autoria/créditos no rodapé.
+- Remoção da criação/rotação de usuário com senha padrão durante o build. O gerente deve criar uma conta individual.
+- Imagem Docker executada como usuário sem privilégios de root; Compose exige segredo e senha de banco definidos e usa volume persistente para mídia, sem mascarar os estáticos coletados.
+- Documentação e slides agora distinguem o sistema existente das propostas de treino por QR Code e notificações automáticas.
 
-- comando: python manage.py test
-- resultado: 10 testes executados
-- status: OK
+## Limitação de validação do ambiente
 
-Conclusão: a base funcional está estável e pronta para evoluir.
+Os testes Django devem ser executados no ambiente Python do projeto. Docker/Compose não está disponível no ambiente desta revisão; portanto, a imagem e a configuração Compose ainda precisam ser validadas por `docker compose config`, build e inicialização em uma máquina com Docker.
 
-## 3. O que já está funcionando bem
+## Próximas melhorias prioritárias
 
-### Backend e arquitetura
-- Django configurado de forma funcional
-- autenticação básica com login do admin
-- gestão de funcionários e avaliações
-- modelos estruturados de forma clara
-- dashboard com filtros e estatísticas
+### 1. Preparar a operação antes da publicação
 
-### Experiência do cliente
-- formulário de avaliação mobile-friendly
-- integração com QR Code para localização
-- tela de sucesso após avaliação
-- suporte para múltiplas categorias e tipos de feedback
+- Configurar segredos, HTTPS, domínio, hosts, banco de produção, backups e recuperação.
+- Criar contas pessoais e validar permissões de cada perfil.
+- Definir responsáveis por triagem e resolução, e política de acesso e retenção de feedback.
+- Fazer teste de aceitação com gerente, funcionários e alunos antes de divulgar QR Codes.
 
-### Gerenciamento
-- status de avaliação: pendente, em análise e resolvida
-- ranking de funcionários
-- filtros por categoria, tipo, funcionário e status
-- IA com fallback local caso a API falhe
+### 2. Melhorar análise e acompanhamento
 
-### Qualidade
-- 10 testes automatizados
-- ausência de erros críticos na checagem atual do projeto
+- Conferir filtros, contagens e relatórios com amostras controladas.
+- Registrar tempos de resposta e resolução e acordar metas mensuráveis.
+- Avaliar atualização automática do dashboard somente se a operação precisar.
+- Reduzir o acoplamento do módulo de views gradualmente com testes de caracterização.
 
-## 4. O que precisa melhorar
+### 3. Planejar o módulo de treinos separado
 
-### 4.1 Sincronização em tempo real
-O maior ponto de melhoria do sistema é a atualização automática.
+Treinos por aparelho ainda não existem no sistema atual. Validar fluxos, papéis, conteúdo e um piloto antes de programar. Proteger planos individuais por autenticação/autorização, manter QR Codes sem dados pessoais, usar vídeos próprios ou autorizados e deixar séries/carga sob responsabilidade profissional. Detalhes: [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md).
 
-Hoje o painel e o app estão funcionando em fluxo tradicional. Para deixar o produto realmente profissional, é essencial:
+### 4. Planejar WhatsApp automático de forma segura
 
-- atualizar o dashboard em tempo real
-- sincronizar cadastro e mudança de status sem refresh manual
-- salvar dados localmente quando o celular estiver offline
-- sincronizar depois quando a internet voltar
+O link existente abre conversa manual. Notificações futuras dependem de WhatsApp Business API oficial, aprovação, custos, credenciais, consentimento/preferências, minimização de conteúdo e auditoria. Não enviar mensagens a alunos sem uma base apropriada e fluxo de opt-out.
 
-Recomendação:
+### 5. Melhorias técnicas adicionais
 
-- usar WebSockets com Django Channels
-- criar camada de sincronização offline-first
-- usar cache para listas recentes
+- revisar validação, tamanho e tipo de uploads de fotos;
+- configurar monitoramento de erros e logs sem dados pessoais desnecessários;
+- revisar limitação e tempo limite das chamadas externas da IA;
+- planejar política de atualização de dependências e execução de verificações de segurança;
+- confirmar requisitos de acessibilidade e desempenho em celulares com usuários reais.
 
-### 4.2 App e experiência mobile
-O sistema está funcional, mas ainda parece um app web bem estruturado, não um produto de app profissional.
+## Critérios de prontidão para uso oficial
 
-Faltam:
+- validação da configuração Docker e/ou do ambiente de hospedagem;
+- testes de acesso sem autenticação e por cada perfil;
+- teste de restauração de backup e persistência de mídia;
+- política de privacidade e canal de contato publicados;
+- domínio e HTTPS confirmados;
+- critérios e responsáveis pela operação aprovados pela gerência.
 
-- identidade visual premium
-- splash screen
-- ícone do app
-- notificações push
-- melhor usabilidade em mobile
-- PWA ou empacotamento Android
-
-### 4.3 IA para tomada de decisão
-A IA está presente, mas ela ainda pode evoluir muito mais.
-
-O ideal é transformar a IA em um assistente executivo, com respostas como:
-
-- “qual setor precisa de atenção?”
-- “quem foi melhor avaliado?”
-- “qual foi a maior reclamação hoje?”
-- “o que eu preciso resolver primeiro?”
-
-A IA deve responder perguntas do gerente, não apenas gerar um texto estático.
-
-### 4.4 Organização do código
-O arquivo views.py está muito carregado. Ele reúne:
-
-- regras de validação
-- geração de QR Code
-- analytics
-- IA
-- chat
-- dashboard
-
-Isso dificulta manutenção e expansão.
-
-Recomendação:
-
-- separar views por contexto
-- criar services para analise IA e aggregation
-- criar helpers para filtros e estatísticas
-- criar módulos de API e dashboard independentes
-
-### 4.5 Testes e cobertura
-Os testes existentes são bons, mas ainda são poucos para um sistema que pretende crescer.
-
-Falta cobrir:
-
-- fluxo completo de IA
-- autenticação e perfis
-- filtros de dashboard
-- geração de QR Code
-- atualização de status
-- upload de fotos de funcionários
-- cenários offline e sincronização
-
-### 4.6 Segurança e produção
-Para produção, o sistema precisa cuidar melhor de:
-
-- validação de upload de imagens
-- controle de permissões por tipo de usuário
-- limite de taxa para requests da IA
-- logs de auditoria
-- backups automáticos do banco de dados
-- política de arquivos estáticos e mídia
-
-### 4.7 Documentação técnica e operacional
-O projeto tem um README forte, mas ainda falta documentação mais robusta para:
-
-- arquitetura de software
-- onboarding de equipe
-- fluxo de deploy
-- operação de IA
-- manutenção
-- troubleshooting
-
-## 5. Melhorias estratégicas recomendadas
-
-### Fase 1 — produtividade imediata
-- live update do dashboard
-- QR Code por local e por unidade
-- resumo executivo automático
-- IA chatbot para gerente
-- status de pendente/resolvido mais visual
-
-### Fase 2 — profissionalização
-- app mobile profissional
-- notificações push
-- relatórios PDF e Excel
-- branding e identidade visual
-- painel executivo por dia/semana/mês
-
-### Fase 3 — diferenciação no mercado
-- assistente IA para cliente e gerente
-- alertas automáticos
-- integração com WhatsApp e e-mail
-- histórico por unidade e funcionário
-- gestão multi-loja
-
-## 6. Conclusão
-
-O projeto já tem uma excelente base funcional e define uma direção muito boa. O diferencial agora não é criar outra versão do mesmo sistema, mas transformar este produto em uma experiência profissional, automatizada e inteligente.
-
-Se o projeto avançar em:
-
-- tempo real
-- IA orientada a decisão
-- mobile premium
-- dashboards executivos
-- gestão por unidade
-
-então ele deixa de ser apenas um sistema interno e passa a ser um produto de alto valor para mercado.
+Metas de retenção, economia e retorno financeiro precisam de baseline e medição; não devem ser prometidas com base apenas na existência do software.

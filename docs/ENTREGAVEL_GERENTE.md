@@ -70,10 +70,12 @@ A academia pode imprimir QR Codes em pontos estratégicos. Quando o aluno escane
 - fortalecimento da reputação da academia
 
 ### Benefícios financeiros
-- maior retenção de clientes
-- redução de perda por insatisfação não tratada
+- oportunidade de acompanhar insatisfações antes que se agravem
+- indicadores para avaliar tendências de satisfação e possíveis impactos
 - melhora na percepção da marca
-- suporte para decisões que impactam operação e produtividade
+- apoio a decisões que impactam operação e produtividade
+
+> Retenção, economia e retorno financeiro são resultados a medir em piloto; não são garantidos apenas pela implantação do sistema.
 
 ---
 
@@ -137,7 +139,7 @@ O sistema organiza tudo em um só lugar.
 ### 3. Ele ajuda a tornar a gestão mais objetiva
 O gerente deixa de “adivinhar” e passa a decidir com dados.
 
-### 4. Ele melhora a operação em tempo real
+### 4. Ele organiza o acompanhamento
 Problemas e elogios passam a ser monitorados com mais clareza.
 
 ### 5. Ele é escalável
@@ -162,12 +164,21 @@ Essa sequência transmite muito bem o valor do produto e facilita a compreensão
 ## Próximos passos de evolução
 
 A solução já está funcional e pronta para apresentação, e pode evoluir para:
-- notificações automáticas por WhatsApp
+- módulo de treino e instrução de aparelhos por QR Code (proposta ainda não implementada)
+- notificações automáticas por WhatsApp Business API oficial, após aprovação
 - alertas para pendências críticas
 - relatórios por unidade
 - exportação de dados para PDF
 - integração com CRM ou painel interno
 - app mobile mais completo
+
+### Próximo projeto: treinos por QR Code
+
+O aluno poderá escanear o QR Code de uma máquina, autenticar-se e consultar apenas o próprio treino e as instruções aprovadas pelo professor. A carga, as séries e as repetições serão definidas pelo profissional; o sistema não deve prescrever exercícios automaticamente. É necessário validar requisitos, segurança, conteúdo autorizado, custos e piloto antes de iniciar a programação. Consulte [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md).
+
+### WhatsApp
+
+O botão de contato do sistema abre uma conversa iniciada pela pessoa com a academia. Ele não envia notificações automáticas. Para avisos automáticos, será necessária integração futura com a WhatsApp Business API, aprovação da academia, análise de custos e definição de preferências de comunicação e privacidade.
 
 ---
 
@@ -181,4 +192,18 @@ Com dashboard, QR Code, IA e chatbot, o sistema deixa claro que a academia tem u
 
 ## Mensagem final para apresentação
 
-“Com o Polo Feedback, a academia deixa de depender de feedback improvisado e passa a usar uma ferramenta inteligente para ouvir, entender e melhorar a experiência dos alunos em tempo real.”
+“Com o Polo Feedback, a academia organiza os feedbacks para ouvir os alunos, analisar temas recorrentes e acompanhar as ações de melhoria.”
+
+---
+
+## Contato e autoria
+
+**Academia Polo Fit**
+Rua Projetada, Bairro Cenecista, nº 62
+Telefone/WhatsApp: (83) 98671-9438
+
+**Software e proposta:** Marcos Paulo Santos Lira
+
+- Tecnologia em Sistemas para Internet — Tecnólogo, IFPB, Campus Picuí — PB; concluído em 2026.
+- Técnico em Eletrônica — Subsequente, IFPB, Campus Picuí — PB.
+- Técnico em Informática, IFPB, Campus Picuí — PB.

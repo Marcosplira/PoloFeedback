@@ -1,105 +1,64 @@
-# Roadmap profissional do Polo Feedback
+# Roadmap profissional — Polo Fit
 
-## Objetivo
+Este roadmap separa funcionalidades existentes de ideias ainda não implementadas. Prazos e custos devem ser estimados com a gerência após validação do escopo.
 
-Transformar o sistema atual em uma solução profissional, moderna, automatizada e com cara de produto pronto para uso em operações reais e em múltiplas unidades.
+## Base existente no Polo Feedback
 
-## Fase 1 — Base operacional premium
+- Avaliação de satisfação por formulário e QR Code por localização.
+- Dashboard protegido por login, filtros, indicadores, avaliações e status.
+- Pesquisa de satisfação para aulas e espaços.
+- Resumo e chat com suporte Gemini opcional e fallback local limitado.
+- PWA instalável e configuração de deploy em Docker/Render.
 
-### Meta
-Aumentar confiança, velocidade e clareza nos dados.
+O sistema atual não possui atualização instantânea via WebSocket, armazenamento/sincronização de avaliações offline, módulo de treinos, mensagens automáticas por WhatsApp, nem publicação validada de produção. O usuário deve atualizar o painel para buscar dados recentes. A configuração de deploy é uma base, não uma confirmação de publicação.
 
-### Entregas
-- atualização automática em tempo real
-- sincronização offline/online
-- QR Code por setor e unidade
-- painel mais visual e executável
-- status com alertas visuais
+## Prioridade 0 — Preparação operacional e segurança
 
-### O que melhorar
-- usar Django Channels para live update
-- separar lógica de dashboards em services
-- criar filtros por data/unidade/local
-- criar notificação para avaliação crítica
+1. Configurar domínio, `SECRET_KEY`, `DEBUG=False`, hosts, banco, backups e HTTPS em ambiente administrado pela academia.
+2. Criar contas individuais para gerente e demais perfis; remover credenciais compartilhadas e validar controle de acesso.
+3. Executar testes e validar formulários, QR Codes, fluxo de status, mídia, PWA e recuperação de backup.
+4. Definir canal de suporte, responsável pela triagem e prazo interno para responder às reclamações.
+5. Documentar aviso de privacidade, minimização de dados, retenção e acesso aos comentários.
 
-## Fase 2 — inteligência e gestão
+## Prioridade 1 — Uso real do feedback
 
-### Meta
-Transformar dados em decisões.
+- Incluir canal claro de contato com a academia (WhatsApp atual abre conversa manual).
+- Definir rotina de revisão de pendências e responsáveis pela tratativa.
+- Medir volume, nota, categorias, tempo de resposta e resolução com uma linha de base.
+- Avaliar melhoria no mobile com alunos e funcionários antes de alterar o fluxo.
+- Planejar relatórios exportáveis conforme as decisões reais da gerência.
 
-### Entregas
-- IA para resumo executivo
-- chatbot para gerente
-- rankings por colaborador
-- alertas automáticos por setor
-- previsão de tendência por período
+## Prioridade 2 — Proposta de treino por QR Code
 
-### Melhorias esperadas
-- reduzir tempo de análise manual
-- responder questões do gerente em segundos
-- priorizar ações com base real em dados
+O novo sistema de treino não deve ser iniciado diretamente pela implementação. Primeiro validar o problema e o escopo com gerente, professores e alunos, prototipar telas, definir piloto, aprovar custos e especificar critérios de aceite.
 
-## Fase 3 — Produto mobile
+### MVP proposto
 
-### Meta
-Deixar a solução pronta para uso em aplicativos e para Play Store.
+- Equipamentos com QR Codes aleatórios que identifiquem apenas a máquina.
+- Login de alunos, professores e gerência com permissões distintas.
+- Exercícios e vídeos próprios ou autorizados, revisados por um professor.
+- Planos individuais consultáveis somente pelo aluno autenticado.
+- Séries, repetições, intervalos e carga definidos pelo profissional.
+- Histórico de alterações e testes contra acesso a plano de outra pessoa.
 
-### Entregas
-- app mobile com identidade visual
-- login por perfil
-- notificações push
-- PWA ou pacote Android
-- experiência forte em celular
+Este módulo ainda não está implementado. Leia [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md) para o roteiro de descoberta, segurança, conteúdo e piloto. Next Fit e MFIT são referências de fluxo, não fontes para copiar vídeos, marca ou conteúdo protegido.
 
-### O que incluir
-- splash screen
-- logo e branding
-- navegação em cards
-- acesso rápido a avaliações recentes
-- botão para gerar resumo do dia
+## Prioridade 3 — Notificações WhatsApp
 
-## Fase 4 — escala e gestão multi-unidade
+O contato direto abre uma conversa iniciada pelo usuário. Alertas automáticos exigem aprovação e integração à WhatsApp Business Platform/API oficial, credenciais guardadas com segurança, avaliação de custo, opt-in/opt-out, definição de destinatários e auditoria. Começar com um alerta gerencial mínimo; não enviar automaticamente dados pessoais ou conteúdo de treino.
 
-### Meta
-Expandir para mais empresas e filiais.
+## Prioridade 4 — Escala
 
-### Entregas
-- gestão por unidade
-- múltiplas empresas
-- dashboards por loja
-- comparativo entre filiais
-- relatórios por responsável
+Após validação do uso em uma unidade e da operação:
 
-## Fase 5 — diferenciação no mercado
+- automação de atualização do painel, caso haja demanda;
+- exportação e relatórios gerenciais;
+- integrações com sistemas da academia;
+- gestão de múltiplas unidades;
+- notificações push ou offline, somente com requisitos claros de privacidade e suporte.
 
-### Meta
-Criar vantagem competitiva real.
+## Indicadores de sucesso
 
-### Entregas
-- IA conversando com cliente e gerente
-- integração com WhatsApp
-- envio de resumo por e-mail
-- relatórios PDF e Excel
-- suporte para clientes finais e gestão operacional
+Combinar as metas com a academia antes do piloto. Exemplos: participação dos alunos, tempo de resposta, percentual de pendências resolvidas, satisfação de alunos e equipe, disponibilidade dos QR Codes e número de incidentes de acesso (meta: zero).
 
-## Critérios de sucesso
-
-- dashboard atualizado em tempo real
-- avaliação em celular sem fricção
-- IA respondendo perguntas úteis para gestão
-- marca percebida como profissional
-- sistema pronto para crescer em mais unidades
-
-## Prioridade recomendada
-
-1. sincronização automática
-2. QR Code por local
-3. IA para resumo executivo
-4. chatbot para gerente
-5. app mobile profissional
-6. relatórios e exportação
-7. expansão multi-unidade
-
-## Observação final
-
-O produto já tem base e potencial. O próximo grande salto não é adicionar mais telas por pura estética, mas entregar inteligência operacional conjugada com experiência profissional de uso.
+Não prometer retenção, receita, economia ou retorno financeiro sem uma medição apropriada.

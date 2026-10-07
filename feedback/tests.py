@@ -58,6 +58,25 @@ class FeedbackViewsTests(TestCase):
             ativo=True
         )
 
+    def test_inicio_e_avaliacao_tem_destinos_separados(self):
+        inicio_response = self.client.get(reverse("inicio"))
+        self.assertEqual(inicio_response.status_code, 200)
+        self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
+        self.assertContains(inicio_response, reverse("avaliar"))
+
+        avaliacao_response = self.client.get(reverse("avaliar"))
+        self.assertEqual(avaliacao_response.status_code, 200)
+        self.assertContains(avaliacao_response, f'href="{reverse("inicio")}"')
+        self.assertContains(avaliacao_response, 'aria-current="page"')
+
+    def test_rodape_exibe_contato_e_creditos(self):
+        response = self.client.get(reverse("inicio"))
+        self.assertContains(response, "Rua Projetada, Bairro Cenecista, nº 62")
+        self.assertContains(response, "(83) 98671-9438")
+        self.assertContains(response, "https://wa.me/5583986719438")
+        self.assertContains(response, "Marcos Paulo Santos Lira")
+        self.assertContains(response, "Instituto Federal de Educação")
+
     def test_pagina_avaliar_get(self):
         response = self.client.get(reverse("avaliar"))
         self.assertEqual(response.status_code, 200)

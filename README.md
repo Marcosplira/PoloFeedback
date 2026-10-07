@@ -8,7 +8,7 @@ Sistema moderno de coleta, análise e gestão de avaliações e satisfação dos
 
 O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da academia, permitindo:
 - **Alunos:** Avaliar a experiência rapidamente via celular escaneando um QR Code nos totens ou setores da academia.
-- **Gerentes e Supervisores:** Acompanhar métricas de satisfação em tempo real, filtrar feedbacks, gerenciar pendências de atendimento, visualizar rankings dos instrutores e gerar relatórios executivos instantâneos com Inteligência Artificial (**Google Gemini**).
+- **Gerentes e Supervisores:** Consultar indicadores ao acessar ou atualizar o painel, filtrar feedbacks, gerenciar pendências, visualizar rankings e usar recursos de IA com **Google Gemini** opcional.
 
 ---
 
@@ -22,7 +22,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
    - Opção de selecionar o colaborador/instrutor avaliado.
    - Retenção inteligente de dados em caso de avisos de validação.
 
-2. **📊 Dashboard Gerencial em Tempo Real (`/dashboard/`):**
+2. **📊 Dashboard Gerencial (`/dashboard/`):**
    - Indicadores-chave (KPIs): Total de avaliações, média de notas, total de elogios e reclamações.
    - Gráficos interativos (Chart.js) por Categoria e por Distribuição de Notas.
    - Filtros dinâmicos por categoria, tipo de feedback, status e colaborador.
@@ -32,7 +32,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 3. **🤖 Análise Inteligente com IA (`/ia/analisar/` e chat em `/ia/chat/`):**
    - Integração com a API Google Gemini (`gemini-1.5-flash`).
    - Gera um resumo executivo com pontos fortes, alertas operacionais e recomendações práticas para a gerência com base nos dados reais coletados.
-   - **Fallback inteligente:** funciona mesmo sem a chave da API, gerando análise automaticamente a partir dos dados do banco.
+   - **Fallback local limitado:** sem a API, algumas respostas são geradas por regras e indicadores do sistema; não equivale a um modelo generativo.
 
 4. **🖨️ Gerador de QR Code com Impressão de Cartaz (`/qrcode/`):**
    - Permite criar QR Codes para qualquer setor ou unidade (ex: *Musculação*, *Recepção*, *Polo Centro*).
@@ -133,11 +133,12 @@ Acesse no navegador:
 
 Para subir a aplicação completa com banco PostgreSQL em containers:
 
-### 1. Crie o arquivo `.env` a partir do exemplo:
-```bash
-cp .env.example .env
-# Edite o .env e defina pelo menos: SECRET_KEY, DB_PASSWORD, DJANGO_ADMIN_PASSWORD
+### 1. Crie o arquivo `.env` a partir do exemplo no PowerShell:
+```powershell
+Copy-Item .env.example .env
 ```
+
+Preencha `SECRET_KEY` com uma chave Django exclusiva e `DB_PASSWORD` com uma senha forte antes de iniciar. Não use os valores de exemplo em produção.
 
 ### 2. Suba os containers:
 ```bash
@@ -145,6 +146,11 @@ docker compose up --build -d
 ```
 
 O sistema estará disponível em [http://localhost:8000](http://localhost:8000).
+
+Crie uma conta administrativa individual na primeira execução:
+```bash
+docker compose exec web python manage.py createsuperuser
+```
 
 ### 3. Parar os containers:
 ```bash
@@ -161,7 +167,7 @@ O projeto possui suíte de testes cobrindo modelos, validações, autenticação
 python manage.py test
 ```
 
-> ✅ 13 testes — todos passando.
+Os testes devem ser executados no ambiente Python configurado para o projeto. Consulte a saída do comando para o resultado atual.
 
 ---
 
@@ -175,9 +181,10 @@ Após o primeiro deploy, vá em **Environment → Environment Variables** e adic
 | Variável | Descrição |
 | :--- | :--- |
 | `GEMINI_API_KEY` | Chave da API Google Gemini (obtenha em [aistudio.google.com](https://aistudio.google.com/app/apikey)) |
-| `DJANGO_ADMIN_PASSWORD` | Senha do usuário `admin` para acessar o dashboard |
 
-> ⚠️ **IMPORTANTE:** Nunca coloque senhas ou chaves de API diretamente no arquivo `render.yaml`. Use sempre o painel de variáveis de ambiente.
+Depois que o serviço estiver conectado ao banco e publicado, crie um superusuário individual pelo Shell do Render com `python manage.py createsuperuser`. O processo de build não cria uma conta compartilhada nem define senha padrão.
+
+> ⚠️ **IMPORTANTE:** Nunca coloque senhas ou chaves de API diretamente no repositório ou no arquivo `render.yaml`. Use as variáveis protegidas do provedor.
 
 ---
 
@@ -191,7 +198,6 @@ Após o primeiro deploy, vá em **Environment → Environment Variables** e adic
 | `DATABASE_URL` | *(SQLite local)* | URL do banco PostgreSQL em produção |
 | `GEMINI_API_KEY` | *(vazio — usa fallback local)* | Chave da API Gemini para IA |
 | `GEMINI_MODEL` | `gemini-1.5-flash` | Modelo Gemini utilizado |
-| `DJANGO_ADMIN_PASSWORD` | *(não cria admin se vazio)* | Senha do superusuário `admin` |
 
 ---
 
@@ -214,6 +220,7 @@ PoloFeedback/
 │   ├── urls.py
 │   └── wsgi.py
 ├── .env.example                # Exemplo de variáveis de ambiente
+├── .dockerignore               # Arquivos excluídos da imagem Docker
 ├── .gitignore
 ├── build.sh                    # Script de build para o Render
 ├── docker-compose.yml          # Orquestração Docker local
@@ -227,14 +234,13 @@ PoloFeedback/
 
 ## 🔎 Auditoria e melhorias prioritárias
 
-O projeto já está funcional e com boa base para evoluir. A validação atual foi feita com testes automatizados e o sistema está em estado estável.
+O projeto contém avaliação por QR Code, painel administrativo, pesquisa de satisfação e suporte de IA. O módulo de treinos por máquina descrito na proposta ainda não está implementado. A implantação em nuvem precisa de configuração e validação específicas por ambiente.
 
 ### Status verificado
-- 13 testes executados com sucesso
-- sistema de avaliação funcional
-- dashboard operacional com filtros e rankings
-- IA com fallback local
-- QR Code funcionando para localizações
+- sistema de avaliação, painel, enquete e QR Code
+- assistente de IA condicionado à configuração da API, com fallback local limitado
+- segredos e credenciais devem ser gerados e armazenados por ambiente
+- imagem Docker deve ser validada com Docker/Compose antes de publicar
 
 ### Principais melhorias recomendadas
 1. Atualização automática em tempo real
@@ -244,12 +250,15 @@ O projeto já está funcional e com boa base para evoluir. A validação atual f
 5. App mobile profissional e branding premium
 6. Dashboard executivo com relatórios e alertas
 7. Separação de regras de negócio em services e módulos
+8. Treinos individualizados por QR Code — projeto futuro, com login, permissões e revisão do professor
+9. Notificações automáticas WhatsApp — planejar com API oficial, custos, consentimento e auditoria
 
 ### Documentação complementar
 - [docs/ANALISE_AUDITORIA.md](docs/ANALISE_AUDITORIA.md)
 - [docs/ROADMAP_PROFISSIONAL.md](docs/ROADMAP_PROFISSIONAL.md)
 - [docs/ENTREGAVEL_GERENTE.md](docs/ENTREGAVEL_GERENTE.md)
 - [docs/SLIDE_APRESENTACAO.html](docs/SLIDE_APRESENTACAO.html)
+- [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md)
 
 ---
 

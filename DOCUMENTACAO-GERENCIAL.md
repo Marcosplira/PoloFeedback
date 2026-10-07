@@ -8,13 +8,13 @@
 
 O **Polo Feedback** é uma solução tecnológica desenvolvida sob medida para a **Polo Fit**, projetada para transformar a maneira como a academia escuta seus alunos, identifica gargalos operacionais e toma decisões estratégicas.
 
-Tradicionalmente, academias enfrentam o desafio do "feedback invisível": a maioria dos alunos insatisfeitos cancela sua matrícula silenciosamente sem relatar o problema à recepção. O **Polo Feedback** resolve este problema ao posicionar pontos de escuta rápidos e acessíveis (via QR Code e aplicativo PWA), combinados com um **Dashboard Executivo em Tempo Real** e um **Consultor de Inteligência Artificial Conversacional** dedicado à gerência.
+Quando não existe um canal simples, algumas insatisfações podem não chegar à gerência. O **Polo Feedback** oferece coleta por QR Code, painel de acompanhamento e recursos de IA configuráveis. O painel atualiza quando é acessado ou recarregado; não há sincronização instantânea por WebSocket.
 
 ### Principais Ganhos para a Polo Fit:
-1. **Redução de Churn (Cancelamentos):** Detecção imediata de insatisfações antes que resultem em perda de receita recorrente.
+1. **Acompanhamento de satisfação:** Registro organizado de insatisfações para que a equipe avalie e trate os casos.
 2. **Eficiência Operacional:** Triagem rápida de manutenções necessárias (ar-condicionado, equipamentos, vestiários) e organização de chamados com fluxo de status (*Pendente* → *Em Análise* → *Resolvida*).
 3. **Reconhecimento da Equipe:** Métricas de desempenho individuais por professor e recepcionista, baseadas na voz direta dos alunos.
-4. **Decisões Estratégicas Guiadas por Dados:** Fim do "achismo" gerencial através de gráficos, relatórios e do assistente de IA.
+4. **Decisões apoiadas por dados:** Gráficos e indicadores para apoiar a análise gerencial; impactos devem ser medidos.
 
 ---
 
@@ -25,11 +25,11 @@ flowchart TD
     subgraph JORNADA_DO_ALUNO["Jornada do Aluno (Foco em Agilidade)"]
         A["Aluno na Polo Fit"] -->|Escaneia QR Code no setor| B["Abertura Instantânea no Celular (PWA)"]
         B --> C["Preenche Nota (1 a 5), Categoria e Comentário"]
-        C -->|Em menos de 30 segundos| D["Feedback Registrado no Banco de Dados"]
+        C --> D["Feedback Registrado no Banco de Dados"]
     end
 
     subgraph JORNADA_DO_GERENTE["Jornada do Gerente (Foco em Controle e Ação)"]
-        D --> E["Dashboard Executivo em Tempo Real"]
+        D --> E["Dashboard Executivo ao acessar/atualizar"]
         E --> F["Visão de KPIs: Média Geral, Elogios, Reclamações, Pendências"]
         E --> G["Ranking de Desempenho dos Colaboradores"]
         E --> H["Gestão de Status das Reclamações"]
@@ -108,9 +108,9 @@ Para apresentar o projeto com o máximo de impacto, siga esta sequência:
 
 | Minuto | Etapa | O que mostrar | Mensagem Chave |
 | :---: | :--- | :--- | :--- |
-| **01** | **Contexto & Problema** | Abrir a página inicial do sistema | *"Hoje perdemos alunos que saem em silêncio. Criamos uma forma simples de escutá-los antes que cancelem."* |
-| **02** | **Experiência do Aluno** | Enviar uma avaliação de teste pelo formulário | *"Em menos de 30 segundos o aluno avalia pelo celular, escolhe o setor, a nota e o colaborador."* |
-| **03** | **Painel em Tempo Real** | Atualizar o Dashboard e mostrar a nova avaliação | *"Instantaneamente o gerente tem a métrica atualizada, sabe quem atendeu e o que precisa ser ajustado."* |
+| **01** | **Contexto & Problema** | Abrir a página inicial do sistema | *"Um canal simples ajuda a registrar a experiência e acompanhar os pontos de atenção."* |
+| **02** | **Experiência do Aluno** | Enviar uma avaliação de teste pelo formulário | *"O aluno pode avaliar pelo celular, escolher o setor, a nota e o colaborador."* |
+| **03** | **Painel de acompanhamento** | Atualizar o Dashboard e mostrar a nova avaliação | *"Após atualizar o painel, a gerência confere a avaliação e decide como acompanhar a tratativa."* |
 | **04** | **Assistente de IA em Ação** | Fazer uma pergunta no chat da IA do painel | *"A IA analisa todos os comentários e nos dá diagnósticos estratégicos e planos de ação em linguagem humana."* |
 | **05** | **Ação Operacional** | Alterar status de uma pendência para 'Resolvida' | *"O painel não é só visual: ele organiza a operação e garante que nenhum problema do aluno fique esquecido."* |
 
@@ -121,14 +121,14 @@ Para apresentar o projeto com o máximo de impacto, siga esta sequência:
 - **URL do Sistema Local:** `http://127.0.0.1:8000`
 - **Acesso pelo Celular na mesma rede Wi-Fi:** `http://192.168.102.114:8000`
 - **Área do Gerente (Login):** `http://127.0.0.1:8000/login/`
-  - **Usuário:** `admin`
-  - **Senha:** `admin`
+  - Crie uma conta individual com `python manage.py createsuperuser`.
+  - Não compartilhe credenciais nem use uma senha padrão.
 
 ---
 
 ## 7. Publicação na Nuvem (Hospedagem no Render para Enviar o Link ao Gerente)
 
-O projeto está totalmente configurado e preparado para hospedagem em nuvem gratuita no **Render.com** através dos arquivos de infraestrutura inclusos no repositório (`render.yaml` e `build.sh`).
+O repositório inclui configurações para publicação no **Render.com** (`render.yaml` e `build.sh`). É necessário configurar segredos, banco, domínio e variáveis de ambiente no provedor e validar o funcionamento antes de disponibilizar o link à academia.
 
 ### Passo a Passo para Gerar o Link Online:
 
@@ -145,16 +145,41 @@ O projeto está totalmente configurado e preparado para hospedagem em nuvem grat
    - Conecte seu repositório `PoloFeedback`.
    - O Render detectará automaticamente o arquivo `render.yaml` e configurará o banco PostgreSQL e o Web Service Python com Whitenoise e Gunicorn.
 
-3. **Deploy Automático:**
+3. **Build e inicialização:**
    - Clique em **"Apply"**.
-   - O Render executará o `build.sh` que instala dependências, compila arquivos estáticos, roda migrações e provisiona automaticamente o usuário gestor `admin`.
+   - O `build.sh` instala dependências e coleta arquivos estáticos; a inicialização aplica as migrações.
+   - Depois que o serviço conectar ao banco, crie o primeiro usuário gerente pelo Shell do Render com `python manage.py createsuperuser`. O sistema não cria senha padrão.
 
 4. **Enviar o Link ao Gerente:**
-   - O Render fornecerá uma URL pública do tipo: `https://polofeedback.onrender.com`
-   - O gerente poderá testar a página inicial, preencher feedbacks e fazer login no painel executivo de qualquer computador ou celular, sem necessidade de instalar nada.
+   - Use a URL fornecida pelo Render apenas após validar HTTPS, acesso ao banco, criação do gerente e fluxos principais.
+   - Configure o domínio e custos do provedor conforme a necessidade da academia.
+
+## Próximos projetos
+
+- Treinos personalizados consultados pelo QR Code dos aparelhos: proposta ainda não implementada. Validar requisitos, privacidade, permissões e conteúdo com gerente, professores e alunos antes de iniciar.
+- Alertas automáticos por WhatsApp: etapa futura sujeita à WhatsApp Business API oficial, custos, consentimento e aprovação da academia.
+- A documentação para iniciar o módulo de treinos está em [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md).
 
 ---
 
-## 8. Conclusão
+## 8. Próximos projetos e limites do escopo
+
+- O módulo de treino individual por QR Code ainda não está implementado. Sua proposta e roteiro inicial estão em [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md).
+- O botão de WhatsApp abre uma conversa manual com a academia. Notificações automáticas exigem integração oficial, custos, consentimento e aprovação.
+- O piloto deve ter linha de base e indicadores acordados; não há promessa de retenção ou retorno financeiro.
+
+## 9. Contato e autoria
+
+**Academia Polo Fit**
+Rua Projetada, Bairro Cenecista, nº 62
+Telefone/WhatsApp: (83) 98671-9438
+
+**Software e proposta:** Marcos Paulo Santos Lira
+
+- Tecnologia em Sistemas para Internet — Tecnólogo, IFPB, Campus Picuí — PB; concluído em 2026.
+- Técnico em Eletrônica — Subsequente, IFPB, Campus Picuí — PB.
+- Técnico em Informática, IFPB, Campus Picuí — PB.
+
+## 10. Conclusão
 
 O **Polo Feedback** não é apenas um sistema de formulários; é uma **ferramenta de gestão de excelência e fidelização de clientes** que posiciona a Polo Fit na vanguarda do setor fitness, aliando design contemporâneo, facilidade de uso e inteligência artificial aplicada ao negócio.

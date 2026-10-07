@@ -1,6 +1,6 @@
 # SLIDES DE APRESENTAÇÃO EXECUTIVA — POLO FEEDBACK
 > **Roteiro de Apresentação para a Reunião com a Gerência**  
-> *Apresentador: Marcos Paulo • Projeto: Polo Feedback para Academia Polo Fit*
+> *Apresentador: Marcos Paulo Santos Lira • Projeto: Polo Feedback para Academia Polo Fit*
 
 ---
 
@@ -8,29 +8,29 @@
 ### **Polo Feedback**
 #### *Plataforma Inteligente de Gestão da Experiência do Aluno*
 - **Subtítulo:** Ouvir em tempo real, agir com velocidade e fidelizar com inteligência artificial.
-- **Apresentador:** Marcos Paulo
+- **Apresentador:** Marcos Paulo Santos Lira
 - **Empresa:** Polo Fit
 - **Notas do Apresentador:**  
-  *"Bom dia! Hoje tenho a satisfação de apresentar o Polo Feedback. Um projeto desenvolvido sob medida para a Polo Fit resolver um dos maiores desafios de qualquer academia moderna: entender o que o aluno realmente pensa e intervir antes que ele decida cancelar a matrícula."*
+  *"Bom dia! Vou apresentar o Polo Feedback, um canal para registrar a experiência dos alunos e ajudar a equipe da Polo Fit a acompanhar oportunidades de melhoria."*
 
 ---
 
 ## 📌 SLIDE 2 — O PROBLEMA DO MERCADO FITNESS
 ### **O Que Acontece Quando Não Ouvimos o Aluno?**
-- 🔇 **O Feedback Invisível:** 96% dos clientes insatisfeitos não reclamam na recepção — eles simplesmente cancelam a mensalidade.
-- ⏳ **Demora na Identificação:** Ar-condicionado com defeito ou aparelho quebrado demoram dias para chegar ao conhecimento da gerência.
-- 📉 **Decisões no "Achismo":** Falta de dados consolidados sobre quais professores são mais elogiados e quais setores precisam de atenção.
-- 💸 **Custo Alto de Cancelamento (Churn):** Conquistar um novo aluno custa até 7 vezes mais caro do que manter um aluno atual satisfeito.
+- 🔇 **O Feedback Invisível:** parte dos alunos pode não relatar uma insatisfação diretamente à equipe; sem um canal simples, a gestão perde a oportunidade de ouvir e acompanhar esses casos.
+- ⏳ **Demora na Identificação:** problemas de manutenção podem não chegar rapidamente ao conhecimento da gerência.
+- 📉 **Decisões sem histórico consolidado:** torna-se mais difícil comparar temas recorrentes, avaliações e setores.
+- 💸 **Risco de cancelamento:** uma insatisfação que não chega à gestão pode deixar de ser tratada a tempo.
 - **Notas do Apresentador:**  
-  *"Na rotina acelerada da academia, o gerente muitas vezes é o último a saber de um problema. Um aluno que treina com ar-condicionado quebrado por uma semana simplesmente não renova no próximo mês. Precisávamos de um canal instantâneo e sem fricção."*
+  *"Na rotina acelerada, uma reclamação pode não chegar à gerência. Um canal simples ajuda a registrar o caso e acompanhar a tratativa."*
 
 ---
 
 ## 📌 SLIDE 3 — A SOLUÇÃO: POLO FEEDBACK
 ### **Transformando Opiniões em Ações Estratégicas**
-- ⚡ **Coleta Instantânea:** Avaliação em menos de 30 segundos pelo celular via QR Code.
+- ⚡ **Coleta simples:** Avaliação pelo celular via QR Code.
 - 📱 **Sem Fricção:** PWA que não exige download pesado nem criação de senhas pelo aluno.
-- 📊 **Painel Executivo em Tempo Real:** Visão clara de notas, categorias e volume de feedbacks.
+- 📊 **Painel Executivo:** Visão de notas, categorias e volume de feedbacks ao acessar/atualizar o painel.
 - 🤖 **Inteligência Artificial Integrada:** Diagnósticos automáticos e consultor virtual conversacional para a gerência.
 - **Notas do Apresentador:**  
   *"O Polo Feedback conecta a ponta física da academia diretamente à tela da gerência. O aluno aponta a câmera do celular para o QR Code no setor e avalia na hora. O gerente vê o resultado no painel imediatamente."*
@@ -65,55 +65,55 @@
 
 ## 📌 SLIDE 6 — INTELIGÊNCIA ARTIFICIAL: O GRANDE DIFERENCIAL
 ### **Um Consultor Executivo 24/7 Dentro do Sistema**
-- 🧠 **Diagnóstico com 1 Clique:** Análise semântica que resume centenas de comentários em pontos fortes e pontos fracos.
-- 💬 **Assistente Conversacional (Chatbot):** O gerente pode conversar em linguagem natural com a IA sobre qualquer aspecto da academia.
-- 🛡️ **Arquitetura Resiliente:** Motor híbrido com fallback estatístico que garante que a IA nunca saia do ar.
+- 🧠 **Resumo de apoio à gestão:** análise dos dados do sistema e dos comentários disponíveis.
+- 💬 **Assistente conversacional:** permite consultar temas cobertos pelo sistema; as respostas dependem da configuração da API Gemini ou do fallback local.
+- 🛡️ **Fallback local:** sem a API externa, o sistema oferece respostas limitadas por regras locais, não substitui um modelo generativo.
 - **Perguntas que o Gerente pode fazer no Chat:**
   - *"Quais os motivos mais frequentes de reclamação esta semana?"*
   - *"Como está o desempenho do professor X?"*
   - *"O que a IA sugere para melhorarmos a nota média da musculação?"*
 - **Notas do Apresentador:**  
-  *"Aqui está o grande salto de inovação: colocamos uma inteligência artificial que lê todas as opiniões dos alunos e responde diretamente às dúvidas da gerência. Não precisamos gastar horas lendo comentário por comentário; a IA já nos entrega o plano de ação pronto."*
+  *"O assistente pode apoiar a leitura dos indicadores. As recomendações devem ser conferidas pela gerência e contextualizadas com a operação."*
 
 ---
 
 ## 📌 SLIDE 7 — IMPACTO NO NEGÓCIO & RETORNO (ROI)
-### **Por Que o Polo Feedback se Paga no Primeiro Mês?**
-- 🛡️ **Retenção de Mensalistas:** Resolver a queixa de um aluno em até 24 horas recupera até 82% dos clientes insatisfeitos.
-- ⚙️ **Agilidade na Manutenção:** Evita que aparelhos fiquem quebrados sem que a direção saiba.
-- 🌟 **Motivação da Equipe:** Dá visibilidade e reconhecimento aos profissionais que recebem elogios frequentes dos alunos.
-- 🚀 **Posicionamento de Marca:** Demonstra aos clientes que a Polo Fit é uma academia moderna, atenta e com padrão tecnológico de excelência.
+### **Como medir o valor para a Polo Fit**
+- 🛡️ **Acompanhamento de satisfação:** monitore volume, notas, temas recorrentes e tempo de resposta.
+- ⚙️ **Agilidade operacional:** acompanhe os prazos entre registro, início da tratativa e resolução.
+- 🌟 **Reconhecimento da equipe:** identifique elogios e avaliações por colaborador com contexto e cuidado.
+- 📈 **Avaliação do piloto:** compare uma linha de base com indicadores após a implantação; não há resultado financeiro garantido sem medição.
 - **Notas do Apresentador:**  
-  *"Se este sistema evitar que apenas 3 ou 4 alunos cancelem sua matrícula por mês devido a um problema simples não resolvido, ele já se pagou integralmente. É um investimento direto em retenção e receita."*
+  *"Vamos medir satisfação, tempo de resposta e resolução durante um piloto. O impacto financeiro deve ser calculado a partir dos resultados observados, sem promessas antecipadas."*
 
 ---
 
 ## 📌 SLIDE 8 — TECNOLOGIA ROBUSTA & HOSPEDAGEM
 ### **Infraestrutura Profissional Pronta para Escalar**
-- 🐍 **Backend Django 5.x:** Alta confiabilidade, segurança e escalabilidade.
+- 🐍 **Backend Django 6.1.1:** Versão declarada no arquivo de dependências deste projeto.
 - 📱 **Frontend Responsivo Tailwind CSS:** Visual impecável em qualquer celular, tablet ou computador.
-- ☁️ **Hospedagem em Nuvem no Render:** Pronto para acesso 24h via web, com banco de dados PostgreSQL e certificado SSL seguro.
+- ☁️ **Hospedagem:** há configuração para Render e Docker; ambiente, domínio, banco, credenciais e HTTPS devem ser configurados e validados antes de anunciar disponibilidade.
 - 📲 **PWA Ready:** Ícones, splash screen e suporte para adicionar à tela inicial do celular como um app.
 - **Notas do Apresentador:**  
-  *"O sistema foi construído sobre padrões modernos da indústria de software. Ele já está pronto para rodar em nuvem no Render, com segurança reforçada e custo de infraestrutura inicial zero no plano gratuito."*
+  *"O projeto possui configurações de implantação. Antes de disponibilizar o sistema, precisamos validar ambiente, domínio, credenciais, banco e custos do provedor."*
 
 ---
 
 ## 📌 SLIDE 9 — PRÓXIMOS PASSOS & ROADMAP
-### **A Evolução da Gestão na Polo Fit**
-- 📲 **Fase 1 (Atual - Pronta):** Coleta por QR Code, Dashboard Gerencial, Chatbot com IA e Deploy em Nuvem.
-- 🔔 **Fase 2 (Próxima):** Notificações instantâneas no WhatsApp da gerência quando uma reclamação nota 1 ou 2 for registrada.
-- 🏢 **Fase 3:** Expansão para suporte a múltiplas unidades da Polo Fit em uma única conta master.
-- 📊 **Fase 4:** Relatório executivo mensal exportado em PDF com 1 clique para a diretoria.
+### **Evolução proposta**
+- ✅ **Base existente:** avaliação por QR Code, painel, pesquisa e suporte de IA; validar o ambiente de produção e as credenciais antes do uso oficial.
+- 🏋️ **Próximo projeto:** validar requisitos para treinos individualizados e instruções de aparelhos por QR Code.
+- 🔔 **Planejamento futuro:** alertas via WhatsApp Business API oficial, após aprovação, configuração e definição de consentimento e custos.
+- 📊 **Etapas posteriores:** relatórios exportáveis e suporte a múltiplas unidades, conforme prioridade e orçamento aprovados.
 - **Notas do Apresentador:**  
-  *"O Polo Feedback foi desenhado para crescer com a academia. A versão que estamos entregando hoje já resolve toda a operação diária, e temos um plano claro para os próximos módulos."*
+  *"O sistema atual oferece uma base de coleta e acompanhamento. As próximas etapas serão priorizadas junto com a gerência, com escopo e investimento definidos antes de iniciar."*
 
 ---
 
 ## 📌 SLIDE 10 — DEMONSTRAÇÃO PRÁTICA AO VIVO
 ### **Vamos Ver o Sistema em Ação!**
-1. 📲 **Simulação 1:** Escanear o QR Code e enviar uma avaliação de 30 segundos pelo celular.
-2. 💻 **Simulação 2:** Abrir o Dashboard e visualizar a métrica atualizada em tempo real.
+1. 📲 **Simulação 1:** Escanear o QR Code e enviar uma avaliação pelo celular.
+2. 💻 **Simulação 2:** Abrir ou atualizar o Dashboard e conferir a nova avaliação.
 3. 🤖 **Simulação 3:** Fazer uma pergunta ao Assistente de IA sobre os pontos a melhorar.
 4. ✅ **Simulação 4:** Marcar uma pendência como 'Resolvida'.
 
@@ -123,5 +123,41 @@
 ### **Polo Feedback**
 #### *Ouvir para evoluir. Treinar para vencer.*
 - **Perguntas e Discussão com a Gerência**
-- **Link de Acesso Online:** Disponível para teste imediato.
-- **Agradecimento:** Marcos Paulo • Polo Fit
+- **Link de acesso:** definir e validar com a gerência antes da apresentação.
+- **Agradecimento:** Marcos Paulo Santos Lira • Polo Fit
+
+---
+
+## 📌 SLIDE 12 — NOVA PROPOSTA: TREINO PELO QR CODE
+### **Orientação do exercício no aparelho**
+- O aluno lê o QR Code instalado na máquina.
+- A página mostra o equipamento e instruções aprovadas.
+- Após entrar na conta, o aluno consulta apenas o próprio plano.
+- Séries, repetições, descanso e carga são definidos pelo professor.
+- Este módulo é uma proposta e ainda não está implementado no Polo Feedback.
+- **Responsável pela proposta:** Marcos Paulo Santos Lira.
+
+## 📌 SLIDE 13 — COMO COMEÇAR SEM AUMENTAR O RISCO
+### **Validar antes de desenvolver**
+1. Conversar com gerente, professores e alunos.
+2. Escolher uma área e um piloto pequeno com a academia.
+3. Desenhar e testar as telas com os três perfis.
+4. Definir permissões, privacidade, equipamentos e conteúdo autorizado.
+5. Aprovar custos, responsáveis, critérios de sucesso e suporte.
+6. Iniciar o MVP somente após aprovar os requisitos e os protótipos.
+
+## 📌 SLIDE 14 — SEGURANÇA E RESPONSABILIDADE
+### **QR público não pode expor um treino particular**
+- QR Code identifica a máquina, não o aluno nem seu plano.
+- Login e autorização verificam o acesso individual.
+- Professor revisa orientações e define carga.
+- Vídeos devem ser próprios ou licenciados; Next Fit e MFIT são referências de fluxo, não material para copiar.
+- Coletar apenas dados necessários e documentar privacidade e retenção.
+
+## 📌 SLIDE 15 — WHATSAPP E EVOLUÇÃO COM APROVAÇÃO
+### **Contato direto hoje; notificações automáticas no futuro**
+- O botão de WhatsApp abre uma conversa iniciada pelo usuário.
+- Alertas automáticos exigem a WhatsApp Business Platform/API oficial.
+- Começar, se aprovado, com alertas gerenciais mínimos para feedbacks críticos.
+- Definir credenciais, custos, opt-in/opt-out, acesso e auditoria antes de enviar mensagens.
+- **Contato da academia:** (83) 98671-9438 • Rua Projetada, Bairro Cenecista, nº 62.

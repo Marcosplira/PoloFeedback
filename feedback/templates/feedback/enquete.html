@@ -99,25 +99,25 @@
     <!-- NAVBAR -->
     <nav class="navbar sticky top-0 z-50 px-4 py-3">
         <div class="max-w-2xl mx-auto flex items-center justify-between">
-            <a href="{% url 'avaliar' %}" class="flex items-center gap-2">
+            <a href="{% url 'inicio' %}" class="flex items-center gap-2">
                 <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-9 object-contain drop-shadow">
                 <span class="text-white font-black text-base hidden sm:block tracking-tight">Polo Feedback</span>
             </a>
-            <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                <a href="{% url 'avaliar' %}"
-                   class="text-white/80 hover:text-[#a3e635] font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition">
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs sm:gap-2 sm:text-sm">
+                <a href="{% url 'inicio' %}"
+                   class="inline-flex min-h-11 flex-shrink-0 items-center whitespace-nowrap text-white/80 hover:text-[#a3e635] font-semibold px-2.5 sm:px-3 py-2 rounded-lg transition">
                     🏠 Início
                 </a>
                 <a href="{% url 'avaliar' %}#formulario"
-                   class="text-white/80 hover:text-[#a3e635] font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition">
+                   class="inline-flex min-h-11 flex-shrink-0 items-center whitespace-nowrap text-white/80 hover:text-[#a3e635] border border-white/20 hover:border-[#a3e635] font-bold px-2.5 sm:px-3.5 py-2 rounded-lg transition">
                     📝 Avaliar
                 </a>
-                <a href="{% url 'enquete' %}"
-                   class="bg-[#a3e635] text-black font-black px-2.5 sm:px-3.5 py-1.5 rounded-lg transition">
+                <a href="{% url 'enquete' %}" aria-current="page"
+                   class="inline-flex min-h-11 flex-shrink-0 items-center whitespace-nowrap bg-[#a3e635] text-black font-black px-2.5 sm:px-3.5 py-2 rounded-lg transition">
                     📋 Enquete
                 </a>
                 <a href="{% url 'dashboard' %}"
-                   class="bg-white/10 hover:bg-white/20 text-[#a3e635] border border-[#a3e635]/40 hover:border-[#a3e635] font-black px-2.5 sm:px-3.5 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1"
+                   class="inline-flex min-h-11 flex-shrink-0 items-center gap-1 whitespace-nowrap bg-white/10 hover:bg-white/20 text-[#a3e635] border border-[#a3e635]/40 hover:border-[#a3e635] font-black px-2.5 sm:px-3.5 py-2 rounded-lg transition shadow-sm"
                    title="Acessar o Painel do Gerente">
                     📊 Dashboard
                 </a>
@@ -362,9 +362,7 @@
     </div>
 
     <!-- RODAPÉ -->
-    <footer class="max-w-2xl mx-auto px-4 py-8 text-center">
-        <p class="text-white/40 text-xs">Polo Fit • Sua opinião transforma nossos treinos.</p>
-    </footer>
+    {% include "feedback/rodape.html" %}
 
     {% include "feedback/pwa_install.html" %}
 </body>

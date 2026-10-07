@@ -1,17 +1,11 @@
-version: "3.9"
-
 services:
-  # ── Banco de dados PostgreSQL ──────────────────────────────
   db:
     image: postgres:16-alpine
-    container_name: polofeedback_db
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-polofeedback}
       POSTGRES_USER: ${POSTGRES_USER:-polo}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-polofit_dev_2026}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -20,33 +14,25 @@ services:
       timeout: 5s
       retries: 5
 
-  # ── Aplicação Django ───────────────────────────────────────
   web:
     build: .
-    container_name: polofeedback_web
     restart: unless-stopped
-    env_file:
-      - .env
-    command: >
-      sh -c "python manage.py migrate &&
-      gunicorn polofeedback.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 60 --log-level info --access-logfile -"
     ports:
-      - "8000:8000"
+      - "${APP_PORT:-8000}:8000"
     environment:
-      SECRET_KEY: ${SECRET_KEY:-django-insecure-dev-apenas-nao-use-em-producao}
+      SECRET_KEY: ${SECRET_KEY:?Defina SECRET_KEY no arquivo .env}
       DEBUG: ${DEBUG:-False}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
-      DATABASE_URL: ${DATABASE_URL:-postgres://polo:${DB_PASSWORD:-polofit_dev_2026}@db:5432/polofeedback}
+      DATABASE_URL: postgres://${POSTGRES_USER:-polo}:${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}@db:5432/${POSTGRES_DB:-polofeedback}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
-      DJANGO_ADMIN_PASSWORD: ${DJANGO_ADMIN_PASSWORD:-}
-      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://localhost,http://localhost:8000}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
     volumes:
-      - ./media:/app/media
-      - ./staticfiles:/app/staticfiles
+      - media_data:/app/media
     depends_on:
       db:
         condition: service_healthy
 
 volumes:
   postgres_data:
+  media_data:

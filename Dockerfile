@@ -14,10 +14,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Diretório de trabalho dentro do container
 WORKDIR /app
 
-# Instala dependências do sistema necessárias para psycopg2 e pillow
+# Instala somente a biblioteca de runtime necessária pelo driver PostgreSQL.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    libpq-dev \
+    libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copia e instala dependências Python primeiro (aproveita cache do Docker)
@@ -27,14 +26,22 @@ RUN pip install -r requirements.txt
 # Copia o restante do projeto
 COPY . .
 
-# Cria as pastas de media e staticfiles com permissões corretas
-RUN mkdir -p /app/media /app/staticfiles
+# Executa a aplicação sem privilégios de root e prepara os diretórios persistentes.
+RUN groupadd --system app && useradd --system --gid app --home-dir /app app \
+    && mkdir -p /app/media /app/staticfiles \
+    && chown -R app:app /app/media /app/staticfiles \
+    && chown -R app:app /app
 
 # Coleta os arquivos estáticos (requer SECRET_KEY mas não precisa do DB)
 RUN SECRET_KEY="collectstatic-temp-key" DEBUG="False" python manage.py collectstatic --noinput
 
+USER app
+
 # Porta que o gunicorn vai expor
 EXPOSE 8000
 
-# Comando de inicialização: aplica migrations e sobe o servidor com configurações de produção
-CMD ["sh", "-c", "python manage.py migrate && gunicorn polofeedback.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 60 --log-level info --access-logfile -"]
+# Aplica migrações no início e substitui o shell pelo Gunicorn para receber sinais.
+CMD ["sh", "-c", "python manage.py migrate && exec gunicorn polofeedback.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 60 --log-level info --access-logfile -"]
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)" || exit 1

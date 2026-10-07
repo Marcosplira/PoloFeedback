@@ -156,7 +156,7 @@
 
 
                 <!-- BOTÃO CONTINUAR -->
-                <a href="{% url 'avaliar' %}" class="mt-5
+                <a href="{% url 'inicio' %}" class="mt-5
                            flex items-center justify-center gap-2
                            w-full
                            bg-[#0a0a0a]
@@ -200,14 +200,9 @@
         </div>
 
 
-        <!-- RODAPÉ -->
-        <p class="text-center text-white/40 text-xs mt-6">
-            Polo Fit • Sua opinião transforma nossos treinos.
-        </p>
-
     </div>
 
-
+    {% include "feedback/rodape.html" %}
     {% include "feedback/pwa_install.html" %}
 
 

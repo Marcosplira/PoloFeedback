@@ -135,6 +135,10 @@ def avaliar(request):
     )
 
 
+def inicio(request):
+    return render(request, "feedback/inicio.html")
+
+
 def enquete(request):
     """
     Página da Enquete de Satisfação com as 6 perguntas oficiais.
