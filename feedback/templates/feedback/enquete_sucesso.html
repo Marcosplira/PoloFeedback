@@ -139,44 +139,62 @@
 
 
             <!-- CONVITE PARA AVALIAÇÃO -->
-            <div id="convite-avaliacao" class="mt-5 rounded-xl border border-gray-200 p-4">
+            <div id="convite-avaliacao" class="mt-5 rounded-2xl border border-gray-200 bg-gray-50 p-5">
 
-                <p class="text-sm font-bold text-gray-900">
-                    Deseja avaliar uma etapa da academia também?
+                <div class="text-3xl mb-3">
+                    ⭐
+                </div>
+
+                <p class="text-base font-black text-gray-900">
+                    Quer avaliar sua experiência na Polo Fit?
                 </p>
 
-                <div class="mt-3 grid grid-cols-2 gap-2">
+                <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                    Leva menos de 1 minuto e sua avaliação ajuda nossa equipe
+                    a melhorar cada vez mais.
+                </p>
 
-                    <!-- SIM -->
-                    <a href="{% url 'inicio' %}" class="flex items-center justify-center
-                               bg-[#0a0a0a]
-                               text-[#a3e635]
-                               font-bold
-                               py-2.5
-                               rounded-lg
-                               text-sm">
-                        Sim
-                    </a>
 
-                    <!-- NÃO -->
-                    <button type="button" id="recusar-avaliacao" class="bg-gray-100
-                               hover:bg-gray-200
-                               text-gray-700
-                               font-semibold
-                               py-2.5
-                               rounded-lg
-                               text-sm">
-                        Não, obrigado
-                    </button>
+                <!-- BOTÃO CONTINUAR -->
+                <a href="{% url 'avaliar' %}" class="mt-5
+                           flex items-center justify-center gap-2
+                           w-full
+                           bg-[#0a0a0a]
+                           hover:bg-[#1a1a1a]
+                           text-[#a3e635]
+                           border border-[#a3e635]
+                           font-black
+                           py-3.5
+                           rounded-xl
+                           transition
+                           shadow-sm
+                           text-sm">
+                    ⭐ Sim, quero avaliar
+                </a>
 
-                </div>
+
+                <!-- BOTÃO AGORA NÃO -->
+                <button type="button" id="recusar-avaliacao" class="mt-3
+                           flex items-center justify-center
+                           w-full
+                           bg-white
+                           hover:bg-gray-100
+                           text-gray-600
+                           font-semibold
+                           py-3
+                           rounded-xl
+                           transition
+                           border border-gray-200
+                           text-sm">
+                    Agora não
+                </button>
 
             </div>
 
 
             <!-- MENSAGEM APÓS RECUSAR -->
             <p id="avaliacao-recusada" class="hidden mt-5 text-sm text-gray-600" role="status" aria-live="polite">
-                Tudo certo. Sua enquete foi concluída.
+                Tudo certo. Sua enquete foi concluída. Obrigado pela participação! 💚
             </p>
 
         </div>
