@@ -586,70 +586,210 @@
         </section>
 
 
-
         <!-- ===================================================== -->
-        <!-- ANÁLISE COM IA -->
+        <!-- ASSISTENTE IA -->
         <!-- ===================================================== -->
 
-        <section class="ia-card p-6">
+        <section class="relative overflow-hidden rounded-3xl bg-slate-950 border border-slate-800 shadow-2xl">
 
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- Brilho decorativo -->
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-lime-400/10 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none">
+            </div>
 
-                <div>
+            <!-- CABEÇALHO -->
+            <div class="relative flex items-center justify-between px-5 md:px-7 py-5 border-b border-slate-800">
 
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                        🤖 Análise Inteligente com IA
-                    </h2>
+                <div class="flex items-center gap-4">
 
-                    <p class="text-gray-400 text-sm mt-1">
-                        Gera um resumo executivo baseado nas avaliações atuais.
+                    <!-- Avatar IA -->
+                    <div class="relative flex-shrink-0">
+
+                        <div
+                            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-lime-300 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/20">
+                            <span class="text-2xl">🤖</span>
+                        </div>
+
+                        <span
+                            class="absolute -right-1 -bottom-1 w-3.5 h-3.5 bg-lime-400 border-2 border-slate-950 rounded-full"></span>
+
+                    </div>
+
+                    <div>
+
+                        <div class="flex items-center gap-2">
+
+                            <h2 class="text-lg md:text-xl font-bold text-white">
+                                Assistente Polo Fit
+                            </h2>
+
+                            <span
+                                class="px-2 py-0.5 rounded-full bg-lime-400/10 border border-lime-400/20 text-[10px] font-bold uppercase tracking-wider text-lime-300">
+                                IA
+                            </span>
+
+                        </div>
+
+                        <p class="text-xs md:text-sm text-slate-400 mt-0.5">
+                            Seu assistente para analisar a academia e tomar decisões.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AÇÕES -->
+                <div class="flex items-center gap-2">
+
+                    <span
+                        class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-lime-300">
+                        <span class="w-2 h-2 bg-lime-400 rounded-full animate-pulse"></span>
+                        Online
+                    </span>
+
+                    <button type="button" id="limpar-chat"
+                        class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition"
+                        title="Limpar conversa">
+                        🗑️
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ÁREA DA CONVERSA -->
+            <div id="chat-mensagens"
+                class="relative h-[360px] md:h-[400px] overflow-y-auto px-4 md:px-6 py-5 space-y-5 scrollbar-thin">
+
+                <!-- MENSAGEM INICIAL DA IA -->
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
+                        🤖
+                    </div>
+
+                    <div class="max-w-[85%]">
+
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-lime-300">
+                                Assistente Polo Fit
+                            </span>
+
+                            <span class="text-[10px] text-slate-500">
+                                agora
+                            </span>
+                        </div>
+
+                        <div
+                            class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
+
+                            <p class="mb-2">
+                                Olá! 👋 Sou o assistente inteligente da <strong class="text-white">Polo Fit</strong>.
+                            </p>
+
+                            <p class="text-slate-400">
+                                Posso ajudar você a analisar avaliações, reclamações,
+                                sugestões, funcionários, desempenho e oportunidades de melhoria.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUGESTÕES -->
+                <div id="chat-sugestoes" class="pl-11">
+
+                    <p class="text-[11px] text-slate-500 mb-2">
+                        Sugestões para começar
                     </p>
 
+                    <div class="flex flex-wrap gap-2">
+
+                        <button type="button"
+                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
+                            data-pergunta="Como está a satisfação dos alunos atualmente?">
+                            📊 Satisfação dos alunos
+                        </button>
+
+                        <button type="button"
+                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
+                            data-pergunta="Quais são as principais reclamações dos alunos?">
+                            ⚠️ Principais reclamações
+                        </button>
+
+                        <button type="button"
+                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
+                            data-pergunta="Quais funcionários estão se destacando nas avaliações?">
+                            🏆 Funcionários destaque
+                        </button>
+
+                        <button type="button"
+                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
+                            data-pergunta="Quais melhorias deveriam ser priorizadas pela academia?">
+                            💡 Melhorias prioritárias
+                        </button>
+
+                    </div>
+
                 </div>
-
-
-                <button id="btn-ia" onclick="analisarComIA()"
-                    class="flex items-center gap-2 bg-[#33FF00] text-black font-bold px-5 py-2.5 rounded-xl hover:bg-[#28cc00] transition-all duration-200 whitespace-nowrap">
-                    ✨ Gerar Análise
-                </button>
 
             </div>
 
 
-            <div id="ia-resultado" class="ia-resultado hidden">
+            <!-- CAMPO DE MENSAGEM -->
+            <div class="relative border-t border-slate-800 bg-slate-950/90 p-4 md:p-5">
 
-                <div id="ia-texto"></div>
+                <form id="chat-form" class="relative">
+
+                    <div class="flex items-end gap-2">
+
+                        <div class="relative flex-1">
+
+                            <textarea id="chat-input" rows="1" maxlength="1000"
+                                placeholder="Pergunte alguma coisa sobre a Polo Fit..."
+                                class="w-full resize-none rounded-2xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 px-4 py-3.5 pr-12 text-sm focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/10 transition"></textarea>
+
+                            <div class="absolute right-3 bottom-3 text-[10px] text-slate-600">
+                                Enter ↵
+                            </div>
+
+                        </div>
+
+
+                        <button id="chat-enviar" type="submit"
+                            class="flex-shrink-0 w-12 h-12 rounded-2xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-black flex items-center justify-center shadow-lg shadow-lime-500/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Enviar mensagem">
+                            ➤
+                        </button>
+
+                    </div>
+
+                    <div class="flex items-center justify-between mt-2 px-1">
+
+                        <span class="text-[10px] text-slate-600">
+                            O assistente utiliza os dados disponíveis no sistema.
+                        </span>
+
+                        <span id="chat-contador" class="text-[10px] text-slate-600">
+                            0/1000
+                        </span>
+
+                    </div>
+
+                </form>
 
             </div>
 
         </section>
 
-        <section class="bg-slate-900 rounded-2xl p-6 border border-lime-500/20 shadow-lg">
-            <div class="flex items-center justify-between gap-3 mb-5">
-                <div>
-                    <p class="text-xs uppercase tracking-[0.22em] text-lime-300/80 mb-2">Assistente do gerente</p>
-                    <h2 class="text-xl font-bold text-white">💬 Chatbot executivo</h2>
-                </div>
-                <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">IA disponível</span>
-            </div>
-
-            <div id="chat-mensagens" class="space-y-3 mb-4 max-h-72 overflow-y-auto pr-2">
-                <div class="bg-slate-800 rounded-xl p-3 text-sm text-slate-100 border border-slate-700">
-                    Olá! Posso ajudar no diagnóstico da academia, responder dúvidas sobre avaliações, reclamações,
-                    ranking e ações de melhoria.
-                </div>
-            </div>
-
-            <form id="chat-form" class="flex flex-col md:flex-row gap-3">
-                <input id="chat-input" type="text"
-                    placeholder="Pergunte ao assistente sobre funcionários, reclamações, metas ou desempenho..."
-                    class="flex-1 rounded-xl border border-slate-700 bg-slate-800 text-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-lime-500">
-                <button type="submit"
-                    class="bg-lime-400 hover:bg-lime-300 text-black font-bold px-5 py-3 rounded-xl transition-all duration-200">
-                    Enviar
-                </button>
-            </form>
-        </section>
 
 
 
@@ -744,18 +884,22 @@
         <!-- SEÇÃO: ENQUETE DE SATISFAÇÃO (AULAS & NOVOS ESPAÇOS)  -->
         <!-- ===================================================== -->
         <section id="secao-enquete" class="bg-white rounded-2xl shadow p-6 border border-slate-100">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
+            <div
+                class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-xl">📋</span>
-                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de Satisfação — Aulas Coletivas & Novos Espaços</h3>
+                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de Satisfação — Aulas Coletivas & Novos
+                            Espaços</h3>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Resultados da pesquisa oficial dos alunos sobre preferências de modalidades e expansões da academia.
+                        Resultados da pesquisa oficial dos alunos sobre preferências de modalidades e expansões da
+                        academia.
                     </p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <span class="inline-flex items-center gap-1.5 bg-lime-100 text-lime-900 text-xs font-bold px-3 py-1.5 rounded-xl border border-lime-300">
+                    <span
+                        class="inline-flex items-center gap-1.5 bg-lime-100 text-lime-900 text-xs font-bold px-3 py-1.5 rounded-xl border border-lime-300">
                         ⚡ {{ total_enquetes }} respostas coletadas
                     </span>
                     <a href="{% url 'gerar_qrcode' %}?localizacao=Enquete+de+Satisfa%C3%A7%C3%A3o"
@@ -773,9 +917,11 @@
             <div class="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-8 text-center">
                 <span class="text-3xl block mb-2">📋</span>
                 <p class="font-bold text-gray-700 text-sm">Nenhuma resposta de enquete registrada ainda.</p>
-                <p class="text-xs text-gray-400 mt-1">Imprima o QR Code da Enquete e divulgue para os alunos responderem pelo celular!</p>
+                <p class="text-xs text-gray-400 mt-1">Imprima o QR Code da Enquete e divulgue para os alunos responderem
+                    pelo celular!</p>
                 <div class="mt-4 flex justify-center gap-2">
-                    <a href="{% url 'enquete' %}" target="_blank" class="text-xs font-bold text-[#33FF00] bg-[#0a0a0a] px-3.5 py-2 rounded-xl transition">
+                    <a href="{% url 'enquete' %}" target="_blank"
+                        class="text-xs font-bold text-[#33FF00] bg-[#0a0a0a] px-3.5 py-2 rounded-xl transition">
                         Responder Primeiro Teste ➔
                     </a>
                 </div>
@@ -785,7 +931,8 @@
 
                 <!-- 1. AULAS FAVORITAS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
+                    <h4
+                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
                         <span>🔥</span> 1. Aulas Mais Populares / Favoritas
                     </h4>
                     <div class="space-y-2.5">
@@ -797,7 +944,7 @@
                             </div>
                             <div class="w-full bg-slate-200 rounded-full h-2">
                                 <div class="bg-gradient-to-r from-[#a3e635] to-[#22c55e] h-2 rounded-full"
-                                     style="width: {% widthratio qtd total_enquetes 100 %}%"></div>
+                                    style="width: {% widthratio qtd total_enquetes 100 %}%"></div>
                             </div>
                         </div>
                         {% empty %}
@@ -808,7 +955,8 @@
 
                 <!-- 3. NOVOS ESPAÇOS DESEJADOS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
+                    <h4
+                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
                         <span>🏗️</span> 3. Novos Espaços Mais Desejados
                     </h4>
                     <div class="space-y-2.5">
@@ -820,7 +968,7 @@
                             </div>
                             <div class="w-full bg-slate-200 rounded-full h-2">
                                 <div class="bg-gradient-to-r from-blue-400 to-indigo-500 h-2 rounded-full"
-                                     style="width: {% widthratio qtd total_enquetes 100 %}%"></div>
+                                    style="width: {% widthratio qtd total_enquetes 100 %}%"></div>
                             </div>
                         </div>
                         {% empty %}
@@ -831,12 +979,14 @@
 
                 <!-- 2. PARTICIPAÇÃO EM AULAS COLETIVAS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
+                    <h4
+                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
                         <span>👥</span> 2. Frequência em Aulas Coletivas
                     </h4>
                     <div class="space-y-2">
                         {% for item, qtd in participacao_ranking %}
-                        <div class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
+                        <div
+                            class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
                             <span class="font-medium text-slate-700">{{ item }}</span>
                             <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">{{ qtd }}</span>
                         </div>
@@ -848,14 +998,17 @@
 
                 <!-- 4. AULAS QUE PRECISAM DE ATENÇÃO -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
+                    <h4
+                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
                         <span>⚠️</span> 4. Aulas que Precisam de Mais Atenção
                     </h4>
                     <div class="space-y-2">
                         {% for aula, qtd in melhorias_ranking %}
-                        <div class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
+                        <div
+                            class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
                             <span class="font-medium text-slate-700">{{ aula }}</span>
-                            <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{{ qtd }} voto{{ qtd|pluralize:"s" }}</span>
+                            <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{{ qtd }} voto{{
+                                qtd|pluralize:"s" }}</span>
                         </div>
                         {% empty %}
                         <p class="text-xs text-gray-400">Sem dados ainda.</p>
@@ -880,13 +1033,16 @@
                             <span>{{ resp.data_criacao|date:"d/m H:i" }}</span>
                         </div>
                         {% if resp.aula_falta %}
-                        <p><strong class="text-slate-700">Sente falta de:</strong> <span class="text-slate-600">{{ resp.aula_falta }}</span></p>
+                        <p><strong class="text-slate-700">Sente falta de:</strong> <span class="text-slate-600">{{
+                                resp.aula_falta }}</span></p>
                         {% endif %}
                         {% if resp.sugestao_valor %}
-                        <p><strong class="text-slate-700">Agregaria valor:</strong> <span class="text-slate-600">{{ resp.sugestao_valor }}</span></p>
+                        <p><strong class="text-slate-700">Agregaria valor:</strong> <span class="text-slate-600">{{
+                                resp.sugestao_valor }}</span></p>
                         {% endif %}
                         {% if resp.elogio_colaborador %}
-                        <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg"><strong>💚 Elogio:</strong> {{ resp.elogio_colaborador }}</p>
+                        <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg"><strong>💚 Elogio:</strong> {{
+                            resp.elogio_colaborador }}</p>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -934,9 +1090,9 @@
 
                 <select name="periodo" id="filtro-periodo">
                     <option value="">Todo período</option>
-                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>📅 Hoje</option>
-                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>📅 Esta semana</option>
-                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>📅 Últimos 30 dias</option>
+                    <option value="hoje" {% if periodo_filtro=='hoje' %}selected{% endif %}>📅 Hoje</option>
+                    <option value="semana" {% if periodo_filtro=='semana' %}selected{% endif %}>📅 Esta semana</option>
+                    <option value="mes" {% if periodo_filtro=='mes' %}selected{% endif %}>📅 Últimos 30 dias</option>
                 </select>
 
 
@@ -949,7 +1105,7 @@
                     </option>
 
                     {% for codigo, nome in categorias %}
-                    <option value="{{ codigo }}" {% if categoria_filtro == codigo %}selected{% endif %}>
+                    <option value="{{ codigo }}" {% if categoria_filtro==codigo %}selected{% endif %}>
                         {{ nome }}
                     </option>
                     {% endfor %}
@@ -960,7 +1116,7 @@
                         Todos tipos
                     </option>
                     {% for codigo, nome in tipos_feedback %}
-                    <option value="{{ codigo }}" {% if tipo_filtro == codigo %}selected{% endif %}>
+                    <option value="{{ codigo }}" {% if tipo_filtro==codigo %}selected{% endif %}>
                         {{ nome }}
                     </option>
                     {% endfor %}
@@ -971,7 +1127,7 @@
                         Todos status
                     </option>
                     {% for codigo, nome in status_choices %}
-                    <option value="{{ codigo }}" {% if status_filtro == codigo %}selected{% endif %}>
+                    <option value="{{ codigo }}" {% if status_filtro==codigo %}selected{% endif %}>
                         {{ nome }}
                     </option>
                     {% endfor %}
@@ -982,7 +1138,8 @@
                         Todos funcionários
                     </option>
                     {% for func in funcionarios %}
-                    <option value="{{ func.id }}" {% if funcionario_filtro == func.id|stringformat:"s" %}selected{% endif %}>
+                    <option value="{{ func.id }}" {% if funcionario_filtro==func.id|stringformat:"s" %}selected{% endif
+                        %}>
                         {{ func.nome }}
                     </option>
                     {% endfor %}
@@ -1938,7 +2095,7 @@
                         <input
                             type="hidden"
                             name="filtros_ativos"
-                            value="${filtrosAtivos}"
+                            value="${filtrosAtivos}
                         >
 
 
@@ -2257,52 +2414,508 @@
 
         }
 
-        const chatForm = document.getElementById("chat-form");
-        const chatInput = document.getElementById("chat-input");
-        const chatMessages = document.getElementById("chat-mensagens");
+        <script>
+/* =========================================================
+            ASSISTENTE IA — POLO FIT
+            ========================================================= */
 
-        if (chatForm && chatInput && chatMessages) {
-            chatForm.addEventListener("submit", async function (event) {
+            const chatForm = document.getElementById("chat-form");
+            const chatInput = document.getElementById("chat-input");
+            const chatMessages = document.getElementById("chat-mensagens");
+            const chatEnviar = document.getElementById("chat-enviar");
+            const limparChat = document.getElementById("limpar-chat");
+            const chatContador = document.getElementById("chat-contador");
+            const chatSugestoes = document.getElementById("chat-sugestoes");
+
+
+            /* =========================================================
+               FORMATAÇÃO SEGURA DA RESPOSTA DA IA
+               ========================================================= */
+
+            function formatarTextoIA(texto) {
+
+    if (!texto) {
+        return "Não consegui gerar uma resposta no momento.";
+    }
+
+            // Protege o conteúdo antes de inserir HTML
+            let seguro = String(texto)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+        // Negrito
+        seguro = seguro.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong class='text-white font-bold'>$1</strong>"
+        );
+
+        // Itálico
+        seguro = seguro.replace(
+            /\*(.*?)\*/g,
+            "<em>$1</em>"
+        );
+
+        // Títulos simples
+        seguro = seguro.replace(
+            /^### (.*?)$/gm,
+            "<div class='font-bold text-lime-300 text-sm mt-3 mb-1'>$1</div>"
+        );
+
+        seguro = seguro.replace(
+            /^## (.*?)$/gm,
+            "<div class='font-bold text-lime-300 text-base mt-3 mb-1'>$1</div>"
+        );
+
+        // Listas
+        seguro = seguro.replace(
+            /^[-•] (.*?)$/gm,
+            "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400'>•</span><span>$1</span></div>"
+        );
+
+        // Números
+        seguro = seguro.replace(
+            /^(\d+)\. (.*?)$/gm,
+            "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400 font-bold'>$1.</span><span>$2</span></div>"
+        );
+
+        // Quebras de linha
+        seguro = seguro.replace(/\n/g, "<br>");
+
+        return seguro;
+}
+
+
+        /* =========================================================
+           HORA ATUAL
+           ========================================================= */
+
+        function horaAtual() {
+
+            return new Date().toLocaleTimeString(
+                "pt-BR",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+        }
+
+
+        /* =========================================================
+           ADICIONAR MENSAGEM DO USUÁRIO
+           ========================================================= */
+
+        function adicionarMensagemUsuario(mensagem) {
+
+            const wrapper = document.createElement("div");
+
+            wrapper.className = "flex justify-end items-start gap-3";
+
+            wrapper.innerHTML = `
+        <div class="max-w-[85%]">
+
+            <div class="flex justify-end items-center gap-2 mb-1">
+
+                <span class="text-[10px] text-slate-500">
+                    ${horaAtual()}
+                </span>
+
+                <span class="text-xs font-bold text-slate-300">
+                    Você
+                </span>
+
+            </div>
+
+            <div class="bg-lime-400 text-slate-950 rounded-2xl rounded-tr-md px-4 py-3 text-sm leading-relaxed font-medium shadow-sm">
+                ${escapeHTML(mensagem)}
+            </div>
+
+        </div>
+
+        <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+            👤
+        </div>
+    `;
+
+            chatMessages.appendChild(wrapper);
+
+            rolarChat();
+
+        }
+
+
+        /* =========================================================
+           ADICIONAR RESPOSTA DA IA
+           ========================================================= */
+
+        function adicionarMensagemIA(texto) {
+
+            const wrapper = document.createElement("div");
+
+            wrapper.className = "flex items-start gap-3";
+
+            wrapper.innerHTML = `
+        <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
+            🤖
+        </div>
+
+        <div class="max-w-[88%]">
+
+            <div class="flex items-center gap-2 mb-1">
+
+                <span class="text-xs font-bold text-lime-300">
+                    Assistente Polo Fit
+                </span>
+
+                <span class="text-[10px] text-slate-500">
+                    ${horaAtual()}
+                </span>
+
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
+                ${formatarTextoIA(texto)}
+            </div>
+
+        </div>
+    `;
+
+            chatMessages.appendChild(wrapper);
+
+            rolarChat();
+
+        }
+
+
+        /* =========================================================
+           INDICADOR "PENSANDO"
+           ========================================================= */
+
+        function adicionarPensando() {
+
+            const wrapper = document.createElement("div");
+
+            wrapper.id = "chat-pensando";
+
+            wrapper.className = "flex items-start gap-3";
+
+            wrapper.innerHTML = `
+        <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
+            🤖
+        </div>
+
+        <div>
+
+            <div class="text-xs font-bold text-lime-300 mb-1">
+                Assistente Polo Fit
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3">
+
+                <div class="flex items-center gap-1">
+
+                    <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"></span>
+
+                    <span
+                        class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"
+                        style="animation-delay:0.15s"
+                    ></span>
+
+                    <span
+                        class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"
+                        style="animation-delay:0.3s"
+                    ></span>
+
+                    <span class="ml-2 text-xs text-slate-500">
+                        Analisando...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+            chatMessages.appendChild(wrapper);
+
+            rolarChat();
+
+        }
+
+
+        /* =========================================================
+           ROLAGEM
+           ========================================================= */
+
+        function rolarChat() {
+
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: "smooth"
+            });
+
+        }
+
+
+        /* =========================================================
+           ESCAPE HTML
+           ========================================================= */
+
+        function escapeHTML(texto) {
+
+            const div = document.createElement("div");
+
+            div.textContent = texto;
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =========================================================
+           ENVIAR PERGUNTA
+           ========================================================= */
+
+        async function enviarPergunta(mensagem) {
+
+            if (!mensagem || !chatForm) {
+                return;
+            }
+
+            adicionarMensagemUsuario(mensagem);
+
+            chatInput.value = "";
+
+            atualizarContador();
+
+            chatInput.disabled = true;
+            chatEnviar.disabled = true;
+
+            adicionarPensando();
+
+            try {
+
+                const response = await fetch("/ia/chat/", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+
+                    body: JSON.stringify({
+                        mensagem: mensagem
+                    })
+
+                });
+
+
+                const data = await response.json();
+
+
+                const pensando = document.getElementById("chat-pensando");
+
+                if (pensando) {
+                    pensando.remove();
+                }
+
+
+                if (!response.ok) {
+
+                    adicionarMensagemIA(
+                        data.resposta ||
+                        data.erro ||
+                        "Não foi possível processar sua pergunta."
+                    );
+
+                    return;
+                }
+
+
+                adicionarMensagemIA(
+                    data.resposta ||
+                    "Não consegui encontrar uma resposta para essa pergunta."
+                );
+
+
+            } catch (error) {
+
+                const pensando = document.getElementById("chat-pensando");
+
+                if (pensando) {
+                    pensando.remove();
+                }
+
+                adicionarMensagemIA(
+                    "Não consegui conectar ao assistente neste momento. Verifique a conexão e tente novamente."
+                );
+
+                console.error("Erro no chatbot:", error);
+
+            } finally {
+
+                chatInput.disabled = false;
+                chatEnviar.disabled = false;
+
+                chatInput.focus();
+
+                rolarChat();
+
+            }
+
+        }
+
+
+        /* =========================================================
+           FORMULÁRIO
+           ========================================================= */
+
+        if (chatForm && chatInput) {
+
+            chatForm.addEventListener("submit", function (event) {
+
                 event.preventDefault();
 
                 const mensagem = chatInput.value.trim();
-                if (!mensagem) return;
 
-                const msgUsuario = document.createElement("div");
-                msgUsuario.className = "bg-lime-400 text-black rounded-xl p-3 text-sm font-medium ml-auto max-w-[85%]";
-                msgUsuario.textContent = mensagem;
-                chatMessages.appendChild(msgUsuario);
-
-                chatInput.value = "";
-                chatInput.disabled = true;
-
-                const msgIA = document.createElement("div");
-                msgIA.className = "bg-slate-800 rounded-xl p-3 text-sm text-slate-100 border border-slate-700 max-w-[85%]";
-                msgIA.innerHTML = '<span class="inline-flex gap-1 align-middle"><span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse"></span><span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse" style="animation-delay:0.15s"></span><span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse" style="animation-delay:0.3s"></span></span> Pensando...';
-                chatMessages.appendChild(msgIA);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                try {
-                    const response = await fetch("/ia/chat/", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRFToken": getCookie("csrftoken")
-                        },
-                        body: JSON.stringify({ mensagem })
-                    });
-
-                    const data = await response.json();
-                    msgIA.innerHTML = formatarTextoIA(data.resposta || "Não foi possível responder no momento.");
-                } catch (error) {
-                    msgIA.textContent = "Não foi possível conectar ao assistente no momento. Tente novamente em instantes.";
-                } finally {
-                    chatInput.disabled = false;
-                    chatInput.focus();
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                if (!mensagem) {
+                    return;
                 }
+
+                enviarPergunta(mensagem);
+
             });
+
+
+            /* =====================================================
+               ENTER ENVIA
+               SHIFT + ENTER QUEBRA LINHA
+               ===================================================== */
+
+            chatInput.addEventListener("keydown", function (event) {
+
+                if (event.key === "Enter" && !event.shiftKey) {
+
+                    event.preventDefault();
+
+                    chatForm.requestSubmit();
+
+                }
+
+            });
+
+
+            /* =====================================================
+               CONTADOR
+               ===================================================== */
+
+            chatInput.addEventListener("input", atualizarContador);
+
         }
+
+
+        /* =========================================================
+           CONTADOR
+           ========================================================= */
+
+        function atualizarContador() {
+
+            if (!chatContador || !chatInput) {
+                return;
+            }
+
+            chatContador.textContent =
+                `${chatInput.value.length}/1000`;
+
+        }
+
+
+        /* =========================================================
+           SUGESTÕES
+           ========================================================= */
+
+        document.querySelectorAll(".sugestao-chat").forEach(function (botao) {
+
+            botao.addEventListener("click", function () {
+
+                const pergunta = this.dataset.pergunta;
+
+                if (!pergunta) {
+                    return;
+                }
+
+                enviarPergunta(pergunta);
+
+            });
+
+        });
+
+
+        /* =========================================================
+           LIMPAR CONVERSA
+           ========================================================= */
+
+        if (limparChat) {
+
+            limparChat.addEventListener("click", function () {
+
+                chatMessages.innerHTML = `
+            <div class="flex items-start gap-3">
+
+                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
+                    🤖
+                </div>
+
+                <div class="max-w-[85%]">
+
+                    <div class="flex items-center gap-2 mb-1">
+
+                        <span class="text-xs font-bold text-lime-300">
+                            Assistente Polo Fit
+                        </span>
+
+                        <span class="text-[10px] text-slate-500">
+                            agora
+                        </span>
+
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200">
+
+                        Olá! 👋 Como posso ajudar você hoje?
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+                chatInput.focus();
+
+            });
+
+        }
+
+
+        /* =========================================================
+           FOCO INICIAL
+           ========================================================= */
+
+        if (chatInput) {
+
+            atualizarContador();
+
+            chatInput.focus();
+
+        }
+    </script>
 
     </script>
 
