@@ -1,0 +1,163 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 16 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: admin, auth, contenttypes, feedback, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying feedback.0001_initial... OK
+  Applying feedback.0002_avaliacao_localizacao... OK
+  Applying feedback.0003_avaliacao_status... OK
+  Applying feedback.0004_avaliacao_categorias... OK
+  Applying feedback.0005_avaliacao_tipos_feedback... OK
+  Applying feedback.0006_funcionario_avaliacao_criado_por_and_more... OK
+  Applying feedback.0007_alter_avaliacao_options... OK
+  Applying feedback.0008_respostaenquete... OK
+  Applying sessions.0001_initial...test_criar_avaliacao (feedback.tests.FeedbackModelTests.test_criar_avaliacao) ... ok
+test_criar_funcionario (feedback.tests.FeedbackModelTests.test_criar_funcionario) ... ok
+test_resolucao_automatica_data (feedback.tests.FeedbackModelTests.test_resolucao_automatica_data) ... ok
+test_dashboard_atualizar_status (feedback.tests.FeedbackViewsTests.test_dashboard_atualizar_status) ... ok
+test_dashboard_autenticado_get (feedback.tests.FeedbackViewsTests.test_dashboard_autenticado_get) ... ERROR
+test_dashboard_requer_login (feedback.tests.FeedbackViewsTests.test_dashboard_requer_login) ... ok
+test_enquete_get (feedback.tests.FeedbackViewsTests.test_enquete_get) ... ok
+test_enquete_post (feedback.tests.FeedbackViewsTests.test_enquete_post) ... FAIL
+test_gerar_qrcode_view (feedback.tests.FeedbackViewsTests.test_gerar_qrcode_view) ... ok
+test_pagina_avaliar_get (feedback.tests.FeedbackViewsTests.test_pagina_avaliar_get) ... ok
+test_pagina_avaliar_possui_botao_area_gerente (feedback.tests.FeedbackViewsTests.test_pagina_avaliar_possui_botao_area_gerente) ... ok
+test_pagina_avaliar_possui_botao_dashboard_navbar (feedback.tests.FeedbackViewsTests.test_pagina_avaliar_possui_botao_dashboard_navbar) ... ok
+test_pagina_avaliar_possui_botoes_por_local (feedback.tests.FeedbackViewsTests.test_pagina_avaliar_possui_botoes_por_local) ... ok
+test_pagina_avaliar_post_invalido_sem_campos_obrigatorios (feedback.tests.FeedbackViewsTests.test_pagina_avaliar_post_invalido_sem_campos_obrigatorios) ... ok
+test_pagina_avaliar_post_valido (feedback.tests.FeedbackViewsTests.test_pagina_avaliar_post_valido) ... ok
+test_pwa_manifest_and_root_scoped_service_worker (feedback.tests.FeedbackViewsTests.test_pwa_manifest_and_root_scoped_service_worker) ... ok
+
+======================================================================
+ERROR: test_dashboard_autenticado_get (feedback.tests.FeedbackViewsTests.test_dashboard_autenticado_get)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\smartif.py", line 186, in translate_token
+    op = OPERATORS[token]
+         ~~~~~~~~~^^^^^^^
+KeyError: "periodo_filtro=='hoje'"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\feedback\tests.py", line 138, in test_dashboard_autenticado_get
+    response = self.client.get(reverse("dashboard"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\test\client.py", line 1128, in get
+    response = super().get(
+               ^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\test\client.py", line 475, in get
+    return self.generic(
+           ^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\test\client.py", line 1091, in request
+    self.check_exception(response)
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\core\handlers\exception.py", line 56, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\core\handlers\base.py", line 199, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\contrib\auth\decorators.py", line 60, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\feedback\views.py", line 559, in dashboard
+    return render(
+           ^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\shortcuts.py", line 27, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\engine.py", line 186, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\base.py", line 157, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\base.py", line 199, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\base.py", line 602, in parse
+    raise self.error(token, e)
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\base.py", line 600, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\defaulttags.py", line 993, in do_if
+    condition = TemplateIfParser(parser, bits).parse()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\defaulttags.py", line 926, in __init__
+    super().__init__(*args, **kwargs)
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\smartif.py", line 177, in __init__
+    mapped_tokens.append(self.translate_token(token))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\smartif.py", line 188, in translate_token
+    return self.create_var(token)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\defaulttags.py", line 929, in create_var
+    return TemplateLiteral(self.template_parser.compile_filter(value), value)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\base.py", line 693, in compile_filter
+    return FilterExpression(token, self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\venv\Lib\site-packages\django\template\base.py", line 793, in __init__
+    raise TemplateSyntaxError(
+django.template.exceptions.TemplateSyntaxError: Template: C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\feedback\templates\feedback\dashboard.html, Could not parse the remainder: '=='hoje'' from 'periodo_filtro=='hoje''
+
+======================================================================
+FAIL: test_enquete_post (feedback.tests.FeedbackViewsTests.test_enquete_post)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main\feedback\tests.py", line 205, in test_enquete_post
+    self.assertContains(response, "Deseja avaliar uma etapa da academia também?")
+AssertionError: False is not true : Couldn't find 'Deseja avaliar uma etapa da academia também?' in the following response
+b'\n<!DOCTYPE html>\n<html lang="pt-BR">\n\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n\n    \n<link rel="manifest" href="/static/feedback/manifest.webmanifest">\n<meta name="theme-color" content="#0b0f12">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n<meta name="apple-mobile-web-app-title" content="Polo Feedback">\n<link rel="apple-touch-icon" href="/static/feedback/pwa-192.png">\n<script>\n    if ("serviceWorker" in navigator) {\n        window.addEventListener("load", function () {\n            navigator.serviceWorker.register("/service-worker.js")\n                .catch(function (error) { console.error("Falha ao ativar suporte offline:", error); });\n        });\n    }\n</script>\n\n    <title>Enquete Enviada com Sucesso \xe2\x80\x94 Polo Fit</title>\n\n    <link rel="preconnect" href="https://fonts.googleapis.com">\n    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">\n\n    <script src="https://cdn.tailwindcss.com"></script>\n\n    <style>\n        * {\n            font-family: \'Inter\', sans-serif;\n        }\n\n        body {\n            background-image: url("/static/feedback/academia1.png");\n            background-size: cover;\n            background-position: center;\n        }\n\n        @keyframes pop {\n            0% {\n                transform: scale(0.5);\n                opacity: 0;\n            }\n\n            70% {\n                transform: scale(1.1);\n            }\n\n            100% {\n                transform: scale(1);\n                opacity: 1;\n            }\n        }\n\n        .check-anim {\n            animation: pop 0.5s ease-out forwards;\n        }\n\n        @keyframes fadeUp {\n            from {\n                transform: translateY(20px);\n                opacity: 0;\n            }\n\n            to {\n                transform: translateY(0);\n                opacity: 1;\n            }\n        }\n\n        .fade-up {\n            animation: fadeUp 0.6s ease-out 0.2s both;\n        }\n    </style>\n</head>\n\n<body class="min-h-screen flex flex-col items-center justify-center relative p-4">\n\n    <!-- FUNDO -->\n    <div class="absolute inset-0 bg-black/65 backdrop-blur-[3px]"></div>\n\n    <div class="relative max-w-sm w-full">\n\n        <!-- LOGO -->\n        <div class="text-center mb-6">\n\n            <img src="/static/feedback/LOGO.png" alt="Polo Fit"\n                class="h-12 mx-auto mb-2 object-contain drop-shadow-lg">\n\n            <h2 class="text-lg font-black text-white drop-shadow tracking-wide">\n                POLO FIT\n            </h2>\n\n        </div>\n\n\n        <!-- CARD PRINCIPAL -->\n        <div class="fade-up bg-white rounded-3xl shadow-2xl p-8 text-center border border-gray-100">\n\n            <!-- \xc3\x8dCONE DE SUCESSO -->\n            <div class="check-anim w-20 h-20\n                       bg-gradient-to-br from-[#a3e635] to-[#4ade80]\n                       rounded-full\n                       flex items-center justify-center\n                       text-4xl\n                       mx-auto mb-5\n                       shadow-lg">\n                \xe2\x9c\x93\n            </div>\n\n\n            <!-- T\xc3\x8dTULO -->\n            <h1 class="text-2xl font-black text-gray-900">\n                Enquete enviada!\n            </h1>\n\n            <p class="text-2xl mt-1">\n                \xf0\x9f\x8e\x89\n            </p>\n\n\n            <!-- TEXTO -->\n            <p class="text-gray-600 mt-3 text-sm leading-relaxed">\n\n                Obrigado por participar da nossa pesquisa.\n\n                Sua opini\xc3\xa3o \xc3\xa9 muito importante para ajudar a\n\n                <strong class="text-gray-800">\n                    Polo Fit\n                </strong>\n\n                a melhorar cada vez mais.\n\n            </p>\n\n\n            <!-- CONFIRMA\xc3\x87\xc3\x83O -->\n            <div class="mt-4\n                       bg-emerald-50\n                       border border-emerald-200\n                       rounded-xl\n                       px-4 py-3\n                       text-emerald-800\n                       text-xs\n                       font-semibold">\n                \xe2\x9c\xa8 Sua resposta foi registrada com sucesso!\n            </div>\n\n\n            <!-- CONVITE PARA AVALIA\xc3\x87\xc3\x83O -->\n            <div id="convite-avaliacao" class="mt-5 rounded-2xl border border-gray-200 bg-gray-50 p-5">\n\n                <div class="text-3xl mb-3">\n                    \xe2\xad\x90\n                </div>\n\n                <p class="text-base font-black text-gray-900">\n                    Quer avaliar sua experi\xc3\xaancia na Polo Fit?\n                </p>\n\n                <p class="text-xs text-gray-500 mt-2 leading-relaxed">\n                    Leva menos de 1 minuto e sua avalia\xc3\xa7\xc3\xa3o ajuda nossa equipe\n                    a melhorar cada vez mais.\n                </p>\n\n\n                <!-- BOT\xc3\x83O CONTINUAR -->\n                <a href="/avaliar/" class="mt-5\n                           flex items-center justify-center gap-2\n                           w-full\n                           bg-[#0a0a0a]\n                           hover:bg-[#1a1a1a]\n                           text-[#a3e635]\n                           border border-[#a3e635]\n                           font-black\n                           py-3.5\n                           rounded-xl\n                           transition\n                           shadow-sm\n                           text-sm">\n                    \xe2\xad\x90 Sim, quero avaliar\n                </a>\n\n\n                <!-- BOT\xc3\x83O AGORA N\xc3\x83O -->\n                <button type="button" id="recusar-avaliacao" class="mt-3\n                           flex items-center justify-center\n                           w-full\n                           bg-white\n                           hover:bg-gray-100\n                           text-gray-600\n                           font-semibold\n                           py-3\n                           rounded-xl\n                           transition\n                           border border-gray-200\n                           text-sm">\n                    Agora n\xc3\xa3o\n                </button>\n\n            </div>\n\n\n            <!-- MENSAGEM AP\xc3\x93S RECUSAR -->\n            <p id="avaliacao-recusada" class="hidden mt-5 text-sm text-gray-600" role="status" aria-live="polite">\n                Tudo certo. Sua enquete foi conclu\xc3\xadda. Obrigado pela participa\xc3\xa7\xc3\xa3o! \xf0\x9f\x92\x9a\n            </p>\n\n        </div>\n\n\n        <!-- RODAP\xc3\x89 -->\n        <p class="text-center text-white/40 text-xs mt-6">\n            Polo Fit \xe2\x80\xa2 Sua opini\xc3\xa3o transforma nossos treinos.\n        </p>\n\n    </div>\n\n\n    \n<div id="pwa-install-area" class="fixed bottom-4 right-4 z-[100] hidden">\n    <button id="pwa-install-button" type="button" class="rounded-xl bg-lime-300 px-4 py-3 text-sm font-bold text-slate-950 shadow-xl shadow-black/30 hover:bg-lime-200 focus:outline-none focus:ring-2 focus:ring-white">\n        Instalar Polo Feedback\n    </button>\n</div>\n\n<dialog id="pwa-install-help" class="w-[min(92vw,26rem)] rounded-2xl border border-slate-200 p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/70">\n    <div class="p-6">\n        <div class="flex items-start justify-between gap-4">\n            <div>\n                <p class="text-xs font-bold uppercase tracking-[0.18em] text-green-700">Polo Feedback</p>\n                <h2 class="mt-2 text-xl font-black">Adicionar \xc3\xa0 tela inicial</h2>\n            </div>\n            <button id="pwa-install-close" type="button" aria-label="Fechar instru\xc3\xa7\xc3\xb5es" class="rounded-lg px-2 py-1 text-xl text-slate-500 hover:bg-slate-100">&times;</button>\n        </div>\n        <p id="pwa-install-instructions" class="mt-4 text-sm leading-6 text-slate-700"></p>\n    </div>\n</dialog>\n\n<script src="/static/feedback/pwa-install.js" defer></script>\n\n\n    <script>\n        const botaoRecusar = document.getElementById("recusar-avaliacao");\n        const conviteAvaliacao = document.getElementById("convite-avaliacao");\n        const avaliacaoRecusada = document.getElementById("avaliacao-recusada");\n\n        if (botaoRecusar) {\n            botaoRecusar.addEventListener("click", function () {\n                conviteAvaliacao.classList.add("hidden");\n                avaliacaoRecusada.classList.remove("hidden");\n            });\n        }\n    </script>\n\n</body>\n\n</html>'
+
+----------------------------------------------------------------------
+Ran 16 tests in 57.520s
+
+FAILED (failures=1, errors=1)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+ OK
+System check identified no issues (0 silenced).

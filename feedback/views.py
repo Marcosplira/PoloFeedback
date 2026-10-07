@@ -1094,36 +1094,7 @@ def ia_chat(request):
         return JsonResponse(
             {"resposta": ("Por favor, digite uma " "pergunta para a IA.")}
         )
-    # ==========================================================
-    # SAUDAÇÕES — CONVERSA NATURAL
-    # ==========================================================
 
-    mensagem_normalizada = mensagem_usuario.lower().strip().rstrip("!?.")
-
-    saudacoes = {
-        "oi",
-        "ola",
-        "olá",
-        "bom dia",
-        "boa tarde",
-        "boa noite",
-    }
-
-    if mensagem_normalizada in saudacoes:
-
-        if mensagem_normalizada == "bom dia":
-            texto = "Bom dia! 👋 Como posso ajudar você hoje?"
-
-        elif mensagem_normalizada == "boa tarde":
-            texto = "Boa tarde! 👋 Como posso ajudar você hoje?"
-
-        elif mensagem_normalizada == "boa noite":
-            texto = "Boa noite! 👋 Como posso ajudar você hoje?"
-
-        else:
-            texto = "Olá! 👋 Como posso ajudar você hoje?"
-
-        return JsonResponse({"resposta": texto})
     # ==========================================================
     # AVALIAÇÕES
     # ==========================================================

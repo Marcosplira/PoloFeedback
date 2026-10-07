@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -7,10 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
 
-    <meta name="description"
-        content="Dashboard de avaliaÃƒÂ§ÃƒÂµes Polo Fit Ã¢â‚¬â€ anÃƒÂ¡lise completa de feedbacks dos alunos.">
+    <meta name="description" content="Dashboard de avaliações Polo Fit — análise completa de feedbacks dos alunos.">
 
-    <title>Dashboard Ã¢â‚¬â€ Polo Fit</title>
+    <title>Dashboard — Polo Fit</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -307,6 +306,73 @@
             animation-delay: 0.3s;
         }
 
+        .chat-shell {
+            background: linear-gradient(180deg, rgba(11, 19, 27, 0.98) 0%, rgba(15, 27, 36, 0.98) 100%);
+            border: 1px solid rgba(163, 230, 53, 0.18);
+            box-shadow: 0 22px 55px rgba(2, 6, 23, 0.28);
+        }
+
+        .chat-message-wrap {
+            scroll-behavior: smooth;
+        }
+
+        .chat-bubble-ai {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.98));
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+        }
+
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #a3e635 0%, #7ae582 100%);
+            color: #0f172a;
+            box-shadow: 0 12px 24px rgba(163, 230, 53, 0.18);
+        }
+
+        .chat-empty-state {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .chat-suggestion {
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(15, 23, 42, 0.78);
+            color: rgba(226, 232, 240, 0.88);
+            transition: all 0.2s ease;
+        }
+
+        .chat-suggestion:hover {
+            border-color: rgba(163, 230, 53, 0.55);
+            background: rgba(15, 23, 42, 0.96);
+            transform: translateY(-1px);
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, #a3e635 0%, #7ae582 100%);
+            color: #0f172a;
+            box-shadow: 0 10px 22px rgba(163, 230, 53, 0.25);
+        }
+
+        .chat-send-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(163, 230, 53, 0.32);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .chat-input {
+            background: rgba(15, 23, 42, 0.82);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+        }
+
+        .chat-input:focus {
+            border-color: rgba(163, 230, 53, 0.65);
+            box-shadow: 0 0 0 4px rgba(163, 230, 53, 0.12);
+        }
+
         @keyframes bounce {
 
             0%,
@@ -377,7 +443,7 @@
 
 
     <!-- ========================================================= -->
-    <!-- CABEÃƒâ€¡ALHO -->
+    <!-- CABEÇALHO -->
     <!-- ========================================================= -->
 
     <header class="header-gradient shadow-xl sticky top-0 z-50">
@@ -396,7 +462,7 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-gray-400 text-xs hidden md:block">Ã°Å¸â€˜Â¤ {{ request.user.username }}</span>
+                    <span class="text-gray-400 text-xs hidden md:block">👤 {{ request.user.username }}</span>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" id="btn-sair"
@@ -407,35 +473,35 @@
                 </div>
             </div>
 
-            <!-- MENU DE NAVEGAÃƒâ€¡ÃƒÆ’O -->
+            <!-- MENU DE NAVEGAÇÃO -->
             <nav class="flex items-center gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
                 <a href="{% url 'avaliar' %}"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸ÂÂ  InÃƒÂ­cio
+                    🏠 Início
                 </a>
                 <a href="{% url 'dashboard' %}"
                     class="flex-shrink-0 flex items-center gap-1.5 bg-white/10 text-[#a3e635] font-bold px-3 py-1.5 rounded-lg text-xs border border-[#a3e635]/30">
-                    Ã°Å¸â€œÅ  Dashboard
+                    📊 Dashboard
                 </a>
                 <a href="{% url 'dashboard' %}#tabela-avaliacoes"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€œâ€¹ AvaliaÃƒÂ§ÃƒÂµes
+                    📋 Avaliações
                 </a>
                 <a href="{% url 'dashboard' %}#ranking"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€˜Â¥ FuncionÃƒÂ¡rios
+                    👥 Funcionários
                 </a>
                 <a href="#secao-enquete"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€œâ€¹ Enquete
+                    📋 Enquete
                 </a>
                 <a href="{% url 'gerar_qrcode' %}" id="btn-qrcode"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã°Å¸â€œÂ± QR Codes
+                    📱 QR Codes
                 </a>
                 <a href="{% url 'admin:index' %}"
                     class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    Ã¢Å¡â„¢Ã¯Â¸Â AdministraÃƒÂ§ÃƒÂ£o
+                    ⚙️ Administração
                 </a>
             </nav>
 
@@ -446,7 +512,7 @@
 
 
     <!-- ========================================================= -->
-    <!-- CONTEÃƒÅ¡DO -->
+    <!-- CONTEÚDO -->
     <!-- ========================================================= -->
 
     <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
@@ -479,7 +545,7 @@
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-xl">
-                            Ã°Å¸â€œâ€¹
+                            📋
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -493,25 +559,25 @@
                     </p>
 
                     <p class="text-xs text-gray-400 mt-1">
-                        avaliaÃƒÂ§ÃƒÂµes registradas
+                        avaliações registradas
                     </p>
 
                 </div>
 
 
 
-                <!-- MÃƒâ€°DIA -->
+                <!-- MÉDIA -->
 
                 <div class="card-stat">
 
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
-                            Ã¢Â­Â
+                            ⭐
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            MÃƒÂ©dia
+                            Média
                         </p>
 
                     </div>
@@ -521,7 +587,7 @@
                     </p>
 
                     <p class="text-xs text-gray-400 mt-1">
-                        nota mÃƒÂ©dia geral
+                        nota média geral
                     </p>
 
                 </div>
@@ -535,7 +601,7 @@
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-xl">
-                            Ã°Å¸â€˜Â
+                            👍
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -556,18 +622,18 @@
 
 
 
-                <!-- RECLAMAÃƒâ€¡Ãƒâ€¢ES -->
+                <!-- RECLAMAÇÕES -->
 
                 <div class="card-stat">
 
                     <div class="flex items-center gap-3 mb-3">
 
                         <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-xl">
-                            Ã¢Å¡Â Ã¯Â¸Â
+                            ⚠️
                         </div>
 
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            ReclamaÃƒÂ§ÃƒÂµes
+                            Reclamações
                         </p>
 
                     </div>
@@ -591,211 +657,95 @@
         <!-- ASSISTENTE IA -->
         <!-- ===================================================== -->
 
-        <section class="relative overflow-hidden rounded-3xl bg-slate-950 border border-slate-800 shadow-2xl">
+        <section class="chat-shell relative overflow-hidden rounded-[28px] border border-slate-800 shadow-2xl">
 
-            <!-- Brilho decorativo -->
-            <div class="absolute -top-24 -right-24 w-64 h-64 bg-lime-400/10 rounded-full blur-3xl pointer-events-none">
-            </div>
-            <div
-                class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none">
-            </div>
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-lime-400/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <!-- CABEÃƒâ€¡ALHO -->
-            <div class="relative flex items-center justify-between px-5 md:px-7 py-5 border-b border-slate-800">
-
+            <div class="relative flex items-center justify-between px-5 md:px-7 py-5 border-b border-slate-800/80">
                 <div class="flex items-center gap-4">
-
-                    <!-- Avatar IA -->
                     <div class="relative flex-shrink-0">
-
-                        <div
-                            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-lime-300 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/20">
-                            <span class="text-2xl">Ã°Å¸Â¤â€“</span>
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-lime-300 via-lime-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/30 ring-2 ring-lime-300/20">
+                            <span class="text-2xl">🤖</span>
                         </div>
-
-                        <span
-                            class="absolute -right-1 -bottom-1 w-3.5 h-3.5 bg-lime-400 border-2 border-slate-950 rounded-full"></span>
-
+                        <span class="absolute -right-1 -bottom-1 w-3.5 h-3.5 bg-lime-400 border-2 border-slate-950 rounded-full"></span>
                     </div>
 
                     <div>
-
                         <div class="flex items-center gap-2">
-
-                            <h2 class="text-lg md:text-xl font-bold text-white">
-                                Assistente Polo Fit
-                            </h2>
-
-                            <span
-                                class="px-2 py-0.5 rounded-full bg-lime-400/10 border border-lime-400/20 text-[10px] font-bold uppercase tracking-wider text-lime-300">
-                                IA
-                            </span>
-
+                            <h2 class="text-lg md:text-xl font-extrabold text-white tracking-tight">Polo IA</h2>
+                            <span class="px-2 py-0.5 rounded-full border border-lime-400/30 bg-lime-400/10 text-[10px] font-bold uppercase tracking-[0.18em] text-lime-300">IA</span>
                         </div>
-
-                        <p class="text-xs md:text-sm text-slate-400 mt-0.5">
-                            Seu assistente para analisar a academia e tomar decisÃƒÂµes.
-                        </p>
-
+                        <p class="text-xs md:text-sm text-slate-400 mt-0.5">Analise executiva e apoio operacional em tempo real.</p>
                     </div>
-
                 </div>
 
-
-                <!-- AÃƒâ€¡Ãƒâ€¢ES -->
                 <div class="flex items-center gap-2">
-
-                    <span
-                        class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-lime-300">
+                    <span class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-lime-300 font-semibold">
                         <span class="w-2 h-2 bg-lime-400 rounded-full animate-pulse"></span>
                         Online
                     </span>
 
-                    <button type="button" id="limpar-chat"
-                        class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition"
-                        title="Limpar conversa">
-                        Ã°Å¸â€”â€˜Ã¯Â¸Â
+                    <button type="button" id="limpar-chat" class="w-9 h-9 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-all duration-200" title="Limpar conversa">
+                        🗑️
                     </button>
-
                 </div>
-
             </div>
 
-
-            <!-- ÃƒÂREA DA CONVERSA -->
-            <div id="chat-mensagens"
-                class="relative h-[360px] md:h-[400px] overflow-y-auto px-4 md:px-6 py-5 space-y-5 scrollbar-thin">
-
-                <!-- MENSAGEM INICIAL DA IA -->
+            <div id="chat-mensagens" class="chat-message-wrap relative h-[360px] md:h-[400px] overflow-y-auto px-4 md:px-6 py-5 space-y-5 scrollbar-thin">
                 <div class="flex items-start gap-3">
-
-                    <div
-                        class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-                        Ã°Å¸Â¤â€“
-                    </div>
+                    <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">🤖</div>
 
                     <div class="max-w-[85%]">
-
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-bold text-lime-300">
-                                Assistente Polo Fit
-                            </span>
-
-                            <span class="text-[10px] text-slate-500">
-                                agora
-                            </span>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="text-xs font-bold text-lime-300">Polo IA</span>
+                            <span class="text-[10px] text-slate-500">agora</span>
                         </div>
 
-                        <div
-                            class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
-
-                            <p class="mb-2">
-                                OlÃƒÂ¡! Ã°Å¸â€˜â€¹ Sou o assistente inteligente da <strong class="text-white">Polo Fit</strong>.
-                            </p>
-
-                            <p class="text-slate-400">
-                                Posso ajudar vocÃƒÂª a analisar avaliaÃƒÂ§ÃƒÂµes, reclamaÃƒÂ§ÃƒÂµes,
-                                sugestÃƒÂµes, funcionÃƒÂ¡rios, desempenho e oportunidades de melhoria.
-                            </p>
-
+                        <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
+                            <p class="mb-2 font-medium text-white">Olá! 👋 Sou a assistente executiva da <span class="text-lime-300">Polo Fit</span>.</p>
+                            <p class="text-slate-300">Posso analisar avaliações, reclamações, sugestões, desempenho da equipe e apontar prioridades estratégicas com base nos dados do sistema.</p>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                <!-- SUGESTÃƒâ€¢ES -->
                 <div id="chat-sugestoes" class="pl-11">
-
-                    <p class="text-[11px] text-slate-500 mb-2">
-                        SugestÃƒÂµes para comeÃƒÂ§ar
-                    </p>
-
+                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-2">Sugestões para começar</p>
                     <div class="flex flex-wrap gap-2">
-
-                        <button type="button"
-                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
-                            data-pergunta="Como estÃƒÂ¡ a satisfaÃƒÂ§ÃƒÂ£o dos alunos atualmente?">
-                            Ã°Å¸â€œÅ  SatisfaÃƒÂ§ÃƒÂ£o dos alunos
-                        </button>
-
-                        <button type="button"
-                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
-                            data-pergunta="Quais sÃƒÂ£o as principais reclamaÃƒÂ§ÃƒÂµes dos alunos?">
-                            Ã¢Å¡Â Ã¯Â¸Â Principais reclamaÃƒÂ§ÃƒÂµes
-                        </button>
-
-                        <button type="button"
-                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
-                            data-pergunta="Quais funcionÃƒÂ¡rios estÃƒÂ£o se destacando nas avaliaÃƒÂ§ÃƒÂµes?">
-                            Ã°Å¸Ââ€  FuncionÃƒÂ¡rios destaque
-                        </button>
-
-                        <button type="button"
-                            class="sugestao-chat px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-lime-400/50 hover:bg-slate-800 text-xs text-slate-300 hover:text-white transition"
-                            data-pergunta="Quais melhorias deveriam ser priorizadas pela academia?">
-                            Ã°Å¸â€™Â¡ Melhorias prioritÃƒÂ¡rias
-                        </button>
-
+                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Como está a satisfação dos alunos atualmente?">📊 Satisfação dos alunos</button>
+                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais são as principais reclamações dos alunos?">⚠️ Principais reclamações</button>
+                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais funcionários estão se destacando nas avaliações?">🏆 Funcionários destaque</button>
+                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais melhorias deveriam ser priorizadas pela academia?">💡 Melhorias prioritárias</button>
                     </div>
-
                 </div>
-
             </div>
 
-
-            <!-- CAMPO DE MENSAGEM -->
-            <div class="relative border-t border-slate-800 bg-slate-950/90 p-4 md:p-5">
-
+            <div class="relative border-t border-slate-800/80 bg-slate-950/90 p-4 md:p-5">
                 <form id="chat-form" class="relative">
-
                     <div class="flex items-end gap-2">
-
                         <div class="relative flex-1">
-
-                            <textarea id="chat-input" rows="1" maxlength="1000"
-                                placeholder="Pergunte alguma coisa sobre a Polo Fit..."
-                                class="w-full resize-none rounded-2xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 px-4 py-3.5 pr-12 text-sm focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/10 transition"></textarea>
-
-                            <div class="absolute right-3 bottom-3 text-[10px] text-slate-600">
-                                Enter Ã¢â€ Âµ
-                            </div>
-
+                            <textarea id="chat-input" rows="1" maxlength="1000" placeholder="Pergunte sobre desempenho, reclamações, equipe ou melhorias..." class="chat-input w-full resize-none rounded-2xl text-white placeholder-slate-500 px-4 py-3.5 pr-14 text-sm focus:outline-none transition"></textarea>
+                            <div class="absolute right-3 bottom-3 text-[10px] text-slate-500 font-medium">Shift + Enter</div>
                         </div>
 
-
-                        <button id="chat-enviar" type="submit"
-                            class="flex-shrink-0 w-12 h-12 rounded-2xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-black flex items-center justify-center shadow-lg shadow-lime-500/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Enviar mensagem">
-                            Ã¢Å¾Â¤
+                        <button id="chat-enviar" type="submit" class="chat-send-btn flex-shrink-0 w-12 h-12 rounded-2xl font-black flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed" title="Enviar mensagem">
+                            ➤
                         </button>
-
                     </div>
 
                     <div class="flex items-center justify-between mt-2 px-1">
-
-                        <span class="text-[10px] text-slate-600">
-                            O assistente utiliza os dados disponÃƒÂ­veis no sistema.
-                        </span>
-
-                        <span id="chat-contador" class="text-[10px] text-slate-600">
-                            0/1000
-                        </span>
-
+                        <span class="text-[10px] text-slate-500">Os dados usados pela IA são os dados disponíveis no sistema.</span>
+                        <span id="chat-contador" class="text-[10px] text-slate-500">0/1000</span>
                     </div>
-
                 </form>
-
             </div>
-
         </section>
 
 
 
 
         <!-- ===================================================== -->
-        <!-- GRÃƒÂFICOS -->
+        <!-- GRÁFICOS -->
         <!-- ===================================================== -->
 
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -804,11 +754,11 @@
             <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
 
                 <h3 class="font-bold text-gray-800 mb-1">
-                    Ã°Å¸â€œÅ  AvaliaÃƒÂ§ÃƒÂµes por Categoria
+                    📊 Avaliações por Categoria
                 </h3>
 
                 <p class="text-xs text-gray-400 mb-4">
-                    DistribuiÃƒÂ§ÃƒÂ£o dos feedbacks
+                    Distribuição dos feedbacks
                 </p>
 
                 <canvas id="graficoCategorias"></canvas>
@@ -819,7 +769,7 @@
             <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
 
                 <h3 class="font-bold text-gray-800 mb-1">
-                    Ã¢Â­Â AvaliaÃƒÂ§ÃƒÂµes por Nota
+                    ⭐ Avaliações por Nota
                 </h3>
 
                 <p class="text-xs text-gray-400 mb-4">
@@ -835,7 +785,7 @@
 
 
         <!-- ===================================================== -->
-        <!-- AVALIAÃƒâ€¡Ãƒâ€¢ES POR LOCAL                                  -->
+        <!-- AVALIAÇÕES POR LOCAL                                  -->
         <!-- ===================================================== -->
 
         {% if locais_ranking %}
@@ -843,12 +793,12 @@
 
             <div class="flex items-center justify-between mb-5">
                 <div>
-                    <h3 class="font-bold text-gray-800">Ã°Å¸â€œÂ AvaliaÃƒÂ§ÃƒÂµes por Local</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Qual espaÃƒÂ§o estÃƒÂ¡ recebendo mais feedback?</p>
+                    <h3 class="font-bold text-gray-800">📍 Avaliações por Local</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Qual espaço está recebendo mais feedback?</p>
                 </div>
                 <a href="{% url 'gerar_qrcode' %}"
                     class="text-xs font-semibold text-[#33FF00] border border-[#33FF00] px-3 py-1.5 rounded-lg hover:bg-[#0a0a0a] transition">
-                    Ã°Å¸â€œÂ± Gerar QR Codes
+                    📱 Gerar QR Codes
                 </a>
             </div>
 
@@ -860,12 +810,12 @@
                         <div class="flex items-center justify-between mb-1">
                             <span class="text-sm font-semibold text-gray-700 truncate">{{ local.nome }}</span>
                             <div class="flex items-center gap-2 flex-shrink-0 ml-2">
-                                <span class="text-xs text-yellow-500 font-bold">Ã¢Â­Â {{ local.media }}</span>
+                                <span class="text-xs text-yellow-500 font-bold">⭐ {{ local.media }}</span>
                                 <span class="text-xs text-gray-400">{{ local.total }} aval.</span>
                                 <a href="{% url 'gerar_qrcode' %}?localizacao={{ local.nome|urlencode }}"
                                     class="text-[11px] font-bold text-[#33FF00] bg-[#0a0a0a] hover:bg-[#1a1a1a] px-2 py-0.5 rounded transition shadow-sm"
                                     title="Gerar QR Code para {{ local.nome }}">
-                                    Ã°Å¸â€œÂ± QR Code
+                                    📱 QR Code
                                 </a>
                             </div>
                         </div>
@@ -882,49 +832,48 @@
         {% endif %}
 
         <!-- ===================================================== -->
-        <!-- SEÃƒâ€¡ÃƒÆ’O: ENQUETE DE SATISFAÃƒâ€¡ÃƒÆ’O (AULAS & NOVOS ESPAÃƒâ€¡OS)  -->
+        <!-- SEÇÃO: ENQUETE DE SATISFAÇÃO (AULAS & NOVOS ESPAÇOS)  -->
         <!-- ===================================================== -->
         <section id="secao-enquete" class="bg-white rounded-2xl shadow p-6 border border-slate-100">
             <div
                 class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="text-xl">Ã°Å¸â€œâ€¹</span>
-                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de SatisfaÃƒÂ§ÃƒÂ£o Ã¢â‚¬â€ Aulas Coletivas &
-                            Novos
-                            EspaÃƒÂ§os</h3>
+                        <span class="text-xl">📋</span>
+                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de Satisfação — Aulas Coletivas & Novos
+                            Espaços</h3>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Resultados da pesquisa oficial dos alunos sobre preferÃƒÂªncias de modalidades e expansÃƒÂµes da
+                        Resultados da pesquisa oficial dos alunos sobre preferências de modalidades e expansões da
                         academia.
                     </p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <span
                         class="inline-flex items-center gap-1.5 bg-lime-100 text-lime-900 text-xs font-bold px-3 py-1.5 rounded-xl border border-lime-300">
-                        Ã¢Å¡Â¡ {{ total_enquetes }} respostas coletadas
+                        ⚡ {{ total_enquetes }} respostas coletadas
                     </span>
                     <a href="{% url 'gerar_qrcode' %}?localizacao=Enquete+de+Satisfa%C3%A7%C3%A3o"
                         class="text-xs font-bold text-black bg-[#a3e635] hover:bg-[#bef264] px-3 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1">
-                        Ã°Å¸â€œÂ± QR Code da Enquete
+                        📱 QR Code da Enquete
                     </a>
                     <a href="{% url 'enquete' %}" target="_blank"
                         class="text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
-                        Ã°Å¸â€â€” Abrir FormulÃƒÂ¡rio Ã¢â€ â€”
+                        🔗 Abrir Formulário ↗
                     </a>
                 </div>
             </div>
 
             {% if total_enquetes == 0 %}
             <div class="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-8 text-center">
-                <span class="text-3xl block mb-2">Ã°Å¸â€œâ€¹</span>
+                <span class="text-3xl block mb-2">📋</span>
                 <p class="font-bold text-gray-700 text-sm">Nenhuma resposta de enquete registrada ainda.</p>
                 <p class="text-xs text-gray-400 mt-1">Imprima o QR Code da Enquete e divulgue para os alunos responderem
                     pelo celular!</p>
                 <div class="mt-4 flex justify-center gap-2">
                     <a href="{% url 'enquete' %}" target="_blank"
                         class="text-xs font-bold text-[#33FF00] bg-[#0a0a0a] px-3.5 py-2 rounded-xl transition">
-                        Responder Primeiro Teste Ã¢Å¾â€
+                        Responder Primeiro Teste ➔
                     </a>
                 </div>
             </div>
@@ -935,7 +884,7 @@
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã°Å¸â€Â¥</span> 1. Aulas Mais Populares / Favoritas
+                        <span>🔥</span> 1. Aulas Mais Populares / Favoritas
                     </h4>
                     <div class="space-y-2.5">
                         {% for aula, qtd in favoritas_ranking %}
@@ -955,11 +904,11 @@
                     </div>
                 </div>
 
-                <!-- 3. NOVOS ESPAÃƒâ€¡OS DESEJADOS -->
+                <!-- 3. NOVOS ESPAÇOS DESEJADOS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã°Å¸Ââ€”Ã¯Â¸Â</span> 3. Novos EspaÃƒÂ§os Mais Desejados
+                        <span>🏗️</span> 3. Novos Espaços Mais Desejados
                     </h4>
                     <div class="space-y-2.5">
                         {% for espaco, qtd in espacos_ranking %}
@@ -979,11 +928,11 @@
                     </div>
                 </div>
 
-                <!-- 2. PARTICIPAÃƒâ€¡ÃƒÆ’O EM AULAS COLETIVAS -->
+                <!-- 2. PARTICIPAÇÃO EM AULAS COLETIVAS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã°Å¸â€˜Â¥</span> 2. FrequÃƒÂªncia em Aulas Coletivas
+                        <span>👥</span> 2. Frequência em Aulas Coletivas
                     </h4>
                     <div class="space-y-2">
                         {% for item, qtd in participacao_ranking %}
@@ -998,26 +947,19 @@
                     </div>
                 </div>
 
-                <!-- 4. AULAS QUE PRECISAM DE ATENÃƒâ€¡ÃƒÆ’O -->
+                <!-- 4. AULAS QUE PRECISAM DE ATENÇÃO -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>Ã¢Å¡Â Ã¯Â¸Â</span> 4. Aulas que Precisam de Mais AtenÃƒÂ§ÃƒÂ£o
+                        <span>⚠️</span> 4. Aulas que Precisam de Mais Atenção
                     </h4>
                     <div class="space-y-2">
                         {% for aula, qtd in melhorias_ranking %}
                         <div
                             class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
                             <span class="font-medium text-slate-700">{{ aula }}</span>
-
-                            <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
-                                {{ qtd }}
-                                {% if qtd == 1 %}
-                                voto
-                                {% else %}
-                                votos
-                                {% endif %}
-                            </span>
+                            <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{{ qtd }} voto{{
+                                qtd|pluralize:"s" }}</span>
                         </div>
                         {% empty %}
                         <p class="text-xs text-gray-400">Sem dados ainda.</p>
@@ -1027,43 +969,32 @@
 
             </div>
 
-            <!-- MURAL DE SUGESTÃƒâ€¢ES E ELOGIOS RECENTES DA ENQUETE -->
+            <!-- MURAL DE SUGESTÕES E ELOGIOS RECENTES DA ENQUETE -->
             {% if ultimas_enquetes %}
             <div class="mt-6 pt-5 border-t border-slate-200">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
-                    Ã°Å¸â€™Â¬ ÃƒÅ¡ltimas ContribuiÃƒÂ§ÃƒÂµes dos Alunos (Perguntas 5 e 6):
+                    💬 Últimas Contribuições dos Alunos (Perguntas 5 e 6):
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {% for resp in ultimas_enquetes %}
                     {% if resp.sugestao_valor or resp.elogio_colaborador or resp.aula_falta %}
                     <div class="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1.5 shadow-sm">
-
                         <div class="flex justify-between text-[11px] text-slate-400">
                             <span>Resposta #{{ resp.id }}</span>
                             <span>{{ resp.data_criacao|date:"d/m H:i" }}</span>
                         </div>
-
                         {% if resp.aula_falta %}
-                        <p>
-                            <strong class="text-slate-700">Sente falta de:</strong>
-                            <span class="text-slate-600">{{ resp.aula_falta }}</span>
-                        </p>
+                        <p><strong class="text-slate-700">Sente falta de:</strong> <span class="text-slate-600">{{
+                                resp.aula_falta }}</span></p>
                         {% endif %}
-
                         {% if resp.sugestao_valor %}
-                        <p>
-                            <strong class="text-slate-700">Agregaria valor:</strong>
-                            <span class="text-slate-600">{{ resp.sugestao_valor }}</span>
-                        </p>
+                        <p><strong class="text-slate-700">Agregaria valor:</strong> <span class="text-slate-600">{{
+                                resp.sugestao_valor }}</span></p>
                         {% endif %}
-
                         {% if resp.elogio_colaborador %}
-                        <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg">
-                            <strong>Ã°Å¸â€™Å¡ Elogio:</strong>
-                            {{ resp.elogio_colaborador }}
-                        </p>
+                        <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg"><strong>💚 Elogio:</strong> {{
+                            resp.elogio_colaborador }}</p>
                         {% endif %}
-
                     </div>
                     {% endif %}
                     {% endfor %}
@@ -1084,18 +1015,18 @@
 
             <div class="flex items-center justify-between gap-3 mb-4">
                 <h3 class="font-bold text-gray-800">
-                    Ã°Å¸â€Â Filtrar AvaliaÃƒÂ§ÃƒÂµes
+                    🔍 Filtrar Avaliações
                 </h3>
                 <div class="flex items-center gap-2">
                     {% if periodo_filtro == 'hoje' %}
-                    <span class="text-xs font-semibold bg-lime-100 text-lime-700 px-2.5 py-1 rounded-full">Ã°Å¸â€œâ€¦
+                    <span class="text-xs font-semibold bg-lime-100 text-lime-700 px-2.5 py-1 rounded-full">📅
                         Hoje</span>
                     {% elif periodo_filtro == 'semana' %}
-                    <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">Ã°Å¸â€œâ€¦ Esta
+                    <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">📅 Esta
                         semana</span>
                     {% elif periodo_filtro == 'mes' %}
-                    <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">Ã°Å¸â€œâ€¦
-                        ÃƒÅ¡ltimos 30 dias</span>
+                    <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">📅
+                        Últimos 30 dias</span>
                     {% else %}
                     <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">filtros ativos</span>
                     {% endif %}
@@ -1106,14 +1037,13 @@
             <form method="get" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
 
 
-                <!-- PERÃƒÂODO -->
+                <!-- PERÍODO -->
 
                 <select name="periodo" id="filtro-periodo">
-                    <option value="">Todo perÃƒÂ­odo</option>
-                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>Ã°Å¸â€œâ€¦ Hoje</option>
-                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>Ã°Å¸â€œâ€¦ Esta semana
-                    </option>
-                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>Ã°Å¸â€œâ€¦ ÃƒÅ¡ltimos 30 dias</option>
+                    <option value="">Todo período</option>
+                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>📅 Hoje</option>
+                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>📅 Esta semana</option>
+                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>📅 Últimos 30 dias</option>
                 </select>
 
 
@@ -1156,11 +1086,10 @@
 
                 <select name="funcionario" id="filtro-funcionario">
                     <option value="">
-                        Todos funcionÃƒÂ¡rios
+                        Todos funcionários
                     </option>
                     {% for func in funcionarios %}
-                    <option value="{{ func.id }} {% if funcionario_filtro == func.id|stringformat:s %}selected{% endif %}>{{ func.nome }}</option>
-                        %}>
+                    <option value="{{ func.id }}" {% if funcionario_filtro == func.id|stringformat:"s" %}selected{% endif %}>
                         {{ func.nome }}
                     </option>
                     {% endfor %}
@@ -1168,7 +1097,7 @@
 
 
 
-                <!-- BOTÃƒâ€¢ES -->
+                <!-- BOTÕES -->
 
                 <div class="flex gap-3 sm:col-span-2 md:col-span-3 lg:col-span-5">
 
@@ -1192,7 +1121,7 @@
 
 
         <!-- ===================================================== -->
-        <!-- TABELA DE AVALIAÃƒâ€¡Ãƒâ€¢ES -->
+        <!-- TABELA DE AVALIAÇÕES -->
         <!-- ===================================================== -->
 
         <section id="tabela-avaliacoes">
@@ -1200,7 +1129,7 @@
             <div class="flex items-center justify-between mb-4">
 
                 <h2 class="text-xl font-bold text-gray-800">
-                    Ã°Å¸â€œÂ AvaliaÃƒÂ§ÃƒÂµes Recentes
+                    📝 Avaliações Recentes
                 </h2>
 
 
@@ -1229,7 +1158,7 @@
                             </th>
 
                             <th>
-                                FuncionÃƒÂ¡rio
+                                Funcionário
                             </th>
 
                             <th>
@@ -1278,7 +1207,7 @@
 
 
 
-                            <!-- FUNCIONÃƒÂRIO -->
+                            <!-- FUNCIONÁRIO -->
 
                             <td>
 
@@ -1310,7 +1239,7 @@
                                 {% else %}
 
                                 <span class="text-gray-400 italic">
-                                    NÃƒÂ£o informado
+                                    Não informado
                                 </span>
 
                                 {% endif %}
@@ -1327,11 +1256,11 @@
 
                                     {% for i in "12345" %}
 
-                                    {% if forloop.counter <= a.nota %} <span class="star-on">Ã¢Ëœâ€¦</span>
+                                    {% if forloop.counter <= a.nota %} <span class="star-on">★</span>
 
                                 {% else %}
 
-                                <span class="star-off">Ã¢Ëœâ€¦</span>
+                                <span class="star-off">★</span>
 
                                 {% endif %}
 
@@ -1350,19 +1279,19 @@
                                 {% if a.tipo_feedback == "elogio" %}
 
                                 <span class="badge badge-elogio">
-                                    Ã°Å¸â€˜Â Elogio
+                                    👍 Elogio
                                 </span>
 
                                 {% elif a.tipo_feedback == "reclamacao" %}
 
                                 <span class="badge badge-reclamacao">
-                                    Ã¢Å¡Â Ã¯Â¸Â ReclamaÃƒÂ§ÃƒÂ£o
+                                    ⚠️ Reclamação
                                 </span>
 
                                 {% else %}
 
                                 <span class="badge badge-sugestao">
-                                    Ã°Å¸â€™Â¡ SugestÃƒÂ£o
+                                    💡 Sugestão
                                 </span>
 
                                 {% endif %}
@@ -1378,19 +1307,19 @@
                                 {% if a.status == "resolvida" %}
 
                                 <span class="badge badge-resolvida">
-                                    Ã¢Å“â€¦ Resolvida
+                                    ✅ Resolvida
                                 </span>
 
                                 {% elif a.status == "em_analise" %}
 
                                 <span class="badge badge-analise">
-                                    Ã°Å¸â€Â Em anÃƒÂ¡lise
+                                    🔍 Em análise
                                 </span>
 
                                 {% else %}
 
                                 <span class="badge badge-pendente">
-                                    Ã°Å¸â€¢Â Pendente
+                                    🕐 Pendente
                                 </span>
 
                                 {% endif %}
@@ -1415,7 +1344,7 @@
 
                                 <button class="btn-detalhes" id="btn-detalhes-{{ a.pk }}"
                                     onclick="abrirModal({{ a.pk }})" title="Ver detalhes">
-                                    Ã°Å¸â€Å½ Ver detalhes
+                                    🔎 Ver detalhes
                                 </button>
 
                             </td>
@@ -1431,12 +1360,12 @@
                             "id": {{ a.pk }},
                             "categoria": "{{ a.get_categoria_display|escapejs }}",
                             "nota": {{ a.nota }},
-                            "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}Ã°Å¸â€˜Â Elogio{% elif a.tipo_feedback == 'reclamacao' %}Ã¢Å¡Â Ã¯Â¸Â ReclamaÃƒÂ§ÃƒÂ£o{% else %}Ã°Å¸â€™Â¡ SugestÃƒÂ£o{% endif %}",
-                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} Ã¢â‚¬â€ {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}NÃƒÂ£o informado{% endif %}",
-                            "comentario": "{{ a.comentario|default:'Sem comentÃƒÂ¡rio'|escapejs }}",
-                            "localizacao": "{{ a.localizacao|default:'NÃƒÂ£o informada'|escapejs }}",
+                            "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}👍 Elogio{% elif a.tipo_feedback == 'reclamacao' %}⚠️ Reclamação{% else %}💡 Sugestão{% endif %}",
+                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} — {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}Não informado{% endif %}",
+                            "comentario": "{{ a.comentario|default:'Sem comentário'|escapejs }}",
+                            "localizacao": "{{ a.localizacao|default:'Não informada'|escapejs }}",
                             "data_criacao": "{{ a.data_criacao|date:'d/m/Y H:i' }}",
-                            "status": "{% if a.status == 'resolvida' %}Ã¢Å“â€¦ Resolvida{% elif a.status == 'em_analise' %}Ã°Å¸â€Â Em AnÃƒÂ¡lise{% else %}Ã°Å¸â€¢Â Pendente{% endif %}",
+                            "status": "{% if a.status == 'resolvida' %}✅ Resolvida{% elif a.status == 'em_analise' %}🔍 Em Análise{% else %}🕐 Pendente{% endif %}",
                             "status_raw": "{{ a.status }}",
                             "resolvido_por": "{% if a.resolvido_por %}{{ a.resolvido_por.username|escapejs }}{% endif %}",
                             "data_resolucao": "{% if a.data_resolucao %}{{ a.data_resolucao|date:'d/m/Y H:i' }}{% endif %}",
@@ -1453,11 +1382,11 @@
                             <td colspan="7" class="py-16 text-center text-gray-400">
 
                                 <div class="text-4xl mb-3">
-                                    Ã°Å¸â€œÂ­
+                                    📭
                                 </div>
 
                                 <p class="font-medium">
-                                    Nenhuma avaliaÃƒÂ§ÃƒÂ£o encontrada
+                                    Nenhuma avaliação encontrada
                                 </p>
 
                                 <p class="text-sm mt-1">
@@ -1489,7 +1418,7 @@
         <section id="ranking">
 
             <h2 class="text-xl font-bold text-gray-800 mb-4">
-                Ã°Å¸Ââ€  Ranking de FuncionÃƒÂ¡rios
+                🏆 Ranking de Funcionários
             </h2>
 
 
@@ -1514,11 +1443,11 @@
                         <span class="text-2xl">
 
                             {% if forloop.counter == 1 %}
-                            Ã°Å¸Â¥â€¡
+                            🥇
                             {% elif forloop.counter == 2 %}
-                            Ã°Å¸Â¥Ë†
+                            🥈
                             {% elif forloop.counter == 3 %}
-                            Ã°Å¸Â¥â€°
+                            🥉
                             {% else %}
                             #{{ forloop.counter }}
                             {% endif %}
@@ -1585,7 +1514,7 @@
                             </p>
 
                             <p class="text-xs text-red-600">
-                                ReclamaÃƒÂ§ÃƒÂµes
+                                Reclamações
                             </p>
 
                         </div>
@@ -1598,7 +1527,7 @@
                             </p>
 
                             <p class="text-xs text-purple-600">
-                                SugestÃƒÂµes
+                                Sugestões
                             </p>
 
                         </div>
@@ -1609,12 +1538,12 @@
                     <div class="flex items-center justify-between text-sm pt-2 border-t border-gray-100">
 
                         <span class="text-gray-500">
-                            Ã¢Â­Â MÃƒÂ©dia:
+                            ⭐ Média:
                             <strong>{{ item.media }}</strong>
                         </span>
 
                         <span class="text-gray-500">
-                            Ã°Å¸â€œÅ  Total:
+                            📊 Total:
                             <strong>{{ item.total }}</strong>
                         </span>
 
@@ -1629,11 +1558,11 @@
                 <div class="col-span-3 text-center text-gray-400 py-10">
 
                     <div class="text-3xl mb-2">
-                        Ã°Å¸â€˜Â¤
+                        👤
                     </div>
 
                     <p>
-                        Nenhum funcionÃƒÂ¡rio cadastrado.
+                        Nenhum funcionário cadastrado.
                     </p>
 
                 </div>
@@ -1665,18 +1594,18 @@
                 <div>
 
                     <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">
-                        AvaliaÃƒÂ§ÃƒÂ£o
+                        Avaliação
                     </p>
 
                     <h2 id="modal-titulo" class="text-lg font-bold text-white">
-                        Detalhes da AvaliaÃƒÂ§ÃƒÂ£o
+                        Detalhes da Avaliação
                     </h2>
 
                 </div>
 
 
                 <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">
-                    Ã¢Å“â€¢
+                    ✕
                 </button>
 
             </div>
@@ -1694,7 +1623,7 @@
 
 
     <!-- ========================================================= -->
-    <!-- DADOS DOS GRÃƒÂFICOS -->
+    <!-- DADOS DOS GRÁFICOS -->
     <!-- ========================================================= -->
 
     {{ avaliacoes_categoria|json_script:"dados-categorias" }}
@@ -1711,7 +1640,7 @@
 
 
         /* ======================================================= */
-        /* GRÃƒÂFICOS */
+        /* GRÁFICOS */
         /* ======================================================= */
 
         const dc =
@@ -1744,7 +1673,7 @@
 
                     datasets: [{
 
-                        label: "AvaliaÃƒÂ§ÃƒÂµes",
+                        label: "Avaliações",
 
                         data: dc.map(
                             i => i.quantidade
@@ -1822,12 +1751,12 @@
                 data: {
 
                     labels: dn.map(
-                        i => i.nota + " Ã¢Ëœâ€¦"
+                        i => i.nota + " ★"
                     ),
 
                     datasets: [{
 
-                        label: "AvaliaÃƒÂ§ÃƒÂµes",
+                        label: "Avaliações",
 
                         data: dn.map(
                             i => i.quantidade
@@ -1901,9 +1830,9 @@
 
                 s += i <= nota
 
-                    ? '<span style="color:#f59e0b;font-size:1.2rem">Ã¢Ëœâ€¦</span>'
+                    ? '<span style="color:#f59e0b;font-size:1.2rem">★</span>'
 
-                    : '<span style="color:#d1d5db;font-size:1.2rem">Ã¢Ëœâ€¦</span>';
+                    : '<span style="color:#d1d5db;font-size:1.2rem">★</span>';
 
             }
 
@@ -1934,14 +1863,14 @@
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€œâ€š",
+                "📂",
                 "Categoria",
                 d.categoria
             );
 
 
             corpo += modalLinha(
-                "Ã¢Â­Â",
+                "⭐",
                 "Nota",
                 estrelas(d.nota) +
                 ' <span style="color:#6b7280;font-size:0.8rem">(' +
@@ -1951,35 +1880,35 @@
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€™Â¬",
+                "💬",
                 "Tipo de Feedback",
                 d.tipo_feedback
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€˜Â¤",
-                "FuncionÃƒÂ¡rio Avaliado",
+                "👤",
+                "Funcionário Avaliado",
                 d.funcionario
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€œÂ",
-                "LocalizaÃƒÂ§ÃƒÂ£o",
+                "📍",
+                "Localização",
                 d.localizacao
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€¢Â",
+                "🕐",
                 "Data e Hora",
                 d.data_criacao
             );
 
 
             corpo += modalLinha(
-                "Ã°Å¸Å’Â",
+                "🌐",
                 "Origem",
                 d.origem
             );
@@ -1996,13 +1925,13 @@
                     >
 
                         <span class="modal-icon">
-                            Ã°Å¸â€œÂ
+                            📝
                         </span>
 
                         <div style="flex:1">
 
                             <p class="modal-label">
-                                ComentÃƒÂ¡rio do Aluno
+                                Comentário do Aluno
                             </p>
 
                             <p
@@ -2021,7 +1950,7 @@
 
 
             corpo += modalLinha(
-                "Ã°Å¸â€â€“",
+                "🔖",
                 "Status Atual",
                 d.status
             );
@@ -2033,7 +1962,7 @@
             ) {
 
                 corpo += modalLinha(
-                    "Ã¢Å“â€¦",
+                    "✅",
                     "Resolvida por",
                     "<strong>" +
                     d.resolvido_por +
@@ -2044,8 +1973,8 @@
                 if (d.data_resolucao) {
 
                     corpo += modalLinha(
-                        "Ã°Å¸â€œâ€¦",
-                        "Data de ResoluÃƒÂ§ÃƒÂ£o",
+                        "📅",
+                        "Data de Resolução",
                         d.data_resolucao
                     );
 
@@ -2136,7 +2065,7 @@
                                 cursor:pointer
                             "
                         >
-                            Ã°Å¸â€¢Â Pendente
+                            🕐 Pendente
                         </button>
 
 
@@ -2156,7 +2085,7 @@
                                 cursor:pointer
                             "
                         >
-                            Ã°Å¸â€Â Em AnÃƒÂ¡lise
+                            🔍 Em Análise
                         </button>
 
 
@@ -2176,7 +2105,7 @@
                                 cursor:pointer
                             "
                         >
-                            Ã¢Å“â€¦ Resolvida
+                            ✅ Resolvida
                         </button>
 
                     </form>
@@ -2317,7 +2246,7 @@
 
 
         /* ======================================================= */
-        /* ANÃƒÂLISE COM IA */
+        /* ANÁLISE COM IA */
         /* ======================================================= */
 
         async function analisarComIA() {
@@ -2364,7 +2293,7 @@
                     <span></span>
                     <span></span>
                 </span>
-                Processando os dados com InteligÃƒÂªncia Artificial...
+                Processando os dados com Inteligência Artificial...
             `;
 
 
@@ -2399,7 +2328,7 @@
             } catch (err) {
 
                 textoDiv.innerHTML =
-                    "Ã¢ÂÅ’ NÃƒÂ£o foi possÃƒÂ­vel conectar ÃƒÂ  IA. Verifique a configuraÃƒÂ§ÃƒÂ£o da chave de API.";
+                    "❌ Não foi possível conectar à IA. Verifique a configuração da chave de API.";
 
             }
 
@@ -2408,110 +2337,52 @@
 
 
             btn.innerHTML =
-                "Ã¢Å“Â¨ Gerar AnÃƒÂ¡lise";
+                "✨ Gerar Análise";
 
         }
 
 
 
-        function formatarTextoIA(texto) {
+        <script>
+/* =========================================================
+            ASSISTENTE IA — POLO FIT
+            ========================================================= */
 
-            return texto
-
-                .replace(
-                    /\*\*(.*?)\*\*/g,
-                    "<strong>$1</strong>"
-                )
-
-                .replace(
-                    /\*(.*?)\*/g,
-                    "<em>$1</em>"
-                )
-
-                .replace(
-                    /\n/g,
-                    "<br>"
-                );
-
-        }
+            const chatForm = document.getElementById("chat-form");
+            const chatInput = document.getElementById("chat-input");
+            const chatMessages = document.getElementById("chat-mensagens");
+            const chatEnviar = document.getElementById("chat-enviar");
+            const limparChat = document.getElementById("limpar-chat");
+            const chatContador = document.getElementById("chat-contador");
+            const chatSugestoes = document.getElementById("chat-sugestoes");
 
 
-        /* =========================================================
-                    ASSISTENTE IA Ã¢â‚¬â€ POLO FIT
-                    ========================================================= */
+            /* =========================================================
+               FORMATAÇÃO SEGURA DA RESPOSTA DA IA
+               ========================================================= */
 
-        const chatForm = document.getElementById("chat-form");
-        const chatInput = document.getElementById("chat-input");
-        const chatMessages = document.getElementById("chat-mensagens");
-        const chatEnviar = document.getElementById("chat-enviar");
-        const limparChat = document.getElementById("limpar-chat");
-        const chatContador = document.getElementById("chat-contador");
-        const chatSugestoes = document.getElementById("chat-sugestoes");
-
-
-        /* =========================================================
-           FORMATAÃƒâ€¡ÃƒÆ’O SEGURA DA RESPOSTA DA IA
-           ========================================================= */
-
-        function formatarTextoIA(texto) {
-
+            function formatarTextoIA(texto) {
             if (!texto) {
-                return "NÃƒÂ£o consegui gerar uma resposta no momento.";
+                return "Não consegui gerar uma resposta no momento.";
             }
 
-            // Protege o conteÃƒÂºdo antes de inserir HTML
             let seguro = String(texto)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
+                .replace(/\"/g, "&quot;")
                 .replace(/'/g, "&#039;");
 
-            // Negrito
-            seguro = seguro.replace(
-                /\*\*(.*?)\*\*/g,
-                "<strong class='text-white font-bold'>$1</strong>"
-            );
-
-            // ItÃƒÂ¡lico
-            seguro = seguro.replace(
-                /\*(.*?)\*/g,
-                "<em>$1</em>"
-            );
-
-            // TÃƒÂ­tulos simples
-            seguro = seguro.replace(
-                /^### (.*?)$/gm,
-                "<div class='font-bold text-lime-300 text-sm mt-3 mb-1'>$1</div>"
-            );
-
-            seguro = seguro.replace(
-                /^## (.*?)$/gm,
-                "<div class='font-bold text-lime-300 text-base mt-3 mb-1'>$1</div>"
-            );
-
-            // Listas
-            seguro = seguro.replace(
-                /^[-Ã¢â‚¬Â¢] (.*?)$/gm,
-                "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400'>Ã¢â‚¬Â¢</span><span>$1</span></div>"
-            );
-
-            // NÃƒÂºmeros
-            seguro = seguro.replace(
-                /^(\d+)\. (.*?)$/gm,
-                "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400 font-bold'>$1.</span><span>$2</span></div>"
-            );
-
-            // Quebras de linha
+            seguro = seguro.replace(/\*\*(.*?)\*\*/g, "<strong class='text-white font-bold'>$1</strong>");
+            seguro = seguro.replace(/\*(.*?)\*/g, "<em>$1</em>");
+            seguro = seguro.replace(/^### (.*?)$/gm, "<div class='font-bold text-lime-300 text-sm mt-3 mb-1'>$1</div>");
+            seguro = seguro.replace(/^## (.*?)$/gm, "<div class='font-bold text-lime-300 text-base mt-3 mb-1'>$1</div>");
+            seguro = seguro.replace(/^[-•] (.*?)$/gm, "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400'>•</span><span>$1</span></div>");
+            seguro = seguro.replace(/^(\d+)\. (.*?)$/gm, "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400 font-bold'>$1.</span><span>$2</span></div>");
             seguro = seguro.replace(/\n/g, "<br>");
 
             return seguro;
         }
-
-
-        /* =========================================================
-           HORA ATUAL
-           ========================================================= */
 
         function horaAtual() {
 
@@ -2527,45 +2398,29 @@
 
 
         /* =========================================================
-           ADICIONAR MENSAGEM DO USUÃƒÂRIO
+           ADICIONAR MENSAGEM DO USUÁRIO
            ========================================================= */
 
         function adicionarMensagemUsuario(mensagem) {
-
             const wrapper = document.createElement("div");
-
             wrapper.className = "flex justify-end items-start gap-3";
 
             wrapper.innerHTML = `
-        <div class="max-w-[85%]">
+                <div class="max-w-[85%]">
+                    <div class="flex justify-end items-center gap-2 mb-1.5">
+                        <span class="text-[10px] text-slate-500">${horaAtual()}</span>
+                        <span class="text-xs font-bold text-slate-300">Você</span>
+                    </div>
+                    <div class="chat-bubble-user rounded-2xl rounded-tr-md px-4 py-3 text-sm leading-relaxed font-medium shadow-sm">
+                        ${escapeHTML(mensagem)}
+                    </div>
+                </div>
 
-            <div class="flex justify-end items-center gap-2 mb-1">
-
-                <span class="text-[10px] text-slate-500">
-                    ${horaAtual()}
-                </span>
-
-                <span class="text-xs font-bold text-slate-300">
-                    VocÃƒÂª
-                </span>
-
-            </div>
-
-            <div class="bg-lime-400 text-slate-950 rounded-2xl rounded-tr-md px-4 py-3 text-sm leading-relaxed font-medium shadow-sm">
-                ${escapeHTML(mensagem)}
-            </div>
-
-        </div>
-
-        <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
-            Ã°Å¸â€˜Â¤
-        </div>
-    `;
+                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-sm">👤</div>
+            `;
 
             chatMessages.appendChild(wrapper);
-
             rolarChat();
-
         }
 
 
@@ -2574,41 +2429,25 @@
            ========================================================= */
 
         function adicionarMensagemIA(texto) {
-
             const wrapper = document.createElement("div");
-
             wrapper.className = "flex items-start gap-3";
 
             wrapper.innerHTML = `
-        <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-            Ã°Å¸Â¤â€“
-        </div>
+                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">🤖</div>
 
-        <div class="max-w-[88%]">
-
-            <div class="flex items-center gap-2 mb-1">
-
-                <span class="text-xs font-bold text-lime-300">
-                    Assistente Polo Fit
-                </span>
-
-                <span class="text-[10px] text-slate-500">
-                    ${horaAtual()}
-                </span>
-
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
-                ${formatarTextoIA(texto)}
-            </div>
-
-        </div>
-    `;
+                <div class="max-w-[88%]">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="text-xs font-bold text-lime-300">Polo IA</span>
+                        <span class="text-[10px] text-slate-500">${horaAtual()}</span>
+                    </div>
+                    <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
+                        ${formatarTextoIA(texto)}
+                    </div>
+                </div>
+            `;
 
             chatMessages.appendChild(wrapper);
-
             rolarChat();
-
         }
 
 
@@ -2617,55 +2456,28 @@
            ========================================================= */
 
         function adicionarPensando() {
-
             const wrapper = document.createElement("div");
-
             wrapper.id = "chat-pensando";
-
             wrapper.className = "flex items-start gap-3";
 
             wrapper.innerHTML = `
-        <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-            Ã°Å¸Â¤â€“
-        </div>
+                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">🤖</div>
 
-        <div>
-
-            <div class="text-xs font-bold text-lime-300 mb-1">
-                Assistente Polo Fit
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3">
-
-                <div class="flex items-center gap-1">
-
-                    <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"></span>
-
-                    <span
-                        class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"
-                        style="animation-delay:0.15s"
-                    ></span>
-
-                    <span
-                        class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"
-                        style="animation-delay:0.3s"
-                    ></span>
-
-                    <span class="ml-2 text-xs text-slate-500">
-                        Analisando...
-                    </span>
-
+                <div>
+                    <div class="text-xs font-bold text-lime-300 mb-1.5">Polo IA</div>
+                    <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3">
+                        <div class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"></span>
+                            <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce" style="animation-delay:0.15s"></span>
+                            <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce" style="animation-delay:0.3s"></span>
+                            <span class="ml-2 text-xs text-slate-400">Digitando...</span>
+                        </div>
+                    </div>
                 </div>
-
-            </div>
-
-        </div>
-    `;
+            `;
 
             chatMessages.appendChild(wrapper);
-
             rolarChat();
-
         }
 
 
@@ -2703,141 +2515,93 @@
            ========================================================= */
 
         async function enviarPergunta(mensagem) {
-
             if (!mensagem || !chatForm) {
                 return;
             }
 
             adicionarMensagemUsuario(mensagem);
-
             chatInput.value = "";
-
             atualizarContador();
+            autoResizeInput();
 
             chatInput.disabled = true;
             chatEnviar.disabled = true;
-
             adicionarPensando();
 
             try {
-
                 const response = await fetch("/ia/chat/", {
-
                     method: "POST",
-
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": getCookie("csrftoken")
                     },
-
-                    body: JSON.stringify({
-                        mensagem: mensagem
-                    })
-
+                    body: JSON.stringify({ mensagem: mensagem })
                 });
 
-
                 const data = await response.json();
-
-
                 const pensando = document.getElementById("chat-pensando");
-
-                if (pensando) {
-                    pensando.remove();
-                }
-
+                if (pensando) pensando.remove();
 
                 if (!response.ok) {
-
                     adicionarMensagemIA(
                         data.resposta ||
                         data.erro ||
-                        "NÃƒÂ£o foi possÃƒÂ­vel processar sua pergunta."
+                        "Não foi possível processar sua pergunta no momento. Tente novamente em alguns segundos."
                     );
-
                     return;
                 }
 
-
                 adicionarMensagemIA(
                     data.resposta ||
-                    "NÃƒÂ£o consegui encontrar uma resposta para essa pergunta."
+                    "Não consegui obter uma resposta relevante para essa pergunta. Tente formular de outra forma."
                 );
-
 
             } catch (error) {
-
                 const pensando = document.getElementById("chat-pensando");
-
-                if (pensando) {
-                    pensando.remove();
-                }
+                if (pensando) pensando.remove();
 
                 adicionarMensagemIA(
-                    "NÃƒÂ£o consegui conectar ao assistente neste momento. Verifique a conexÃƒÂ£o e tente novamente."
+                    "Não foi possível conectar ao assistente naquele momento. Verifique a conexão e tente novamente, ou use a análise do dashboard como alternativa."
                 );
-
                 console.error("Erro no chatbot:", error);
-
             } finally {
-
                 chatInput.disabled = false;
                 chatEnviar.disabled = false;
-
                 chatInput.focus();
-
                 rolarChat();
-
             }
-
         }
 
 
         /* =========================================================
-           FORMULÃƒÂRIO
+           FORMULÁRIO
            ========================================================= */
 
+        function autoResizeInput() {
+            if (!chatInput) return;
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 160) + 'px';
+        }
+
         if (chatForm && chatInput) {
-
             chatForm.addEventListener("submit", function (event) {
-
                 event.preventDefault();
-
                 const mensagem = chatInput.value.trim();
-
-                if (!mensagem) {
-                    return;
-                }
-
+                if (!mensagem) return;
                 enviarPergunta(mensagem);
-
             });
-
-
-            /* =====================================================
-               ENTER ENVIA
-               SHIFT + ENTER QUEBRA LINHA
-               ===================================================== */
 
             chatInput.addEventListener("keydown", function (event) {
-
                 if (event.key === "Enter" && !event.shiftKey) {
-
                     event.preventDefault();
-
                     chatForm.requestSubmit();
-
                 }
-
             });
 
-
-            /* =====================================================
-               CONTADOR
-               ===================================================== */
-
-            chatInput.addEventListener("input", atualizarContador);
-
+            chatInput.addEventListener("input", function () {
+                atualizarContador();
+                autoResizeInput();
+            });
         }
 
 
@@ -2858,7 +2622,7 @@
 
 
         /* =========================================================
-           SUGESTÃƒâ€¢ES
+           SUGESTÕES
            ========================================================= */
 
         document.querySelectorAll(".sugestao-chat").forEach(function (botao) {
@@ -2890,7 +2654,7 @@
             <div class="flex items-start gap-3">
 
                 <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-                    Ã°Å¸Â¤â€“
+                    🤖
                 </div>
 
                 <div class="max-w-[85%]">
@@ -2909,7 +2673,7 @@
 
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200">
 
-                        OlÃƒÂ¡! Ã°Å¸â€˜â€¹ Como posso ajudar vocÃƒÂª hoje?
+                        Olá! 👋 Como posso ajudar você hoje?
 
                     </div>
 
@@ -2937,7 +2701,6 @@
 
         }
     </script>
-
 
     {% include "feedback/pwa_install.html" %}
 </body>

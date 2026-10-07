@@ -41,8 +41,6 @@ urlpatterns = [
 ]
 
 
-
-
 # Em desenvolvimento (DEBUG=True), o Django serve arquivos de mídia diretamente.
 # Em produção, configure um servidor web ou storage (S3, Cloudflare R2, etc.)
 # para servir os arquivos de /media/.
