@@ -1,7 +1,9 @@
 import io
 import base64
 import json
+import re
 import socket
+import unicodedata
 import urllib.request
 import urllib.error
 import qrcode
@@ -552,6 +554,42 @@ def dashboard(request):
         reverse=True,
     )
 
+    respostas_enquete = RespostaEnquete.objects.all()
+    total_enquetes = respostas_enquete.count()
+    favoritas_ranking = Counter(
+        [
+            aula
+            for resposta in respostas_enquete.exclude(aulas_favoritas=[])
+            for aula in (resposta.aulas_favoritas or [])
+        ]
+    ).most_common(6)
+    espacos_ranking = Counter(
+        respostas_enquete.exclude(novo_espaco="").values_list(
+            "novo_espaco",
+            flat=True,
+        )
+    ).most_common(6)
+    melhorias_ranking = Counter(
+        respostas_enquete.exclude(aula_melhoria="").values_list(
+            "aula_melhoria",
+            flat=True,
+        )
+    ).most_common(5)
+    participacao_ranking = Counter(
+        respostas_enquete.exclude(participa_aulas="").values_list(
+            "participa_aulas",
+            flat=True,
+        )
+    ).most_common(4)
+    ultimas_enquetes = (
+        respostas_enquete.filter(
+            models.Q(sugestao_valor__gt="")
+            | models.Q(elogio_colaborador__gt="")
+            | models.Q(aula_falta__gt="")
+        )
+        .order_by("-data_criacao")[:6]
+    )
+
     # ==========================================================
     # DASHBOARD
     # ==========================================================
@@ -581,35 +619,14 @@ def dashboard(request):
             "funcionarios": todos_funcionarios,
             "ranking_funcionarios": ranking_funcionarios,
             "locais_ranking": locais_ranking,
-            "total_enquetes": RespostaEnquete.objects.count(),
-            "favoritas_ranking": Counter(
-                [
-                    a
-                    for r in RespostaEnquete.objects.exclude(aulas_favoritas=[])
-                    for a in (r.aulas_favoritas or [])
-                ]
-            ).most_common(6),
-            "espacos_ranking": Counter(
-                RespostaEnquete.objects.exclude(novo_espaco="").values_list(
-                    "novo_espaco",
-                    flat=True,
-                )
-            ).most_common(6),
-            "melhorias_ranking": Counter(
-                RespostaEnquete.objects.exclude(aula_melhoria="").values_list(
-                    "aula_melhoria",
-                    flat=True,
-                )
-            ).most_common(5),
-            "participacao_ranking": Counter(
-                RespostaEnquete.objects.exclude(participa_aulas="").values_list(
-                    "participa_aulas",
-                    flat=True,
-                )
-            ).most_common(4),
-            "ultimas_enquetes": (
-                RespostaEnquete.objects.all().order_by("-data_criacao")[:6]
-            ),
+            "total_enquetes": total_enquetes,
+            "favoritas_ranking": favoritas_ranking,
+            "espacos_ranking": espacos_ranking,
+            "melhorias_ranking": melhorias_ranking,
+            "participacao_ranking": participacao_ranking,
+            "ultimas_enquetes": ultimas_enquetes,
+            "principal_oportunidade": melhorias_ranking[0] if melhorias_ranking else None,
+            "espaco_mais_desejado": espacos_ranking[0] if espacos_ranking else None,
         },
     )
 
@@ -944,7 +961,65 @@ def _gerar_resposta_conversacional_local(
     comentarios,
 ):
 
-    p = pergunta.lower()
+    p = unicodedata.normalize("NFKD", pergunta.lower())
+    p = "".join(caractere for caractere in p if not unicodedata.combining(caractere))
+    p = re.sub(r"[^\w\s]", " ", p)
+    p = " ".join(p.split())
+
+    saudacao = next(
+        (
+            cumprimento
+            for cumprimento in (
+                "bom dia",
+                "boa tarde",
+                "boa noite",
+                "oi",
+                "ola",
+                "e ai",
+            )
+            if p == cumprimento or p.startswith(f"{cumprimento} ")
+        ),
+        "",
+    )
+    if saudacao:
+        p = p[len(saudacao) :].strip()
+
+    if p in {"", "tudo bem", "como vai", "tudo bem voce"}:
+        return (
+            f"{saudacao.capitalize() + '! ' if saudacao else 'Olá! '}"
+            "Bom ter você por aqui. Como posso ajudar? "
+            "Posso consultar a satisfação dos alunos, reclamações, sugestões "
+            "ou avaliações da equipe."
+        )
+
+    if p in {
+        "obrigado",
+        "obrigada",
+        "muito obrigado",
+        "muito obrigada",
+        "valeu",
+    }:
+        return (
+            "Por nada! Estou à disposição para ajudar com os dados e as "
+            "decisões de gestão da Polo Fit."
+        )
+
+    if any(
+        termo in p
+        for termo in [
+            "o que voce pode fazer",
+            "como voce pode me ajudar",
+            "como pode me ajudar",
+            "quais informacoes voce tem",
+            "ajuda",
+        ]
+    ):
+        return (
+            "Posso ajudar você a analisar os indicadores da academia: satisfação "
+            "e notas dos alunos, elogios, reclamações pendentes, sugestões, "
+            "preferências da enquete e avaliações dos colaboradores. "
+            "O que gostaria de consultar?"
+        )
 
     if any(
         k in p
@@ -967,11 +1042,9 @@ Com base nas avaliações recentes dos alunos:
 
 {ranking_txt}
 
-**Destaques:**
-• Os alunos apontam grande empatia, atenção e incentivo nos treinos.
-
 **Recomendação para a Gerência:**
-Reconheça os colaboradores mais elogiados no ranking."""
+Considere reconhecer os colaboradores com maior número de elogios e acompanhar
+as notas médias junto ao volume de avaliações de cada pessoa."""
 
     if any(
         k in p
@@ -1047,7 +1120,22 @@ Com base nas **{sugestoes} sugestões** e na nota média de **{round(media, 1)}/
 3. Manter os QR Codes visíveis para ampliar os feedbacks.
 4. Compartilhar os elogios nas reuniões com a equipe."""
 
-    return f"""**📋 Síntese dos Feedbacks — Polo Fit**
+    if any(
+        termo in p
+        for termo in [
+            "satisfacao",
+            "satisfacao dos alunos",
+            "nota",
+            "notas",
+            "resumo",
+            "visao geral",
+            "panorama",
+            "desempenho",
+            "avaliacao",
+            "avaliacoes",
+        ]
+    ):
+        return f"""**📋 Panorama de Feedbacks — Polo Fit**
 
 • **Volume Total:** {total} avaliações.
 • **Nota Média:** {round(media, 1)} / 5.0 ⭐
@@ -1057,7 +1145,16 @@ Com base nas **{sugestoes} sugestões** e na nota média de **{round(media, 1)}/
 • **Resolvidas:** {resolvidas}
 • **Pendentes:** {pendentes}
 
-O sistema pode analisar funcionários, reclamações, sugestões, desempenho e oportunidades de melhoria."""
+**Leitura para a gestão:** acompanhe as demandas pendentes e compare a nota média
+com a evolução dos próximos períodos para identificar tendências."""
+
+    abertura = f"{saudacao.capitalize()}! " if saudacao else ""
+    return (
+        f"{abertura}Claro, posso conversar com você e ajudar com as informações da Polo Fit. "
+        "Para manter as recomendações baseadas em dados reais, posso analisar "
+        "satisfação, avaliações, reclamações, sugestões, equipe e resultados da "
+        "enquete. Qual desses assuntos você gostaria de explorar?"
+    )
 
 
 @login_required
@@ -1207,7 +1304,10 @@ COMENTÁRIOS REAIS DOS ALUNOS:
 PERGUNTA DO GERENTE:
 "{mensagem_usuario}"
 
-Responda em português brasileiro.
+Responda em português brasileiro com tom cordial, natural e profissional.
+Converse como um assistente: cumprimente de volta saudações, responda agradecimentos
+e perguntas simples sem apresentar um relatório desnecessário. Para perguntas sobre
+a academia, use os dados abaixo; quando faltar contexto, faça uma pergunta objetiva.
 
 Seja:
 - profissional;

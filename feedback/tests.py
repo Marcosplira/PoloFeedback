@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.test import override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
@@ -153,6 +154,49 @@ class FeedbackViewsTests(TestCase):
         self.assertNotIn("<script", chat_script)
         self.assertIn('document.querySelectorAll(".sugestao-chat")', chat_script)
         self.assertContains(response, "Como está a satisfação dos alunos atualmente?")
+
+    def test_dashboard_survey_results_are_rendered_for_managers(self):
+        self.client.force_login(self.user)
+        for _ in range(6):
+            RespostaEnquete.objects.create(
+                aulas_favoritas=["Funcional"],
+                aula_melhoria="Jump",
+                novo_espaco="Espaço Kids",
+                aula_falta="Natação",
+                sugestao_valor="Ampliar os horários das aulas",
+                elogio_colaborador="A equipe é muito atenciosa",
+            )
+
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertRegex(response.content.decode(), r"6\s+respostas coletadas")
+        self.assertContains(response, "6 votos")
+        self.assertRegex(response.content.decode(), r"6\s+menções")
+        self.assertContains(response, "Sinal de atenção")
+        self.assertContains(response, "Espaço Kids")
+        self.assertContains(response, "Sugestão de melhoria:")
+        self.assertContains(response, "Ampliar os horários das aulas")
+        self.assertNotContains(response, "{{")
+
+    @override_settings(GEMINI_API_KEY="")
+    def test_ia_chat_handles_greetings_and_small_talk(self):
+        self.client.force_login(self.user)
+
+        for message, expected in [
+            ("Bom dia!", "Como posso ajudar?"),
+            ("Oi, tudo bem?", "Como posso ajudar?"),
+            ("Bom dia, o que você precisa saber sobre o aplicativo?", "Bom dia!"),
+            ("Obrigado", "Por nada!"),
+            ("O que você pode fazer?", "Posso ajudar você a analisar"),
+        ]:
+            with self.subTest(message=message):
+                response = self.client.post(
+                    reverse("ia_chat"),
+                    data=json.dumps({"mensagem": message}),
+                    content_type="application/json",
+                )
+                self.assertEqual(response.status_code, 200)
+                self.assertIn(expected, response.json()["resposta"])
 
     def test_dashboard_atualizar_status(self):
         self.client.login(username="gerente_teste", password="senha_segura_123")
