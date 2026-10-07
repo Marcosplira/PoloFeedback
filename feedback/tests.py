@@ -140,6 +140,20 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Dashboard")
         self.assertContains(response, "Ambiente climatizado")
 
+    def test_dashboard_chat_script_is_valid_for_suggestion_buttons(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+
+        content = response.content.decode()
+        script_start = content.index("const chatForm =")
+        script_end = content.index("</script>", script_start)
+        chat_script = content[script_start:script_end]
+
+        self.assertNotIn("<script", chat_script)
+        self.assertIn('document.querySelectorAll(".sugestao-chat")', chat_script)
+        self.assertContains(response, "Como está a satisfação dos alunos atualmente?")
+
     def test_dashboard_atualizar_status(self):
         self.client.login(username="gerente_teste", password="senha_segura_123")
         av = Avaliacao.objects.create(
