@@ -27,8 +27,10 @@ def service_worker(request):
 
     with open(worker_path, encoding="utf-8") as worker_file:
         response = HttpResponse(
-            worker_file.read(), content_type="application/javascript"
+            worker_file.read(),
+            content_type="application/javascript",
         )
+
     response["Service-Worker-Allowed"] = "/"
     return response
 
@@ -56,17 +58,20 @@ def avaliar(request):
         localizacao = request.POST.get("localizacao", "").strip()
         funcionario_id = request.POST.get("funcionario_id")
 
-        # Validação detalhada
         erros = []
+
         if not categorias:
             erros.append(
-                "Selecione pelo menos um aspecto para avaliar (Atendimento, Limpeza, etc.)."
+                "Selecione pelo menos um aspecto para avaliar "
+                "(Atendimento, Limpeza, etc.)."
             )
+
         if not nota:
             erros.append("Avalie atribuindo uma nota de 1 a 5 estrelas.")
+
         if not tipos_feedback:
             erros.append(
-                "Selecione o tipo de feedback (Elogio, Sugestão ou Reclamação)."
+                "Selecione o tipo de feedback " "(Elogio, Sugestão ou Reclamação)."
             )
 
         if erros:
@@ -85,15 +90,17 @@ def avaliar(request):
                 },
             )
 
-        # Funcionário selecionado
         funcionario = None
+
         if funcionario_id:
             try:
-                funcionario = Funcionario.objects.get(pk=funcionario_id, ativo=True)
+                funcionario = Funcionario.objects.get(
+                    pk=funcionario_id,
+                    ativo=True,
+                )
             except (Funcionario.DoesNotExist, ValueError):
                 pass
 
-        # Salva avaliação
         Avaliacao.objects.create(
             categoria=categorias[0],
             categorias=categorias,
@@ -105,12 +112,17 @@ def avaliar(request):
             funcionario=funcionario,
         )
 
-        return render(request, "feedback/sucesso.html", {"localizacao": localizacao})
+        return render(
+            request,
+            "feedback/sucesso.html",
+            {"localizacao": localizacao},
+        )
 
-    # GET — localização padrão "Geral" quando o aluno acessa sem QR Code
     localizacao_get = request.GET.get("localizacao", "").strip()
+
     if not localizacao_get:
         localizacao_get = "Geral"
+
     return render(
         request,
         "feedback/avaliar.html",
@@ -123,37 +135,54 @@ def avaliar(request):
 
 def enquete(request):
     """
-    Página da Enquete de Satisfação com as 6 perguntas oficiais reordenadas pelo gerente.
-    1. Quais aulas você MAIS gosta ou participa?
-    2. Você participa das aulas coletivas da academia?
-    3. Sobre novos espaços na academia (Qual faria mais diferença?)
-    4. Qual aula precisa de mais atenção ou melhorias? / Sente falta?
-    5. Pensando em agregações e melhorias (O que agregaria mais valor?)
-    6. Deixe aqui um elogio para nossos colaboradores.
+    Página da Enquete de Satisfação com as 6 perguntas oficiais.
     """
+
     funcionarios = Funcionario.objects.filter(ativo=True).order_by("nome")
 
     if request.method == "POST":
-        # 1. Quais aulas você MAIS gosta ou participa? (múltipla escolha)
+
         aulas_favoritas = request.POST.getlist("aulas_favoritas")
-        aulas_favoritas_outra = request.POST.get("aulas_favoritas_outra", "").strip()
+        aulas_favoritas_outra = request.POST.get(
+            "aulas_favoritas_outra",
+            "",
+        ).strip()
 
-        # 2. Você participa das aulas coletivas da academia?
-        participa_aulas = request.POST.get("participa_aulas", "").strip()
+        participa_aulas = request.POST.get(
+            "participa_aulas",
+            "",
+        ).strip()
 
-        # 3. Sobre novos espaços na academia
-        novo_espaco = request.POST.get("novo_espaco", "").strip()
-        novo_espaco_outro = request.POST.get("novo_espaco_outro", "").strip()
+        novo_espaco = request.POST.get(
+            "novo_espaco",
+            "",
+        ).strip()
 
-        # 4. Qual aula precisa de atenção e qual sente falta
-        aula_melhoria = request.POST.get("aula_melhoria", "").strip()
-        aula_falta = request.POST.get("aula_falta", "").strip()
+        novo_espaco_outro = request.POST.get(
+            "novo_espaco_outro",
+            "",
+        ).strip()
 
-        # 5. Pensando em agregações e melhorias
-        sugestao_valor = request.POST.get("sugestao_valor", "").strip()
+        aula_melhoria = request.POST.get(
+            "aula_melhoria",
+            "",
+        ).strip()
 
-        # 6. Elogio para colaboradores
-        elogio_colaborador = request.POST.get("elogio_colaborador", "").strip()
+        aula_falta = request.POST.get(
+            "aula_falta",
+            "",
+        ).strip()
+
+        sugestao_valor = request.POST.get(
+            "sugestao_valor",
+            "",
+        ).strip()
+
+        elogio_colaborador = request.POST.get(
+            "elogio_colaborador",
+            "",
+        ).strip()
+
         funcionario_id = request.POST.get("funcionario_id")
 
         resposta = RespostaEnquete.objects.create(
@@ -168,10 +197,13 @@ def enquete(request):
             elogio_colaborador=elogio_colaborador,
         )
 
-        # Se deixou elogio e selecionou funcionário, integra com ranking de avaliações
         if elogio_colaborador and funcionario_id:
             try:
-                func = Funcionario.objects.get(pk=funcionario_id, ativo=True)
+                func = Funcionario.objects.get(
+                    pk=funcionario_id,
+                    ativo=True,
+                )
+
                 Avaliacao.objects.create(
                     categoria="professores",
                     categorias=["professores"],
@@ -182,10 +214,15 @@ def enquete(request):
                     funcionario=func,
                     origem="aluno",
                 )
+
             except Exception:
                 pass
 
-        return render(request, "feedback/enquete_sucesso.html", {"resposta": resposta})
+        return render(
+            request,
+            "feedback/enquete_sucesso.html",
+            {"resposta": resposta},
+        )
 
     return render(
         request,
@@ -206,7 +243,6 @@ def dashboard(request):
     if request.method == "POST":
 
         avaliacao_id = request.POST.get("avaliacao_id")
-
         novo_status = request.POST.get("novo_status")
 
         if avaliacao_id and novo_status in [
@@ -215,35 +251,33 @@ def dashboard(request):
             "resolvida",
         ]:
 
-            av = get_object_or_404(Avaliacao, pk=avaliacao_id)
+            av = get_object_or_404(
+                Avaliacao,
+                pk=avaliacao_id,
+            )
 
             av.status = novo_status
 
-            # Resolvida
             if novo_status == "resolvida":
 
                 if not av.resolvido_por:
-
                     av.resolvido_por = request.user
 
                 if not av.data_resolucao:
-
                     av.data_resolucao = timezone.now()
 
-            # Voltou para pendente/em análise
             else:
-
                 av.resolvido_por = None
-
                 av.data_resolucao = None
 
             av.save()
 
-        # Mantém os filtros atuais
-        params = request.POST.get("filtros_ativos", "")
+        params = request.POST.get(
+            "filtros_ativos",
+            "",
+        )
 
         if params:
-
             return redirect(f"/dashboard/?{params}")
 
         return redirect("/dashboard/")
@@ -252,15 +286,30 @@ def dashboard(request):
     # FILTROS
     # ==========================================================
 
-    categoria_filtro = request.GET.get("categoria", "")
+    categoria_filtro = request.GET.get(
+        "categoria",
+        "",
+    )
 
-    tipo_filtro = request.GET.get("tipo", "")
+    tipo_filtro = request.GET.get(
+        "tipo",
+        "",
+    )
 
-    status_filtro = request.GET.get("status", "")
+    status_filtro = request.GET.get(
+        "status",
+        "",
+    )
 
-    funcionario_filtro = request.GET.get("funcionario", "")
+    funcionario_filtro = request.GET.get(
+        "funcionario",
+        "",
+    )
 
-    periodo_filtro = request.GET.get("periodo", "")
+    periodo_filtro = request.GET.get(
+        "periodo",
+        "",
+    )
 
     # ==========================================================
     # AVALIAÇÕES
@@ -268,42 +317,53 @@ def dashboard(request):
 
     avaliacoes = Avaliacao.objects.all()
 
-    # Período
     if periodo_filtro:
+
         agora = timezone.now()
+
         if periodo_filtro == "hoje":
-            inicio = agora.replace(hour=0, minute=0, second=0, microsecond=0)
-            avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
-        elif periodo_filtro == "semana":
-            inicio = agora - timedelta(days=7)
-            avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
-        elif periodo_filtro == "mes":
-            inicio = agora - timedelta(days=30)
+
+            inicio = agora.replace(
+                hour=0,
+                minute=0,
+                second=0,
+                microsecond=0,
+            )
+
             avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
 
-    # Categoria
+        elif periodo_filtro == "semana":
+
+            inicio = agora - timedelta(days=7)
+
+            avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
+
+        elif periodo_filtro == "mes":
+
+            inicio = agora - timedelta(days=30)
+
+            avaliacoes = avaliacoes.filter(data_criacao__gte=inicio)
+
     if categoria_filtro:
+
         avaliacoes = avaliacoes.filter(
             models.Q(categoria=categoria_filtro)
             | models.Q(categorias__icontains=categoria_filtro)
         )
 
-    # Tipo
     if tipo_filtro:
+
         avaliacoes = avaliacoes.filter(
             models.Q(tipo_feedback=tipo_filtro)
             | models.Q(tipos_feedback__icontains=tipo_filtro)
         )
 
-    # Status
     if status_filtro:
         avaliacoes = avaliacoes.filter(status=status_filtro)
 
-    # Funcionário
     if funcionario_filtro:
         avaliacoes = avaliacoes.filter(funcionario_id=funcionario_filtro)
 
-    # Mais recentes primeiro
     avaliacoes = avaliacoes.order_by("-data_criacao")
 
     # ==========================================================
@@ -330,9 +390,16 @@ def dashboard(request):
     cats = []
 
     for a in avaliacoes:
-        if a.categorias and isinstance(a.categorias, list):
+
+        if a.categorias and isinstance(
+            a.categorias,
+            list,
+        ):
+
             cats.extend([str(x).strip().lower() for x in a.categorias])
+
         elif a.categoria:
+
             cats.append(str(a.categoria).strip().lower())
 
     cont_cat = Counter(cats)
@@ -341,7 +408,10 @@ def dashboard(request):
 
     for codigo, nome in Avaliacao.CATEGORIA_CHOICES:
 
-        quantidade = cont_cat.get(codigo.lower(), 0)
+        quantidade = cont_cat.get(
+            codigo.lower(),
+            0,
+        )
 
         avaliacoes_categoria.append(
             {
@@ -350,7 +420,6 @@ def dashboard(request):
             }
         )
 
-    # Caso existam categorias diferentes das cadastradas
     if sum(x["quantidade"] for x in avaliacoes_categoria) == 0 and cont_cat:
 
         avaliacoes_categoria = [
@@ -403,17 +472,13 @@ def dashboard(request):
 
         media_func = avs.aggregate(m=models.Avg("nota"))["m"] or 0
 
-        # Foto
         foto_url = ""
 
         if func.foto:
 
             try:
-
                 foto_url = func.foto.url
-
             except ValueError:
-
                 foto_url = ""
 
         ranking_funcionarios.append(
@@ -426,12 +491,20 @@ def dashboard(request):
                 "elogios": elogios,
                 "reclamacoes": reclamacoes,
                 "sugestoes": sugestoes,
-                "media": round(media_func, 1),
+                "media": round(
+                    media_func,
+                    1,
+                ),
             }
         )
 
-    # Ordenação: quem tem mais elogios primeiro; desempate pela média
-    ranking_funcionarios.sort(key=lambda x: (x["elogios"], x["media"]), reverse=True)
+    ranking_funcionarios.sort(
+        key=lambda x: (
+            x["elogios"],
+            x["media"],
+        ),
+        reverse=True,
+    )
 
     # ==========================================================
     # AVALIAÇÕES POR LOCAL
@@ -448,23 +521,36 @@ def dashboard(request):
     ]
 
     locais_ranking = []
-    # Usa TODAS as avaliações (sem filtro de período) para o ranking de locais
+
     todas_avs = Avaliacao.objects.all()
+
     for nome_local, icone in LOCAIS_DEFINIDOS:
+
         avs_local = todas_avs.filter(localizacao=nome_local)
+
         total_local = avs_local.count()
+
         if total_local == 0:
             continue
+
         media_local = avs_local.aggregate(m=models.Avg("nota"))["m"] or 0
+
         locais_ranking.append(
             {
                 "nome": nome_local,
                 "icone": icone,
                 "total": total_local,
-                "media": round(media_local, 1),
+                "media": round(
+                    media_local,
+                    1,
+                ),
             }
         )
-    locais_ranking.sort(key=lambda x: x["total"], reverse=True)
+
+    locais_ranking.sort(
+        key=lambda x: x["total"],
+        reverse=True,
+    )
 
     # ==========================================================
     # DASHBOARD
@@ -474,32 +560,27 @@ def dashboard(request):
         request,
         "feedback/dashboard.html",
         {
-            # Cards
             "total_avaliacoes": total_avaliacoes,
-            "media_notas": round(media, 1),
+            "media_notas": round(
+                media,
+                1,
+            ),
             "total_elogios": total_elogios,
             "total_reclamacoes": total_reclamacoes,
-            # Filtros
             "categoria_filtro": categoria_filtro,
             "tipo_filtro": tipo_filtro,
             "status_filtro": status_filtro,
             "funcionario_filtro": funcionario_filtro,
             "periodo_filtro": periodo_filtro,
-            # Gráficos
             "avaliacoes_categoria": avaliacoes_categoria,
             "avaliacoes_nota": avaliacoes_nota,
-            # Avaliações
             "avaliacoes": avaliacoes,
-            # Opções dos filtros
             "categorias": Avaliacao.CATEGORIA_CHOICES,
             "tipos_feedback": Avaliacao.TIPO_FEEDBACK_CHOICES,
             "status_choices": Avaliacao.STATUS_CHOICES,
             "funcionarios": todos_funcionarios,
-            # Ranking
             "ranking_funcionarios": ranking_funcionarios,
-            # Locais
             "locais_ranking": locais_ranking,
-            # Estatísticas da Enquete de Satisfação
             "total_enquetes": RespostaEnquete.objects.count(),
             "favoritas_ranking": Counter(
                 [
@@ -510,78 +591,93 @@ def dashboard(request):
             ).most_common(6),
             "espacos_ranking": Counter(
                 RespostaEnquete.objects.exclude(novo_espaco="").values_list(
-                    "novo_espaco", flat=True
+                    "novo_espaco",
+                    flat=True,
                 )
             ).most_common(6),
             "melhorias_ranking": Counter(
                 RespostaEnquete.objects.exclude(aula_melhoria="").values_list(
-                    "aula_melhoria", flat=True
+                    "aula_melhoria",
+                    flat=True,
                 )
             ).most_common(5),
             "participacao_ranking": Counter(
                 RespostaEnquete.objects.exclude(participa_aulas="").values_list(
-                    "participa_aulas", flat=True
+                    "participa_aulas",
+                    flat=True,
                 )
             ).most_common(4),
-            "ultimas_enquetes": RespostaEnquete.objects.all().order_by("-data_criacao")[
-                :6
-            ],
+            "ultimas_enquetes": (
+                RespostaEnquete.objects.all().order_by("-data_criacao")[:6]
+            ),
         },
     )
 
 
 @login_required
 def gerar_qrcode(request):
+
     qrcode_base64 = None
     localizacao = ""
     url_gerada = ""
+
     ip_local = _obter_ip_local()
+
     usar_ip = request.GET.get("usar_ip") == "1"
 
-    # ==========================================================
-    # GERA QR CODE
-    # ==========================================================
-
     if request.GET.get("localizacao"):
+
         localizacao = request.GET.get("localizacao").strip()
 
         if usar_ip and ip_local != "127.0.0.1":
+
             porta = request.get_port()
+
             host = (
                 f"{ip_local}:{porta}"
                 if porta and porta not in ["80", "443"]
                 else ip_local
             )
+
         else:
+
             host = request.get_host()
 
         protocolo = "https" if request.is_secure() else "http"
-        if "enquete" in localizacao.lower():
-            url_gerada = f"{protocolo}://{host}/enquete/"
-        else:
-            url_gerada = f"{protocolo}://{host}/?localizacao={localizacao}"
 
-        # Cria QR Code
+        if "enquete" in localizacao.lower():
+
+            url_gerada = f"{protocolo}://{host}/enquete/"
+
+        else:
+
+            url_gerada = f"{protocolo}://{host}/" f"?localizacao={localizacao}"
+
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_H,
             box_size=10,
             border=4,
         )
+
         qr.add_data(url_gerada)
         qr.make(fit=True)
 
-        img = qr.make_image(fill_color="black", back_color="white")
+        img = qr.make_image(
+            fill_color="black",
+            back_color="white",
+        )
 
-        # Converte para Base64
         buf = io.BytesIO()
-        img.save(buf, format="PNG")
-        buf.seek(0)
-        qrcode_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
 
-    # ==========================================================
-    # PÁGINA DO QR CODE
-    # ==========================================================
+        img.save(
+            buf,
+            format="PNG",
+        )
+
+        buf.seek(0)
+
+        qrcode_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
 
     return render(
         request,
@@ -597,31 +693,58 @@ def gerar_qrcode(request):
 
 
 def _gerar_resumo_executivo_local(
-    avaliacoes, total, elogios, reclamacoes, sugestoes, media, pendentes, resolvidas
+    avaliacoes,
+    total,
+    elogios,
+    reclamacoes,
+    sugestoes,
+    media,
+    pendentes,
+    resolvidas,
 ):
-    """
-    Gera um relatório executivo analítico e profissional diretamente
-    a partir dos dados reais do banco, garantindo que o gerente sempre receba
-    um diagnóstico impecável mesmo se a API externa de IA estiver fora do ar.
-    """
-    taxa_aprovacao = round((elogios / total * 100), 1) if total > 0 else 0
+
+    taxa_aprovacao = (
+        round(
+            (elogios / total * 100),
+            1,
+        )
+        if total > 0
+        else 0
+    )
 
     cats = []
+
     for a in avaliacoes:
-        if a.categorias and isinstance(a.categorias, list):
+
+        if a.categorias and isinstance(
+            a.categorias,
+            list,
+        ):
+
             cats.extend(a.categorias)
+
         elif a.categoria:
+
             cats.append(a.categoria)
+
     cont_cat = Counter(cats)
+
     principais_cats = [
-        dict(Avaliacao.CATEGORIA_CHOICES).get(c, c.capitalize())
+        dict(Avaliacao.CATEGORIA_CHOICES).get(
+            c,
+            c.capitalize(),
+        )
         for c, _ in cont_cat.most_common(2)
     ]
+
     setores_txt = " e ".join(principais_cats) if principais_cats else "Geral"
 
     comentarios = [a.comentario.strip() for a in avaliacoes if a.comentario.strip()][:3]
+
     amostra_comentarios = ""
+
     if comentarios:
+
         amostra_comentarios = "\n\n**O que os alunos estão dizendo:**\n" + "\n".join(
             f'• *"{c}"*' for c in comentarios
         )
@@ -629,114 +752,171 @@ def _gerar_resumo_executivo_local(
     return f"""**📊 Resumo Executivo: Experiência e Qualidade — Polo Fit**
 
 **1. Diagnóstico Geral de Desempenho**
-• **Nota Média Geral:** {round(media, 1)} / 5.0 ⭐ (Índice de Excelência)
+• **Nota Média Geral:** {round(media, 1)} / 5.0 ⭐
 • **Índice de Satisfação:** {taxa_aprovacao}% de feedbacks positivos ({elogios} elogios em {total} avaliações).
 • **Status de Resolução:** {resolvidas} demandas resolvidas e {pendentes} em acompanhamento.
 
 **2. Pontos Fortes em Destaque**
-Os alunos demonstram alta satisfação e fidelização especialmente nas áreas de **{setores_txt}**. A dedicação da equipe e a qualidade da estrutura foram amplamente elogiadas nos registros recentes.
+Os alunos demonstram alta satisfação especialmente nas áreas de **{setores_txt}**.
 
 **3. Pontos de Atenção e Oportunidades**
-Foram registradas {reclamacoes} reclamação(ões) pontual(is) e {sugestoes} sugestão(ões) de melhoria. É fundamental priorizar o atendimento rápido a esses chamados no painel para manter a proximidade com os alunos.
+Foram registradas {reclamacoes} reclamação(ões) e {sugestoes} sugestão(ões) de melhoria.
 
 **4. Recomendações Práticas para a Gerência**
-1. **Reconhecimento da Equipe:** Parabenizar os professores e colaboradores com mais elogios no ranking do dashboard.
-2. **Tempo de Resposta Ágil:** Manter o ciclo de resolução das avaliações pendentes em até 24 horas.
-3. **Melhoria Contínua:** Utilizar as sugestões registradas para guiar futuras aquisições de equipamentos e ajustes de horários.{amostra_comentarios}"""
+1. **Reconhecimento da Equipe:** Parabenizar os colaboradores mais elogiados.
+2. **Tempo de Resposta:** Manter o acompanhamento das avaliações pendentes.
+3. **Melhoria Contínua:** Utilizar as sugestões dos alunos para orientar melhorias futuras.{amostra_comentarios}"""
 
 
 @login_required
 def ia_analisar(request):
-    """
-    Endpoint que usa a Gemini API para gerar uma análise inteligente
-    das avaliações mais recentes cadastradas no sistema.
-    Possui fallback analítico inteligente para garantir que a gerência sempre tenha o parecer em tela.
-    """
-    # Coleta as últimas 50 avaliações através dos IDs para permitir filtragens no queryset
+
     ids_recentes = list(
-        Avaliacao.objects.order_by("-data_criacao").values_list("id", flat=True)[:50]
+        Avaliacao.objects.order_by("-data_criacao").values_list(
+            "id",
+            flat=True,
+        )[:50]
     )
+
     if not ids_recentes:
+
         return JsonResponse(
-            {"analise": "Nenhuma avaliação cadastrada ainda para analisar."}
+            {"analise": ("Nenhuma avaliação cadastrada " "ainda para analisar.")}
         )
 
     avaliacoes = Avaliacao.objects.filter(id__in=ids_recentes)
+
     total = avaliacoes.count()
 
     elogios = avaliacoes.filter(
         models.Q(tipo_feedback="elogio") | models.Q(tipos_feedback__icontains="elogio")
     ).count()
+
     reclamacoes = avaliacoes.filter(
         models.Q(tipo_feedback="reclamacao")
         | models.Q(tipos_feedback__icontains="reclamacao")
     ).count()
+
     sugestoes = avaliacoes.filter(
         models.Q(tipo_feedback="sugestao")
         | models.Q(tipos_feedback__icontains="sugestao")
     ).count()
+
     media = avaliacoes.aggregate(m=models.Avg("nota"))["m"] or 0
 
     pendentes = avaliacoes.filter(status="pendente").count()
+
     resolvidas = avaliacoes.filter(status="resolvida").count()
 
-    # Comentários mais recentes
     comentarios = list(
-        avaliacoes.exclude(comentario="").values_list("comentario", flat=True)[:10]
+        avaliacoes.exclude(comentario="").values_list(
+            "comentario",
+            flat=True,
+        )[:10]
     )
+
     comentarios_txt = (
         "\n".join(f'- "{c}"' for c in comentarios) or "Nenhum comentário registrado."
     )
 
     prompt = f"""Você é um consultor especialista em qualidade para a academia Polo Fit.
+
 Gere um resumo executivo direto e profissional para o gerente com base nos dados reais:
-- Total: {total} avaliações | Nota média geral: {round(media, 1)} de 5.0
-- Elogios: {elogios} | Reclamações: {reclamacoes} | Sugestões: {sugestoes}
-- Pendentes: {pendentes} | Resolvidas: {resolvidas}
+
+- Total: {total} avaliações
+- Nota média geral: {round(media, 1)} de 5.0
+- Elogios: {elogios}
+- Reclamações: {reclamacoes}
+- Sugestões: {sugestoes}
+- Pendentes: {pendentes}
+- Resolvidas: {resolvidas}
+
 Comentários dos alunos:
 {comentarios_txt}
 
 Apresente em português brasileiro:
+
 1. **Pontos Fortes**
 2. **Pontos de Atenção**
 3. **Recomendações Práticas para a Gerência**
 4. **Visão Geral**
+
 Máximo 250 palavras."""
 
-    api_key = getattr(settings, "GEMINI_API_KEY", "")
-    # Modelos em ordem de preferência (mais rápido primeiro)
-    modelo_cfg = getattr(settings, "GEMINI_MODEL", "gemini-1.5-flash")
+    api_key = getattr(
+        settings,
+        "GEMINI_API_KEY",
+        "",
+    )
+
+    modelo_cfg = getattr(
+        settings,
+        "GEMINI_MODEL",
+        "gemini-1.5-flash",
+    )
+
     modelos_ativos = list(
-        dict.fromkeys([modelo_cfg, "gemini-1.5-flash", "gemini-1.5-pro"])
+        dict.fromkeys(
+            [
+                modelo_cfg,
+                "gemini-1.5-flash",
+                "gemini-1.5-pro",
+            ]
+        )
     )
 
     if api_key:
+
         for modelo in modelos_ativos:
+
             try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={api_key}"
+
+                url = (
+                    "https://generativelanguage.googleapis.com/"
+                    f"v1beta/models/{modelo}:generateContent"
+                    f"?key={api_key}"
+                )
+
                 payload = {
                     "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {"maxOutputTokens": 600, "temperature": 0.6},
+                    "generationConfig": {
+                        "maxOutputTokens": 600,
+                        "temperature": 0.6,
+                    },
                 }
+
                 data = json.dumps(payload).encode("utf-8")
+
                 req = urllib.request.Request(
                     url,
                     data=data,
                     headers={"Content-Type": "application/json"},
                     method="POST",
                 )
-                with urllib.request.urlopen(req, timeout=8) as resp:
+
+                with urllib.request.urlopen(
+                    req,
+                    timeout=8,
+                ) as resp:
+
                     result = json.loads(resp.read().decode("utf-8"))
 
-                cands = result.get("candidates", [])
+                cands = result.get(
+                    "candidates",
+                    [],
+                )
+
                 if cands:
+
                     parts = cands[0].get("content", {}).get("parts", [])
+
                     if parts and parts[0].get("text"):
+
                         return JsonResponse({"analise": parts[0].get("text")})
+
             except Exception:
                 continue
 
-    # Fallback automático e inteligente garantindo que o relatório seja sempre exibido
     analise_local = _gerar_resumo_executivo_local(
         avaliacoes=avaliacoes,
         total=total,
@@ -747,6 +927,7 @@ Máximo 250 palavras."""
         pendentes=pendentes,
         resolvidas=resolvidas,
     )
+
     return JsonResponse({"analise": analise_local})
 
 
@@ -762,10 +943,7 @@ def _gerar_resposta_conversacional_local(
     ranking_txt,
     comentarios,
 ):
-    """
-    Motor local de resposta inteligente para responder perguntas do gerente sobre o feedback
-    mesmo quando a API de IA externa não estiver conectada.
-    """
+
     p = pergunta.lower()
 
     if any(
@@ -782,14 +960,18 @@ def _gerar_resposta_conversacional_local(
             "atendente",
         ]
     ):
+
         return f"""**🏆 Análise da Equipe e Professores — Polo Fit**
 
 Com base nas avaliações recentes dos alunos:
+
 {ranking_txt}
 
 **Destaques:**
-• Os alunos apontam grande empatia, atenção às posturas corretas e incentivo nos treinos.
-• **Recomendação para a Gerência:** Crie um reconhecimento mensal ou bonificação para os colaboradores mais elogiados no ranking."""
+• Os alunos apontam grande empatia, atenção e incentivo nos treinos.
+
+**Recomendação para a Gerência:**
+Reconheça os colaboradores mais elogiados no ranking."""
 
     if any(
         k in p
@@ -805,30 +987,41 @@ Com base nas avaliações recentes dos alunos:
             "defeito",
         ]
     ):
+
         coments_rec = [
             c
             for c in comentarios
             if any(
                 w in c.lower()
-                for w in ["quebrado", "demora", "ar", "limpeza", "espera", "ruim"]
+                for w in [
+                    "quebrado",
+                    "demora",
+                    "ar",
+                    "limpeza",
+                    "espera",
+                    "ruim",
+                ]
             )
         ]
+
         amostra = (
-            f"\n*Comentários relacionados:* "
+            "\n*Comentários relacionados:* "
             + "; ".join(f'"{c}"' for c in coments_rec[:2])
             if coments_rec
             else ""
         )
+
         return f"""**⚠️ Panorama de Reclamações e Pontos Críticos**
 
-• **Total de Reclamações Registradas:** {reclamacoes} ocorrência(s).
-• **Demandas Pendentes de Ação:** {pendentes} no painel.
+• **Total de Reclamações:** {reclamacoes}
+• **Demandas Pendentes:** {pendentes}
 • **Demandas Resolvidas:** {resolvidas}.{amostra}
 
 **Plano de Ação Recomendado:**
-1. Verifique os chamados com status **Pendente** na tabela abaixo e altere para **Em Análise** para sinalizar acompanhamento.
-2. Atue preventivamente na manutenção de equipamentos antes dos horários de pico (18h às 21h).
-3. Sinalize a resolução diretamente aos alunos assim que o ajuste for feito."""
+
+1. Verifique os chamados com status **Pendente**.
+2. Altere para **Em Análise** quando a equipe iniciar a tratativa.
+3. Registre a resolução diretamente no painel."""
 
     if any(
         k in p
@@ -844,23 +1037,27 @@ Com base nas avaliações recentes dos alunos:
             "ação",
         ]
     ):
-        return f"""**💡 Ideias e Recomendações Estratégicas para a Polo Fit**
 
-Com base nas {sugestoes} sugestões e no índice de satisfação atual ({round(media, 1)}/5.0):
+        return f"""**💡 Ideias e Recomendações Estratégicas — Polo Fit**
 
-1. **Horários de Pico:** Considerar reforço de instrutores no salão entre 17h30 e 20h30.
-2. **Revisão Preventiva de Equipamentos:** Estabelecer checklist matinal diário.
-3. **Totem de Feedback:** Manter os cartazes com QR Code visíveis na saída do vestiário e na recepção para ampliar a taxa de respostas.
-4. **Feedbacks Positivos:** Compartilhar os elogios recebidos na reunião de alinhamento com os colaboradores."""
+Com base nas **{sugestoes} sugestões** e na nota média de **{round(media, 1)}/5.0**:
 
-    return f"""**📋 Síntese dos Feedbacks da Academia Polo Fit**
+1. Avaliar melhorias nos horários de maior movimento.
+2. Reforçar a manutenção preventiva dos equipamentos.
+3. Manter os QR Codes visíveis para ampliar os feedbacks.
+4. Compartilhar os elogios nas reuniões com a equipe."""
 
-• **Volume Total:** {total} avaliações computadas.
-• **Nota Média:** {round(media, 1)} / 5.0 estrelas ⭐.
-• **Balanço:** {elogios} elogios 👍, {sugestoes} sugestões 💡 e {reclamacoes} reclamações ⚠️.
-• **Status Operacional:** {resolvidas} resolvidas | {pendentes} pendentes de tratativa.
+    return f"""**📋 Síntese dos Feedbacks — Polo Fit**
 
-O sentimento dos alunos é de alta satisfação ({round((elogios/total*100) if total else 0, 1)}% de aprovação). Você pode me fazer perguntas específicas sobre instrutores, queixas ou planos de ação!"""
+• **Volume Total:** {total} avaliações.
+• **Nota Média:** {round(media, 1)} / 5.0 ⭐
+• **Elogios:** {elogios} 👍
+• **Sugestões:** {sugestoes} 💡
+• **Reclamações:** {reclamacoes} ⚠️
+• **Resolvidas:** {resolvidas}
+• **Pendentes:** {pendentes}
+
+O sistema pode analisar funcionários, reclamações, sugestões, desempenho e oportunidades de melhoria."""
 
 
 @login_required
@@ -868,108 +1065,247 @@ def ia_chat(request):
     """
     Endpoint conversacional interativo com a IA sobre as avaliações dos alunos.
     """
+
     if request.method != "POST":
-        return JsonResponse({"erro": "Método não permitido"}, status=405)
+
+        return JsonResponse(
+            {"erro": "Método não permitido"},
+            status=405,
+        )
 
     try:
+
         data = json.loads(request.body.decode("utf-8"))
-        mensagem_usuario = data.get("mensagem", "").strip()
+
+        mensagem_usuario = data.get(
+            "mensagem",
+            "",
+        ).strip()
+
     except Exception:
-        mensagem_usuario = request.POST.get("mensagem", "").strip()
+
+        mensagem_usuario = request.POST.get(
+            "mensagem",
+            "",
+        ).strip()
 
     if not mensagem_usuario:
-        return JsonResponse({"resposta": "Por favor, digite uma pergunta para a IA."})
 
-    avaliacoes = Avaliacao.objects.all().order_by("-data_criacao")[:100]
-    total = Avaliacao.objects.count()  # contagem real sem o limite
-    elogios = Avaliacao.objects.filter(
+        return JsonResponse(
+            {"resposta": ("Por favor, digite uma " "pergunta para a IA.")}
+        )
+
+    # ==========================================================
+    # AVALIAÇÕES
+    # ==========================================================
+    #
+    # IMPORTANTE:
+    # Não fazemos [:100] aqui.
+    # Primeiro aplicamos filtros como exclude().
+    # Depois limitamos os comentários.
+    #
+
+    avaliacoes = Avaliacao.objects.all().order_by("-data_criacao")
+
+    total = avaliacoes.count()
+
+    elogios = avaliacoes.filter(
         models.Q(tipo_feedback="elogio") | models.Q(tipos_feedback__icontains="elogio")
     ).count()
-    reclamacoes = Avaliacao.objects.filter(
+
+    reclamacoes = avaliacoes.filter(
         models.Q(tipo_feedback="reclamacao")
         | models.Q(tipos_feedback__icontains="reclamacao")
     ).count()
-    sugestoes = Avaliacao.objects.filter(
+
+    sugestoes = avaliacoes.filter(
         models.Q(tipo_feedback="sugestao")
         | models.Q(tipos_feedback__icontains="sugestao")
     ).count()
-    media = Avaliacao.objects.aggregate(m=models.Avg("nota"))["m"] or 0
-    pendentes = Avaliacao.objects.filter(status="pendente").count()
-    resolvidas = Avaliacao.objects.filter(status="resolvida").count()
+
+    media = avaliacoes.aggregate(m=models.Avg("nota"))["m"] or 0
+
+    pendentes = avaliacoes.filter(status="pendente").count()
+
+    resolvidas = avaliacoes.filter(status="resolvida").count()
+
+    # ==========================================================
+    # RANKING
+    # ==========================================================
 
     ranking = []
+
     for f in Funcionario.objects.filter(ativo=True):
+
         f_avs = Avaliacao.objects.filter(funcionario=f)
+
         f_el = f_avs.filter(
             models.Q(tipo_feedback="elogio")
             | models.Q(tipos_feedback__icontains="elogio")
         ).count()
+
         f_rec = f_avs.filter(
             models.Q(tipo_feedback="reclamacao")
             | models.Q(tipos_feedback__icontains="reclamacao")
         ).count()
+
         f_med = f_avs.aggregate(m=models.Avg("nota"))["m"] or 0
+
         ranking.append(
-            f"{f.nome} ({f.cargo or 'Instrutor'}): {f_el} elogios, {f_rec} reclamações, nota média {round(f_med, 1)}"
+            f"{f.nome} "
+            f"({f.cargo or 'Instrutor'}): "
+            f"{f_el} elogios, "
+            f"{f_rec} reclamações, "
+            f"nota média {round(f_med, 1)}"
         )
+
     ranking_txt = "\n".join(ranking) or "Nenhum funcionário cadastrado."
 
+    # ==========================================================
+    # COMENTÁRIOS
+    # ==========================================================
+    #
+    # Primeiro filtramos comentários vazios.
+    # Só depois aplicamos [:15].
+    #
+
     comentarios = list(
-        avaliacoes.exclude(comentario="").values_list("comentario", flat=True)[:15]
+        avaliacoes.exclude(comentario="").values_list(
+            "comentario",
+            flat=True,
+        )[:15]
     )
+
     comentarios_txt = (
         "\n".join(f'- "{c}"' for c in comentarios) or "Nenhum comentário registrado."
     )
 
+    # ==========================================================
+    # PROMPT DA IA
+    # ==========================================================
+
     prompt = f"""Você é o Consultor Executivo de Inteligência Artificial da Academia Polo Fit.
-Você está conversando diretamente com o Gerente da academia para auxiliá-lo a tomar as melhores decisões operacionais e estratégicas.
+
+Você está conversando diretamente com o gerente da academia para auxiliá-lo a tomar decisões operacionais e estratégicas.
 
 BASE DE DADOS EM TEMPO REAL DA POLO FIT:
-- Total de avaliações: {total} | Nota média geral: {round(media, 1)} de 5.0
-- Elogios: {elogios} | Reclamações: {reclamacoes} | Sugestões: {sugestoes}
-- Pendentes de resolução: {pendentes} | Resolvidas: {resolvidas}
-- Desempenho dos colaboradores:
+
+- Total de avaliações: {total}
+- Nota média geral: {round(media, 1)} de 5.0
+- Elogios: {elogios}
+- Reclamações: {reclamacoes}
+- Sugestões: {sugestoes}
+- Pendentes de resolução: {pendentes}
+- Resolvidas: {resolvidas}
+
+DESEMPENHO DOS COLABORADORES:
 {ranking_txt}
-- Comentários reais dos alunos:
+
+COMENTÁRIOS REAIS DOS ALUNOS:
 {comentarios_txt}
 
 PERGUNTA DO GERENTE:
 "{mensagem_usuario}"
 
-Responda em português brasileiro de forma direta, executiva, cordial e orientada a resultados (máximo 200 palavras). Use marcadores para leitura rápida."""
+Responda em português brasileiro.
 
-    api_key = getattr(settings, "GEMINI_API_KEY", "")
-    # Modelos em ordem de preferência
-    modelo_cfg = getattr(settings, "GEMINI_MODEL", "gemini-1.5-flash")
+Seja:
+- profissional;
+- cordial;
+- objetivo;
+- executivo;
+- baseado nos dados disponíveis;
+- orientado a resultados.
+
+Organize a resposta para facilitar a leitura.
+
+Use títulos curtos e marcadores quando forem úteis.
+
+Não invente dados que não estejam disponíveis.
+
+Máximo de 200 palavras."""
+
+    # ==========================================================
+    # GEMINI
+    # ==========================================================
+
+    api_key = getattr(
+        settings,
+        "GEMINI_API_KEY",
+        "",
+    )
+
+    modelo_cfg = getattr(
+        settings,
+        "GEMINI_MODEL",
+        "gemini-1.5-flash",
+    )
+
     modelos_ativos = list(
-        dict.fromkeys([modelo_cfg, "gemini-1.5-flash", "gemini-1.5-pro"])
+        dict.fromkeys(
+            [
+                modelo_cfg,
+                "gemini-1.5-flash",
+                "gemini-1.5-pro",
+            ]
+        )
     )
 
     if api_key:
+
         for modelo in modelos_ativos:
+
             try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={api_key}"
+
+                url = (
+                    "https://generativelanguage.googleapis.com/"
+                    f"v1beta/models/{modelo}:generateContent"
+                    f"?key={api_key}"
+                )
+
                 payload = {
                     "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {"maxOutputTokens": 500, "temperature": 0.6},
+                    "generationConfig": {
+                        "maxOutputTokens": 500,
+                        "temperature": 0.6,
+                    },
                 }
+
                 data = json.dumps(payload).encode("utf-8")
+
                 req = urllib.request.Request(
                     url,
                     data=data,
                     headers={"Content-Type": "application/json"},
                     method="POST",
                 )
-                with urllib.request.urlopen(req, timeout=5) as resp:
+
+                with urllib.request.urlopen(
+                    req,
+                    timeout=5,
+                ) as resp:
+
                     result = json.loads(resp.read().decode("utf-8"))
 
-                cands = result.get("candidates", [])
+                cands = result.get(
+                    "candidates",
+                    [],
+                )
+
                 if cands:
+
                     parts = cands[0].get("content", {}).get("parts", [])
+
                     if parts and parts[0].get("text"):
+
                         return JsonResponse({"resposta": parts[0].get("text")})
+
             except Exception:
                 continue
+
+    # ==========================================================
+    # FALLBACK LOCAL
+    # ==========================================================
 
     resposta_local = _gerar_resposta_conversacional_local(
         pergunta=mensagem_usuario,
@@ -983,4 +1319,5 @@ Responda em português brasileiro de forma direta, executiva, cordial e orientad
         ranking_txt=ranking_txt,
         comentarios=comentarios,
     )
+
     return JsonResponse({"resposta": resposta_local})
