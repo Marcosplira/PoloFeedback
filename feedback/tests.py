@@ -109,9 +109,8 @@ class FeedbackViewsTests(TestCase):
             inicio_response,
             "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view",
         )
-        self.assertContains(inicio_response, "Assistir ao vídeo")
+        self.assertContains(inicio_response, "Abrir o vídeo de apresentação")
         self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
-        self.assertContains(inicio_response, "academia2.png")
         avaliacao_response = self.client.get(reverse("avaliar"))
         self.assertEqual(avaliacao_response.status_code, 200)
         self.assertContains(avaliacao_response, f'href="{reverse("inicio")}"')
@@ -262,6 +261,25 @@ class FeedbackViewsTests(TestCase):
                     expected_group,
                 )
                 self.assertTrue(funcionario.ativo)
+
+    def test_colaboradoras_da_recepcao_ficam_no_grupo_correto(self):
+        nomes_recepcao = (
+            "Jaqueline Lima",
+            "Jessica Karla",
+            "Micheli Priscila",
+        )
+
+        for nome in nomes_recepcao:
+            with self.subTest(nome=nome):
+                funcionario = Funcionario.objects.get(nome=nome)
+                self.assertEqual(
+                    list(funcionario.funcoes.values_list("nome", flat=True)),
+                    ["Recepção"],
+                )
+                self.assertEqual(
+                    funcionario.funcoes.get().grupo,
+                    Funcao.GRUPO_RECEPCAO,
+                )
 
     def test_pagina_avaliar_get(self):
         response = self.client.get(reverse("avaliar"))

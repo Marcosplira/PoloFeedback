@@ -110,7 +110,7 @@ O `runserver` local não carrega `.env` automaticamente: sem variáveis de ambie
 python manage.py migrate
 ```
 
-As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Os cargos legados são convertidos em funções selecionáveis e classificados em quatro grupos para a pergunta de elogios da enquete: **Recepção**, **Time de limpeza**, **Estagiários e professores** e **Direção e coordenação**. Os cargos genéricos de funcionário são inicialmente agrupados em **Estagiários e professores**; confirme e ajuste essa classificação conforme a equipe real.
+As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Os cargos legados são convertidos em funções selecionáveis e classificados em quatro grupos para a pergunta de elogios da enquete: **Recepção**, **Time de limpeza**, **Estagiários e professores** e **Direção e coordenação**. Jaqueline Lima, Jessica Karla e Micheli Priscila são inicialmente classificadas em **Recepção**; os demais cargos genéricos de funcionário ficam em **Estagiários e professores**. Confirme e ajuste essa classificação conforme a equipe real.
 
 No Django Admin, abra **Funções** para ajustar o grupo de cada cargo e **Funcionários** para associar uma ou mais funções às pessoas. A pergunta 6 da enquete exibe as pessoas agrupadas por esses grupos e permite selecionar várias. Nas perguntas sobre espaços desejados e aulas que precisam de melhorias, os alunos também podem marcar várias opções; a pergunta de frequência das aulas continua aceitando apenas uma resposta.
 
