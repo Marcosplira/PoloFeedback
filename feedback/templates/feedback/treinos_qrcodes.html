@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>QR Codes de treinos | Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .qr-card { break-inside: avoid; border: 1px solid #777; box-shadow: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-white">
+    <header class="no-print border-b border-lime-400/20 bg-slate-900">
+        <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-lime-300">Área da equipe</p>
+                <h1 class="text-xl font-black">QR Codes dos aparelhos</h1>
+            </div>
+            <div class="flex gap-2">
+                <a href="{% url 'dashboard' %}" class="rounded-lg border border-white/20 px-4 py-2 text-sm font-bold">Voltar ao painel</a>
+                <button type="button" onclick="window.print()" class="rounded-lg bg-lime-300 px-4 py-2 text-sm font-bold text-slate-950">Imprimir QR Codes</button>
+            </div>
+        </div>
+    </header>
+    <main class="mx-auto max-w-6xl px-4 py-8">
+        <p class="no-print mb-6 max-w-3xl text-sm leading-relaxed text-slate-300">
+            Cadastre os aparelhos, exercícios e planos no <a class="font-bold text-lime-300 underline" href="{% url 'admin:index' %}">Administração</a>.
+            Estes códigos identificam somente o aparelho; o aluno precisa entrar na conta para consultar o próprio plano.
+            Antes de imprimir, confira se o endereço do site é o endereço que os celulares dos alunos conseguem acessar.
+        </p>
+        <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {% for item in equipamentos %}
+            <article class="qr-card rounded-2xl border border-white/10 bg-white p-5 text-center text-slate-900 shadow-lg">
+                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="mx-auto h-10 w-auto">
+                <h2 class="mt-3 text-xl font-black">{{ item.equipamento.nome }}</h2>
+                {% if item.equipamento.localizacao %}
+                <p class="mt-1 text-sm text-slate-600">{{ item.equipamento.localizacao }}</p>
+                {% endif %}
+                <img src="data:image/png;base64,{{ item.qr_base64 }}" alt="QR Code para {{ item.equipamento.nome }}" class="mx-auto mt-4 h-52 w-52">
+                <p class="mt-2 break-all text-xs text-slate-500">{{ item.url }}</p>
+                <p class="mt-3 text-sm font-bold">Escaneie para consultar as orientações deste aparelho</p>
+            </article>
+            {% empty %}
+            <div class="no-print rounded-2xl border border-white/10 bg-white/5 p-6 sm:col-span-2 lg:col-span-3">
+                <h2 class="text-lg font-bold">Ainda não há aparelhos ativos.</h2>
+                <p class="mt-2 text-sm text-slate-300">Cadastre primeiro um equipamento na Administração e volte para gerar os códigos.</p>
+                <a href="{% url 'admin:feedback_equipamento_add' %}" class="mt-4 inline-flex rounded-lg bg-lime-300 px-4 py-2 font-bold text-slate-950">Cadastrar aparelho</a>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>

@@ -6,7 +6,7 @@
 **Instituição:** Instituto Federal de Educação, Ciência e Tecnologia da Paraíba (IFPB), Campus Picuí — PB  
 **Tecnologias previstas:** Python, Django, JavaScript, HTML, CSS e Tailwind CSS
 
-> Este é um módulo proposto para uma nova etapa. O sistema Polo Feedback existente ainda não cadastra treinos, máquinas ou alunos e não oferece instruções de exercícios por QR Code.
+> **Status do projeto:** já foi criado um MVP inicial dentro do Polo Feedback. A implementação cobre cadastro administrativo de aparelhos, exercícios e planos, QR Codes para impressão e visualização autenticada dos exercícios do próprio aluno. Ainda exige cadastro real, revisão profissional, permissões do Django Admin e validação num piloto antes de uso pela academia.
 
 ## Resumo executivo para apresentar à gerência
 
@@ -18,7 +18,18 @@
 
 **Pedido de decisão:** aprovar a etapa de descoberta e protótipo, indicar um gerente patrocinador e professores revisores, e escolher uma área pequena para o piloto. A programação, custos e prazo só devem ser confirmados depois de validar os requisitos e a infraestrutura.
 
-**Importante:** esta proposta é um projeto futuro; não é uma funcionalidade já disponível no Polo Feedback.
+**Importante:** trata-se de um MVP técnico para demonstração e validação. Não é uma implantação oficial nem substitui o acompanhamento do professor.
+
+## MVP inicial já implementado
+
+- Modelos para equipamento com identificador QR aleatório, exercício, plano por aluno e itens com séries, repetições, descanso e carga informada pelo professor.
+- Cadastro e manutenção pelo Django Admin, incluindo edição dos itens do plano dentro do próprio plano.
+- Página de QR Codes para impressão, acessível à equipe pelo Dashboard em **QR Treinos** ou diretamente em `/treinos/qrs/`.
+- Rota do aparelho exige login; depois de autenticado, o aluno vê somente itens dos próprios planos ativos que correspondem àquele equipamento.
+- Instruções gerais do aparelho, observações de segurança, orientações por exercício e link de vídeo externo.
+- Contas sem permissão de gerência não acessam Dashboard, análise/chat de IA ou gerador de QR de avaliação.
+
+Para iniciar a demonstração local, aplique `python manage.py migrate`, crie um administrador com `python manage.py createsuperuser` e siga o roteiro **Cadastrar o MVP de treinos por QR Code** no README. As contas de aluno são criadas pela equipe; não há cadastro público de alunos. O domínio escolhido para produção é `https://app.polofitacademias.com.br`, mas ele ainda precisa ser conectado ao serviço de hospedagem e configurado no DNS. Gere os QRs somente depois de confirmar que o domínio abre com HTTPS, acessando a página `/treinos/qrs/` por esse endereço.
 
 ## 1. Problema a resolver
 
@@ -60,13 +71,13 @@ O sistema não deve permitir que um aluno consulte treinos de outra pessoa. Perm
 2. Um profissional cadastra ou revisa as instruções e adiciona um vídeo autorizado.
 3. O professor cria o plano individual, escolhe os exercícios e registra séries, repetições, intervalos e carga.
 4. O aluno escaneia o QR Code do equipamento.
-5. A página explica a máquina e solicita login para mostrar o treino individual.
+5. Se necessário, o aluno entra na conta; depois o sistema exibe as orientações da máquina e somente os itens daquele equipamento nos próprios planos ativos.
 6. O aluno confere a orientação e realiza o exercício; dúvidas e desconfortos devem ser tratados com o professor.
 7. O professor revisa o plano periodicamente e altera suas prescrições quando necessário.
 
 ## 5. Escopo recomendado para o primeiro MVP
 
-**Incluir**
+**Incluído no MVP atual**
 
 - cadastro de equipamentos, exercícios, categorias e vídeos;
 - geração e impressão de QR Codes por máquina;
@@ -75,9 +86,16 @@ O sistema não deve permitir que um aluno consulte treinos de outra pessoa. Perm
 - séries, repetições, intervalo, observações e carga prescrita;
 - tela mobile-first com controles grandes, vídeo e instruções legíveis;
 - estado atual do plano, data de atualização e professor responsável;
-- histórico simples de alterações e identificação do profissional responsável;
-- interface administrativa para ativar/inativar conteúdo desatualizado;
-- testes de autenticação, autorização e privacidade entre contas.
+- cadastro e ativação/inativação de equipamento e exercício;
+- registro do professor responsável no plano;
+- testes de login, autorização e separação entre alunos.
+
+**Próximas melhorias para piloto/versões posteriores**
+
+- histórico de alterações do conteúdo e das prescrições;
+- tela gerencial para monitorar conteúdo desatualizado e utilização;
+- fluxos específicos para revisão/publicação do professor e configuração de permissões;
+- acessibilidade do conteúdo, vídeos legendados e roteiro offline para ausência de celular/conexão.
 
 **Deixar para versões posteriores**
 
@@ -91,11 +109,11 @@ O sistema não deve permitir que um aluno consulte treinos de outra pessoa. Perm
 - aplicativo nativo publicado nas lojas;
 - notificações automáticas por WhatsApp.
 
-## 6. Como iniciar antes de programar
+## 6. Como organizar o projeto e preparar um piloto
 
 ### Etapa 1 — Aprovar o problema e o responsável
 
-Converse com gerente, professores e alunos. Registre quais aparelhos geram mais dúvidas, como os treinos são entregues atualmente, quais informações cada perfil precisa e quem aprovará o conteúdo técnico.
+Converse com gerente, professores e alunos. Registre quais aparelhos geram mais dúvidas, como os treinos são entregues atualmente, quais informações cada perfil precisa e quem aprovará o conteúdo técnico. O código do MVP existe, mas a validação com pessoas da academia ainda precisa acontecer antes do piloto.
 
 ### Etapa 2 — Delimitar o piloto
 
@@ -105,7 +123,7 @@ Escolha em conjunto uma área e um conjunto pequeno de equipamentos para testar.
 
 Confirme os papéis e permissões, os dados realmente necessários, a política de acesso e atualização dos planos e os procedimentos para alunos sem celular ou sem conexão. Não coloque nome, matrícula, diagnóstico, carga ou plano individual dentro do QR Code ou da URL pública.
 
-### Etapa 4 — Fazer protótipos
+### Etapa 4 — Validar o protótipo disponível
 
 Desenhe no papel ou em ferramenta de prototipação as telas de login, leitura do QR, instrução do aparelho, plano do aluno e edição pelo professor. Peça que pessoas dos três perfis tentem realizar tarefas sem orientação.
 
@@ -128,11 +146,11 @@ Antes do desenvolvimento, escreva como demonstrar que:
 
 Apresente ao gerente as entregas, custos de hospedagem, domínio, produção/armazenamento de vídeo, suporte, operação e manutenção. Combine prazo, responsável por aprovação técnica, participantes do teste e como decidir a continuidade.
 
-Só depois da aprovação dos requisitos, protótipos e critérios de aceite, iniciar a implementação e criar tarefas técnicas.
+O MVP está implementado no código; antes de usar com alunos reais, aprove requisitos, protótipo, conteúdo e critérios de aceite com a gerência.
 
-### Etapa 8 — Construir, testar e avaliar em ciclos
+### Etapa 8 — Configurar, testar e avaliar em ciclos
 
-Implemente primeiro o cadastro de equipamentos e conteúdo revisado; depois autenticação e permissões, planos individuais e a experiência mobile do QR. Faça testes com contas de aluno, professor e gerente, incluindo tentativas de acesso indevido. Rode um piloto supervisionado, registre problemas e só então decida com a gerência se amplia o escopo.
+Cadastre poucos equipamentos e conteúdos aprovados; crie contas de aluno e equipe com permissões mínimas; gere os QRs no domínio alcançável por celulares. Faça testes com contas de aluno, professor e gerente, incluindo tentativas de acesso indevido. Rode um piloto supervisionado, registre problemas e só então decida com a gerência se amplia o escopo.
 
 ## 7. Estrutura técnica sugerida
 

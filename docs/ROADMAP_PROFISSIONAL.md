@@ -32,16 +32,16 @@ O sistema atual não possui atualização instantânea via WebSocket, armazename
 
 O novo sistema de treino não deve ser iniciado diretamente pela implementação. Primeiro validar o problema e o escopo com gerente, professores e alunos, prototipar telas, definir piloto, aprovar custos e especificar critérios de aceite.
 
-### MVP proposto
+### MVP inicial implementado
 
 - Equipamentos com QR Codes aleatórios que identifiquem apenas a máquina.
 - Login de alunos, professores e gerência com permissões distintas.
 - Exercícios e vídeos próprios ou autorizados, revisados por um professor.
 - Planos individuais consultáveis somente pelo aluno autenticado.
 - Séries, repetições, intervalos e carga definidos pelo profissional.
-- Histórico de alterações e testes contra acesso a plano de outra pessoa.
+- Autorização por titular do plano e testes contra acesso ao treino de outra pessoa.
 
-Este módulo ainda não está implementado. Leia [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md) para o roteiro de descoberta, segurança, conteúdo e piloto. Next Fit e MFIT são referências de fluxo, não fontes para copiar vídeos, marca ou conteúdo protegido.
+O código do MVP já está no projeto. Antes do piloto, é preciso cadastrar contas/conteúdo aprovado, configurar permissões de professor e gerente, gerar QRs pelo host acessível aos alunos e validar com a equipe. Leia [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md) para o passo a passo e o roteiro de teste. Next Fit e MFIT são referências de fluxo, não fontes para copiar vídeos, marca ou conteúdo protegido.
 
 ## Prioridade 3 — Notificações WhatsApp
 

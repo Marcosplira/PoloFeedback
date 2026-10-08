@@ -8,18 +8,58 @@ import urllib.request
 import urllib.error
 import qrcode
 from datetime import timedelta
+from functools import wraps
 
 from collections import Counter
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.staticfiles import finders
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseNotFound,
+    JsonResponse,
+)
 from django.utils import timezone
 from django.conf import settings
+from django.urls import reverse
 
-from .models import Avaliacao, Funcionario, RespostaEnquete
+from .models import (
+    Avaliacao,
+    Equipamento,
+    Funcionario,
+    ItemPlanoTreino,
+    RespostaEnquete,
+)
+
+
+def staff_required(view_func=None, *, permission=None):
+    def decorate(view):
+        @wraps(view)
+        def wrapped_view(request, *args, **kwargs):
+            if not request.user.is_authenticated:
+                return redirect_to_login(request.get_full_path())
+            if not request.user.is_staff:
+                return HttpResponseForbidden(
+                    "Acesso permitido somente à equipe da academia."
+                )
+            if (
+                permission
+                and not request.user.is_superuser
+                and not request.user.has_perm(permission)
+            ):
+                return HttpResponseForbidden(
+                    "Sua conta não tem permissão para acessar esta área."
+                )
+            return view(request, *args, **kwargs)
+
+        return wrapped_view
+
+    if view_func is not None:
+        return decorate(view_func)
+    return decorate
 
 
 def service_worker(request):
@@ -239,7 +279,7 @@ def enquete(request):
     )
 
 
-@login_required
+@staff_required(permission="feedback.view_avaliacao")
 def dashboard(request):
 
     # ==========================================================
@@ -635,7 +675,7 @@ def dashboard(request):
     )
 
 
-@login_required
+@staff_required(permission="feedback.view_avaliacao")
 def gerar_qrcode(request):
 
     qrcode_base64 = None
@@ -710,6 +750,79 @@ def gerar_qrcode(request):
             "ip_local": ip_local,
             "usando_ip": usar_ip,
         },
+    )
+
+
+def treino_equipamento(request, identificador_qr):
+    equipamento = get_object_or_404(
+        Equipamento,
+        identificador_qr=identificador_qr,
+        ativo=True,
+    )
+    exercicios = equipamento.exercicios.filter(ativo=True)
+    itens_plano = ItemPlanoTreino.objects.none()
+
+    if request.user.is_authenticated:
+        itens_plano = (
+            ItemPlanoTreino.objects.filter(
+                plano__aluno=request.user,
+                plano__ativo=True,
+                exercicio__equipamento=equipamento,
+                exercicio__ativo=True,
+            )
+            .select_related("plano", "exercicio")
+            .order_by("plano__nome", "ordem", "id")
+        )
+    else:
+        return redirect_to_login(
+            request.get_full_path(),
+            login_url=reverse("login"),
+        )
+
+    return render(
+        request,
+        "feedback/treino_equipamento.html",
+        {
+            "equipamento": equipamento,
+            "exercicios": exercicios,
+            "itens_plano": itens_plano,
+        },
+    )
+
+
+@staff_required
+def qrcodes_treinos(request):
+    equipamentos = []
+    for equipamento in Equipamento.objects.filter(ativo=True):
+        url = request.build_absolute_uri(
+            reverse(
+                "treino_equipamento",
+                kwargs={"identificador_qr": equipamento.identificador_qr},
+            )
+        )
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=8,
+            border=3,
+        )
+        qr.add_data(url)
+        qr.make(fit=True)
+        image = qr.make_image(fill_color="black", back_color="white")
+        buffer = io.BytesIO()
+        image.save(buffer, format="PNG")
+        equipamentos.append(
+            {
+                "equipamento": equipamento,
+                "url": url,
+                "qr_base64": base64.b64encode(buffer.getvalue()).decode("ascii"),
+            }
+        )
+
+    return render(
+        request,
+        "feedback/treinos_qrcodes.html",
+        {"equipamentos": equipamentos},
     )
 
 
@@ -789,7 +902,7 @@ Foram registradas {reclamacoes} reclamação(ões) e {sugestoes} sugestão(ões)
 3. **Melhoria Contínua:** Utilizar as sugestões dos alunos para orientar melhorias futuras.{amostra_comentarios}"""
 
 
-@login_required
+@staff_required(permission="feedback.view_avaliacao")
 def ia_analisar(request):
 
     ids_recentes = list(
@@ -1161,7 +1274,7 @@ com a evolução dos próximos períodos para identificar tendências."""
     )
 
 
-@login_required
+@staff_required(permission="feedback.view_avaliacao")
 def ia_chat(request):
     """
     Endpoint conversacional interativo com a IA sobre as avaliações dos alunos.

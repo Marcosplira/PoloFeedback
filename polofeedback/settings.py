@@ -107,20 +107,36 @@ WSGI_APPLICATION = "polofeedback.wsgi.application"
 # Banco de dados — usa DATABASE_URL se disponível (Docker/Railway), senão SQLite local
 _db_url = os.environ.get("DATABASE_URL", "")
 if _db_url:
-    import urllib.parse
+    from urllib.parse import parse_qs, unquote, urlparse
 
-    _parsed = urllib.parse.urlparse(_db_url)
+    _parsed = urlparse(_db_url)
+    if _parsed.scheme not in {"postgres", "postgresql"}:
+        raise RuntimeError("DATABASE_URL deve apontar para um banco PostgreSQL.")
+
+    _database_name = unquote(_parsed.path.lstrip("/"))
+    if not _database_name:
+        raise RuntimeError("DATABASE_URL precisa informar o nome do banco PostgreSQL.")
+
+    _query_params = parse_qs(_parsed.query)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": _parsed.path.lstrip("/"),
-            "USER": _parsed.username,
-            "PASSWORD": _parsed.password,
+            "NAME": _database_name,
+            "USER": unquote(_parsed.username or ""),
+            "PASSWORD": unquote(_parsed.password or ""),
             "HOST": _parsed.hostname,
             "PORT": _parsed.port or 5432,
+            "OPTIONS": {
+                "sslmode": _query_params.get("sslmode", ["require"])[0],
+            },
         }
     }
 else:
+    if not DEBUG:
+        raise RuntimeError(
+            "DATABASE_URL não definida. Configure um banco PostgreSQL "
+            "persistente antes de iniciar em produção."
+        )
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

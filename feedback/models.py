@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -162,3 +164,126 @@ class RespostaEnquete(models.Model):
 
     def __str__(self):
         return f"Enquete #{self.id} - {self.data_criacao.strftime('%d/%m/%Y %H:%M')}"
+
+
+class Equipamento(models.Model):
+    nome = models.CharField(max_length=120, unique=True, verbose_name="Equipamento")
+    identificador_qr = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        verbose_name="Identificador do QR Code",
+    )
+    localizacao = models.CharField(max_length=120, blank=True, verbose_name="Localização")
+    instrucoes = models.TextField(blank=True, verbose_name="Instruções gerais")
+    observacoes_seguranca = models.TextField(
+        blank=True,
+        verbose_name="Orientações de segurança",
+    )
+    ativo = models.BooleanField(default=True, verbose_name="Ativo")
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Equipamento de treino"
+        verbose_name_plural = "Equipamentos de treino"
+        ordering = ["nome"]
+
+    def __str__(self):
+        return self.nome
+
+
+class Exercicio(models.Model):
+    nome = models.CharField(max_length=120, verbose_name="Exercício")
+    equipamento = models.ForeignKey(
+        Equipamento,
+        on_delete=models.PROTECT,
+        related_name="exercicios",
+        verbose_name="Equipamento",
+    )
+    instrucoes = models.TextField(verbose_name="Como executar")
+    video_url = models.URLField(blank=True, verbose_name="Link do vídeo autorizado")
+    ativo = models.BooleanField(default=True, verbose_name="Ativo")
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Exercício"
+        verbose_name_plural = "Exercícios"
+        ordering = ["equipamento__nome", "nome"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=("equipamento", "nome"),
+                name="feedback_unique_exercise_per_equipment",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.nome} — {self.equipamento.nome}"
+
+
+class PlanoTreino(models.Model):
+    aluno = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="planos_treino",
+        verbose_name="Aluno",
+    )
+    professor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="planos_criados",
+        verbose_name="Professor responsável",
+    )
+    nome = models.CharField(max_length=120, default="Meu treino", verbose_name="Nome do plano")
+    observacoes = models.TextField(blank=True, verbose_name="Observações")
+    ativo = models.BooleanField(default=True, verbose_name="Plano ativo")
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Plano de treino"
+        verbose_name_plural = "Planos de treino"
+        ordering = ["aluno__username", "nome"]
+
+    def __str__(self):
+        return f"{self.nome} — {self.aluno.get_full_name() or self.aluno.username}"
+
+
+class ItemPlanoTreino(models.Model):
+    plano = models.ForeignKey(
+        PlanoTreino,
+        on_delete=models.CASCADE,
+        related_name="itens",
+        verbose_name="Plano",
+    )
+    exercicio = models.ForeignKey(
+        Exercicio,
+        on_delete=models.PROTECT,
+        related_name="itens_plano",
+        verbose_name="Exercício",
+    )
+    ordem = models.PositiveSmallIntegerField(default=1, verbose_name="Ordem")
+    series = models.PositiveSmallIntegerField(default=3, verbose_name="Séries")
+    repeticoes = models.CharField(max_length=40, default="10", verbose_name="Repetições")
+    descanso_segundos = models.PositiveSmallIntegerField(
+        default=60,
+        verbose_name="Descanso (segundos)",
+    )
+    carga = models.CharField(
+        max_length=40,
+        blank=True,
+        verbose_name="Carga orientada pelo professor",
+        help_text="Ex.: 15 kg. O sistema não calcula nem recomenda carga.",
+    )
+    observacoes = models.CharField(max_length=255, blank=True, verbose_name="Observações")
+
+    class Meta:
+        verbose_name = "Exercício do plano"
+        verbose_name_plural = "Exercícios do plano"
+        ordering = ["ordem", "id"]
+
+    def __str__(self):
+        return f"{self.ordem}. {self.exercicio.nome} — {self.plano}"

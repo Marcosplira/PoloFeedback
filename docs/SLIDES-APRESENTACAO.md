@@ -128,7 +128,7 @@
 
 ---
 
-## 📌 SLIDE 12 — NOVA PROPOSTA: TREINO PELO QR CODE
+## 📌 SLIDE 12 — MVP DE TREINO PELO QR CODE
 ### **Treino e orientação no aparelho**
 - O aluno lê o QR Code instalado na máquina.
 - A página mostra o equipamento e instruções aprovadas.
@@ -136,27 +136,27 @@
 - Vídeo demonstrativo, regulagem, execução, séries, repetições e descanso.
 - A carga de referência é definida/aprovada pelo professor; o sistema não prescreve automaticamente.
 - Recursos futuros: marcar séries concluídas, cronômetro de descanso, histórico, favoritos e alternativas previamente aprovadas.
-- Este módulo é uma proposta e ainda não está implementado no Polo Feedback.
+- O MVP já está no código; falta cadastrar conteúdo real e validar o piloto com a academia.
 - **Responsável pela proposta:** Marcos Paulo Santos Lira.
 
 ## 📌 SLIDE 13 — COMO COMEÇAR SEM AUMENTAR O RISCO
-### **Validar antes de desenvolver**
+### **Validar antes do piloto real**
 1. Conversar com gerente, professores e alunos.
 2. Escolher uma área e um piloto pequeno com a academia.
 3. Desenhar e testar as telas com os três perfis.
 4. Definir permissões, privacidade, conteúdo autorizado e como apoiar quem não tem celular/conexão.
 5. Aprovar custos, responsáveis, critérios de sucesso e suporte.
-6. Construir cadastro e conteúdo; depois autenticação, planos e consulta via QR.
-7. Fazer piloto supervisionado, medir resultados e decidir se amplia.
+6. Cadastrar aparelhos, vídeos autorizados, contas e planos; conferir domínio dos QRs.
+7. Testar com aluno, professor e gerente; fazer piloto supervisionado e medir resultados.
 
 ## 📌 SLIDE 14 — COMO APRESENTAR O VALOR DO PROJETO
-### **Uma proposta para simplificar a orientação, não substituir o professor**
+### **Um MVP para simplificar a orientação, não substituir o professor**
 - **Aluno:** encontra instruções e seu próprio plano no celular.
 - **Professor:** revisa conteúdo e planos; continua responsável por exercícios e carga.
 - **Gerência:** acompanha atualização do conteúdo, uso e dúvidas recorrentes.
 - **Piloto:** medir se alunos encontram e compreendem a orientação, e se diminuem dúvidas repetidas; definir linha de base e metas antes do teste.
 - **Decisão solicitada:** aprovar descoberta e protótipo, indicar responsáveis e escolher a área piloto. Custo e prazo ficam para estimativa após requisitos.
-- O módulo é uma proposta futura; não está implementado no Polo Feedback.
+- O código inicial já está implementado; o uso oficial depende de conteúdo revisado e piloto aprovado.
 
 ## 📌 SLIDE 15 — SEGURANÇA E RESPONSABILIDADE
 ### **QR público não pode expor um treino particular**

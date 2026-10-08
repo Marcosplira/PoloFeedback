@@ -164,7 +164,7 @@ Essa sequência transmite muito bem o valor do produto e facilita a compreensão
 ## Próximos passos de evolução
 
 A solução já está funcional e pronta para apresentação, e pode evoluir para:
-- módulo de treino e instrução de aparelhos por QR Code (proposta ainda não implementada)
+- evolução do MVP de treinos por QR Code, com piloto supervisionado
 - notificações automáticas por WhatsApp Business API oficial, após aprovação
 - alertas para pendências críticas
 - relatórios por unidade
@@ -182,29 +182,29 @@ O botão de contato do sistema abre uma conversa iniciada pela pessoa com a acad
 
 ---
 
-## Proposta de novo projeto: Polo Fit Treinos por QR Code
+## Módulo Polo Fit Treinos por QR Code
 
-> **Status:** proposta para avaliação. O módulo de treinos não está implementado no Polo Feedback.
+> **Status:** MVP inicial implementado no código; falta cadastrar conteúdo real, revisar permissões e validar um piloto com a academia antes de uso oficial.
 
 ### Desafio da rotina
 
 Alunos podem ter dúvidas sobre os aparelhos e a execução dos exercícios. Professores repetem orientações, enquanto fichas impressas podem ser esquecidas ou ficar desatualizadas. A proposta é facilitar a consulta sem substituir o professor nem automatizar prescrição de treino.
 
-### Como funcionaria
+### Como funciona o MVP
 
-1. A academia cadastra o aparelho e imprime um QR Code que identifica somente esse equipamento.
-2. Ao escanear, o aluno vê instruções públicas revisadas e um vídeo autorizado da execução.
-3. Para consultar o próprio plano, o aluno entra em sua conta. O sistema verifica a autorização no servidor.
-4. O plano apresenta exercícios, séries, repetições, intervalos, observações e carga de referência definidos e aprovados pelo professor.
-5. O professor revisa e atualiza orientações e planos; o gerente acompanha conteúdo desatualizado e o piloto.
+1. A equipe cadastra o aparelho, instruções gerais e observações de segurança.
+2. A equipe cadastra exercícios associados ao equipamento e adiciona instruções e link de vídeo autorizado.
+3. O professor ou gerente cria um plano para o usuário/aluno e inclui séries, repetições, descanso e carga orientada.
+4. A equipe imprime um QR Code que contém apenas um identificador aleatório do equipamento.
+5. O aluno escaneia o código e entra em sua conta para ver as instruções e apenas os exercícios daquele aparelho que estão em seus próprios planos ativos.
 
 ### Recursos sugeridos
 
-**Primeira versão (MVP):** cadastro de aparelhos e exercícios; QR Code; vídeo e instruções; login para alunos e professores; plano individual; séries, repetições, descanso e carga aprovada pelo professor; histórico de alterações; interface adaptada ao celular; testes de privacidade.
+**Implementado:** cadastro de aparelhos e exercícios no Django Admin; QR Code imprimível; links de vídeo e instruções; login; plano individual com séries, repetições, descanso e carga preenchida pelo professor; verificação de titularidade do plano; interface adaptada ao celular; testes de privacidade.
 
 **Possíveis melhorias após o piloto:** marcar séries concluídas, cronômetro de descanso, histórico de treinos, favoritos, busca, alternativas autorizadas pelo professor, legenda e controles de acessibilidade, lembretes internos configuráveis e pesquisa breve sobre clareza das instruções.
 
-### O que precisa ser aprovado antes de programar
+### O que precisa ser aprovado antes do piloto real
 
 - gerente patrocinador, professor(es) responsáveis pela revisão e área/equipamentos do piloto;
 - perfis de acesso, dados necessários, aviso de privacidade e retenção;
@@ -213,11 +213,11 @@ Alunos podem ter dúvidas sobre os aparelhos e a execução dos exercícios. Pro
 - custo de hospedagem e mídia, operação, manutenção e suporte;
 - metas do piloto, por exemplo: alunos que encontram a instrução, clareza do conteúdo, dúvidas recorrentes e QR/vídeos indisponíveis.
 
-Recomenda-se começar com entrevistas, protótipo em papel e um piloto pequeno. Prazo e investimento devem ser estimados depois de validar o escopo e as condições técnicas. Não se deve prometer economia, retenção ou resultados de saúde sem avaliação apropriada.
+O código do MVP já existe. O próximo passo é cadastrar uma amostra de conteúdo aprovado, entrevistar os perfis, validar o fluxo no protótipo/página e executar um piloto pequeno supervisionado. Estime prazo e investimento das próximas melhorias depois de validar o escopo e as condições técnicas. Não se deve prometer economia, retenção ou resultados de saúde sem avaliação apropriada.
 
 ### Texto curto para apresentar ao gerente
 
-> “Proponho avaliarmos um módulo de treinos por QR Code para a Polo Fit. O aluno poderá abrir a orientação do aparelho e, após autenticação, consultar somente o plano que o professor preparou para ele. Vídeos e instruções serão revisados pela equipe, e a carga não será calculada automaticamente. Minha sugestão é começarmos ouvindo gerente, professores e alunos, prototipando as telas e testando uma área pequena antes de aprovar desenvolvimento, prazo e investimento.”
+> “Preparei um MVP de treinos por QR Code para a Polo Fit. A equipe cadastra aparelhos e vídeos autorizados; o aluno entra com sua conta e vê apenas os exercícios daquele aparelho que pertencem ao próprio plano. O professor define séries, repetições e carga — o sistema não prescreve automaticamente. Proponho validarmos o conteúdo e as permissões, escolhermos uma área pequena e fazermos um piloto supervisionado antes de decidir as próximas melhorias e investimentos.”
 
 O escopo detalhado, as etapas de descoberta e desenvolvimento, os riscos de privacidade e os critérios de piloto estão em [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md).
 

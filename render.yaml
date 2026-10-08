@@ -1,9 +1,3 @@
-databases:
-  - name: polofeedback-db
-    databaseName: polofeedback
-    user: polo
-    plan: free
-
 services:
   - type: web
     name: polofeedback
@@ -19,13 +13,11 @@ services:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: polofeedback-db
-          property: connectionString
+        sync: false
       - key: ALLOWED_HOSTS
-        value: "polofeedback.onrender.com,localhost,127.0.0.1"
+        value: "polofeedback.onrender.com,app.polofitacademias.com.br,localhost,127.0.0.1"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://polofeedback.onrender.com"
+        value: "https://polofeedback.onrender.com,https://app.polofitacademias.com.br"
       # GEMINI_API_KEY: configure manualmente no painel do Render em "Environment"
       # para não expor a chave no repositório.
       # - key: GEMINI_API_KEY

@@ -16,7 +16,9 @@ from feedback.views import (
     inicio,
     ia_analisar,
     ia_chat,
+    qrcodes_treinos,
     service_worker,
+    treino_equipamento,
 )
 
 urlpatterns = [
@@ -37,6 +39,12 @@ urlpatterns = [
     ),
     path("dashboard/", dashboard, name="dashboard"),
     path("qrcode/", gerar_qrcode, name="gerar_qrcode"),
+    path("treinos/qrs/", qrcodes_treinos, name="qrcodes_treinos"),
+    path(
+        "treinos/aparelho/<uuid:identificador_qr>/",
+        treino_equipamento,
+        name="treino_equipamento",
+    ),
     path("ia/analisar/", ia_analisar, name="ia_analisar"),
     path("ia/chat/", ia_chat, name="ia_chat"),
 ]

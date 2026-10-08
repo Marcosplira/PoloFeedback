@@ -1,6 +1,14 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Avaliacao, Funcionario, RespostaEnquete
+from .models import (
+    Avaliacao,
+    Equipamento,
+    Exercicio,
+    Funcionario,
+    ItemPlanoTreino,
+    PlanoTreino,
+    RespostaEnquete,
+)
 
 
 admin.site.site_header = "Polo Fit — Painel Administrativo"
@@ -97,3 +105,40 @@ class RespostaEnqueteAdmin(admin.ModelAdmin):
         if obj.aulas_favoritas_outra:
             itens.append(f"Outra: {obj.aulas_favoritas_outra}")
         return ", ".join(itens) or "—"
+
+
+@admin.register(Equipamento)
+class EquipamentoAdmin(admin.ModelAdmin):
+    list_display = ("nome", "localizacao", "ativo", "atualizado_em")
+    list_filter = ("ativo", "localizacao")
+    search_fields = ("nome", "localizacao")
+    readonly_fields = ("identificador_qr", "criado_em", "atualizado_em")
+
+
+@admin.register(Exercicio)
+class ExercicioAdmin(admin.ModelAdmin):
+    list_display = ("nome", "equipamento", "ativo", "atualizado_em")
+    list_filter = ("ativo", "equipamento")
+    search_fields = ("nome", "equipamento__nome")
+    autocomplete_fields = ("equipamento",)
+    readonly_fields = ("criado_em", "atualizado_em")
+
+
+class ItemPlanoTreinoInline(admin.TabularInline):
+    model = ItemPlanoTreino
+    extra = 1
+    autocomplete_fields = ("exercicio",)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "exercicio":
+            kwargs["queryset"] = Exercicio.objects.filter(ativo=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+@admin.register(PlanoTreino)
+class PlanoTreinoAdmin(admin.ModelAdmin):
+    list_display = ("nome", "aluno", "professor", "ativo", "atualizado_em")
+    list_filter = ("ativo", "atualizado_em")
+    search_fields = ("nome", "aluno__username", "aluno__first_name", "aluno__last_name")
+    readonly_fields = ("criado_em", "atualizado_em")
+    inlines = (ItemPlanoTreinoInline,)

@@ -104,13 +104,27 @@ copy .env.example .env
 python manage.py migrate
 ```
 
-### 6. Criar superusuário para o Dashboard (primeira vez)
+### 6. Criar o usuário administrador (primeira vez)
 
 ```powershell
 python manage.py createsuperuser
 ```
 
-### 7. Iniciar o Servidor de Desenvolvimento
+### 7. Cadastrar o MVP de treinos por QR Code
+
+No endereço `/admin/`, entre com o administrador e:
+
+1. Cadastre os alunos como usuários comuns (sem marcar **Equipe** / `is_staff`).
+2. Cadastre cada máquina em **Equipamentos de treino**, com instruções e avisos de segurança.
+3. Cadastre os exercícios em **Exercícios**, relacionando o equipamento e, se aprovado, um link para vídeo.
+4. Crie um **Plano de treino**, selecione o aluno e o professor responsável e inclua os exercícios, séries, repetições, descanso e carga orientada pelo professor.
+5. Um membro da equipe imprime os QR Codes em `/treinos/qrs/` ou pelo link **QR Treinos** no Dashboard.
+
+O QR Code identifica apenas o equipamento. O aluno entra com sua conta para ver os exercícios vinculados ao aparelho que pertencem aos próprios planos ativos. Para administrar os planos, o professor deve ter conta da equipe (`is_staff`) e as permissões de visualizar/adicionar/alterar Equipamento, Exercício, Plano de treino e Exercício do plano. A equipe pode imprimir os QR Codes dos aparelhos sem a permissão de visualizar avaliações. O gerente deve ter a permissão `feedback.view_avaliacao` (ou ser superusuário) para abrir Dashboard, IA e QR Codes de avaliação.
+
+O link do QR é montado usando o host acessado pelo membro da equipe. O domínio escolhido para a implantação é `https://app.polofitacademias.com.br`; ele já está incluído nos hosts e origens CSRF permitidos do Render. Para que funcione, configure esse domínio personalizado no serviço do Render e cadastre no provedor DNS os registros que o Render indicar. Depois do deploy, confirme que o domínio abre com HTTPS, cadastre os equipamentos e gere os códigos acessando `/treinos/qrs/` por esse domínio. Não imprima QRs gerados por `localhost` para uso pelos alunos. Vídeos externos precisam ser próprios ou licenciados. Carga, séries e repetições são configuradas pelo professor; o sistema não calcula nem prescreve treino.
+
+### 8. Iniciar o Servidor de Desenvolvimento
 
 ```powershell
 python manage.py runserver
@@ -125,6 +139,7 @@ Acesse no navegador:
 - **Avaliação do Aluno:** [http://localhost:8000/](http://localhost:8000/)
 - **Dashboard Gerencial:** [http://localhost:8000/dashboard/](http://localhost:8000/dashboard/)
 - **Gerador de QR Code:** [http://localhost:8000/qrcode/](http://localhost:8000/qrcode/)
+- **QR Codes dos aparelhos:** [http://localhost:8000/treinos/qrs/](http://localhost:8000/treinos/qrs/) (equipe)
 - **Administração Django:** [http://localhost:8000/admin/](http://localhost:8000/admin/)
 
 ---
@@ -173,16 +188,33 @@ Os testes devem ser executados no ambiente Python configurado para o projeto. Co
 
 ## ☁️ Deploy no Render.com
 
-O arquivo `render.yaml` contém a configuração completa de deploy.
+O arquivo `render.yaml` configura somente o serviço Web do Django. O banco PostgreSQL deve ser criado separadamente na Neon para não consumir o limite de bancos do Workspace do Render nem compartilhar dados com outros projetos.
 
-### Configuração necessária no painel do Render:
-Após o primeiro deploy, vá em **Environment → Environment Variables** e adicione:
+### 1. Criar um banco PostgreSQL separado na Neon
+
+1. Crie uma conta em [neon.tech](https://neon.tech/) e crie um projeto PostgreSQL para o Polo Feedback.
+2. No painel da Neon, abra os detalhes de conexão do projeto e copie a connection string PostgreSQL (normalmente começa com `postgresql://`).
+3. Trate essa URL como uma senha: não a envie em mensagens, não a coloque no GitHub e não a salve em `render.yaml`.
+
+Confira os limites e eventuais cobranças indicados pela Neon antes de criar o banco.
+
+### 2. Configurar o Render
+
+1. No Blueprint `PoloFeedback`, execute **Manual sync** para criar somente o serviço Web. A configuração não tentará criar um banco no Render.
+2. Abra o serviço Web `polofeedback` e entre em **Environment**.
+3. Adicione `DATABASE_URL` e cole a connection string da Neon. Salve; o Render poderá solicitar um novo deploy.
+4. O Django usa SSL (`sslmode=require`) por padrão para o PostgreSQL. O comando de inicialização executa as migrações antes de iniciar o servidor.
+5. Após o deploy concluir, abra o **Shell** do serviço e crie seu usuário administrador com `python manage.py createsuperuser`.
+
+Para o domínio personalizado, adicione `app.polofitacademias.com.br` em **Settings → Custom Domains** no serviço Web e configure no provedor do domínio os registros DNS que o Render mostrar. Só gere QR Codes depois que o endereço estiver publicado e abrir com HTTPS.
+
+### Outras variáveis no painel do Render
+
+Se utilizar a IA com Google Gemini, configure `GEMINI_API_KEY` em **Environment**:
 
 | Variável | Descrição |
 | :--- | :--- |
 | `GEMINI_API_KEY` | Chave da API Google Gemini (obtenha em [aistudio.google.com](https://aistudio.google.com/app/apikey)) |
-
-Depois que o serviço estiver conectado ao banco e publicado, crie um superusuário individual pelo Shell do Render com `python manage.py createsuperuser`. O processo de build não cria uma conta compartilhada nem define senha padrão.
 
 > ⚠️ **IMPORTANTE:** Nunca coloque senhas ou chaves de API diretamente no repositório ou no arquivo `render.yaml`. Use as variáveis protegidas do provedor.
 
@@ -234,7 +266,7 @@ PoloFeedback/
 
 ## 🔎 Auditoria e melhorias prioritárias
 
-O projeto contém avaliação por QR Code, painel administrativo, pesquisa de satisfação e suporte de IA. O módulo de treinos por máquina descrito na proposta ainda não está implementado. A implantação em nuvem precisa de configuração e validação específicas por ambiente.
+O projeto contém avaliação por QR Code, painel administrativo, pesquisa de satisfação, suporte de IA e um MVP inicial de treinos por máquina. O módulo de treinos cadastra aparelhos/exercícios, cria planos por aluno, imprime QR Codes e protege o acesso ao plano com autenticação e verificação de titularidade. Antes de um piloto real, ainda é preciso cadastrar conteúdo aprovado, contas e permissões, validar a URL HTTPS usada nos QRs e testar o fluxo com a gerência e os professores. A implantação em nuvem precisa de configuração e validação específicas por ambiente.
 
 ### Status verificado
 - sistema de avaliação, painel, enquete e QR Code
@@ -250,7 +282,7 @@ O projeto contém avaliação por QR Code, painel administrativo, pesquisa de sa
 5. App mobile profissional e branding premium
 6. Dashboard executivo com relatórios e alertas
 7. Separação de regras de negócio em services e módulos
-8. Treinos individualizados por QR Code — projeto futuro, com login, permissões e revisão do professor
+8. Treinos por QR Code — MVP inicial implementado; avaliar piloto e melhorias (histórico de conclusão, cronômetro, favoritos e acessibilidade)
 9. Notificações automáticas WhatsApp — planejar com API oficial, custos, consentimento e auditoria
 
 ### Documentação complementar

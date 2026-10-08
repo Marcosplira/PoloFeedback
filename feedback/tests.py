@@ -4,7 +4,15 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 import json
-from feedback.models import Funcionario, Avaliacao, RespostaEnquete
+from feedback.models import (
+    Avaliacao,
+    Equipamento,
+    Exercicio,
+    Funcionario,
+    ItemPlanoTreino,
+    PlanoTreino,
+    RespostaEnquete,
+)
 
 
 class FeedbackModelTests(TestCase):
@@ -52,6 +60,9 @@ class FeedbackViewsTests(TestCase):
             username="gerente_teste",
             password="senha_segura_123"
         )
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save(update_fields=["is_staff", "is_superuser"])
         self.funcionario = Funcionario.objects.create(
             nome="Mariana Instrutora",
             cargo="Instrutora de Pilates",
@@ -256,6 +267,114 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Unidade / Ponto: <span class=\"font-bold text-black\">polo_norte</span>")
         self.assertNotContains(response, "{{")
         self.assertIsNotNone(response.context["qrcode_base64"])
+
+    def test_treino_por_qr_exige_login_e_preserva_destino(self):
+        equipamento = Equipamento.objects.create(
+            nome="Leg press",
+            instrucoes="Ajuste o encosto antes de começar.",
+        )
+
+        response = self.client.get(
+            reverse(
+                "treino_equipamento",
+                kwargs={"identificador_qr": equipamento.identificador_qr},
+            )
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        self.assertIn(str(equipamento.identificador_qr), response.url)
+
+    def test_aluno_ve_apenas_o_proprio_treino_do_aparelho(self):
+        equipamento = Equipamento.objects.create(
+            nome="Leg press",
+            localizacao="Musculação",
+            instrucoes="Ajuste o encosto antes de começar.",
+        )
+        exercicio_proprio = Exercicio.objects.create(
+            nome="Leg press horizontal",
+            equipamento=equipamento,
+            instrucoes="Empurre a plataforma sem travar os joelhos.",
+            video_url="https://www.youtube.com/watch?v=abc123",
+        )
+        exercicio_alheio = Exercicio.objects.create(
+            nome="Exercício privado de outro aluno",
+            equipamento=equipamento,
+            instrucoes="Não deve aparecer para esta conta.",
+        )
+        aluno = User.objects.create_user(username="aluno_teste")
+        outro_aluno = User.objects.create_user(username="outro_aluno")
+        plano_proprio = PlanoTreino.objects.create(
+            aluno=aluno,
+            professor=self.user,
+            nome="Treino A",
+        )
+        plano_alheio = PlanoTreino.objects.create(
+            aluno=outro_aluno,
+            professor=self.user,
+            nome="Treino reservado",
+        )
+        ItemPlanoTreino.objects.create(
+            plano=plano_proprio,
+            exercicio=exercicio_proprio,
+            ordem=1,
+            series=4,
+            repeticoes="12",
+            descanso_segundos=90,
+            carga="40 kg",
+        )
+        ItemPlanoTreino.objects.create(
+            plano=plano_alheio,
+            exercicio=exercicio_alheio,
+            ordem=1,
+        )
+        self.client.force_login(aluno)
+
+        response = self.client.get(
+            reverse(
+                "treino_equipamento",
+                kwargs={"identificador_qr": equipamento.identificador_qr},
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Leg press horizontal")
+        self.assertContains(response, "40 kg")
+        self.assertContains(response, "Assistir vídeo demonstrativo")
+        self.assertNotContains(response, "Exercício privado de outro aluno")
+        self.assertNotContains(response, "Treino reservado")
+
+    def test_qr_dos_treinos_so_e_disponivel_para_equipe(self):
+        equipamento = Equipamento.objects.create(nome="Puxada alta")
+        url = reverse("qrcodes_treinos")
+        aluno = User.objects.create_user(username="aluno_teste")
+        self.client.force_login(aluno)
+
+        forbidden_response = self.client.get(url)
+        self.assertEqual(forbidden_response.status_code, 403)
+
+        self.client.force_login(self.user)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Puxada alta")
+        self.assertContains(response, str(equipamento.identificador_qr))
+        self.assertContains(response, "Imprimir QR Codes")
+
+    def test_professor_pode_imprimir_qr_sem_ver_dashboard_gerencial(self):
+        professor = User.objects.create_user(username="professor_teste", is_staff=True)
+        self.client.force_login(professor)
+
+        self.assertEqual(self.client.get(reverse("qrcodes_treinos")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("dashboard")).status_code, 403)
+
+    def test_usuario_aluno_nao_acessa_dashboard_gerencial(self):
+        aluno = User.objects.create_user(username="aluno_teste")
+        self.client.force_login(aluno)
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 403)
 
     def test_enquete_get(self):
         response = self.client.get(reverse("enquete"))

@@ -143,10 +143,10 @@ O repositório inclui configurações para publicação no **Render.com** (`rend
    - Acesse [https://render.com](https://render.com) e faça login com sua conta do GitHub.
    - Clique em **"New +"** no canto superior direito e selecione **"Blueprint"**.
    - Conecte seu repositório `PoloFeedback`.
-   - O Render detectará automaticamente o arquivo `render.yaml` e configurará o banco PostgreSQL e o Web Service Python com Whitenoise e Gunicorn.
+   - O Render detectará o `render.yaml` e configurará o Web Service Python com Whitenoise e Gunicorn. Para evitar consumir o limite de bancos do Workspace ou compartilhar dados com outros projetos, o PostgreSQL deve ser criado separadamente na Neon.
 
-3. **Build e inicialização:**
-   - Clique em **"Apply"**.
+3. **Banco Neon e inicialização:**
+   - Crie um projeto PostgreSQL separado na Neon e configure a variável protegida `DATABASE_URL` no Environment do serviço do Render com a connection string fornecida pela Neon. Nunca salve essa URL no GitHub.
    - O `build.sh` instala dependências e coleta arquivos estáticos; a inicialização aplica as migrações.
    - Depois que o serviço conectar ao banco, crie o primeiro usuário gerente pelo Shell do Render com `python manage.py createsuperuser`. O sistema não cria senha padrão.
 
@@ -154,17 +154,17 @@ O repositório inclui configurações para publicação no **Render.com** (`rend
    - Use a URL fornecida pelo Render apenas após validar HTTPS, acesso ao banco, criação do gerente e fluxos principais.
    - Configure o domínio e custos do provedor conforme a necessidade da academia.
 
-## Próximos projetos
+## MVP de treinos e próximos projetos
 
-- Treinos personalizados consultados pelo QR Code dos aparelhos: proposta ainda não implementada. Validar requisitos, privacidade, permissões e conteúdo com gerente, professores e alunos antes de iniciar.
+- O MVP inicial de treinos por QR Code está implementado no código: cadastros de equipamentos/exercícios/planos, QR imprimível e consulta autenticada do próprio aluno. Ainda falta preparar contas e conteúdo real, configurar permissões, validar o domínio dos QR Codes e aprovar um piloto supervisionado.
 - Alertas automáticos por WhatsApp: etapa futura sujeita à WhatsApp Business API oficial, custos, consentimento e aprovação da academia.
-- A documentação para iniciar o módulo de treinos está em [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md).
+- O passo a passo, limitações e melhorias planejadas para treinos estão em [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md).
 
 ---
 
 ## 8. Próximos projetos e limites do escopo
 
-- O módulo de treino individual por QR Code ainda não está implementado. Sua proposta e roteiro inicial estão em [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md).
+- O MVP de treino por QR Code precisa de conteúdo e permissões configurados e de validação antes de ser usado oficialmente com alunos. Consulte [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md).
 - O botão de WhatsApp abre uma conversa manual com a academia. Notificações automáticas exigem integração oficial, custos, consentimento e aprovação.
 - O piloto deve ter linha de base e indicadores acordados; não há promessa de retenção ou retorno financeiro.
 
