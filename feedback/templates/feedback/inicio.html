@@ -58,6 +58,8 @@
                     </div>
                 </div>
                 <div class="rounded-3xl border border-lime-300/20 bg-slate-900/70 p-6 shadow-2xl shadow-lime-950/20 sm:p-8">
+                    <img src="{% static 'feedback/academia2.png' %}" alt="Área de cardio da Academia Polo Fit"
+                        class="mb-6 aspect-video w-full rounded-2xl object-cover">
                     <h2 class="mb-3 text-sm font-bold text-lime-200">Conheça a Polo Fit</h2>
                     <iframe
                         src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
@@ -69,14 +71,20 @@
                     </iframe>
                     <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
                         target="_blank" rel="noopener noreferrer"
-                        class="mb-6 flex min-h-20 items-center justify-center rounded-2xl border border-lime-300/30 bg-slate-950 px-4 text-center font-extrabold text-lime-200 transition hover:bg-slate-900 sm:hidden"
+                        class="group relative mb-2 flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl bg-slate-950 sm:hidden"
                         aria-label="Abrir o vídeo de apresentação da Academia Polo Fit no Google Drive">
-                        ▶ Abrir o vídeo de apresentação
+                        <img src="https://lh3.googleusercontent.com/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX=w1000"
+                            alt="Prévia do vídeo de apresentação da Academia Polo Fit"
+                            class="absolute inset-0 h-full w-full object-cover">
+                        <span class="relative flex h-16 w-16 items-center justify-center rounded-full bg-lime-300 text-2xl text-slate-950 shadow-lg transition group-hover:scale-105">
+                            ▶
+                        </span>
                     </a>
+                    <p class="mb-6 text-xs text-slate-400 sm:hidden">Toque na imagem para assistir ao vídeo.</p>
                     <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
                         target="_blank" rel="noopener noreferrer"
                         class="mb-6 hidden text-sm font-semibold text-lime-200 underline underline-offset-4 sm:inline-block">
-                        Se o player não iniciar, abrir no Google Drive.
+                        Se o player não iniciar, abra o vídeo no Google Drive.
                     </a>
                     <p class="text-sm font-bold text-lime-200">Como funciona</p>
                     <ol class="mt-5 space-y-5">

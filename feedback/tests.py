@@ -109,7 +109,12 @@ class FeedbackViewsTests(TestCase):
             inicio_response,
             "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view",
         )
-        self.assertContains(inicio_response, "Abrir o vídeo de apresentação")
+        self.assertContains(inicio_response, "academia2.png")
+        self.assertContains(
+            inicio_response,
+            "https://lh3.googleusercontent.com/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX=w1000",
+        )
+        self.assertContains(inicio_response, "Toque na imagem para assistir ao vídeo.")
         self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
         avaliacao_response = self.client.get(reverse("avaliar"))
         self.assertEqual(avaliacao_response.status_code, 200)
