@@ -2,7 +2,15 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.templatetags.static import static
 from django.utils import timezone
+
+
+FOTOS_FUNCIONARIOS = {
+    "Alan Araújo": "feedback/funcionarios/alan-araujo.png",
+    "Jefferson Tauin": "feedback/funcionarios/jefferson-tauin.png",
+    "Italo Kelps": "feedback/funcionarios/italo-kelps.png",
+}
 
 
 class Funcao(models.Model):
@@ -53,6 +61,13 @@ class Funcionario(models.Model):
 
     def __str__(self):
         return self.nome
+
+    @property
+    def foto_url(self):
+        if self.foto:
+            return self.foto.url
+        caminho_foto = FOTOS_FUNCIONARIOS.get(self.nome)
+        return static(caminho_foto) if caminho_foto else ""
 
     @property
     def funcoes_display(self):

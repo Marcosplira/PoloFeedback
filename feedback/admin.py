@@ -33,15 +33,12 @@ class FuncionarioAdmin(admin.ModelAdmin):
 
     @admin.display(description="Foto")
     def foto_preview(self, obj):
-        if obj.foto:
-            try:
-                return format_html(
-                    '<img src="{}" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" />',
-                    obj.foto.url,
-                )
-            except Exception:
-                return "—"
-        return "—"
+        if not obj.foto_url:
+            return "—"
+        return format_html(
+            '<img src="{}" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" />',
+            obj.foto_url,
+        )
 
 
 @admin.register(Funcao)

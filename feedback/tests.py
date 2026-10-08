@@ -291,6 +291,7 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Polo Feedback")
         self.assertContains(response, "Mariana Instrutora")
+        self.assertContains(response, "feedback/funcionarios/alan-araujo.png")
         self.assertContains(response, 'name="funcionarios_ids"', html=False)
         self.assertContains(response, "marque um ou mais funcionários")
 
@@ -643,6 +644,9 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Estagiários e professores")
         self.assertContains(response, "Direção e coordenação")
         self.assertContains(response, "Mariana Instrutora")
+        self.assertContains(response, "feedback/funcionarios/alan-araujo.png")
+        self.assertContains(response, "feedback/funcionarios/jefferson-tauin.png")
+        self.assertContains(response, "feedback/funcionarios/italo-kelps.png")
         self.assertNotContains(response, "{{")
 
     def test_enquete_post(self):

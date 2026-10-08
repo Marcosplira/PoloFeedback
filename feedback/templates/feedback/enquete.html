@@ -338,8 +338,8 @@
                                             data-funcionario-id="{{ f.id }}"
                                             {% if f.id|stringformat:"s" in funcionarios_ids_selecionados %}checked{% endif %}>
                                         <div class="func-inner">
-                                            {% if f.foto %}
-                                            <img src="{{ f.foto.url }}" alt="{{ f.nome }}" class="w-12 h-12 rounded-full object-cover">
+                                            {% if f.foto_url %}
+                                            <img src="{{ f.foto_url }}" alt="{{ f.nome }}" class="w-12 h-12 rounded-full object-cover">
                                             {% else %}
                                             <div class="func-foto-placeholder">{{ f.nome|first }}</div>
                                             {% endif %}

@@ -359,8 +359,8 @@
                             <input type="checkbox" name="funcionarios_ids" value="{{ func.pk }}"
                                 {% if func.pk|stringformat:"s" in funcionarios_ids_selecionados %}checked{% endif %}>
                             <div class="func-inner">
-                                {% if func.foto %}
-                                <img src="{{ func.foto.url }}" alt="{{ func.nome }}" class="func-foto">
+                                {% if func.foto_url %}
+                                <img src="{{ func.foto_url }}" alt="{{ func.nome }}" class="func-foto">
                                 {% else %}
                                 <div class="func-foto-placeholder">{{ func.nome|slice:":1" }}</div>
                                 {% endif %}
