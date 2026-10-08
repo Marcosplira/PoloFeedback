@@ -59,6 +59,21 @@ class FeedbackModelTests(TestCase):
         self.assertEqual(av.funcionarios_avaliados, [self.funcionario])
         self.assertIn("atendimento", str(av))
 
+    def test_video_do_youtube_usa_embed_privado(self):
+        exercicio = Exercicio(video_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+        self.assertEqual(
+            exercicio.video_embed_url,
+            "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+        )
+
+    def test_video_de_dominio_nao_autorizado_nao_e_embutido(self):
+        exercicio = Exercicio(
+            video_url="https://youtube.com.example.org/watch?v=dQw4w9WgXcQ"
+        )
+
+        self.assertEqual(exercicio.video_embed_url, "")
+
     def test_resolucao_automatica_data(self):
         av = Avaliacao.objects.create(
             categoria="limpeza",
@@ -90,6 +105,142 @@ class FeedbackViewsTests(TestCase):
                 grupo=Funcao.GRUPO_ESTAGIARIOS_PROFESSORES,
             )
         )
+
+    def test_cadastro_publico_cria_aluno_sem_permissoes_de_equipe(self):
+        response = self.client.post(
+            reverse("cadastro_aluno"),
+            {
+                "first_name": "Ana",
+                "last_name": "Aluna",
+                "username": "ana_aluna",
+                "password1": "TreinoSeguro#93",
+                "password2": "TreinoSeguro#93",
+            },
+        )
+
+        self.assertRedirects(response, reverse("meus_treinos"))
+        aluno = User.objects.get(username="ana_aluna")
+        self.assertEqual(aluno.get_full_name(), "Ana Aluna")
+        self.assertFalse(aluno.is_staff)
+        self.assertFalse(aluno.is_superuser)
+        self.assertEqual(
+            self.client.get(reverse("meus_treinos")).status_code,
+            200,
+        )
+
+    def test_cadastro_publico_rejeita_senha_fraca(self):
+        response = self.client.post(
+            reverse("cadastro_aluno"),
+            {
+                "first_name": "Ana",
+                "last_name": "Aluna",
+                "username": "ana_senha_fraca",
+                "password1": "123",
+                "password2": "123",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username="ana_senha_fraca").exists())
+
+    def test_equipe_cria_plano_para_aluno_com_exercicio(self):
+        professor = User.objects.create_user(
+            username="professor_plano",
+            is_staff=True,
+        )
+        aluno = User.objects.create_user(
+            username="aluno_plano",
+            first_name="Ana",
+            last_name="Aluna",
+        )
+        equipamento = Equipamento.objects.create(nome="Esteira")
+        exercicio = Exercicio.objects.create(
+            nome="Caminhada",
+            equipamento=equipamento,
+            instrucoes="Caminhe em ritmo confortável.",
+        )
+        exercicio_extra = Exercicio.objects.create(
+            nome="Corrida leve",
+            equipamento=equipamento,
+            instrucoes="Aumente o ritmo apenas conforme sua orientação.",
+        )
+        self.client.force_login(professor)
+
+        form_response = self.client.get(reverse("plano_treino_novo"))
+        self.assertEqual(form_response.status_code, 200)
+        self.assertContains(form_response, "Ana Aluna (@aluno_plano)")
+        self.assertContains(form_response, "add-exercise")
+        self.assertNotContains(form_response, "gerente_teste")
+
+        response = self.client.post(
+            reverse("plano_treino_novo"),
+            {
+                "aluno": aluno.pk,
+                "nome": "Plano inicial",
+                "observacoes": "Começar com orientação do professor.",
+                "ativo": "on",
+                "itens-TOTAL_FORMS": "2",
+                "itens-INITIAL_FORMS": "0",
+                "itens-MIN_NUM_FORMS": "1",
+                "itens-MAX_NUM_FORMS": "1000",
+                "itens-0-exercicio": exercicio.pk,
+                "itens-0-ordem": "1",
+                "itens-0-series": "3",
+                "itens-0-repeticoes": "15",
+                "itens-0-descanso_segundos": "60",
+                "itens-0-carga": "",
+                "itens-0-observacoes": "",
+                "itens-1-exercicio": exercicio_extra.pk,
+                "itens-1-ordem": "2",
+                "itens-1-series": "3",
+                "itens-1-repeticoes": "12",
+                "itens-1-descanso_segundos": "60",
+                "itens-1-carga": "",
+                "itens-1-observacoes": "",
+            },
+        )
+
+        self.assertRedirects(response, reverse("gestao_treinos"))
+        plano = PlanoTreino.objects.get(aluno=aluno, nome="Plano inicial")
+        self.assertEqual(plano.professor, professor)
+        item = ItemPlanoTreino.objects.get(plano=plano, ordem=1)
+        self.assertEqual(item.exercicio, exercicio)
+        self.assertEqual(item.series, 3)
+        self.assertTrue(
+            ItemPlanoTreino.objects.filter(
+                plano=plano,
+                ordem=2,
+                exercicio=exercicio_extra,
+            ).exists()
+        )
+
+    def test_aluno_nao_acessa_gestao_dos_planos(self):
+        aluno = User.objects.create_user(username="aluno_sem_gestao")
+        self.client.force_login(aluno)
+
+        response = self.client.get(reverse("gestao_treinos"))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_login_redireciona_aluno_para_treinos_e_equipe_para_dashboard(self):
+        aluno = User.objects.create_user(username="aluno_login", password="TreinoSeguro#93")
+        resposta_aluno = self.client.post(
+            reverse("login"),
+            {"username": aluno.username, "password": "TreinoSeguro#93"},
+        )
+        self.assertRedirects(resposta_aluno, reverse("meus_treinos"))
+
+        self.client.logout()
+        funcionario = User.objects.create_user(
+            username="funcionario_login",
+            password="TreinoSeguro#93",
+            is_staff=True,
+        )
+        resposta_funcionario = self.client.post(
+            reverse("login"),
+            {"username": funcionario.username, "password": "TreinoSeguro#93"},
+        )
+        self.assertRedirects(resposta_funcionario, reverse("qrcodes_treinos"))
 
     def test_inicio_e_avaliacao_tem_destinos_separados(self):
         inicio_response = self.client.get(reverse("inicio"))
@@ -534,7 +685,7 @@ class FeedbackViewsTests(TestCase):
             nome="Leg press horizontal",
             equipamento=equipamento,
             instrucoes="Empurre a plataforma sem travar os joelhos.",
-            video_url="https://www.youtube.com/watch?v=abc123",
+            video_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         )
         exercicio_alheio = Exercicio.objects.create(
             nome="Exercício privado de outro aluno",
@@ -569,6 +720,13 @@ class FeedbackViewsTests(TestCase):
         )
         self.client.force_login(aluno)
 
+        home_response = self.client.get(reverse("meus_treinos"))
+        self.assertEqual(home_response.status_code, 200)
+        self.assertContains(home_response, "Treino A")
+        self.assertContains(home_response, "Leg press horizontal")
+        self.assertNotContains(home_response, "Treino reservado")
+        self.assertNotContains(home_response, "Exercício privado de outro aluno")
+
         response = self.client.get(
             reverse(
                 "treino_equipamento",
@@ -579,7 +737,11 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Leg press horizontal")
         self.assertContains(response, "40 kg")
-        self.assertContains(response, "Assistir vídeo demonstrativo")
+        self.assertContains(response, "Abrir vídeo no YouTube")
+        self.assertContains(
+            response,
+            "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+        )
         self.assertNotContains(response, "Exercício privado de outro aluno")
         self.assertNotContains(response, "Treino reservado")
 
@@ -599,12 +761,15 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Puxada alta")
         self.assertContains(response, str(equipamento.identificador_qr))
         self.assertContains(response, "Imprimir QR Codes")
+        self.assertContains(response, reverse("gestao_treinos"))
 
     def test_professor_pode_imprimir_qr_sem_ver_dashboard_gerencial(self):
         professor = User.objects.create_user(username="professor_teste", is_staff=True)
         self.client.force_login(professor)
 
-        self.assertEqual(self.client.get(reverse("qrcodes_treinos")).status_code, 200)
+        qrcodes_response = self.client.get(reverse("qrcodes_treinos"))
+        self.assertEqual(qrcodes_response.status_code, 200)
+        self.assertNotContains(qrcodes_response, 'href="/dashboard/"')
         self.assertEqual(self.client.get(reverse("dashboard")).status_code, 403)
 
     def test_usuario_aluno_nao_acessa_dashboard_gerencial(self):

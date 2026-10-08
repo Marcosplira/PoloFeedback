@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>{% if plano.pk %}Editar{% else %}Criar{% endif %} plano | Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-white">
+    <main class="mx-auto max-w-4xl px-4 py-8">
+        <a href="{% url 'gestao_treinos' %}" class="inline-flex min-h-10 items-center text-sm font-semibold text-lime-300 hover:underline">
+            ← Voltar aos planos
+        </a>
+        <header class="my-6">
+            <p class="text-xs font-bold uppercase tracking-widest text-lime-300">Área da equipe</p>
+            <h1 class="mt-2 text-3xl font-black">{% if plano.pk %}Editar plano{% else %}Criar plano de treino{% endif %}</h1>
+            <p class="mt-2 text-sm text-slate-400">
+                Defina o treino junto ao aluno e informe somente cargas recomendadas pelo profissional responsável.
+            </p>
+        </header>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <section class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
+                <h2 class="mb-5 text-xl font-bold">Dados do plano</h2>
+                {% for field in form %}
+                <div class="mb-5 last:mb-0">
+                    {% if field.field.widget.input_type == "checkbox" %}
+                    <label for="{{ field.id_for_label }}" class="flex items-center gap-3 text-sm font-semibold">
+                        {{ field }} {{ field.label }}
+                    </label>
+                    {% else %}
+                    <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-semibold">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% endif %}
+                    {% for error in field.errors %}<p class="mt-1 text-sm text-red-300">{{ error }}</p>{% endfor %}
+                </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                <div class="rounded-xl bg-red-400/10 p-3 text-sm text-red-200">
+                    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
+                <div class="mb-5">
+                    <h2 class="text-xl font-bold">Exercícios do plano</h2>
+                    <p class="mt-1 text-sm text-slate-400">
+                        Escolha exercícios cadastrados em equipamentos ativos. A carga é preenchida pelo professor.
+                    </p>
+                </div>
+                {{ formset.management_form }}
+                {% if formset.non_form_errors %}
+                <div class="mb-4 rounded-xl bg-red-400/10 p-3 text-sm text-red-200">
+                    {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+                </div>
+                {% endif %}
+                <div id="exercise-forms" class="space-y-4">
+                    {% for item_form in formset %}
+                    <fieldset class="rounded-2xl border border-white/10 bg-slate-900 p-4">
+                        <legend class="px-2 font-bold">Exercício {{ forloop.counter }}</legend>
+                        {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
+                        {% for field in item_form.visible_fields %}
+                        {% if field.field.widget.input_type == "checkbox" %}
+                        <label for="{{ field.id_for_label }}" class="mt-3 flex items-center gap-2 text-sm font-semibold text-red-200">
+                            {{ field }} {{ field.label }}
+                        </label>
+                        {% else %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="mb-1 block text-sm font-semibold">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                        </div>
+                        {% endif %}
+                        {% for error in field.errors %}<p class="mb-2 text-sm text-red-300">{{ error }}</p>{% endfor %}
+                        {% endfor %}
+                        {% for error in item_form.non_field_errors %}<p class="text-sm text-red-300">{{ error }}</p>{% endfor %}
+                    </fieldset>
+                    {% endfor %}
+                </div>
+                <template id="empty-exercise-form">
+                    {% with item_form=formset.empty_form %}
+                    <fieldset class="rounded-2xl border border-white/10 bg-slate-900 p-4">
+                        <legend class="px-2 font-bold">Novo exercício</legend>
+                        {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
+                        {% for field in item_form.visible_fields %}
+                        {% if field.field.widget.input_type == "checkbox" %}
+                        <label for="{{ field.id_for_label }}" class="mt-3 flex items-center gap-2 text-sm font-semibold text-red-200">
+                            {{ field }} {{ field.label }}
+                        </label>
+                        {% else %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="mb-1 block text-sm font-semibold">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </fieldset>
+                    {% endwith %}
+                </template>
+                <button id="add-exercise" type="button"
+                    class="mt-4 rounded-lg border border-lime-300 px-4 py-2 text-sm font-bold text-lime-200 hover:bg-lime-300/10">
+                    + Adicionar outro exercício
+                </button>
+            </section>
+
+            {% if formset.errors %}
+            <p class="text-sm text-red-300">Revise os campos destacados nos exercícios.</p>
+            {% endif %}
+            <button type="submit" class="w-full rounded-xl bg-lime-300 px-5 py-3 font-black text-slate-950 hover:bg-lime-200">
+                Salvar plano de treino
+            </button>
+        </form>
+    </main>
+    <script>
+        const addExerciseButton = document.getElementById("add-exercise");
+        const exerciseForms = document.getElementById("exercise-forms");
+        const emptyExerciseTemplate = document.getElementById("empty-exercise-form");
+        const totalForms = document.getElementById("id_{{ formset.prefix }}-TOTAL_FORMS");
+
+        addExerciseButton.addEventListener("click", function () {
+            const index = Number(totalForms.value);
+            const formHtml = emptyExerciseTemplate.innerHTML.replace(/__prefix__/g, index);
+            exerciseForms.insertAdjacentHTML("beforeend", formHtml);
+            totalForms.value = index + 1;
+        });
+    </script>
+</body>
+</html>

@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
-    <title>Login - Polo Feedback</title>
+    <title>Entrar - Polo Fit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .fundo-principal {
@@ -26,13 +26,13 @@
         <div class="text-center mb-6">
             <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-16 mx-auto mb-2 object-contain drop-shadow-lg">
             <h1 class="text-3xl font-black text-white drop-shadow-lg tracking-wide">POLO FIT</h1>
-            <p class="text-white/80 mt-1 font-medium">Polo Feedback</p>
+            <p class="text-white/80 mt-1 font-medium">Treinos e Polo Feedback</p>
         </div>
 
         <div class="bg-white rounded-2xl shadow-2xl p-8">
             <div class="text-center mb-8">
-                <h2 class="text-xl font-bold text-gray-800">Área Administrativa</h2>
-                <p class="text-gray-500 text-sm mt-1">Acesse o dashboard de avaliações</p>
+                <h2 class="text-xl font-bold text-gray-800">Acesse sua conta</h2>
+                <p class="text-gray-500 text-sm mt-1">Entre para ver sua área da Polo Fit</p>
             </div>
 
             <form method="post">
@@ -66,15 +66,18 @@
 
                 <button type="submit"
                     class="w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-lg hover:shadow-green-500/10">
-                    Entrar no Dashboard
+                    Entrar
                 </button>
             </form>
 
-            <p class="text-center text-xs text-gray-400 mt-6">
-                Contas de alunos e equipe são disponibilizadas pela administração da Polo Fit.
+            <p class="mt-6 text-center text-sm text-gray-600">
+                Ainda não tem conta de aluno?
+                <a href="{% url 'cadastro_aluno' %}" class="font-bold text-green-700 hover:underline">
+                    Criar conta
+                </a>
             </p>
             <p class="mt-3 text-center text-xs text-gray-500">
-                Não existe login padrão “admin/admin”. Use a conta e a senha individuais fornecidas pela administração.
+                Não existe login padrão “admin/admin”. A equipe usa uma conta individual fornecida pela administração.
             </p>
         </div>
 

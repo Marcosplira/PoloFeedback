@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>Gestão dos treinos | Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-white">
+    <header class="border-b border-lime-400/20 bg-slate-900">
+        <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+            <div class="flex items-center gap-3">
+                <img src="{% static 'feedback/LOGO.png' %}" alt="" class="h-10 w-auto">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-lime-300">Área da equipe</p>
+                    <h1 class="text-xl font-black">Gestão dos treinos</h1>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'qrcodes_treinos' %}" class="rounded-lg border border-white/20 px-4 py-2 text-sm font-bold hover:bg-white/10">
+                    QR Codes
+                </a>
+                <a href="{% url 'plano_treino_novo' %}" class="rounded-lg bg-lime-300 px-4 py-2 text-sm font-black text-slate-950 hover:bg-lime-200">
+                    Criar plano
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-4 py-8">
+        <p class="mb-6 max-w-3xl text-sm leading-relaxed text-slate-300">
+            Selecione um aluno cadastrado, adicione exercícios e informe séries, repetições, descanso e carga orientada.
+            Apenas a equipe pode criar ou alterar os planos.
+        </p>
+        <section class="space-y-3">
+            {% for plano in planos %}
+            <article class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h2 class="text-lg font-bold">{{ plano.nome }}</h2>
+                        {% if plano.ativo %}
+                        <span class="rounded-full bg-lime-300/15 px-2 py-1 text-xs font-bold text-lime-200">Ativo</span>
+                        {% else %}
+                        <span class="rounded-full bg-slate-700 px-2 py-1 text-xs font-bold text-slate-300">Inativo</span>
+                        {% endif %}
+                    </div>
+                    <p class="mt-1 text-sm text-slate-300">
+                        Aluno: {{ plano.aluno.get_full_name|default:plano.aluno.username }}
+                        · {{ plano.quantidade_exercicios }} exercício(s)
+                    </p>
+                    {% if plano.professor %}
+                    <p class="mt-1 text-xs text-slate-500">Responsável: {{ plano.professor.get_full_name|default:plano.professor.username }}</p>
+                    {% endif %}
+                </div>
+                <a href="{% url 'plano_treino_editar' plano.id %}"
+                    class="inline-flex min-h-11 items-center rounded-lg border border-lime-300 px-4 py-2 text-sm font-bold text-lime-200 hover:bg-lime-300/10">
+                    Editar plano
+                </a>
+            </article>
+            {% empty %}
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h2 class="text-lg font-bold">Nenhum plano cadastrado ainda.</h2>
+                <p class="mt-2 text-sm text-slate-300">Crie o primeiro plano para um aluno da Polo Fit.</p>
+                <a href="{% url 'plano_treino_novo' %}" class="mt-4 inline-flex rounded-lg bg-lime-300 px-4 py-2 font-bold text-slate-950 hover:bg-lime-200">
+                    Criar plano
+                </a>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>Meus treinos | Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-white">
+    <header class="border-b border-lime-400/20 bg-slate-950/95">
+        <div class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4">
+            <div class="flex items-center gap-3">
+                <img src="{% static 'feedback/LOGO.png' %}" alt="" class="h-10 w-auto">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-lime-300">Polo Fit</p>
+                    <p class="text-sm text-slate-300">Área do aluno</p>
+                </div>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold hover:bg-white/10">
+                    Sair
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 py-8">
+        <section class="mb-7">
+            <p class="text-xs font-bold uppercase tracking-widest text-lime-300">Bem-vindo(a)</p>
+            <h1 class="mt-2 text-3xl font-black">{{ request.user.get_full_name|default:request.user.username }}</h1>
+            <p class="mt-2 text-slate-400">Confira seus planos e abra o QR Code do aparelho para ver as instruções.</p>
+        </section>
+
+        {% for plano in planos %}
+        <section class="mb-6 rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
+            <h2 class="text-2xl font-extrabold">{{ plano.nome }}</h2>
+            {% if plano.observacoes %}
+            <p class="mt-2 whitespace-pre-line text-sm text-slate-300">{{ plano.observacoes }}</p>
+            {% endif %}
+            <div class="mt-5 space-y-3">
+                {% for item in plano.itens_ativos %}
+                <article class="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-slate-900 p-4">
+                    <div>
+                        <p class="font-bold">{{ item.exercicio.nome }}</p>
+                        <p class="mt-1 text-sm text-slate-400">
+                            {{ item.series }} séries · {{ item.repeticoes }} repetições ·
+                            {{ item.exercicio.equipamento.nome }}
+                        </p>
+                    </div>
+                    <a href="{% url 'treino_equipamento' item.exercicio.equipamento.identificador_qr %}"
+                        class="inline-flex min-h-11 items-center rounded-lg bg-lime-300 px-4 py-2 font-bold text-slate-950 hover:bg-lime-200">
+                        Ver instruções
+                    </a>
+                </article>
+                {% empty %}
+                <p class="rounded-xl bg-slate-900 p-4 text-sm text-slate-300">
+                    Este plano ainda não tem exercícios ativos.
+                </p>
+                {% endfor %}
+            </div>
+        </section>
+        {% empty %}
+        <section class="rounded-3xl border border-white/10 bg-white/5 p-6">
+            <h2 class="text-xl font-bold">Seu treino ainda não está disponível</h2>
+            <p class="mt-2 text-slate-300">
+                Peça ao professor da Polo Fit para criar ou ativar seu plano de treino.
+            </p>
+        </section>
+        {% endfor %}
+    </main>
+</body>
+</html>

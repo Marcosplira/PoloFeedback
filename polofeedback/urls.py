@@ -7,6 +7,8 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.views import LoginView
+from django.urls import reverse
 
 from feedback.views import (
     avaliar,
@@ -18,10 +20,32 @@ from feedback.views import (
     inicio,
     ia_analisar,
     ia_chat,
+    cadastro_aluno,
+    editar_plano_treino,
+    gestao_treinos,
+    meus_treinos,
     qrcodes_treinos,
     service_worker,
     treino_equipamento,
 )
+
+
+class LoginPoloFitView(LoginView):
+    template_name = "registration/login.html"
+
+    def get_success_url(self):
+        next_url = self.get_redirect_url()
+        if next_url:
+            return next_url
+        if self.request.user.is_staff:
+            destination = (
+                "dashboard"
+                if self.request.user.has_perm("feedback.view_avaliacao")
+                else "qrcodes_treinos"
+            )
+            return reverse(destination)
+        return reverse("meus_treinos")
+
 
 urlpatterns = [
     path("service-worker.js", service_worker, name="service_worker"),
@@ -31,8 +55,21 @@ urlpatterns = [
     path("enquete/", enquete, name="enquete"),
     path(
         "login/",
-        auth_views.LoginView.as_view(template_name="registration/login.html"),
+        LoginPoloFitView.as_view(),
         name="login",
+    ),
+    path("cadastro/aluno/", cadastro_aluno, name="cadastro_aluno"),
+    path("treinos/meus/", meus_treinos, name="meus_treinos"),
+    path("treinos/gestao/", gestao_treinos, name="gestao_treinos"),
+    path(
+        "treinos/gestao/novo/",
+        editar_plano_treino,
+        name="plano_treino_novo",
+    ),
+    path(
+        "treinos/gestao/<int:plano_id>/",
+        editar_plano_treino,
+        name="plano_treino_editar",
     ),
     path(
         "logout/",

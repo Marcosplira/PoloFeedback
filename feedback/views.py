@@ -14,7 +14,10 @@ from urllib.parse import quote
 from collections import Counter
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Prefetch
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.staticfiles import finders
 from django.http import (
@@ -33,8 +36,10 @@ from .models import (
     Funcao,
     Funcionario,
     ItemPlanoTreino,
+    PlanoTreino,
     RespostaEnquete,
 )
+from .forms import CadastroAlunoForm, ItemPlanoTreinoFormSet, PlanoTreinoForm
 
 
 def staff_required(view_func=None, *, permission=None):
@@ -899,6 +904,91 @@ def treino_equipamento(request, identificador_qr):
             "equipamento": equipamento,
             "exercicios": exercicios,
             "itens_plano": itens_plano,
+        },
+    )
+
+
+def cadastro_aluno(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            destino = (
+                "dashboard"
+                if request.user.has_perm("feedback.view_avaliacao")
+                else "qrcodes_treinos"
+            )
+            return redirect(destino)
+        return redirect("meus_treinos")
+
+    form = CadastroAlunoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        aluno = form.save()
+        login(request, aluno)
+        return redirect("meus_treinos")
+
+    return render(request, "registration/cadastro_aluno.html", {"form": form})
+
+
+@login_required
+def meus_treinos(request):
+    if request.user.is_staff and request.user.has_perm("feedback.view_avaliacao"):
+        return redirect("dashboard")
+
+    itens_ativos = (
+        ItemPlanoTreino.objects.filter(
+            exercicio__ativo=True,
+            exercicio__equipamento__ativo=True,
+        )
+        .select_related("exercicio", "exercicio__equipamento")
+        .order_by("ordem", "id")
+    )
+    planos = PlanoTreino.objects.filter(
+        aluno=request.user,
+        ativo=True,
+    ).prefetch_related(Prefetch("itens", queryset=itens_ativos, to_attr="itens_ativos"))
+
+    return render(request, "feedback/meus_treinos.html", {"planos": planos})
+
+
+@staff_required
+def gestao_treinos(request):
+    planos = (
+        PlanoTreino.objects.select_related("aluno", "professor")
+        .annotate(quantidade_exercicios=models.Count("itens"))
+        .order_by("-atualizado_em")
+    )
+    return render(request, "feedback/gestao_treinos.html", {"planos": planos})
+
+
+@staff_required
+def editar_plano_treino(request, plano_id=None):
+    if plano_id is None:
+        plano = PlanoTreino(professor=request.user)
+    else:
+        plano = get_object_or_404(PlanoTreino, pk=plano_id)
+
+    form = PlanoTreinoForm(request.POST or None, instance=plano)
+    formset = ItemPlanoTreinoFormSet(request.POST or None, instance=plano)
+
+    form_valido = form.is_valid()
+    formset_valido = formset.is_valid()
+
+    if request.method == "POST" and form_valido and formset_valido:
+        with transaction.atomic():
+            plano = form.save(commit=False)
+            if plano.professor_id is None:
+                plano.professor = request.user
+            plano.save()
+            formset.instance = plano
+            formset.save()
+        return redirect("gestao_treinos")
+
+    return render(
+        request,
+        "feedback/form_plano_treino.html",
+        {
+            "form": form,
+            "formset": formset,
+            "plano": plano,
         },
     )
 

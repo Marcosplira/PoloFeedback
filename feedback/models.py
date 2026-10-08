@@ -1,4 +1,5 @@
 import uuid
+from urllib.parse import parse_qs, urlparse
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -302,6 +303,42 @@ class Exercicio(models.Model):
 
     def __str__(self):
         return f"{self.nome} — {self.equipamento.nome}"
+
+    @property
+    def video_embed_url(self):
+        if not self.video_url:
+            return ""
+
+        parsed_url = urlparse(self.video_url)
+        if parsed_url.scheme not in {"http", "https"}:
+            return ""
+
+        try:
+            host = parsed_url.hostname
+        except ValueError:
+            return ""
+
+        path_parts = [part for part in parsed_url.path.split("/") if part]
+        video_id = ""
+
+        if host == "youtu.be" and path_parts:
+            video_id = path_parts[0]
+        elif host in {"youtube.com", "www.youtube.com", "m.youtube.com"}:
+            if parsed_url.path == "/watch":
+                video_id = parse_qs(parsed_url.query).get("v", [""])[0]
+            elif len(path_parts) >= 2 and path_parts[0] in {"embed", "shorts", "live"}:
+                video_id = path_parts[1]
+        elif host in {"youtube-nocookie.com", "www.youtube-nocookie.com"}:
+            if len(path_parts) >= 2 and path_parts[0] == "embed":
+                video_id = path_parts[1]
+
+        if len(video_id) != 11 or not all(
+            character.isascii() and (character.isalnum() or character in "_-")
+            for character in video_id
+        ):
+            return ""
+
+        return f"https://www.youtube-nocookie.com/embed/{video_id}"
 
 
 class PlanoTreino(models.Model):

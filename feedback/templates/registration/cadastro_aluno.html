@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>Criar conta | Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8 text-slate-900">
+    <main class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-9">
+        <a href="{% url 'login' %}" class="text-sm font-bold text-green-800 hover:underline">
+            ← Voltar para entrar
+        </a>
+        <div class="my-6 text-center">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="mx-auto h-14 w-auto">
+            <h1 class="mt-4 text-2xl font-black">Criar conta de aluno</h1>
+            <p class="mt-2 text-sm text-slate-600">
+                Use seu nome para que a equipe possa identificar sua ficha de treino.
+            </p>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="mb-1 block text-sm font-semibold">
+                    {{ field.label }}
+                </label>
+                <input
+                    type="{{ field.field.widget.input_type }}"
+                    name="{{ field.html_name }}"
+                    id="{{ field.id_for_label }}"
+                    value="{{ field.value|default_if_none:'' }}"
+                    {% if field.field.required %}required{% endif %}
+                    {% if field.field.widget.attrs.autocomplete %}autocomplete="{{ field.field.widget.attrs.autocomplete }}"{% endif %}
+                    class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-green-600 focus:outline-none focus:ring-2 focus:ring-green-200"
+                >
+                {% if field.help_text %}
+                <div class="mt-1 text-xs leading-relaxed text-slate-500">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                <p class="mt-1 text-sm text-red-700">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            {% if form.non_field_errors %}
+            <div class="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-800">
+                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+            <button type="submit" class="w-full rounded-xl bg-slate-950 px-4 py-3 font-bold text-lime-300 hover:bg-slate-800">
+                Criar conta
+            </button>
+        </form>
+    </main>
+</body>
+</html>
