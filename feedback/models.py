@@ -10,6 +10,10 @@ FOTOS_FUNCIONARIOS = {
     "Alan Araújo": "feedback/funcionarios/alan-araujo.png",
     "Jefferson Tauin": "feedback/funcionarios/jefferson-tauin.png",
     "Italo Kelps": "feedback/funcionarios/italo-kelps.png",
+    "Thalyson Pablo": "feedback/funcionarios/thalyson-pablo.png",
+    "Douglas Augusto": "feedback/funcionarios/douglas-augusto.png",
+    "Anderson Adriel": "feedback/funcionarios/anderson-adriel.png",
+    "João Matheus": "feedback/funcionarios/joao-matheus.png",
 }
 
 

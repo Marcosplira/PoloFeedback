@@ -647,6 +647,10 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "feedback/funcionarios/alan-araujo.png")
         self.assertContains(response, "feedback/funcionarios/jefferson-tauin.png")
         self.assertContains(response, "feedback/funcionarios/italo-kelps.png")
+        self.assertContains(response, "feedback/funcionarios/thalyson-pablo.png")
+        self.assertContains(response, "feedback/funcionarios/douglas-augusto.png")
+        self.assertContains(response, "feedback/funcionarios/anderson-adriel.png")
+        self.assertContains(response, "feedback/funcionarios/joao-matheus.png")
         self.assertNotContains(response, "{{")
 
     def test_enquete_post(self):
