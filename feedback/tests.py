@@ -82,12 +82,22 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(inicio_response, "QR Code para pesquisa Polo Fit")
         self.assertTrue(inicio_response.context["avaliar_qr"])
         self.assertTrue(inicio_response.context["enquete_qr"])
+        self.assertContains(
+            inicio_response,
+            "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview",
+        )
+        self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
         self.assertContains(inicio_response, "academia2.png")
-
         avaliacao_response = self.client.get(reverse("avaliar"))
         self.assertEqual(avaliacao_response.status_code, 200)
         self.assertContains(avaliacao_response, f'href="{reverse("inicio")}"')
         self.assertContains(avaliacao_response, 'aria-current="page"')
+
+    def test_login_explica_que_nao_existe_credencial_padrao(self):
+        response = self.client.get(reverse("login"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Não existe login padrão “admin/admin”")
 
     def test_rodape_exibe_contato_e_creditos(self):
         response = self.client.get(reverse("inicio"))
