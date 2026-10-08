@@ -6,7 +6,24 @@ from django.utils import timezone
 
 
 class Funcao(models.Model):
+    GRUPO_RECEPCAO = "recepcao"
+    GRUPO_LIMPEZA = "limpeza"
+    GRUPO_ESTAGIARIOS_PROFESSORES = "estagiarios_professores"
+    GRUPO_DIRECAO = "direcao_coordenacao"
+    GRUPO_CHOICES = [
+        (GRUPO_RECEPCAO, "Recepção"),
+        (GRUPO_LIMPEZA, "Time de limpeza"),
+        (GRUPO_ESTAGIARIOS_PROFESSORES, "Estagiários e professores"),
+        (GRUPO_DIRECAO, "Direção e coordenação"),
+    ]
+
     nome = models.CharField(max_length=100, unique=True, verbose_name="Função")
+    grupo = models.CharField(
+        max_length=32,
+        choices=GRUPO_CHOICES,
+        blank=True,
+        verbose_name="Grupo da equipe",
+    )
 
     class Meta:
         verbose_name = "Função"

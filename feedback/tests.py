@@ -84,6 +84,12 @@ class FeedbackViewsTests(TestCase):
             cargo="Instrutora de Pilates",
             ativo=True
         )
+        self.funcionario.funcoes.add(
+            Funcao.objects.create(
+                nome="Instrutora de Pilates",
+                grupo=Funcao.GRUPO_ESTAGIARIOS_PROFESSORES,
+            )
+        )
 
     def test_inicio_e_avaliacao_tem_destinos_separados(self):
         inicio_response = self.client.get(reverse("inicio"))
@@ -240,6 +246,15 @@ class FeedbackViewsTests(TestCase):
                 self.assertEqual(
                     list(funcionario.funcoes.values_list("nome", flat=True)),
                     [cargo],
+                )
+                expected_group = (
+                    Funcao.GRUPO_DIRECAO
+                    if cargo in {"Gerente", "Proprietário"}
+                    else Funcao.GRUPO_ESTAGIARIOS_PROFESSORES
+                )
+                self.assertEqual(
+                    funcionario.funcoes.get().grupo,
+                    expected_group,
                 )
                 self.assertTrue(funcionario.ativo)
 
@@ -581,6 +596,11 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Deixe aqui um elogio para nossos colaboradores")
         self.assertContains(response, 'name="funcionarios_ids"', html=False)
         self.assertContains(response, "uma ou mais pessoas")
+        self.assertContains(response, "Recepção")
+        self.assertContains(response, "Time de limpeza")
+        self.assertContains(response, "Estagiários e professores")
+        self.assertContains(response, "Direção e coordenação")
+        self.assertContains(response, "Mariana Instrutora")
         self.assertNotContains(response, "{{")
 
     def test_enquete_post(self):

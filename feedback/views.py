@@ -30,6 +30,7 @@ from django.urls import reverse
 from .models import (
     Avaliacao,
     Equipamento,
+    Funcao,
     Funcionario,
     ItemPlanoTreino,
     RespostaEnquete,
@@ -235,11 +236,25 @@ def enquete(request):
     Página da Enquete de Satisfação com as 6 perguntas oficiais.
     """
 
-    funcionarios = (
+    funcionarios = list(
         Funcionario.objects.filter(ativo=True)
         .prefetch_related("funcoes")
         .order_by("nome")
     )
+    funcionarios_por_grupo = []
+    for codigo, nome_grupo in Funcao.GRUPO_CHOICES:
+        funcionarios_do_grupo = [
+            funcionario
+            for funcionario in funcionarios
+            if any(funcao.grupo == codigo for funcao in funcionario.funcoes.all())
+        ]
+        funcionarios_por_grupo.append(
+            {
+                "codigo": codigo,
+                "nome": nome_grupo,
+                "funcionarios": funcionarios_do_grupo,
+            }
+        )
 
     if request.method == "POST":
 
@@ -294,6 +309,7 @@ def enquete(request):
                 "feedback/enquete.html",
                 {
                     "funcionarios": funcionarios,
+                    "funcionarios_por_grupo": funcionarios_por_grupo,
                     "funcionarios_ids_selecionados": funcionario_ids,
                     "erro_funcionarios": (
                         "Um ou mais funcionários selecionados não estão disponíveis. "
@@ -340,6 +356,7 @@ def enquete(request):
         "feedback/enquete.html",
         {
             "funcionarios": funcionarios,
+            "funcionarios_por_grupo": funcionarios_por_grupo,
         },
     )
 

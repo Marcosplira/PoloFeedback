@@ -46,6 +46,9 @@ class FuncionarioAdmin(admin.ModelAdmin):
 
 @admin.register(Funcao)
 class FuncaoAdmin(admin.ModelAdmin):
+    list_display = ("nome", "grupo")
+    list_editable = ("grupo",)
+    list_filter = ("grupo",)
     search_fields = ("nome",)
     ordering = ("nome",)
 

@@ -110,7 +110,9 @@ O `runserver` local não carrega `.env` automaticamente: sem variáveis de ambie
 python manage.py migrate
 ```
 
-As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Os cargos legados são convertidos em funções selecionáveis. Funcionários e funções podem ser associados em combinações múltiplas pelo Django Admin.
+As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Os cargos legados são convertidos em funções selecionáveis e classificados em quatro grupos para a pergunta de elogios da enquete: **Recepção**, **Time de limpeza**, **Estagiários e professores** e **Direção e coordenação**. Os cargos genéricos de funcionário são inicialmente agrupados em **Estagiários e professores**; confirme e ajuste essa classificação conforme a equipe real.
+
+No Django Admin, abra **Funções** para ajustar o grupo de cada cargo e **Funcionários** para associar uma ou mais funções às pessoas. A pergunta 6 da enquete exibe as pessoas agrupadas por esses grupos e permite selecionar várias.
 
 Se o Admin mostrar `no such table: feedback_equipamento` ou `feedback_planotreino`, pare o servidor e execute `python manage.py migrate` na pasta exata do projeto e com o mesmo ambiente Python usado para iniciar o servidor. Depois, inicie novamente com `python manage.py runserver`. Executar a migração em outra cópia do projeto ou em outro banco não corrige o banco que está servindo a página.
 
