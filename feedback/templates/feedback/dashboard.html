@@ -1288,31 +1288,14 @@
 
                             <td>
 
-                                {% if a.funcionario %}
-
-                                <div class="flex items-center gap-2">
-
-                                    {% if a.funcionario.foto %}
-
-                                    <img src="{{ a.funcionario.foto.url }}" alt="{{ a.funcionario.nome }}"
-                                        class="w-7 h-7 rounded-full object-cover border border-gray-200">
-
-                                    {% else %}
-
-                                    <div
-                                        class="w-7 h-7 rounded-full bg-gradient-to-br from-gray-800 to-green-600 flex items-center justify-center text-white text-xs font-bold">
-                                        {{ a.funcionario.nome|slice:":1" }}
-                                    </div>
-
-                                    {% endif %}
-
-
-                                    <span class="font-medium">
-                                        {{ a.funcionario.nome }}
+                                {% if a.funcionarios_avaliados %}
+                                <div class="flex flex-wrap gap-1.5">
+                                    {% for funcionario in a.funcionarios_avaliados %}
+                                    <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-700">
+                                        {{ funcionario.nome }}
                                     </span>
-
+                                    {% endfor %}
                                 </div>
-
                                 {% else %}
 
                                 <span class="text-gray-400 italic">
@@ -1438,7 +1421,7 @@
                             "categoria": "{{ a.get_categoria_display|escapejs }}",
                             "nota": {{ a.nota }},
                             "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}👍 Elogio{% elif a.tipo_feedback == 'reclamacao' %}⚠️ Reclamação{% else %}💡 Sugestão{% endif %}",
-                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} — {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}Não informado{% endif %}",
+                            "funcionario": "{% for funcionario in a.funcionarios_avaliados %}{% if not forloop.first %}, {% endif %}{{ funcionario.nome|escapejs }}{% if funcionario.funcoes_display %} — {{ funcionario.funcoes_display|escapejs }}{% endif %}{% empty %}Não informado{% endfor %}",
                             "comentario": "{{ a.comentario|default:'Sem comentário'|escapejs }}",
                             "localizacao": "{{ a.localizacao|default:'Não informada'|escapejs }}",
                             "data_criacao": "{{ a.data_criacao|date:'d/m/Y H:i' }}",
@@ -1554,10 +1537,10 @@
                             </p>
 
 
-                            {% if item.cargo %}
+                            {% if item.funcoes %}
 
                             <p class="text-xs text-gray-400">
-                                {{ item.cargo }}
+                                {{ item.funcoes }}
                             </p>
 
                             {% endif %}

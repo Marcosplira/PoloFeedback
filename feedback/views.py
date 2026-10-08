@@ -105,8 +105,29 @@ def _gerar_qrcode_base64(url, box_size=8):
     return base64.b64encode(buffer.getvalue()).decode("ascii")
 
 
+def _selecionar_funcionarios(ids):
+    ids_unicos = list(dict.fromkeys(ids))
+    if any(not funcionario_id.isdecimal() for funcionario_id in ids_unicos):
+        return [], False
+
+    funcionarios_por_id = {
+        str(funcionario.pk): funcionario
+        for funcionario in Funcionario.objects.filter(
+            pk__in=ids_unicos,
+            ativo=True,
+        ).prefetch_related("funcoes")
+    }
+    selecao_valida = len(funcionarios_por_id) == len(ids_unicos)
+    funcionarios = [
+        funcionarios_por_id[funcionario_id]
+        for funcionario_id in ids_unicos
+        if funcionario_id in funcionarios_por_id
+    ]
+    return funcionarios, selecao_valida
+
+
 def avaliar(request):
-    funcionarios = Funcionario.objects.filter(ativo=True)
+    funcionarios = Funcionario.objects.filter(ativo=True).prefetch_related("funcoes")
 
     if request.method == "POST":
         categorias = request.POST.getlist("categorias")
@@ -114,7 +135,10 @@ def avaliar(request):
         tipos_feedback = request.POST.getlist("tipos_feedback")
         comentario = request.POST.get("comentario", "").strip()
         localizacao = request.POST.get("localizacao", "").strip()
-        funcionario_id = request.POST.get("funcionario_id")
+        funcionario_ids = request.POST.getlist("funcionarios_ids")
+        funcionarios_selecionados, selecao_valida = _selecionar_funcionarios(
+            funcionario_ids
+        )
 
         erros = []
 
@@ -132,6 +156,12 @@ def avaliar(request):
                 "Selecione o tipo de feedback " "(Elogio, Sugestão ou Reclamação)."
             )
 
+        if not selecao_valida:
+            erros.append(
+                "Um ou mais funcionários selecionados não estão disponíveis. "
+                "Revise a seleção e tente novamente."
+            )
+
         if erros:
             return render(
                 request,
@@ -144,22 +174,11 @@ def avaliar(request):
                     "nota_selecionada": nota,
                     "categorias_selecionadas": categorias,
                     "tipos_selecionados": tipos_feedback,
-                    "funcionario_id_selecionado": funcionario_id,
+                    "funcionarios_ids_selecionados": funcionario_ids,
                 },
             )
 
-        funcionario = None
-
-        if funcionario_id:
-            try:
-                funcionario = Funcionario.objects.get(
-                    pk=funcionario_id,
-                    ativo=True,
-                )
-            except (Funcionario.DoesNotExist, ValueError):
-                pass
-
-        Avaliacao.objects.create(
+        avaliacao = Avaliacao.objects.create(
             categoria=categorias[0],
             categorias=categorias,
             nota=int(nota),
@@ -167,8 +186,11 @@ def avaliar(request):
             tipos_feedback=tipos_feedback,
             comentario=comentario,
             localizacao=localizacao,
-            funcionario=funcionario,
+            funcionario=funcionarios_selecionados[0]
+            if funcionarios_selecionados
+            else None,
         )
+        avaliacao.funcionarios.set(funcionarios_selecionados)
 
         return render(
             request,
@@ -213,7 +235,11 @@ def enquete(request):
     Página da Enquete de Satisfação com as 6 perguntas oficiais.
     """
 
-    funcionarios = Funcionario.objects.filter(ativo=True).order_by("nome")
+    funcionarios = (
+        Funcionario.objects.filter(ativo=True)
+        .prefetch_related("funcoes")
+        .order_by("nome")
+    )
 
     if request.method == "POST":
 
@@ -258,7 +284,24 @@ def enquete(request):
             "",
         ).strip()
 
-        funcionario_id = request.POST.get("funcionario_id")
+        funcionario_ids = request.POST.getlist("funcionarios_ids")
+        funcionarios_selecionados, selecao_valida = _selecionar_funcionarios(
+            funcionario_ids
+        )
+        if not selecao_valida:
+            return render(
+                request,
+                "feedback/enquete.html",
+                {
+                    "funcionarios": funcionarios,
+                    "funcionarios_ids_selecionados": funcionario_ids,
+                    "erro_funcionarios": (
+                        "Um ou mais funcionários selecionados não estão disponíveis. "
+                        "Revise a seleção e tente novamente."
+                    ),
+                },
+                status=400,
+            )
 
         resposta = RespostaEnquete.objects.create(
             participa_aulas=participa_aulas,
@@ -271,27 +314,20 @@ def enquete(request):
             sugestao_valor=sugestao_valor,
             elogio_colaborador=elogio_colaborador,
         )
+        resposta.funcionarios_elogiados.set(funcionarios_selecionados)
 
-        if elogio_colaborador and funcionario_id:
-            try:
-                func = Funcionario.objects.get(
-                    pk=funcionario_id,
-                    ativo=True,
-                )
-
-                Avaliacao.objects.create(
-                    categoria="professores",
-                    categorias=["professores"],
-                    nota=5,
-                    tipo_feedback="elogio",
-                    tipos_feedback=["elogio"],
-                    comentario=f"[Enquete] {elogio_colaborador}",
-                    funcionario=func,
-                    origem="aluno",
-                )
-
-            except Exception:
-                pass
+        if elogio_colaborador and funcionarios_selecionados:
+            avaliacao = Avaliacao.objects.create(
+                categoria="professores",
+                categorias=["professores"],
+                nota=5,
+                tipo_feedback="elogio",
+                tipos_feedback=["elogio"],
+                comentario=f"[Enquete] {elogio_colaborador}",
+                funcionario=funcionarios_selecionados[0],
+                origem="aluno",
+            )
+            avaliacao.funcionarios.set(funcionarios_selecionados)
 
         return render(
             request,
@@ -390,7 +426,15 @@ def dashboard(request):
     # AVALIAÇÕES
     # ==========================================================
 
-    avaliacoes = Avaliacao.objects.all()
+    avaliacoes = (
+        Avaliacao.objects.all()
+        .select_related("funcionario")
+        .prefetch_related(
+            "funcionarios",
+            "funcionarios__funcoes",
+            "funcionario__funcoes",
+        )
+    )
 
     if periodo_filtro:
 
@@ -437,7 +481,10 @@ def dashboard(request):
         avaliacoes = avaliacoes.filter(status=status_filtro)
 
     if funcionario_filtro:
-        avaliacoes = avaliacoes.filter(funcionario_id=funcionario_filtro)
+        avaliacoes = avaliacoes.filter(
+            models.Q(funcionario_id=funcionario_filtro)
+            | models.Q(funcionarios__id=funcionario_filtro)
+        ).distinct()
 
     avaliacoes = avaliacoes.order_by("-data_criacao")
 
@@ -523,8 +570,9 @@ def dashboard(request):
     # FUNCIONÁRIOS
     # ==========================================================
 
-    todos_funcionarios = Funcionario.objects.filter(ativo=True).prefetch_related(
-        "avaliacoes"
+    todos_funcionarios = (
+        Funcionario.objects.filter(ativo=True)
+        .prefetch_related("avaliacoes", "avaliacoes_multiplas", "funcoes")
     )
 
     # ==========================================================
@@ -535,7 +583,9 @@ def dashboard(request):
 
     for func in todos_funcionarios:
 
-        avs = Avaliacao.objects.filter(funcionario=func)
+        avs = Avaliacao.objects.filter(
+            models.Q(funcionario=func) | models.Q(funcionarios=func)
+        ).distinct()
 
         total = avs.count()
 
@@ -560,7 +610,7 @@ def dashboard(request):
             {
                 "funcionario": func,
                 "nome": func.nome,
-                "cargo": func.cargo,
+                "funcoes": func.funcoes_display,
                 "foto": foto_url,
                 "total": total,
                 "elogios": elogios,
@@ -1390,7 +1440,9 @@ def ia_chat(request):
 
     for f in Funcionario.objects.filter(ativo=True):
 
-        f_avs = Avaliacao.objects.filter(funcionario=f)
+        f_avs = Avaliacao.objects.filter(
+            models.Q(funcionario=f) | models.Q(funcionarios=f)
+        ).distinct()
 
         f_el = f_avs.filter(
             models.Q(tipo_feedback="elogio")
@@ -1406,7 +1458,7 @@ def ia_chat(request):
 
         ranking.append(
             f"{f.nome} "
-            f"({f.cargo or 'Instrutor'}): "
+            f"({f.funcoes_display or 'Instrutor'}): "
             f"{f_el} elogios, "
             f"{f_rec} reclamações, "
             f"nota média {round(f_med, 1)}"

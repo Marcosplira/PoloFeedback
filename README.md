@@ -97,12 +97,12 @@ pip install -r requirements.txt
 
 ### 4. Configurar Variáveis de Ambiente (opcional)
 
-Copie o arquivo de exemplo e ajuste os valores:
+Para usar Docker Compose, copie o arquivo de exemplo e preencha os valores:
 ```powershell
 copy .env.example .env
 ```
 
-> Para desenvolvimento local, o projeto funciona sem configurar nada — usa SQLite e fallback da IA.
+O `runserver` local não carrega `.env` automaticamente: sem variáveis de ambiente, usa SQLite local e fallback da IA. Para entrar no dashboard local, crie uma conta com `python manage.py createsuperuser`.
 
 ### 5. Executar Migrações do Banco
 
@@ -110,7 +110,7 @@ copy .env.example .env
 python manage.py migrate
 ```
 
-As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Esses registros não criam usuários, senhas nem acessos ao Django Admin; as contas administrativas devem ser criadas individualmente.
+As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Os cargos legados são convertidos em funções selecionáveis. Funcionários e funções podem ser associados em combinações múltiplas pelo Django Admin.
 
 Se o Admin mostrar `no such table: feedback_equipamento` ou `feedback_planotreino`, pare o servidor e execute `python manage.py migrate` na pasta exata do projeto e com o mesmo ambiente Python usado para iniciar o servidor. Depois, inicie novamente com `python manage.py runserver`. Executar a migração em outra cópia do projeto ou em outro banco não corrige o banco que está servindo a página.
 
@@ -122,11 +122,13 @@ Se o servidor já estiver usando um banco, a tela de erro mostra instruções em
 python manage.py createsuperuser
 ```
 
-Para acesso rápido do dashboard em ambiente de demonstração, o projeto também cria automaticamente duas contas de equipe:
-- `gerente` / `gerente123`
-- `marcos` / `marcos123`
+Para configurar as duas contas privadas do dashboard no Render, defina no painel **Environment**:
+- `DASHBOARD_MANAGER_USERNAME` (usuário inicial sugerido: `gerente`)
+- `DASHBOARD_MANAGER_PASSWORD` (senha privada, forte e não compartilhada)
+- `DASHBOARD_OWNER_USERNAME` (usuário inicial sugerido: `marcos`)
+- `DASHBOARD_OWNER_PASSWORD` (outra senha privada e forte)
 
-Essas credenciais ficam disponíveis ao iniciar o servidor e são úteis para testes de apresentação e entrega ao gerente.
+O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard e à gestão de funcionários, sem torná-las superusuárias. O `startCommand` do Render executa as migrações e esse comando antes de iniciar o servidor. Se as variáveis ainda não estiverem preenchidas, o serviço continua no ar e registra um aviso; as contas só são criadas depois de configurar as senhas e reiniciar o serviço. Não há credenciais padrão no código nem na tela de login.
 
 ### 7. Cadastrar o MVP de treinos por QR Code
 

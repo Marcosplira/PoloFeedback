@@ -33,7 +33,9 @@ RUN groupadd --system app && useradd --system --gid app --home-dir /app app \
     && chown -R app:app /app
 
 # Coleta os arquivos estáticos (requer SECRET_KEY mas não precisa do DB)
-RUN SECRET_KEY="collectstatic-temp-key" DEBUG="False" python manage.py collectstatic --noinput
+RUN SECRET_KEY="collectstatic-temp-key" DEBUG="False" \
+    DATABASE_URL="postgres://build:build@127.0.0.1:5432/build" \
+    python manage.py collectstatic --noinput --skip-checks
 
 USER app
 
@@ -41,7 +43,7 @@ USER app
 EXPOSE 8000
 
 # Aplica migrações no início e substitui o shell pelo Gunicorn para receber sinais.
-CMD ["sh", "-c", "python manage.py migrate && exec gunicorn polofeedback.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 60 --log-level info --access-logfile -"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py setup_dashboard_users && exec gunicorn polofeedback.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 60 --log-level info --access-logfile -"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)" || exit 1

@@ -6,13 +6,21 @@ services:
     buildCommand: bash build.sh
     # --workers 2: adequado para o plano free do Render (512 MB RAM)
     # --timeout 60: evita que requests lentos (ex: Gemini) causem erro 502
-    startCommand: python manage.py migrate && gunicorn polofeedback.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60 --log-level info
+    startCommand: python manage.py migrate --noinput && python manage.py setup_dashboard_users && exec gunicorn polofeedback.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60 --log-level info
     envVars:
       - key: DEBUG
         value: "False"
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
+        sync: false
+      - key: DASHBOARD_MANAGER_USERNAME
+        value: gerente
+      - key: DASHBOARD_MANAGER_PASSWORD
+        sync: false
+      - key: DASHBOARD_OWNER_USERNAME
+        value: marcos
+      - key: DASHBOARD_OWNER_PASSWORD
         sync: false
       - key: ALLOWED_HOSTS
         value: "polofeedback.onrender.com,app.polofitacademias.com.br,localhost,127.0.0.1"

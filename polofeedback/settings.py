@@ -133,8 +133,11 @@ if _db_url:
         }
     }
 else:
-    # Render, Docker e demo locais podem funcionar sem postgres configurado;
-    # neste caso usamos SQLite para manter o serviço disponível.
+    if not DEBUG:
+        raise RuntimeError(
+            "DATABASE_URL não definida. Configure um banco PostgreSQL persistente "
+            "antes de iniciar em produção."
+        )
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

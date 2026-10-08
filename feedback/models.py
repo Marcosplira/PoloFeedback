@@ -5,11 +5,29 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+class Funcao(models.Model):
+    nome = models.CharField(max_length=100, unique=True, verbose_name="Função")
+
+    class Meta:
+        verbose_name = "Função"
+        verbose_name_plural = "Funções"
+        ordering = ["nome"]
+
+    def __str__(self):
+        return self.nome
+
+
 class Funcionario(models.Model):
     nome = models.CharField(max_length=100)
     cargo = models.CharField(max_length=100, blank=True)
     foto = models.ImageField(upload_to='funcionarios/', null=True, blank=True)
     ativo = models.BooleanField(default=True)
+    funcoes = models.ManyToManyField(
+        Funcao,
+        blank=True,
+        related_name="funcionarios",
+        verbose_name="Funções",
+    )
 
     class Meta:
         verbose_name = "Funcionário"
@@ -18,6 +36,13 @@ class Funcionario(models.Model):
 
     def __str__(self):
         return self.nome
+
+    @property
+    def funcoes_display(self):
+        funcoes = list(self.funcoes.all())
+        if funcoes:
+            return ", ".join(funcao.nome for funcao in funcoes)
+        return self.cargo
 
 
 class Avaliacao(models.Model):
@@ -72,6 +97,12 @@ class Avaliacao(models.Model):
         related_name="avaliacoes",
         verbose_name="Funcionário avaliado",
     )
+    funcionarios = models.ManyToManyField(
+        Funcionario,
+        blank=True,
+        related_name="avaliacoes_multiplas",
+        verbose_name="Funcionários avaliados",
+    )
 
     criado_por = models.ForeignKey(
         User,
@@ -102,6 +133,15 @@ class Avaliacao(models.Model):
 
     def __str__(self):
         return f"{self.categoria} - {self.nota}★ - {self.status}"
+
+    @property
+    def funcionarios_avaliados(self):
+        funcionarios = list(self.funcionarios.all())
+        if self.funcionario_id and all(
+            funcionario.pk != self.funcionario_id for funcionario in funcionarios
+        ):
+            funcionarios.insert(0, self.funcionario)
+        return funcionarios
 
 
 class RespostaEnquete(models.Model):
@@ -154,6 +194,12 @@ class RespostaEnquete(models.Model):
     elogio_colaborador = models.TextField(
         blank=True,
         verbose_name="Elogio para colaboradores",
+    )
+    funcionarios_elogiados = models.ManyToManyField(
+        Funcionario,
+        blank=True,
+        related_name="elogios_enquetes",
+        verbose_name="Funcionários elogiados",
     )
     data_criacao = models.DateTimeField(auto_now_add=True)
 

@@ -4,6 +4,7 @@ from .models import (
     Avaliacao,
     Equipamento,
     Exercicio,
+    Funcao,
     Funcionario,
     ItemPlanoTreino,
     PlanoTreino,
@@ -18,10 +19,17 @@ admin.site.index_title = "Gestão de equipe, avaliações e treinos"
 
 @admin.register(Funcionario)
 class FuncionarioAdmin(admin.ModelAdmin):
-    list_display = ("id", "nome", "cargo", "foto_preview", "ativo")
+    list_display = ("id", "nome", "funcoes_display", "foto_preview", "ativo")
     list_editable = ("ativo",)
-    search_fields = ("nome", "cargo")
+    search_fields = ("nome", "funcoes__nome")
+    list_filter = ("ativo", "funcoes")
+    filter_horizontal = ("funcoes",)
+    exclude = ("cargo",)
     ordering = ("nome",)
+
+    @admin.display(description="Funções", ordering="funcoes__nome")
+    def funcoes_display(self, obj):
+        return obj.funcoes_display or "—"
 
     @admin.display(description="Foto")
     def foto_preview(self, obj):
@@ -36,6 +44,12 @@ class FuncionarioAdmin(admin.ModelAdmin):
         return "—"
 
 
+@admin.register(Funcao)
+class FuncaoAdmin(admin.ModelAdmin):
+    search_fields = ("nome",)
+    ordering = ("nome",)
+
+
 @admin.register(Avaliacao)
 class AvaliacaoAdmin(admin.ModelAdmin):
     list_display = (
@@ -43,7 +57,7 @@ class AvaliacaoAdmin(admin.ModelAdmin):
         "get_categorias",
         "nota",
         "get_tipos",
-        "funcionario",
+        "get_funcionarios",
         "localizacao",
         "status",
         "origem",
@@ -51,10 +65,17 @@ class AvaliacaoAdmin(admin.ModelAdmin):
         "resolvido_por",
         "data_criacao",
     )
-    list_filter = ("nota", "status", "origem", "funcionario", "localizacao", "data_criacao")
-    search_fields = ("comentario", "localizacao", "funcionario__nome")
+    list_filter = ("nota", "status", "origem", "funcionarios", "localizacao", "data_criacao")
+    search_fields = ("comentario", "localizacao", "funcionario__nome", "funcionarios__nome")
     list_editable = ("status",)
     ordering = ("-data_criacao",)
+    exclude = ("funcionario",)
+
+    @admin.display(description="Funcionários")
+    def get_funcionarios(self, obj):
+        return ", ".join(
+            funcionario.nome for funcionario in obj.funcionarios_avaliados
+        ) or "—"
 
     @admin.display(description="Categorias")
     def get_categorias(self, obj):
@@ -91,6 +112,7 @@ class RespostaEnqueteAdmin(admin.ModelAdmin):
         "id",
         "participa_aulas",
         "get_favoritas",
+        "get_funcionarios",
         "aula_melhoria",
         "novo_espaco",
         "data_criacao",
@@ -105,6 +127,12 @@ class RespostaEnqueteAdmin(admin.ModelAdmin):
         if obj.aulas_favoritas_outra:
             itens.append(f"Outra: {obj.aulas_favoritas_outra}")
         return ", ".join(itens) or "—"
+
+    @admin.display(description="Funcionários elogiados")
+    def get_funcionarios(self, obj):
+        return ", ".join(
+            funcionario.nome for funcionario in obj.funcionarios_elogiados.all()
+        ) or "—"
 
 
 @admin.register(Equipamento)

@@ -82,8 +82,8 @@
         }
 
         /* Card de funcionário */
-        .card-func input[type="radio"] { display: none; }
-        .card-func input[type="radio"]:checked + .func-inner {
+        .card-func input[type="checkbox"] { display: none; }
+        .card-func input[type="checkbox"]:checked + .func-inner {
             border-color: #16a34a;
             background-color: #f0fdf4;
             box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
@@ -352,12 +352,12 @@
                 {% if funcionarios %}
                 <div class="mb-6">
                     <label class="block text-sm font-bold text-gray-800 mb-1">Quem te atendeu?</label>
-                    <p class="text-xs text-gray-400 mb-3">Opcional — selecione o funcionário para avaliar individualmente.</p>
+                    <p class="text-xs text-gray-400 mb-3">Opcional — marque um ou mais funcionários.</p>
                     <div class="grid grid-cols-3 gap-3">
                         {% for func in funcionarios %}
                         <label class="card-func">
-                            <input type="radio" name="funcionario_id" value="{{ func.pk }}"
-                                {% if funcionario_id_selecionado == func.pk|stringformat:"s" %}checked{% endif %}>
+                            <input type="checkbox" name="funcionarios_ids" value="{{ func.pk }}"
+                                {% if func.pk|stringformat:"s" in funcionarios_ids_selecionados %}checked{% endif %}>
                             <div class="func-inner">
                                 {% if func.foto %}
                                 <img src="{{ func.foto.url }}" alt="{{ func.nome }}" class="func-foto">
@@ -365,8 +365,8 @@
                                 <div class="func-foto-placeholder">{{ func.nome|slice:":1" }}</div>
                                 {% endif %}
                                 <span class="text-xs font-bold text-gray-800 text-center leading-tight">{{ func.nome }}</span>
-                                {% if func.cargo %}
-                                <span class="text-xs text-gray-500 text-center leading-tight">{{ func.cargo }}</span>
+                                {% if func.funcoes_display %}
+                                <span class="text-xs text-gray-500 text-center leading-tight">{{ func.funcoes_display }}</span>
                                 {% endif %}
                             </div>
                         </label>

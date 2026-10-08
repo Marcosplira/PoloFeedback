@@ -5,11 +5,16 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 from django.db import OperationalError
+from django.core.management import call_command
 import json
+import os
+from io import StringIO
+from unittest.mock import patch
 from feedback.models import (
     Avaliacao,
     Equipamento,
     Exercicio,
+    Funcao,
     Funcionario,
     ItemPlanoTreino,
     PlanoTreino,
@@ -20,15 +25,22 @@ from feedback.middleware import DatabaseErrorPageMiddleware
 
 class FeedbackModelTests(TestCase):
     def setUp(self):
+        self.funcao_professor = Funcao.objects.create(nome="Professor")
+        self.funcao_instrutor = Funcao.objects.create(nome="Instrutor")
         self.funcionario = Funcionario.objects.create(
             nome="Carlos Treinador",
             cargo="Professor de Musculação",
             ativo=True
         )
+        self.funcionario.funcoes.add(self.funcao_professor, self.funcao_instrutor)
 
     def test_criar_funcionario(self):
         self.assertEqual(str(self.funcionario), "Carlos Treinador")
         self.assertTrue(self.funcionario.ativo)
+        self.assertEqual(
+            self.funcionario.funcoes_display,
+            "Instrutor, Professor",
+        )
 
     def test_criar_avaliacao(self):
         av = Avaliacao.objects.create(
@@ -44,6 +56,7 @@ class FeedbackModelTests(TestCase):
         self.assertEqual(av.nota, 5)
         self.assertEqual(av.status, "pendente")
         self.assertEqual(av.funcionario.nome, "Carlos Treinador")
+        self.assertEqual(av.funcionarios_avaliados, [self.funcionario])
         self.assertIn("atendimento", str(av))
 
     def test_resolucao_automatica_data(self):
@@ -98,6 +111,54 @@ class FeedbackViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Não existe login padrão “admin/admin”")
+        self.assertNotContains(response, "gerente123")
+        self.assertNotContains(response, "marcos123")
+
+    @override_settings(AUTH_PASSWORD_VALIDATORS=[])
+    def test_configura_duas_contas_privadas_sem_superusuario(self):
+        variaveis = {
+            "DASHBOARD_MANAGER_USERNAME": "gerente_configurado",
+            "DASHBOARD_MANAGER_PASSWORD": "T8!qL3@vR9#pK2",
+            "DASHBOARD_OWNER_USERNAME": "responsavel_configurado",
+            "DASHBOARD_OWNER_PASSWORD": "X5#kM9!sQ2@vL7",
+        }
+        with patch.dict(os.environ, variaveis, clear=False):
+            call_command("setup_dashboard_users")
+
+        gerente = User.objects.get(username="gerente_configurado")
+        self.assertTrue(gerente.is_staff)
+        self.assertFalse(gerente.is_superuser)
+        self.assertTrue(gerente.has_perm("feedback.view_avaliacao"))
+        self.assertTrue(gerente.has_perm("feedback.change_funcionario"))
+        self.assertTrue(gerente.check_password(variaveis["DASHBOARD_MANAGER_PASSWORD"]))
+        self.assertTrue(
+            self.client.login(
+                username="gerente_configurado",
+                password=variaveis["DASHBOARD_MANAGER_PASSWORD"],
+            )
+        )
+        self.assertEqual(self.client.get(reverse("dashboard")).status_code, 200)
+
+    def test_setup_dashboard_users_avisa_quando_faltam_variaveis(self):
+        conta_legada = User.objects.create_superuser(
+            username="gerente",
+            email="gerente@example.com",
+            password="senha_conhecida",
+        )
+        variaveis = {
+            "DASHBOARD_MANAGER_USERNAME": "",
+            "DASHBOARD_MANAGER_PASSWORD": "",
+            "DASHBOARD_OWNER_USERNAME": "",
+            "DASHBOARD_OWNER_PASSWORD": "",
+        }
+        saida_erro = StringIO()
+        with patch.dict(os.environ, variaveis, clear=False):
+            call_command("setup_dashboard_users", stderr=saida_erro)
+
+        self.assertIn("não atualizadas", saida_erro.getvalue())
+        conta_legada.refresh_from_db()
+        self.assertFalse(conta_legada.is_active)
+        self.assertFalse(conta_legada.has_usable_password())
 
     def test_rodape_exibe_contato_e_creditos(self):
         response = self.client.get(reverse("inicio"))
@@ -176,6 +237,10 @@ class FeedbackViewsTests(TestCase):
             with self.subTest(nome=nome):
                 funcionario = Funcionario.objects.get(nome=nome)
                 self.assertEqual(funcionario.cargo, cargo)
+                self.assertEqual(
+                    list(funcionario.funcoes.values_list("nome", flat=True)),
+                    [cargo],
+                )
                 self.assertTrue(funcionario.ativo)
 
     def test_pagina_avaliar_get(self):
@@ -183,6 +248,8 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Polo Feedback")
         self.assertContains(response, "Mariana Instrutora")
+        self.assertContains(response, 'name="funcionarios_ids"', html=False)
+        self.assertContains(response, "marque um ou mais funcionários")
 
     def test_pagina_avaliar_possui_botao_area_gerente(self):
         response = self.client.get(reverse("avaliar"))
@@ -222,14 +289,23 @@ class FeedbackViewsTests(TestCase):
             "tipos_feedback": ["elogio"],
             "comentario": "Ótima aula com a professora Mariana!",
             "localizacao": "Unidade Central",
-            "funcionario_id": self.funcionario.pk
         }
+        segundo_funcionario = Funcionario.objects.create(
+            nome="Ana Professora",
+            cargo="",
+            ativo=True,
+        )
+        dados["funcionarios_ids"] = [self.funcionario.pk, segundo_funcionario.pk]
         response = self.client.post(reverse("avaliar"), dados)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Muito Obrigado")
         self.assertEqual(Avaliacao.objects.count(), 1)
         av = Avaliacao.objects.first()
         self.assertEqual(av.funcionario, self.funcionario)
+        self.assertCountEqual(
+            av.funcionarios.all(),
+            [self.funcionario, segundo_funcionario],
+        )
         self.assertEqual(av.nota, 5)
 
     def test_pagina_avaliar_post_invalido_sem_campos_obrigatorios(self):
@@ -260,6 +336,38 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Dashboard")
         self.assertContains(response, "Ambiente climatizado")
+
+    def test_dashboard_filtra_e_ranqueia_funcionario_em_avaliacoes_multiplas(self):
+        segundo_funcionario = Funcionario.objects.create(
+            nome="Ana Professora",
+            cargo="",
+            ativo=True,
+        )
+        avaliacao = Avaliacao.objects.create(
+            categoria="professores",
+            categorias=["professores"],
+            nota=5,
+            tipo_feedback="elogio",
+            tipos_feedback=["elogio"],
+            funcionario=self.funcionario,
+        )
+        avaliacao.funcionarios.set([self.funcionario, segundo_funcionario])
+        self.client.force_login(self.user)
+
+        response = self.client.get(
+            reverse("dashboard"),
+            {"funcionario": segundo_funcionario.pk},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["total_avaliacoes"], 1)
+        ranking = {
+            item["nome"]: item
+            for item in response.context["ranking_funcionarios"]
+        }
+        self.assertEqual(ranking["Ana Professora"]["total"], 1)
+        self.assertContains(response, "Mariana Instrutora")
+        self.assertContains(response, "Ana Professora")
 
     def test_dashboard_chat_script_is_valid_for_suggestion_buttons(self):
         self.client.force_login(self.user)
@@ -471,9 +579,16 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Qual aula precisa de MAIS atenção ou melhorias?")
         self.assertContains(response, "Pensando em agregações e melhorias")
         self.assertContains(response, "Deixe aqui um elogio para nossos colaboradores")
+        self.assertContains(response, 'name="funcionarios_ids"', html=False)
+        self.assertContains(response, "uma ou mais pessoas")
         self.assertNotContains(response, "{{")
 
     def test_enquete_post(self):
+        segundo_funcionario = Funcionario.objects.create(
+            nome="Ana Professora",
+            cargo="",
+            ativo=True,
+        )
         dados = {
             "aulas_favoritas": ["Funcional", "Dança"],
             "aulas_favoritas_outra": "Zumba",
@@ -483,7 +598,7 @@ class FeedbackViewsTests(TestCase):
             "aula_falta": "Boxe",
             "sugestao_valor": "Mais esteiras no horário de pico",
             "elogio_colaborador": "Parabéns ao Carlos pelo ótimo treino!",
-            "funcionario_id": self.funcionario.pk,
+            "funcionarios_ids": [self.funcionario.pk, segundo_funcionario.pk],
         }
         response = self.client.post(reverse("enquete"), dados)
         self.assertEqual(response.status_code, 200)
@@ -498,3 +613,11 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(r.novo_espaco, "Cross / Treinamento funcional avançado")
         self.assertEqual(r.aula_melhoria, "Jump")
         self.assertEqual(r.aula_falta, "Boxe")
+        self.assertCountEqual(
+            list(r.funcionarios_elogiados.all()),
+            [self.funcionario, segundo_funcionario],
+        )
+        self.assertCountEqual(
+            Avaliacao.objects.get(comentario__startswith="[Enquete]").funcionarios.all(),
+            [self.funcionario, segundo_funcionario],
+        )

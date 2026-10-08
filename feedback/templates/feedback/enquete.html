@@ -65,8 +65,8 @@
         }
 
         /* Card colaborador */
-        .card-func input { display: none; }
-        .card-func input:checked + .func-inner {
+        .card-func input[type="checkbox"] { display: none; }
+        .card-func input[type="checkbox"]:checked + .func-inner {
             border-color: #16a34a;
             background-color: #f0fdf4;
             box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
@@ -127,6 +127,11 @@
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        {% if erro_funcionarios %}
+        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+            {{ erro_funcionarios }}
+        </div>
+        {% endif %}
 
         <!-- CABEÇALHO HERO -->
         <div class="text-center">
@@ -320,11 +325,12 @@
 
                     {% if funcionarios %}
                     <div class="mb-4">
-                        <p class="text-xs font-bold text-slate-700 mb-2">Selecione quem você deseja elogiar (opcional):</p>
+                        <p class="text-xs font-bold text-slate-700 mb-2">Marque uma ou mais pessoas que deseja elogiar (opcional):</p>
                         <div class="grid grid-cols-3 gap-2">
                             {% for f in funcionarios %}
                             <label class="card-func">
-                                <input type="radio" name="funcionario_id" value="{{ f.id }}">
+                                <input type="checkbox" name="funcionarios_ids" value="{{ f.id }}"
+                                    {% if f.id|stringformat:"s" in funcionarios_ids_selecionados %}checked{% endif %}>
                                 <div class="func-inner">
                                     {% if f.foto %}
                                     <img src="{{ f.foto.url }}" alt="{{ f.nome }}" class="w-12 h-12 rounded-full object-cover">
@@ -332,6 +338,9 @@
                                     <div class="func-foto-placeholder">{{ f.nome|first }}</div>
                                     {% endif %}
                                     <span class="text-[11px] font-bold text-slate-800 text-center leading-tight truncate w-full">{{ f.nome }}</span>
+                                    {% if f.funcoes_display %}
+                                    <span class="text-[10px] text-slate-500 text-center leading-tight">{{ f.funcoes_display }}</span>
+                                    {% endif %}
                                 </div>
                             </label>
                             {% endfor %}
