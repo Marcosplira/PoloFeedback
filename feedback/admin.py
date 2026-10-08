@@ -11,9 +11,9 @@ from .models import (
 )
 
 
-admin.site.site_header = "Polo Fit — Painel Administrativo"
-admin.site.site_title = "Polo Feedback"
-admin.site.index_title = "Gestão de Avaliações e Equipe"
+admin.site.site_header = "Polo Fit | Painel Administrativo"
+admin.site.site_title = "Polo Fit | Gestão"
+admin.site.index_title = "Gestão de equipe, avaliações e treinos"
 
 
 @admin.register(Funcionario)

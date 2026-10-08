@@ -172,6 +172,6 @@
 - Alertas automáticos exigem a WhatsApp Business Platform/API oficial.
 - Começar, se aprovado, com alertas gerenciais mínimos para feedbacks críticos.
 - Definir credenciais, custos, opt-in/opt-out, acesso e auditoria antes de enviar mensagens.
-- **Contato:** (83) 98671-9438 • Rua Projetada, nº 62, Bairro Cenecista, Picuí - PB • CEP 58187-000.
+- **Contato:** (83) 98671-9438 • Rua Antônio dos Santos, nº 62, Bairro Cenecista, Picuí - PB • CEP 58187-000.
 - **Instagram:** [@polofitacademias](https://www.instagram.com/polofitacademias/)
 - **Horários:** segunda a sexta, 05h às 22h; sábado, 11h às 19h.

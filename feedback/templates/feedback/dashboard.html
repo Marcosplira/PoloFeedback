@@ -521,6 +521,32 @@
 
     <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
 
+        <section aria-labelledby="atalhos-gestao" class="rounded-2xl border border-lime-300/20 bg-slate-900/80 p-5">
+            <div class="mb-4">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-lime-300">Acesso rápido</p>
+                <h2 id="atalhos-gestao" class="mt-1 text-lg font-extrabold text-white">Organize a gestão da academia</h2>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                {% if perms.feedback.view_funcionario %}
+                <a href="{% url 'admin:feedback_funcionario_changelist' %}"
+                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
+                    👥 Gerenciar funcionários
+                </a>
+                {% endif %}
+                {% if perms.feedback.add_funcionario %}
+                <a href="{% url 'admin:feedback_funcionario_add' %}"
+                    class="inline-flex min-h-11 items-center rounded-lg bg-lime-300 px-4 py-2 text-sm font-extrabold text-slate-950 transition hover:bg-lime-200">
+                    ➕ Cadastrar funcionário
+                </a>
+                {% endif %}
+                {% if perms.feedback.view_equipamento %}
+                <a href="{% url 'admin:feedback_equipamento_changelist' %}"
+                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
+                    🏋️ Gerenciar aparelhos e treinos
+                </a>
+                {% endif %}
+            </div>
+        </section>
 
         <!-- ===================================================== -->
         <!-- CARDS DE RESUMO -->

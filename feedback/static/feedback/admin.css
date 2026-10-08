@@ -1,0 +1,67 @@
+:root {
+    --primary: #0f172a;
+    --secondary: #365314;
+    --accent: #a3e635;
+    --link-fg: #365314;
+    --link-hover-color: #4d7c0f;
+    --link-selected-fg: #365314;
+}
+
+#header {
+    background: #0f172a;
+}
+
+#site-name a:link,
+#site-name a:visited {
+    color: #fff;
+}
+
+#site-name span {
+    margin-left: 0.5rem;
+    color: #bef264;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.admin-dashboard-link {
+    display: inline-block;
+    margin: 0.25rem 1rem 0.75rem;
+    border: 1px solid rgb(190 242 100 / 45%);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: #ecfccb !important;
+    font-weight: 700;
+}
+
+.admin-dashboard-link:hover,
+.admin-dashboard-link:focus {
+    background: #365314;
+    color: #fff !important;
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+    background: #365314;
+}
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button {
+    border-radius: 0.35rem;
+}
+
+.button.default,
+input[type="submit"].default,
+.submit-row input.default {
+    background: #65a30d;
+    color: #fff;
+}
+
+.button.default:hover,
+input[type="submit"].default:hover,
+.submit-row input.default:hover {
+    background: #4d7c0f;
+}

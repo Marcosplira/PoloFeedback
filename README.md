@@ -104,6 +104,10 @@ copy .env.example .env
 python manage.py migrate
 ```
 
+As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Esses registros não criam usuários, senhas nem acessos ao Django Admin; as contas administrativas devem ser criadas individualmente.
+
+Se o Admin mostrar `no such table: feedback_equipamento` ou `feedback_planotreino`, pare o servidor e execute `python manage.py migrate` na pasta exata do projeto e com o mesmo ambiente Python usado para iniciar o servidor. Depois, inicie novamente com `python manage.py runserver`. Executar a migração em outra cópia do projeto ou em outro banco não corrige o banco que está servindo a página.
+
 ### 6. Criar o usuário administrador (primeira vez)
 
 ```powershell

@@ -83,15 +83,48 @@ class FeedbackViewsTests(TestCase):
 
     def test_rodape_exibe_contato_e_creditos(self):
         response = self.client.get(reverse("inicio"))
-        self.assertContains(response, "Rua Projetada, nº 62, Bairro Cenecista, Picuí - PB, CEP 58187-000")
+        self.assertContains(response, "Rua Antônio dos Santos, nº 62, Bairro Cenecista, Picuí - PB, CEP 58187-000")
         self.assertContains(response, "(83) 98671-9438")
         self.assertContains(response, "https://wa.me/5583986719438")
         self.assertContains(response, "https://www.instagram.com/polofitacademias/")
+        self.assertContains(response, "Rua+Ant%C3%B4nio+dos+Santos")
         self.assertContains(response, "Segunda a sexta: 05h às 22h")
         self.assertContains(response, "Sábado: 11h às 19h")
         self.assertContains(response, "mensalidades")
         self.assertContains(response, "Marcos Paulo Santos Lira")
         self.assertContains(response, "Instituto Federal de Educação")
+
+    def test_painel_executivo_tem_atalhos_de_gestao_para_superusuario(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Gerenciar funcionários")
+        self.assertContains(response, reverse("admin:feedback_funcionario_changelist"))
+        self.assertContains(response, "Cadastrar funcionário")
+        self.assertContains(response, reverse("admin:feedback_funcionario_add"))
+
+    def test_admin_tem_link_de_volta_ao_painel_e_tema_da_aplicacao(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("admin:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Voltar ao Painel Executivo")
+        self.assertContains(response, "feedback/admin.css")
+
+    def test_equipe_inicial_cadastrada_no_admin_para_avaliacoes(self):
+        nomes_esperados = {
+            "Alan Araújo": "Gerente",
+            "Anderson Adriel": "Funcionário",
+            "Jefferson Tauin": "Proprietário",
+            "Vivia Gabriella": "Funcionária",
+        }
+
+        for nome, cargo in nomes_esperados.items():
+            with self.subTest(nome=nome):
+                funcionario = Funcionario.objects.get(nome=nome)
+                self.assertEqual(funcionario.cargo, cargo)
+                self.assertTrue(funcionario.ativo)
 
     def test_pagina_avaliar_get(self):
         response = self.client.get(reverse("avaliar"))
