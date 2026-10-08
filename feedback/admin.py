@@ -116,11 +116,11 @@ class RespostaEnqueteAdmin(admin.ModelAdmin):
         "participa_aulas",
         "get_favoritas",
         "get_funcionarios",
-        "aula_melhoria",
-        "novo_espaco",
+        "get_aulas_melhoria",
+        "get_novos_espacos",
         "data_criacao",
     )
-    list_filter = ("participa_aulas", "aula_melhoria", "novo_espaco", "data_criacao")
+    list_filter = ("participa_aulas", "data_criacao")
     search_fields = ("aula_falta", "sugestao_valor", "elogio_colaborador", "aulas_favoritas_outra")
     ordering = ("-data_criacao",)
 
@@ -130,6 +130,14 @@ class RespostaEnqueteAdmin(admin.ModelAdmin):
         if obj.aulas_favoritas_outra:
             itens.append(f"Outra: {obj.aulas_favoritas_outra}")
         return ", ".join(itens) or "—"
+
+    @admin.display(description="Aulas para melhorias")
+    def get_aulas_melhoria(self, obj):
+        return ", ".join(obj.aula_melhoria or []) or "—"
+
+    @admin.display(description="Novos espaços")
+    def get_novos_espacos(self, obj):
+        return ", ".join(obj.novo_espaco or []) or "—"
 
     @admin.display(description="Funcionários elogiados")
     def get_funcionarios(self, obj):

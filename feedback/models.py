@@ -180,10 +180,10 @@ class RespostaEnquete(models.Model):
         verbose_name="Outra aula favorita",
     )
     # 3. Qual aula precisa de mais atenção ou melhorias
-    aula_melhoria = models.CharField(
-        max_length=100,
+    aula_melhoria = models.JSONField(
+        default=list,
         blank=True,
-        verbose_name="Aula que precisa de melhorias",
+        verbose_name="Aulas que precisam de melhorias",
     )
     # 4. Qual aula sente falta na academia (resposta aberta)
     aula_falta = models.CharField(
@@ -192,10 +192,10 @@ class RespostaEnquete(models.Model):
         verbose_name="Aula que sente falta",
     )
     # 5. Sobre novos espaços na academia
-    novo_espaco = models.CharField(
-        max_length=100,
+    novo_espaco = models.JSONField(
+        default=list,
         blank=True,
-        verbose_name="Novo espaço mais desejado",
+        verbose_name="Novos espaços desejados",
     )
     novo_espaco_outro = models.CharField(
         max_length=150,

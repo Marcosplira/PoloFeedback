@@ -64,11 +64,26 @@
                     <iframe
                         src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
                         title="Vídeo de apresentação da Academia Polo Fit"
-                        class="mb-6 aspect-video w-full rounded-2xl bg-black"
+                        class="mb-2 hidden aspect-video w-full rounded-2xl bg-black sm:block"
                         allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                         allowfullscreen
                         loading="lazy">
                     </iframe>
+                    <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
+                        target="_blank" rel="noopener noreferrer"
+                        class="group relative mb-6 flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl bg-slate-950 sm:hidden"
+                        aria-label="Abrir vídeo de apresentação da Academia Polo Fit no Google Drive">
+                        <img src="{% static 'feedback/academia2.png' %}" alt=""
+                            class="absolute inset-0 h-full w-full object-cover opacity-70 transition group-hover:scale-105">
+                        <span class="relative rounded-full bg-lime-300 px-5 py-3 font-extrabold text-slate-950 shadow-lg">
+                            ▶ Assistir ao vídeo
+                        </span>
+                    </a>
+                    <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
+                        target="_blank" rel="noopener noreferrer"
+                        class="mb-6 hidden text-sm font-semibold text-lime-200 underline underline-offset-4 sm:inline-block">
+                        Se o vídeo não carregar, abra no Google Drive.
+                    </a>
                     <p class="text-sm font-bold text-lime-200">Como funciona</p>
                     <ol class="mt-5 space-y-5">
                         <li class="flex gap-4">

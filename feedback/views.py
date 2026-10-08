@@ -269,20 +269,18 @@ def enquete(request):
             "",
         ).strip()
 
-        novo_espaco = request.POST.get(
+        novo_espaco = request.POST.getlist(
             "novo_espaco",
-            "",
-        ).strip()
+        )
 
         novo_espaco_outro = request.POST.get(
             "novo_espaco_outro",
             "",
         ).strip()
 
-        aula_melhoria = request.POST.get(
+        aula_melhoria = request.POST.getlist(
             "aula_melhoria",
-            "",
-        ).strip()
+        )
 
         aula_falta = request.POST.get(
             "aula_falta",
@@ -704,16 +702,14 @@ def dashboard(request):
         ]
     ).most_common(6)
     espacos_ranking = Counter(
-        respostas_enquete.exclude(novo_espaco="").values_list(
-            "novo_espaco",
-            flat=True,
-        )
+        espaco
+        for resposta in respostas_enquete
+        for espaco in (resposta.novo_espaco or [])
     ).most_common(6)
     melhorias_ranking = Counter(
-        respostas_enquete.exclude(aula_melhoria="").values_list(
-            "aula_melhoria",
-            flat=True,
-        )
+        aula
+        for resposta in respostas_enquete
+        for aula in (resposta.aula_melhoria or [])
     ).most_common(5)
     participacao_ranking = Counter(
         respostas_enquete.exclude(participa_aulas="").values_list(

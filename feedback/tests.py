@@ -105,6 +105,11 @@ class FeedbackViewsTests(TestCase):
             inicio_response,
             "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview",
         )
+        self.assertContains(
+            inicio_response,
+            "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view",
+        )
+        self.assertContains(inicio_response, "Assistir ao vídeo")
         self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
         self.assertContains(inicio_response, "academia2.png")
         avaliacao_response = self.client.get(reverse("avaliar"))
@@ -403,8 +408,8 @@ class FeedbackViewsTests(TestCase):
         for _ in range(6):
             RespostaEnquete.objects.create(
                 aulas_favoritas=["Funcional"],
-                aula_melhoria="Jump",
-                novo_espaco="Espaço Kids",
+                aula_melhoria=["Jump", "Dança"],
+                novo_espaco=["Espaço Kids", "Yoga"],
                 aula_falta="Natação",
                 sugestao_valor="Ampliar os horários das aulas",
                 elogio_colaborador="A equipe é muito atenciosa",
@@ -417,6 +422,8 @@ class FeedbackViewsTests(TestCase):
         self.assertRegex(response.content.decode(), r"6\s+menções")
         self.assertContains(response, "Sinal de atenção")
         self.assertContains(response, "Espaço Kids")
+        self.assertIn(("Yoga", 6), response.context["espacos_ranking"])
+        self.assertIn(("Dança", 6), response.context["melhorias_ranking"])
         self.assertContains(response, "Sugestão de melhoria:")
         self.assertContains(response, "Ampliar os horários das aulas")
         self.assertNotContains(response, "{{")
@@ -591,7 +598,19 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Quais aulas você MAIS gosta ou participa?")
         self.assertContains(response, "Você participa das aulas coletivas da academia?")
         self.assertContains(response, "Sobre novos espaços na academia")
+        self.assertContains(response, "Quais espaços você acha que fariam MAIS diferença")
         self.assertContains(response, "Qual aula precisa de MAIS atenção ou melhorias?")
+        self.assertContains(response, "Marque todas as aulas que precisam de atenção")
+        self.assertContains(
+            response,
+            'type="checkbox" name="novo_espaco"',
+            html=False,
+        )
+        self.assertContains(
+            response,
+            'type="checkbox" name="aula_melhoria"',
+            html=False,
+        )
         self.assertContains(response, "Pensando em agregações e melhorias")
         self.assertContains(response, "Deixe aqui um elogio para nossos colaboradores")
         self.assertContains(response, 'name="funcionarios_ids"', html=False)
@@ -613,8 +632,8 @@ class FeedbackViewsTests(TestCase):
             "aulas_favoritas": ["Funcional", "Dança"],
             "aulas_favoritas_outra": "Zumba",
             "participa_aulas": "Sim, com frequência",
-            "novo_espaco": "Cross / Treinamento funcional avançado",
-            "aula_melhoria": "Jump",
+            "novo_espaco": ["Cross / Treinamento funcional avançado", "Yoga"],
+            "aula_melhoria": ["Jump", "Dança"],
             "aula_falta": "Boxe",
             "sugestao_valor": "Mais esteiras no horário de pico",
             "elogio_colaborador": "Parabéns ao Carlos pelo ótimo treino!",
@@ -630,8 +649,11 @@ class FeedbackViewsTests(TestCase):
         r = RespostaEnquete.objects.first()
         self.assertEqual(r.participa_aulas, "Sim, com frequência")
         self.assertIn("Funcional", r.aulas_favoritas)
-        self.assertEqual(r.novo_espaco, "Cross / Treinamento funcional avançado")
-        self.assertEqual(r.aula_melhoria, "Jump")
+        self.assertEqual(
+            r.novo_espaco,
+            ["Cross / Treinamento funcional avançado", "Yoga"],
+        )
+        self.assertEqual(r.aula_melhoria, ["Jump", "Dança"])
         self.assertEqual(r.aula_falta, "Boxe")
         self.assertCountEqual(
             list(r.funcionarios_elogiados.all()),
