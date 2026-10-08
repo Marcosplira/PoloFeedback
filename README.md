@@ -122,6 +122,12 @@ Se o servidor já estiver usando um banco, a tela de erro mostra instruções em
 python manage.py createsuperuser
 ```
 
+Para acesso rápido do dashboard em ambiente de demonstração, o projeto também cria automaticamente duas contas de equipe:
+- `gerente` / `gerente123`
+- `marcos` / `marcos123`
+
+Essas credenciais ficam disponíveis ao iniciar o servidor e são úteis para testes de apresentação e entrega ao gerente.
+
 ### 7. Cadastrar o MVP de treinos por QR Code
 
 No endereço `/admin/`, entre com o administrador e:

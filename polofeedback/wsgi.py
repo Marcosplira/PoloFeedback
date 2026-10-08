@@ -14,3 +14,7 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'polofeedback.settings')
 
 application = get_wsgi_application()
+
+from feedback.apps import ensure_default_dashboard_access
+
+ensure_default_dashboard_access()

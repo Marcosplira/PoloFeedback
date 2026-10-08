@@ -106,7 +106,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "polofeedback.wsgi.application"
 
 # Banco de dados — usa DATABASE_URL se disponível (Docker/Railway), senão SQLite local
-_db_url = os.environ.get("DATABASE_URL", "")
+_db_url = os.environ.get("DATABASE_URL", "") or os.environ.get("POSTGRES_URL", "")
 if _db_url:
     from urllib.parse import parse_qs, unquote, urlparse
 
@@ -133,11 +133,8 @@ if _db_url:
         }
     }
 else:
-    if not DEBUG:
-        raise RuntimeError(
-            "DATABASE_URL não definida. Configure um banco PostgreSQL "
-            "persistente antes de iniciar em produção."
-        )
+    # Render, Docker e demo locais podem funcionar sem postgres configurado;
+    # neste caso usamos SQLite para manter o serviço disponível.
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

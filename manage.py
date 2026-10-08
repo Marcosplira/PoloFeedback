@@ -15,6 +15,15 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+
+    if len(sys.argv) > 1 and sys.argv[1] not in {"migrate", "makemigrations", "showmigrations", "sqlmigrate", "check"}:
+        from django import setup
+
+        setup()
+        from feedback.apps import ensure_default_dashboard_access
+
+        ensure_default_dashboard_access()
+
     execute_from_command_line(sys.argv)
 
 
