@@ -9,6 +9,7 @@ import urllib.error
 import qrcode
 from datetime import timedelta
 from functools import wraps
+from urllib.parse import quote
 
 from collections import Counter
 
@@ -87,6 +88,21 @@ def _obter_ip_local():
         return ip
     except Exception:
         return "127.0.0.1"
+
+
+def _gerar_qrcode_base64(url, box_size=8):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        box_size=box_size,
+        border=3,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    image = qr.make_image(fill_color="black", back_color="white")
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    return base64.b64encode(buffer.getvalue()).decode("ascii")
 
 
 def avaliar(request):
@@ -176,7 +192,20 @@ def avaliar(request):
 
 
 def inicio(request):
-    return render(request, "feedback/inicio.html")
+    avaliar_url = request.build_absolute_uri(reverse("avaliar"))
+    enquete_url = request.build_absolute_uri(reverse("enquete"))
+    return render(
+        request,
+        "feedback/inicio.html",
+        {
+            "avaliar_url": avaliar_url,
+            "avaliar_qr": _gerar_qrcode_base64(avaliar_url),
+            "enquete_url": enquete_url,
+            "enquete_qr": _gerar_qrcode_base64(enquete_url),
+            "link_funciona_publicamente": request.get_host().split(":", 1)[0].lower()
+            not in {"localhost", "127.0.0.1"},
+        },
+    )
 
 
 def enquete(request):
@@ -676,6 +705,51 @@ def dashboard(request):
 
 
 @staff_required(permission="feedback.view_avaliacao")
+def configuracao_sistema(request):
+    from django.db import connection
+    from django.db.migrations.executor import MigrationExecutor
+
+    executor = MigrationExecutor(connection)
+    pendentes = executor.migration_plan(executor.loader.graph.leaf_nodes())
+    return render(
+        request,
+        "feedback/configuracao_sistema.html",
+        {
+            "banco_engine": connection.settings_dict["ENGINE"],
+            "migracoes_pendentes": [
+                f"{migration.app_label}.{migration.name}"
+                for migration, _ in pendentes
+            ],
+            "migracoes_ok": not pendentes,
+        },
+    )
+
+
+@staff_required(permission="feedback.view_avaliacao")
+def divulgacao(request):
+    link_publico = request.build_absolute_uri(reverse("inicio"))
+    mensagem = (
+        "Conheça o Polo Feedback, uma solução digital para ouvir alunos e "
+        "acompanhar oportunidades de melhoria em academias: "
+        f"{link_publico}"
+    )
+    return render(
+        request,
+        "feedback/divulgacao.html",
+        {
+            "link_publico": link_publico,
+            "mensagem_whatsapp": mensagem,
+            "link_whatsapp": (
+                "https://wa.me/?text="
+                + quote(mensagem)
+            ),
+            "link_funciona_publicamente": request.get_host().split(":", 1)[0].lower()
+            not in {"localhost", "127.0.0.1"},
+        },
+    )
+
+
+@staff_required(permission="feedback.view_avaliacao")
 def gerar_qrcode(request):
 
     qrcode_base64 = None
@@ -714,31 +788,7 @@ def gerar_qrcode(request):
 
             url_gerada = f"{protocolo}://{host}/" f"?localizacao={localizacao}"
 
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_H,
-            box_size=10,
-            border=4,
-        )
-
-        qr.add_data(url_gerada)
-        qr.make(fit=True)
-
-        img = qr.make_image(
-            fill_color="black",
-            back_color="white",
-        )
-
-        buf = io.BytesIO()
-
-        img.save(
-            buf,
-            format="PNG",
-        )
-
-        buf.seek(0)
-
-        qrcode_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+        qrcode_base64 = _gerar_qrcode_base64(url_gerada, box_size=10)
 
     return render(
         request,
@@ -800,22 +850,11 @@ def qrcodes_treinos(request):
                 kwargs={"identificador_qr": equipamento.identificador_qr},
             )
         )
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_H,
-            box_size=8,
-            border=3,
-        )
-        qr.add_data(url)
-        qr.make(fit=True)
-        image = qr.make_image(fill_color="black", back_color="white")
-        buffer = io.BytesIO()
-        image.save(buffer, format="PNG")
         equipamentos.append(
             {
                 "equipamento": equipamento,
                 "url": url,
-                "qr_base64": base64.b64encode(buffer.getvalue()).decode("ascii"),
+                "qr_base64": _gerar_qrcode_base64(url),
             }
         )
 

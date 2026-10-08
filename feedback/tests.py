@@ -1,8 +1,10 @@
 from django.test import TestCase, Client
 from django.test import override_settings
+from django.test import RequestFactory
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
+from django.db import OperationalError
 import json
 from feedback.models import (
     Avaliacao,
@@ -13,6 +15,7 @@ from feedback.models import (
     PlanoTreino,
     RespostaEnquete,
 )
+from feedback.middleware import DatabaseErrorPageMiddleware
 
 
 class FeedbackModelTests(TestCase):
@@ -75,6 +78,11 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
         self.assertContains(inicio_response, reverse("avaliar"))
         self.assertContains(inicio_response, 'from-lime-500/20')
+        self.assertContains(inicio_response, "QR Code para avaliação Polo Fit")
+        self.assertContains(inicio_response, "QR Code para pesquisa Polo Fit")
+        self.assertTrue(inicio_response.context["avaliar_qr"])
+        self.assertTrue(inicio_response.context["enquete_qr"])
+        self.assertContains(inicio_response, "academia2.png")
 
         avaliacao_response = self.client.get(reverse("avaliar"))
         self.assertEqual(avaliacao_response.status_code, 200)
@@ -103,6 +111,40 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, reverse("admin:feedback_funcionario_changelist"))
         self.assertContains(response, "Cadastrar funcionário")
         self.assertContains(response, reverse("admin:feedback_funcionario_add"))
+        self.assertContains(response, reverse("configuracao_sistema"))
+        self.assertContains(response, reverse("divulgacao"))
+
+    def test_diagnostico_mostra_status_das_migracoes(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("configuracao_sistema"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Diagnóstico e ajuda")
+        self.assertContains(response, "Estrutura do banco atualizada")
+
+    def test_pagina_divulgacao_nao_anuncia_endereco_local_como_publico(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("divulgacao"),
+            HTTP_HOST="localhost:8000",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Este endereço é local")
+        self.assertContains(response, "Compartilhar pelo WhatsApp")
+
+    def test_middleware_mostra_tela_de_ajuda_em_erro_operacional_do_banco(self):
+        def view_com_banco_indisponivel(request):
+            raise OperationalError("no such table: feedback_equipamento")
+
+        middleware = DatabaseErrorPageMiddleware(view_com_banco_indisponivel)
+        request = RequestFactory().get("/admin/feedback/equipamento/")
+
+        with self.assertLogs("feedback.middleware", level="ERROR"):
+            response = middleware(request)
+
+        self.assertEqual(response.status_code, 503)
+        self.assertContains(response, "O banco ainda não está pronto", status_code=503)
 
     def test_admin_tem_link_de_volta_ao_painel_e_tema_da_aplicacao(self):
         self.client.force_login(self.user)

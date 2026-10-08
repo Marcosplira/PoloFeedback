@@ -49,6 +49,11 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
    - Gestão de colaboradores com fotos e status ativo.
    - Gestão e auditoria de avaliações.
 
+7. **📲 Acesso rápido, QR Codes e ajuda no painel:**
+   - A página inicial oferece QR Codes para avaliação e pesquisa; cada código aponta para o host HTTPS/local usado para abrir o site.
+   - O Dashboard oferece atalhos de diagnóstico de migrações (`/dashboard/configuracao/`) e material para compartilhar (`/dashboard/divulgacao/`).
+   - A tela de instalação adiciona o PWA à tela inicial do dispositivo. O aplicativo ainda não está publicado na Google Play Store; não compartilhe links como se houvesse um app listado na loja.
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
@@ -107,6 +112,8 @@ python manage.py migrate
 As migrações incluem os 16 funcionários informados para a lista de avaliações (Alan Araújo como gerente, Jefferson Tauin como proprietário e os demais como funcionários). Esses registros não criam usuários, senhas nem acessos ao Django Admin; as contas administrativas devem ser criadas individualmente.
 
 Se o Admin mostrar `no such table: feedback_equipamento` ou `feedback_planotreino`, pare o servidor e execute `python manage.py migrate` na pasta exata do projeto e com o mesmo ambiente Python usado para iniciar o servidor. Depois, inicie novamente com `python manage.py runserver`. Executar a migração em outra cópia do projeto ou em outro banco não corrige o banco que está servindo a página.
+
+Se o servidor já estiver usando um banco, a tela de erro mostra instruções em vez do traceback amarelo do Django e registra a exceção no log. A tela **Diagnóstico** do Dashboard exibe migrações pendentes quando a conexão com o banco está disponível. Em hospedagem, configure `DATABASE_URL` primeiro; as migrações são aplicadas pelo comando de inicialização.
 
 ### 6. Criar o usuário administrador (primeira vez)
 

@@ -11,6 +11,8 @@ from django.conf.urls.static import static
 from feedback.views import (
     avaliar,
     dashboard,
+    configuracao_sistema,
+    divulgacao,
     enquete,
     gerar_qrcode,
     inicio,
@@ -38,6 +40,8 @@ urlpatterns = [
         name="logout",
     ),
     path("dashboard/", dashboard, name="dashboard"),
+    path("dashboard/configuracao/", configuracao_sistema, name="configuracao_sistema"),
+    path("dashboard/divulgacao/", divulgacao, name="divulgacao"),
     path("qrcode/", gerar_qrcode, name="gerar_qrcode"),
     path("treinos/qrs/", qrcodes_treinos, name="qrcodes_treinos"),
     path(

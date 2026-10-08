@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Banco de dados indisponível | Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-950 px-4 py-12 text-white">
+    <main class="mx-auto max-w-2xl rounded-3xl border border-amber-300/30 bg-slate-900 p-8 shadow-2xl">
+        <p class="text-sm font-bold uppercase tracking-widest text-amber-300">Polo Feedback · assistência</p>
+        <h1 class="mt-3 text-3xl font-black">O banco ainda não está pronto</h1>
+        <p class="mt-4 leading-relaxed text-slate-300">
+            A aplicação não conseguiu consultar o banco. Isso costuma acontecer quando as migrações
+            não foram executadas no mesmo projeto e banco usados para iniciar o servidor.
+        </p>
+        <section class="mt-6 rounded-2xl border border-white/10 bg-black/30 p-5">
+            <h2 class="font-bold text-lime-200">Corrija no computador que está rodando o site</h2>
+            <ol class="mt-3 list-inside list-decimal space-y-2 text-sm text-slate-300">
+                <li>Pare o servidor com <kbd class="rounded bg-black/40 px-2 py-1 text-white">Ctrl+C</kbd>.</li>
+                <li>Abra o terminal na pasta que contém o arquivo <code>manage.py</code> desta aplicação.</li>
+                <li>Execute <code class="rounded bg-black/40 px-2 py-1 text-lime-200">python manage.py migrate</code>.</li>
+                <li>Inicie novamente com <code class="rounded bg-black/40 px-2 py-1 text-lime-200">python manage.py runserver</code>.</li>
+            </ol>
+            <p class="mt-4 text-xs leading-relaxed text-slate-400">
+                No Windows, use o mesmo Python/ambiente virtual que inicia o servidor. Se houver cópias
+                do projeto em Downloads e Desktop, aplique a migração na cópia que contém o
+                <code>manage.py</code> ativo. Não apague o banco de dados.
+            </p>
+        </section>
+        <a href="{% url 'inicio' %}" class="mt-6 inline-flex min-h-11 items-center rounded-lg bg-lime-300 px-4 py-2 font-bold text-slate-950">
+            Voltar ao início
+        </a>
+        <p class="mt-5 text-xs text-slate-500">Código HTTP 503 · erro registrado no log do servidor.</p>
+    </main>
+</body>
+</html>
