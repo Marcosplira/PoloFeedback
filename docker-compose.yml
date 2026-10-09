@@ -29,7 +29,7 @@ services:
       DASHBOARD_OWNER_USERNAME: ${DASHBOARD_OWNER_USERNAME:-marcos}
       DASHBOARD_OWNER_PASSWORD: ${DASHBOARD_OWNER_PASSWORD:?Defina DASHBOARD_OWNER_PASSWORD no arquivo .env}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
     volumes:
       - media_data:/app/media

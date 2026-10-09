@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>Projeto de treinos por QR Code | Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+    <header class="border-b border-white/10 bg-slate-900">
+        <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-lime-300">Projeto da Academia PoloFit</p>
+                <h1 class="mt-1 text-xl font-black sm:text-2xl">Treinos orientados por QR Code</h1>
+            </div>
+            <a href="{% url 'dashboard' %}" class="rounded-lg border border-white/20 px-4 py-2 text-sm font-bold hover:border-lime-300 hover:text-lime-200">
+                Voltar ao painel
+            </a>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl space-y-8 px-4 py-8">
+        <section class="rounded-3xl border border-lime-300/20 bg-gradient-to-br from-slate-900 to-slate-900/60 p-6 sm:p-9">
+            <p class="text-sm font-bold uppercase tracking-wider text-lime-300">Proposta e demonstração</p>
+            <h2 class="mt-3 max-w-3xl text-3xl font-black leading-tight sm:text-4xl">
+                O aluno escaneia o aparelho e consulta seu treino com orientação do professor.
+            </h2>
+            <p class="mt-4 max-w-3xl leading-7 text-slate-300">
+                O módulo reúne QR Code por equipamento, exercícios demonstrativos e planos individuais com séries,
+                repetições, descanso, carga e observações. O acesso ao plano exige login e mostra somente o treino
+                do aluno autenticado.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <a href="{% url 'qrcodes_treinos' %}" class="rounded-xl bg-lime-300 px-5 py-3 font-extrabold text-slate-950 hover:bg-lime-200">
+                    Ver QR Codes dos aparelhos
+                </a>
+                <a href="{% url 'gestao_treinos' %}" class="rounded-xl border border-white/20 px-5 py-3 font-bold hover:border-lime-300 hover:text-lime-200">
+                    Abrir gestão de treinos
+                </a>
+                {% if perms.feedback.view_equipamento %}
+                <a href="{% url 'admin:feedback_equipamento_changelist' %}" class="rounded-xl border border-white/20 px-5 py-3 font-bold hover:border-lime-300 hover:text-lime-200">
+                    Gerenciar aparelhos
+                </a>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="grid gap-4 md:grid-cols-3">
+            <article class="rounded-2xl border border-white/10 bg-slate-900 p-5">
+                <p class="text-2xl">📱</p>
+                <h3 class="mt-3 text-lg font-extrabold">1. Escanear</h3>
+                <p class="mt-2 leading-6 text-slate-300">Cada aparelho recebe um QR Code próprio. O código identifica o equipamento, não o aluno.</p>
+            </article>
+            <article class="rounded-2xl border border-white/10 bg-slate-900 p-5">
+                <p class="text-2xl">🔐</p>
+                <h3 class="mt-3 text-lg font-extrabold">2. Entrar na conta</h3>
+                <p class="mt-2 leading-6 text-slate-300">Após o login, o sistema verifica a identidade e protege os planos individuais.</p>
+            </article>
+            <article class="rounded-2xl border border-white/10 bg-slate-900 p-5">
+                <p class="text-2xl">🎥</p>
+                <h3 class="mt-3 text-lg font-extrabold">3. Consultar a orientação</h3>
+                <p class="mt-2 leading-6 text-slate-300">O aluno vê os exercícios, vídeos autorizados e as instruções prescritas pelo professor.</p>
+            </article>
+        </section>
+
+        <section class="grid gap-6 lg:grid-cols-2">
+            <article class="rounded-2xl border border-white/10 bg-slate-900 p-6">
+                <h2 class="text-xl font-black">Problemas que a proposta aborda</h2>
+                <ul class="mt-4 space-y-3 leading-6 text-slate-300">
+                    <li>• Dúvidas sobre regulagem e execução dos aparelhos.</li>
+                    <li>• Explicações repetidas pelos professores durante o treino.</li>
+                    <li>• Fichas impressas esquecidas, perdidas ou desatualizadas.</li>
+                    <li>• Necessidade de padronizar orientações sem substituir o acompanhamento profissional.</li>
+                </ul>
+            </article>
+            <article class="rounded-2xl border border-white/10 bg-slate-900 p-6">
+                <h2 class="text-xl font-black">Etapas para iniciar o piloto</h2>
+                <ol class="mt-4 space-y-3 leading-6 text-slate-300">
+                    <li><strong class="text-lime-200">1.</strong> Escolher uma área e um grupo pequeno de aparelhos.</li>
+                    <li><strong class="text-lime-200">2.</strong> Indicar professores para revisar instruções e vídeos autorizados.</li>
+                    <li><strong class="text-lime-200">3.</strong> Cadastrar exercícios e planos, testar o QR e os acessos de aluno.</li>
+                    <li><strong class="text-lime-200">4.</strong> Fazer um piloto acompanhado, coletar dúvidas e avaliar os resultados.</li>
+                </ol>
+            </article>
+        </section>
+
+        <section class="rounded-2xl border border-amber-300/20 bg-amber-300/5 p-6">
+            <h2 class="text-lg font-black text-amber-100">Status e cuidados</h2>
+            <p class="mt-2 leading-6 text-slate-300">
+                O Polo Feedback já contém um MVP técnico para demonstrar esse fluxo. Antes do uso oficial, é necessário
+                cadastrar conteúdo real, revisar vídeos e instruções com os profissionais, validar o domínio HTTPS e
+                executar um piloto. Carga e execução devem ser definidas pelo professor; o sistema não substitui
+                orientação profissional.
+            </p>
+        </section>
+    </main>
+</body>
+</html>

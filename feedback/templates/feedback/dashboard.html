@@ -503,6 +503,10 @@
                     class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     🏋️ QR Treinos
                 </a>
+                <a href="{% url 'projeto_treino' %}"
+                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
+                    📘 Projeto Academia
+                </a>
                 <a href="{% url 'configuracao_sistema' %}"
                     class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
                     🛠️ Diagnóstico
@@ -547,6 +551,12 @@
                     ➕ Cadastrar funcionário
                 </a>
                 {% endif %}
+                {% if perms.auth.view_user %}
+                <a href="{% url 'admin:auth_user_changelist' %}"
+                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
+                    👤 Gerenciar usuários e alunos
+                </a>
+                {% endif %}
                 {% if perms.feedback.view_equipamento %}
                 <a href="{% url 'admin:feedback_equipamento_changelist' %}"
                     class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
@@ -560,6 +570,10 @@
                 <a href="{% url 'divulgacao' %}"
                     class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
                     📣 Compartilhar e divulgar
+                </a>
+                <a href="{% url 'projeto_treino' %}"
+                    class="inline-flex min-h-11 items-center rounded-lg border border-lime-300/40 bg-lime-300/10 px-4 py-2 text-sm font-bold text-lime-100 transition hover:bg-lime-300/20">
+                    📘 Projeto da Academia PoloFit
                 </a>
             </div>
         </section>
@@ -727,9 +741,9 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <span class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-lime-300 font-semibold">
-                        <span class="w-2 h-2 bg-lime-400 rounded-full animate-pulse"></span>
-                        Online
+                    <span class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] {% if gemini_configured %}text-lime-300{% else %}text-amber-300{% endif %} font-semibold">
+                    <span class="w-2 h-2 {% if gemini_configured %}bg-lime-400 animate-pulse{% else %}bg-amber-400{% endif %} rounded-full"></span>
+                    {% if gemini_configured %}Chave configurada{% else %}Modo local{% endif %}
                     </span>
 
                     <button type="button" id="limpar-chat" class="w-9 h-9 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-all duration-200" title="Limpar conversa">
@@ -762,6 +776,7 @@
                         <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais são as principais reclamações dos alunos?">⚠️ Principais reclamações</button>
                         <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais funcionários estão se destacando nas avaliações?">🏆 Funcionários destaque</button>
                         <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais melhorias deveriam ser priorizadas pela academia?">💡 Melhorias prioritárias</button>
+                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Faça um resumo geral de todos os dados do aplicativo: avaliações, tópicos, funcionários e enquete.">🧾 Resumo geral da academia</button>
                     </div>
                 </div>
             </div>
@@ -2382,6 +2397,11 @@
                     formatarTextoIA(
                         data.analise ||
                         "Sem resposta da IA."
+                    ) +
+                    (
+                        data.aviso
+                            ? `<p class="mt-3 text-sm text-amber-200">${escapeHTML(data.aviso)}</p>`
+                            : ""
                     );
 
 
@@ -2414,6 +2434,7 @@
             const limparChat = document.getElementById("limpar-chat");
             const chatContador = document.getElementById("chat-contador");
             const chatSugestoes = document.getElementById("chat-sugestoes");
+            const historicoChat = [];
 
 
             /* =========================================================
@@ -2487,7 +2508,7 @@
            ADICIONAR RESPOSTA DA IA
            ========================================================= */
 
-        function adicionarMensagemIA(texto) {
+        function adicionarMensagemIA(texto, aviso = "") {
             const wrapper = document.createElement("div");
             wrapper.className = "flex items-start gap-3";
 
@@ -2501,6 +2522,7 @@
                     </div>
                     <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
                         ${formatarTextoIA(texto)}
+                        ${aviso ? `<p class="mt-3 border-t border-white/10 pt-2 text-xs text-amber-200">${escapeHTML(aviso)}</p>` : ""}
                     </div>
                 </div>
             `;
@@ -2574,11 +2596,12 @@
            ========================================================= */
 
         async function enviarPergunta(mensagem) {
-            if (!mensagem || !chatForm) {
+            if (!mensagem || !chatForm || chatInput.disabled) {
                 return;
             }
 
             adicionarMensagemUsuario(mensagem);
+            historicoChat.push({ role: "user", content: mensagem });
             chatInput.value = "";
             atualizarContador();
             autoResizeInput();
@@ -2594,7 +2617,10 @@
                         "Content-Type": "application/json",
                         "X-CSRFToken": getCookie("csrftoken")
                     },
-                    body: JSON.stringify({ mensagem: mensagem })
+                    body: JSON.stringify({
+                        mensagem: mensagem,
+                        historico: historicoChat.slice(0, -1).slice(-8)
+                    })
                 });
 
                 const data = await response.json();
@@ -2602,6 +2628,7 @@
                 if (pensando) pensando.remove();
 
                 if (!response.ok) {
+                    historicoChat.pop();
                     adicionarMensagemIA(
                         data.resposta ||
                         data.erro ||
@@ -2610,12 +2637,19 @@
                     return;
                 }
 
+                const resposta = data.resposta ||
+                    "Não consegui obter uma resposta relevante para essa pergunta. Tente formular de outra forma.";
                 adicionarMensagemIA(
-                    data.resposta ||
-                    "Não consegui obter uma resposta relevante para essa pergunta. Tente formular de outra forma."
+                    resposta,
+                    data.aviso || ""
                 );
+                historicoChat.push({ role: "assistant", content: resposta });
+                if (historicoChat.length > 8) {
+                    historicoChat.splice(0, historicoChat.length - 8);
+                }
 
             } catch (error) {
+                historicoChat.pop();
                 const pensando = document.getElementById("chat-pensando");
                 if (pensando) pensando.remove();
 
@@ -2740,6 +2774,10 @@
 
             </div>
         `;
+                historicoChat.length = 0;
+                if (chatSugestoes) {
+                    chatMessages.appendChild(chatSugestoes);
+                }
 
                 chatInput.focus();
 

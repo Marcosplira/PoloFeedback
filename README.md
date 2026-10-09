@@ -30,9 +30,9 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
    - **Ranking de Funcionários:** Destaque para instrutores mais elogiados e suas médias.
 
 3. **🤖 Análise Inteligente com IA (`/ia/analisar/` e chat em `/ia/chat/`):**
-   - Integração com a API Google Gemini (`gemini-1.5-flash`).
-   - Gera um resumo executivo com pontos fortes, alertas operacionais e recomendações práticas para a gerência com base nos dados reais coletados.
-   - **Fallback local limitado:** sem a API, algumas respostas são geradas por regras e indicadores do sistema; não equivale a um modelo generativo.
+   - Integração com a API Google Gemini (`gemini-2.5-flash`) com histórico curto para conversas de múltiplos turnos.
+   - Resumo gerencial inclui avaliações, categorias e notas, funcionários, locais e todos os tópicos da enquete.
+   - **Fallback local identificado:** sem uma chave Gemini válida, o painel sinaliza o modo local e responde com regras e dados registrados; isso não equivale a um modelo generativo.
 
 4. **🖨️ Gerador de QR Code com Impressão de Cartaz (`/qrcode/`):**
    - Permite criar QR Codes para qualquer setor ou unidade (ex: *Musculação*, *Recepção*, *Polo Centro*).
@@ -48,11 +48,12 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 6. **🛡️ Painel Administrativo Completo (`/admin/`):**
    - Gestão de colaboradores com fotos e status ativo.
    - Gestão e auditoria de avaliações.
+   - Lista e cadastro de usuários/alunos, ativação/inativação e redefinição de senha; senhas não são exibidas e contas gerenciais não podem conceder privilégios administrativos por essa tela.
 
 7. **📲 Acesso rápido, QR Codes e ajuda no painel:**
    - A página inicial oferece QR Codes para avaliação e pesquisa; cada código aponta para o host HTTPS/local usado para abrir o site.
    - A página inicial também exibe a foto da academia e o vídeo de apresentação incorporado do Google Drive. Para os visitantes assistirem, o arquivo precisa permitir acesso a qualquer pessoa com o link.
-   - O Dashboard oferece atalhos de diagnóstico de migrações (`/dashboard/configuracao/`) e material para compartilhar (`/dashboard/divulgacao/`).
+   - O Dashboard oferece atalhos de diagnóstico de migrações (`/dashboard/configuracao/`), material para compartilhar (`/dashboard/divulgacao/`) e apresentação do projeto de treinos (`/dashboard/projeto-treino/`).
    - A tela de instalação adiciona o PWA à tela inicial do dispositivo. O aplicativo ainda não está publicado na Google Play Store; não compartilhe links como se houvesse um app listado na loja.
 
 ---
@@ -64,7 +65,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 | **Backend** | Python 3.12, Django 6.1.1 |
 | **Frontend** | HTML5, Tailwind CSS (CDN), JavaScript, Chart.js |
 | **Banco de Dados** | SQLite (Desenvolvimento local) / PostgreSQL (Produção / Docker) |
-| **Inteligência Artificial** | Google Gemini API (`gemini-1.5-flash`) |
+| **Inteligência Artificial** | Google Gemini API (`gemini-2.5-flash`) |
 | **Infraestrutura** | Gunicorn, Whitenoise, Docker, Docker Compose |
 | **Hospedagem** | Render.com (configuração pronta) |
 
@@ -130,7 +131,7 @@ Para configurar as duas contas privadas do dashboard no Render, defina no painel
 - `DASHBOARD_OWNER_USERNAME` (usuário inicial sugerido: `marcos`)
 - `DASHBOARD_OWNER_PASSWORD` (outra senha privada e forte)
 
-O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard, à gestão de funcionários e ao cadastro/edição de aparelhos e exercícios, sem torná-las superusuárias nem permitir exclusões pelo Admin. O `startCommand` do Render executa as migrações e esse comando antes de iniciar o servidor. Se as variáveis ainda não estiverem preenchidas, o serviço continua no ar e registra um aviso; as contas só são criadas depois de configurar as senhas e reiniciar o serviço. Não há credenciais padrão no código nem na tela de login.
+O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard, à gestão de funcionários, ao cadastro/edição de aparelhos e exercícios e à consulta/cadastro/edição básica de usuários, sem torná-las superusuárias nem permitir exclusões pelo Admin. A tela de usuários oculta campos de privilégios; senhas existentes nunca são exibidas. O `startCommand` do Render executa as migrações e esse comando antes de iniciar o servidor. Se as variáveis ainda não estiverem preenchidas, o serviço continua no ar e registra um aviso; as contas só são criadas depois de configurar as senhas e reiniciar o serviço. Não há credenciais padrão no código nem na tela de login.
 
 ### 7. Cadastrar o MVP de treinos por QR Code
 
@@ -143,6 +144,8 @@ No endereço `/admin/`, entre com uma conta da equipe autorizada (ou com o super
 5. Um membro da equipe imprime os QR Codes em `/treinos/qrs/` ou pelo link **QR Treinos** no Dashboard.
 
 O QR Code identifica apenas o equipamento. O aluno entra com sua conta para ver os exercícios vinculados ao aparelho que pertencem aos próprios planos ativos. Para usar as telas de gestão, o professor deve ter conta da equipe (`is_staff`). As contas privadas criadas por `setup_dashboard_users` também recebem permissões para visualizar, adicionar e alterar equipamentos e exercícios pelo Admin, sem permissão para excluí-los. A equipe pode imprimir os QR Codes dos aparelhos sem a permissão de visualizar avaliações. O gerente deve ter a permissão `feedback.view_avaliacao` (ou ser superusuário) para abrir Dashboard, IA e QR Codes de avaliação.
+
+A apresentação com o problema, solução, fluxo e etapas sugeridas do piloto também está acessível no Dashboard pelo botão **Projeto da Academia PoloFit**.
 
 O link do QR é montado usando o host acessado pelo membro da equipe. O domínio escolhido para a implantação é `https://app.polofitacademias.com.br`; ele já está incluído nos hosts e origens CSRF permitidos do Render. Para que funcione, configure esse domínio personalizado no serviço do Render e cadastre no provedor DNS os registros que o Render indicar. Depois do deploy, confirme que o domínio abre com HTTPS, cadastre os equipamentos e gere os códigos acessando `/treinos/qrs/` por esse domínio. Não imprima QRs gerados por `localhost` para uso pelos alunos. Vídeos externos precisam ser próprios ou licenciados. Carga, séries e repetições são configuradas pelo professor; o sistema não calcula nem prescreve treino.
 
@@ -251,7 +254,7 @@ Se utilizar a IA com Google Gemini, configure `GEMINI_API_KEY` em **Environment*
 | `ALLOWED_HOSTS` | `*` em debug | Hosts permitidos separados por vírgula |
 | `DATABASE_URL` | *(SQLite local)* | URL do banco PostgreSQL em produção |
 | `GEMINI_API_KEY` | *(vazio — usa fallback local)* | Chave da API Gemini para IA |
-| `GEMINI_MODEL` | `gemini-1.5-flash` | Modelo Gemini utilizado |
+| `GEMINI_MODEL` | `gemini-2.5-flash` | Modelo Gemini utilizado |
 
 ---
 

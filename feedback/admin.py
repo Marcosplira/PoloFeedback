@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 from django.utils.html import format_html
 from .models import (
     Avaliacao,
@@ -15,6 +17,52 @@ from .models import (
 admin.site.site_header = "Polo Fit | Painel Administrativo"
 admin.site.site_title = "Polo Fit | Gestão"
 admin.site.index_title = "Gestão de equipe, avaliações e treinos"
+
+admin.site.unregister(User)
+
+
+@admin.register(User)
+class AlunoUserAdmin(UserAdmin):
+    list_display = (
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "is_active",
+        "date_joined",
+    )
+    list_filter = ("is_active", "date_joined")
+    search_fields = ("username", "first_name", "last_name", "email")
+    ordering = ("username",)
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        ("Dados pessoais", {"fields": ("first_name", "last_name", "email")}),
+        ("Acesso", {"fields": ("is_active",)}),
+        ("Datas", {"fields": ("last_login", "date_joined")}),
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "username",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "password1",
+                    "password2",
+                ),
+            },
+        ),
+    )
+    readonly_fields = ("last_login", "date_joined")
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if not request.user.is_superuser:
+            queryset = queryset.filter(is_staff=False)
+        return queryset
 
 
 @admin.register(Funcionario)

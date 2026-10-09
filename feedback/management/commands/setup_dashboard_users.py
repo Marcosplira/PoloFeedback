@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    help = "Cria ou atualiza as duas contas privadas de acesso ao dashboard."
+    help = "Cria ou atualiza as duas contas privadas de acesso ao painel e gestão de usuários."
 
     legacy_usernames = ("gerente", "marcos")
     accounts = (
@@ -31,6 +31,7 @@ class Command(BaseCommand):
         "add_exercicio",
         "change_exercicio",
     )
+    user_permission_codenames = ("view_user", "add_user", "change_user")
 
     def _disable_legacy_accounts(self, keep_usernames=()):
         user_model = get_user_model()
@@ -81,17 +82,26 @@ class Command(BaseCommand):
             )
             return
 
-        permissions = Permission.objects.filter(
+        permissions_feedback = Permission.objects.filter(
             content_type__app_label="feedback",
             codename__in=self.permission_codenames,
         )
-        found_codenames = set(permissions.values_list("codename", flat=True))
+        permissions_users = Permission.objects.filter(
+            content_type__app_label="auth",
+            codename__in=self.user_permission_codenames,
+        )
+        found_codenames = set(permissions_feedback.values_list("codename", flat=True))
         missing_codenames = set(self.permission_codenames) - found_codenames
-        if missing_codenames:
+        found_user_codenames = set(permissions_users.values_list("codename", flat=True))
+        missing_user_codenames = (
+            set(self.user_permission_codenames) - found_user_codenames
+        )
+        if missing_codenames or missing_user_codenames:
             raise CommandError(
-                "Permissões do dashboard ausentes. Execute as migrações antes "
-                "de configurar as contas."
+                "Permissões de usuários ou do dashboard ausentes. Execute as "
+                "migrações antes de configurar as contas."
             )
+        permissions = permissions_feedback | permissions_users
 
         user_model = get_user_model()
         users_to_save = []

@@ -8,7 +8,7 @@ Variáveis de ambiente suportadas:
   DATABASE_URL         — URL do PostgreSQL (ex: postgres://user:pass@host:5432/db)
   CSRF_TRUSTED_ORIGINS — Origens CSRF separadas por vírgula
   GEMINI_API_KEY       — Chave da API Google Gemini
-  GEMINI_MODEL         — Modelo Gemini (padrão: gemini-1.5-flash)
+  GEMINI_MODEL         — Modelo Gemini (padrão: gemini-2.5-flash)
 """
 
 import os
@@ -202,6 +202,6 @@ if not DEBUG:
 
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-# Modelo padrão: gemini-1.5-flash (rápido, barato, amplamente disponível)
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+# Gemini 1.5 não está mais entre os modelos atuais da API.
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

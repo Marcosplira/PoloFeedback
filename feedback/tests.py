@@ -9,7 +9,7 @@ from django.core.management import call_command
 import json
 import os
 from io import StringIO
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from feedback.models import (
     Avaliacao,
     Equipamento,
@@ -142,6 +142,28 @@ class FeedbackViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(username="ana_senha_fraca").exists())
+
+    def test_cadastro_publico_informa_quando_o_usuario_ja_existe(self):
+        User.objects.create_user(
+            username="joao12@gmail.com",
+            password="SenhaSegura#42",
+        )
+
+        response = self.client.post(
+            reverse("cadastro_aluno"),
+            {
+                "first_name": "João",
+                "last_name": "Carlos",
+                "username": "joao12@gmail.com",
+                "password1": "OutraSenha#42",
+                "password2": "OutraSenha#42",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "O usuário precisa ser único")
+        self.assertContains(response, "entre por aqui")
+        self.assertEqual(User.objects.filter(username="joao12@gmail.com").count(), 1)
 
     def test_equipe_cria_plano_para_aluno_com_exercicio(self):
         professor = User.objects.create_user(
@@ -306,8 +328,17 @@ class FeedbackViewsTests(TestCase):
         self.assertTrue(gerente.has_perm("feedback.change_funcionario"))
         self.assertTrue(gerente.has_perm("feedback.add_equipamento"))
         self.assertTrue(gerente.has_perm("feedback.change_exercicio"))
+        self.assertTrue(gerente.has_perm("auth.view_user"))
+        self.assertTrue(gerente.has_perm("auth.add_user"))
+        self.assertTrue(gerente.has_perm("auth.change_user"))
+        self.assertFalse(gerente.has_perm("auth.delete_user"))
         self.assertFalse(gerente.has_perm("feedback.delete_equipamento"))
         self.assertTrue(gerente.check_password(variaveis["DASHBOARD_MANAGER_PASSWORD"]))
+        aluno = User.objects.create_user(
+            username="aluno_visivel",
+            first_name="Aluno",
+            last_name="Visível",
+        )
         self.assertTrue(
             self.client.login(
                 username="gerente_configurado",
@@ -322,6 +353,37 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(
             self.client.get(reverse("admin:feedback_exercicio_add")).status_code,
             200,
+        )
+        user_list_response = self.client.get(reverse("admin:auth_user_changelist"))
+        self.assertEqual(user_list_response.status_code, 200)
+        self.assertContains(user_list_response, "aluno_visivel")
+        usuarios_listados = [
+            usuario.username
+            for usuario in user_list_response.context["cl"].result_list
+        ]
+        self.assertNotIn("gerente_configurado", usuarios_listados)
+        self.assertEqual(
+            self.client.get(
+                reverse("admin:auth_user_password_change", args=[aluno.pk])
+            ).status_code,
+            200,
+        )
+        user_add_response = self.client.get(reverse("admin:auth_user_add"))
+        self.assertEqual(user_add_response.status_code, 200)
+        self.assertNotIn("is_staff", user_add_response.context["adminform"].form.fields)
+        self.assertNotIn(
+            "is_superuser",
+            user_add_response.context["adminform"].form.fields,
+        )
+        self.assertNotIn(
+            "user_permissions",
+            user_add_response.context["adminform"].form.fields,
+        )
+        self.assertEqual(
+            self.client.get(
+                reverse("admin:auth_user_delete", args=[gerente.pk])
+            ).status_code,
+            403,
         )
 
     def test_setup_dashboard_users_avisa_quando_faltam_variaveis(self):
@@ -367,8 +429,20 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, reverse("admin:feedback_funcionario_changelist"))
         self.assertContains(response, "Cadastrar funcionário")
         self.assertContains(response, reverse("admin:feedback_funcionario_add"))
+        self.assertContains(response, "Gerenciar usuários e alunos")
         self.assertContains(response, reverse("configuracao_sistema"))
         self.assertContains(response, reverse("divulgacao"))
+        self.assertContains(response, reverse("projeto_treino"))
+
+    def test_pagina_de_projeto_de_treino_tem_acoes_de_demonstracao(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("projeto_treino"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Treinos orientados por QR Code")
+        self.assertContains(response, reverse("qrcodes_treinos"))
+        self.assertContains(response, reverse("gestao_treinos"))
+        self.assertContains(response, "Etapas para iniciar o piloto")
 
     def test_diagnostico_mostra_status_das_migracoes(self):
         self.client.force_login(self.user)
@@ -644,6 +718,105 @@ class FeedbackViewsTests(TestCase):
                 )
                 self.assertEqual(response.status_code, 200)
                 self.assertIn(expected, response.json()["resposta"])
+                self.assertEqual(response.json()["modo"], "local")
+
+    @override_settings(GEMINI_API_KEY="")
+    def test_resumo_local_inclui_avaliacoes_e_todos_os_topicos_da_enquete(self):
+        self.client.force_login(self.user)
+        User.objects.create_user(username="aluno_resumo")
+        avaliacao = Avaliacao.objects.create(
+            categoria="limpeza",
+            categorias=["limpeza", "estrutura"],
+            nota=2,
+            tipo_feedback="reclamacao",
+            tipos_feedback=["reclamacao", "sugestao"],
+            comentario="O vestiário precisa de atenção.",
+        )
+        avaliacao.funcionarios.add(self.funcionario)
+        resposta = RespostaEnquete.objects.create(
+            participa_aulas="Sim",
+            aulas_favoritas=["Funcional"],
+            aula_melhoria=["Jump"],
+            aula_falta="Natação",
+            novo_espaco=["Yoga"],
+            sugestao_valor="Ampliar os horários",
+            elogio_colaborador="Mariana é muito atenciosa.",
+        )
+        resposta.funcionarios_elogiados.add(self.funcionario)
+
+        response = self.client.post(reverse("ia_analisar"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["modo"], "local")
+        resumo = response.json()["analise"]
+        for conteudo in (
+            "Limpeza",
+            "Estrutura",
+            "Mariana Instrutora",
+            "Funcional",
+            "Jump",
+            "Natação",
+            "Yoga",
+            "Ampliar os horários",
+            "1 aluno(s) cadastrado(s)",
+        ):
+            self.assertIn(conteudo, resumo)
+
+    @override_settings(GEMINI_API_KEY="test-key", GEMINI_MODEL="gemini-2.5-flash")
+    def test_ia_chat_envia_historico_e_contexto_completo_ao_gemini(self):
+        self.client.force_login(self.user)
+        RespostaEnquete.objects.create(aulas_favoritas=["Funcional"])
+        resposta_http = MagicMock()
+        resposta_http.read.return_value = json.dumps(
+            {"candidates": [{"content": {"parts": [{"text": "Entendi, vou detalhar."}]}}]}
+        ).encode("utf-8")
+        context_manager = MagicMock()
+        context_manager.__enter__.return_value = resposta_http
+
+        with patch("feedback.views.urllib.request.urlopen", return_value=context_manager) as urlopen:
+            response = self.client.post(
+                reverse("ia_chat"),
+                data=json.dumps(
+                    {
+                        "mensagem": "Pode explicar melhor?",
+                        "historico": [
+                            {"role": "user", "content": "Como foram as aulas?"},
+                            {"role": "assistant", "content": "Vou consultar a enquete."},
+                        ],
+                    }
+                ),
+                content_type="application/json",
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["modo"], "gemini")
+        self.assertEqual(response.json()["resposta"], "Entendi, vou detalhar.")
+        payload = json.loads(urlopen.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual(
+            [item["role"] for item in payload["contents"]],
+            ["user", "model", "user"],
+        )
+        self.assertIn("ENQUETE: 1 respostas", payload["systemInstruction"]["parts"][0]["text"])
+        self.assertIn(
+            "gemini-2.5-flash:generateContent",
+            urlopen.call_args.args[0].full_url,
+        )
+
+    @override_settings(GEMINI_API_KEY="")
+    def test_ia_chat_valida_entrada_e_limita_historico_enviado(self):
+        self.client.force_login(self.user)
+        resposta = self.client.post(
+            reverse("ia_chat"),
+            data=json.dumps(
+                {
+                    "mensagem": "  " + ("a" * 1001) + "  ",
+                    "historico": [],
+                }
+            ),
+            content_type="application/json",
+        )
+        self.assertEqual(resposta.status_code, 400)
+        self.assertIn("1.000", resposta.json()["erro"])
 
     def test_dashboard_atualizar_status(self):
         self.client.login(username="gerente_teste", password="senha_segura_123")

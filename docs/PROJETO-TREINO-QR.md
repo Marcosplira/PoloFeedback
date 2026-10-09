@@ -26,6 +26,7 @@
 - Cadastro e manutenção de aparelhos e exercícios pelo Django Admin, incluindo edição dos itens do plano dentro do próprio plano.
 - Contas privadas de gerente recebem permissões mínimas para cadastrar/editar aparelhos e exercícios; exclusão continua reservada a um administrador.
 - Página de QR Codes para impressão, acessível à equipe pelo Dashboard em **QR Treinos** ou diretamente em `/treinos/qrs/`.
+- Página de apresentação do projeto e roteiro para iniciar o piloto, acessível pelo Dashboard em **Projeto Academia** (`/dashboard/projeto-treino/`).
 - Rota do aparelho exige login; depois de autenticado, o aluno vê somente itens dos próprios planos ativos que correspondem àquele equipamento.
 - Instruções gerais do aparelho, observações de segurança, orientações por exercício e link de vídeo externo.
 - Contas sem permissão de gerência não acessam Dashboard, análise/chat de IA ou gerador de QR de avaliação.
