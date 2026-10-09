@@ -247,7 +247,7 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(inicio_response.status_code, 200)
         self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
         self.assertContains(inicio_response, reverse("avaliar"))
-        self.assertContains(inicio_response, 'from-lime-500/20')
+        self.assertContains(inicio_response, "from-lime-500/10")
         self.assertContains(inicio_response, "QR Code para avaliação Polo Fit")
         self.assertContains(inicio_response, "QR Code para pesquisa Polo Fit")
         self.assertTrue(inicio_response.context["avaliar_qr"])
@@ -265,6 +265,8 @@ class FeedbackViewsTests(TestCase):
             "https://drive.google.com/uc?export=download&amp;id=1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX",
         )
         self.assertContains(inicio_response, "academia2.png")
+        self.assertContains(inicio_response, "feedback/academia1.png")
+        self.assertContains(inicio_response, "class=\"fundo-academia min-h-screen bg-slate-950 text-white\"")
         self.assertContains(
             inicio_response,
             "class=\"mx-auto mb-3 aspect-[9/16] w-full max-w-xs rounded-2xl bg-black sm:aspect-video sm:max-w-none\"",

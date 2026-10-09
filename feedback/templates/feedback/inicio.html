@@ -8,8 +8,24 @@
     <title>Polo Fit | Início</title>
     <meta name="description" content="Conheça os canais digitais da Academia Polo Fit: avaliação, pesquisa de satisfação e contato.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fundo-academia {
+            background-image:
+                linear-gradient(rgba(2, 6, 23, 0.58), rgba(2, 6, 23, 0.72)),
+                url("{% static 'feedback/academia1.png' %}");
+            background-position: center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        @media (max-width: 640px) {
+            .fundo-academia {
+                background-attachment: scroll;
+            }
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-slate-950 text-white">
+<body class="fundo-academia min-h-screen bg-slate-950 text-white">
     <header class="sticky top-0 z-20 border-b border-lime-400/20 bg-slate-950/90 backdrop-blur">
         <nav class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
             <a href="{% url 'inicio' %}" class="flex min-h-11 items-center gap-2" aria-label="Polo Fit — início">
@@ -35,7 +51,7 @@
 
     <main>
         <section class="relative isolate overflow-hidden">
-            <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-500/20 via-slate-950 to-slate-950"></div>
+            <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-500/10 via-slate-950/25 to-slate-950/40"></div>
             <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:py-24 md:grid-cols-2 md:items-center">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-[0.22em] text-lime-300">Academia Polo Fit</p>
