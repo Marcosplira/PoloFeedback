@@ -475,48 +475,32 @@
 
             <!-- MENU DE NAVEGAÇÃO -->
             <nav class="flex items-center gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
-                <a href="{% url 'inicio' %}"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
+                <a href="{% url 'avaliar' %}"
+                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
                     🏠 Início
                 </a>
                 <a href="{% url 'dashboard' %}"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap bg-white/10 text-[#a3e635] font-bold px-3 py-2 rounded-lg text-xs border border-[#a3e635]/30">
+                    class="flex-shrink-0 flex items-center gap-1.5 bg-white/10 text-[#a3e635] font-bold px-3 py-1.5 rounded-lg text-xs border border-[#a3e635]/30">
                     📊 Dashboard
                 </a>
                 <a href="{% url 'dashboard' %}#tabela-avaliacoes"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
                     📋 Avaliações
                 </a>
                 <a href="{% url 'dashboard' %}#ranking"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
                     👥 Funcionários
                 </a>
                 <a href="#secao-enquete"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
                     📋 Enquete
                 </a>
                 <a href="{% url 'gerar_qrcode' %}" id="btn-qrcode"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
                     📱 QR Codes
                 </a>
-                <a href="{% url 'qrcodes_treinos' %}"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
-                    🏋️ QR Treinos
-                </a>
-                <a href="{% url 'projeto_treino' %}"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
-                    📘 Projeto Academia
-                </a>
-                <a href="{% url 'configuracao_sistema' %}"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
-                    🛠️ Diagnóstico
-                </a>
-                <a href="{% url 'divulgacao' %}"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
-                    📣 Divulgar
-                </a>
                 <a href="{% url 'admin:index' %}"
-                    class="flex-shrink-0 flex min-h-11 items-center gap-1.5 whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-2 rounded-lg text-xs transition">
+                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
                     ⚙️ Administração
                 </a>
             </nav>
@@ -533,60 +517,6 @@
 
     <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
 
-        <section aria-labelledby="atalhos-gestao" class="rounded-2xl border border-lime-300/20 bg-slate-900/80 p-5">
-            <div class="mb-4">
-                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-lime-300">Acesso rápido</p>
-                <h2 id="atalhos-gestao" class="mt-1 text-lg font-extrabold text-white">Organize a gestão da academia</h2>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                {% if perms.feedback.view_funcionario %}
-                <a href="{% url 'admin:feedback_funcionario_changelist' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
-                    👥 Gerenciar funcionários
-                </a>
-                {% endif %}
-                {% if perms.feedback.add_funcionario %}
-                <a href="{% url 'admin:feedback_funcionario_add' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg bg-lime-300 px-4 py-2 text-sm font-extrabold text-slate-950 transition hover:bg-lime-200">
-                    ➕ Cadastrar funcionário
-                </a>
-                {% endif %}
-                {% if perms.auth.view_user %}
-                <a href="{% url 'admin:auth_user_changelist' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
-                    👤 Gerenciar usuários e alunos
-                </a>
-                {% endif %}
-                {% if perms.feedback.view_equipamento %}
-                <a href="{% url 'admin:feedback_equipamento_changelist' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
-                    🏋️ Gerenciar aparelhos e treinos
-                </a>
-                {% endif %}
-                {% if perms.feedback.view_planotreino %}
-                <a href="{% url 'admin:feedback_planotreino_changelist' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
-                    📋 Planos de treino
-                </a>
-                <a href="{% url 'gestao_treinos' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-lime-300/40 bg-lime-300/10 px-4 py-2 text-sm font-bold text-lime-100 transition hover:bg-lime-300/20">
-                    💪 Painel de treinos dos alunos
-                </a>
-                {% endif %}
-                <a href="{% url 'configuracao_sistema' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-amber-300/30 px-4 py-2 text-sm font-bold text-amber-100 transition hover:bg-amber-300/10">
-                    🛠️ Diagnóstico do sistema
-                </a>
-                <a href="{% url 'divulgacao' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2 text-sm font-bold text-white transition hover:border-lime-300 hover:text-lime-200">
-                    📣 Compartilhar e divulgar
-                </a>
-                <a href="{% url 'projeto_treino' %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-lime-300/40 bg-lime-300/10 px-4 py-2 text-sm font-bold text-lime-100 transition hover:bg-lime-300/20">
-                    📘 Projeto da Academia PoloFit
-                </a>
-            </div>
-        </section>
 
         <!-- ===================================================== -->
         <!-- CARDS DE RESUMO -->
@@ -751,9 +681,9 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <span class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] {% if gemini_configured %}text-lime-300{% else %}text-amber-300{% endif %} font-semibold">
-                    <span class="w-2 h-2 {% if gemini_configured %}bg-lime-400 animate-pulse{% else %}bg-amber-400{% endif %} rounded-full"></span>
-                    {% if gemini_configured %}Chave configurada{% else %}Modo local{% endif %}
+                    <span class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-lime-300 font-semibold">
+                        <span class="w-2 h-2 bg-lime-400 rounded-full animate-pulse"></span>
+                        Online
                     </span>
 
                     <button type="button" id="limpar-chat" class="w-9 h-9 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-all duration-200" title="Limpar conversa">
@@ -786,7 +716,6 @@
                         <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais são as principais reclamações dos alunos?">⚠️ Principais reclamações</button>
                         <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais funcionários estão se destacando nas avaliações?">🏆 Funcionários destaque</button>
                         <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais melhorias deveriam ser priorizadas pela academia?">💡 Melhorias prioritárias</button>
-                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Faça um resumo geral de todos os dados do aplicativo: avaliações, tópicos, funcionários e enquete.">🧾 Resumo geral da academia</button>
                     </div>
                 </div>
             </div>
@@ -911,17 +840,18 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-xl">📋</span>
-                        <h3 class="font-extrabold text-gray-900 text-lg">Pesquisa de Satisfação — Aulas e Estrutura</h3>
+                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de Satisfação — Aulas Coletivas & Novos
+                            Espaços</h3>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Preferências dos alunos e oportunidades de melhoria para apoiar o planejamento da academia.
+                        Resultados da pesquisa oficial dos alunos sobre preferências de modalidades e expansões da
+                        academia.
                     </p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <span
                         class="inline-flex items-center gap-1.5 bg-lime-100 text-lime-900 text-xs font-bold px-3 py-1.5 rounded-xl border border-lime-300">
-                        ⚡ {{ total_enquetes }}
-                        {% if total_enquetes == 1 %}resposta coletada{% else %}respostas coletadas{% endif %}
+                        ⚡ {{ total_enquetes }} respostas coletadas
                     </span>
                     <a href="{% url 'gerar_qrcode' %}?localizacao=Enquete+de+Satisfa%C3%A7%C3%A3o"
                         class="text-xs font-bold text-black bg-[#a3e635] hover:bg-[#bef264] px-3 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1">
@@ -948,54 +878,20 @@
                 </div>
             </div>
             {% else %}
-            {% if principal_oportunidade or espaco_mais_desejado %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
-                {% if principal_oportunidade %}
-                <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Sinal de atenção</p>
-                    <p class="mt-1 text-sm font-bold text-slate-800">
-                        {{ principal_oportunidade.0 }}
-                        <span class="font-medium text-slate-600">
-                            — {{ principal_oportunidade.1 }}
-                            {% if principal_oportunidade.1 == 1 %}menção{% else %}menções{% endif %}
-                        </span>
-                    </p>
-                    <p class="mt-1 text-xs text-slate-600">
-                        Tema mais citado como oportunidade de melhoria. Avalie os comentários e a viabilidade antes de definir ações.
-                    </p>
-                </div>
-                {% endif %}
-                {% if espaco_mais_desejado %}
-                <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-blue-800">Interesse por novos espaços</p>
-                    <p class="mt-1 text-sm font-bold text-slate-800">
-                        {{ espaco_mais_desejado.0 }}
-                        <span class="font-medium text-slate-600">
-                            — {{ espaco_mais_desejado.1 }}
-                            {% if espaco_mais_desejado.1 == 1 %}resposta{% else %}respostas{% endif %}
-                        </span>
-                    </p>
-                    <p class="mt-1 text-xs text-slate-600">
-                        Use este indicador como subsídio para avaliar prioridades e investimentos, junto aos demais dados da academia.
-                    </p>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <!-- 1. AULAS FAVORITAS -->
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>🔥</span> Preferências de aulas coletivas
+                        <span>🔥</span> 1. Aulas Mais Populares / Favoritas
                     </h4>
                     <div class="space-y-2.5">
                         {% for aula, qtd in favoritas_ranking %}
                         <div>
                             <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
                                 <span>{{ aula }}</span>
-                                <span class="text-slate-500">{{ qtd }} {% if qtd == 1 %}voto{% else %}votos{% endif %}</span>
+                                <span class="text-slate-500">{{ qtd }} voto{{ qtd|pluralize:"s" }}</span>
                             </div>
                             <div class="w-full bg-slate-200 rounded-full h-2">
                                 <div class="bg-gradient-to-r from-[#a3e635] to-[#22c55e] h-2 rounded-full"
@@ -1012,14 +908,14 @@
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>🏗️</span> Espaços mais desejados
+                        <span>🏗️</span> 3. Novos Espaços Mais Desejados
                     </h4>
                     <div class="space-y-2.5">
                         {% for espaco, qtd in espacos_ranking %}
                         <div>
                             <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
                                 <span class="truncate max-w-[200px]">{{ espaco }}</span>
-                                <span class="text-slate-500">{{ qtd }} {% if qtd == 1 %}voto{% else %}votos{% endif %}</span>
+                                <span class="text-slate-500">{{ qtd }} voto{{ qtd|pluralize:"s" }}</span>
                             </div>
                             <div class="w-full bg-slate-200 rounded-full h-2">
                                 <div class="bg-gradient-to-r from-blue-400 to-indigo-500 h-2 rounded-full"
@@ -1036,7 +932,7 @@
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>👥</span> Participação nas aulas coletivas
+                        <span>👥</span> 2. Frequência em Aulas Coletivas
                     </h4>
                     <div class="space-y-2">
                         {% for item, qtd in participacao_ranking %}
@@ -1055,16 +951,15 @@
                 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                     <h4
                         class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>⚠️</span> Aulas com oportunidade de melhoria
+                        <span>⚠️</span> 4. Aulas que Precisam de Mais Atenção
                     </h4>
                     <div class="space-y-2">
                         {% for aula, qtd in melhorias_ranking %}
                         <div
                             class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
                             <span class="font-medium text-slate-700">{{ aula }}</span>
-                            <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
-                                {{ qtd }} {% if qtd == 1 %}voto{% else %}votos{% endif %}
-                            </span>
+                            <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{{ qtd }} voto{{
+                                qtd|pluralize:"s" }}</span>
                         </div>
                         {% empty %}
                         <p class="text-xs text-gray-400">Sem dados ainda.</p>
@@ -1078,24 +973,27 @@
             {% if ultimas_enquetes %}
             <div class="mt-6 pt-5 border-t border-slate-200">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
-                    💬 Sugestões, necessidades e reconhecimentos dos alunos
+                    💬 Últimas Contribuições dos Alunos (Perguntas 5 e 6):
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {% for resp in ultimas_enquetes %}
                     {% if resp.sugestao_valor or resp.elogio_colaborador or resp.aula_falta %}
                     <div class="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1.5 shadow-sm">
                         <div class="flex justify-between text-[11px] text-slate-400">
-                            <span>Contribuição do aluno</span>
-                            <span>{{ resp.data_criacao|date:"d/m/Y H:i" }}</span>
+                            <span>Resposta #{{ resp.id }}</span>
+                            <span>{{ resp.data_criacao|date:"d/m H:i" }}</span>
                         </div>
                         {% if resp.aula_falta %}
-                        <p><strong class="text-slate-700">Modalidade desejada:</strong> <span class="text-slate-600">{{ resp.aula_falta|linebreaksbr }}</span></p>
+                        <p><strong class="text-slate-700">Sente falta de:</strong> <span class="text-slate-600">{{
+                                resp.aula_falta }}</span></p>
                         {% endif %}
                         {% if resp.sugestao_valor %}
-                        <p><strong class="text-slate-700">Sugestão de melhoria:</strong> <span class="text-slate-600">{{ resp.sugestao_valor|linebreaksbr }}</span></p>
+                        <p><strong class="text-slate-700">Agregaria valor:</strong> <span class="text-slate-600">{{
+                                resp.sugestao_valor }}</span></p>
                         {% endif %}
                         {% if resp.elogio_colaborador %}
-                        <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg"><strong>💚 Reconhecimento à equipe:</strong> {{ resp.elogio_colaborador|linebreaksbr }}</p>
+                        <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg"><strong>💚 Elogio:</strong> {{
+                            resp.elogio_colaborador }}</p>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -1313,14 +1211,31 @@
 
                             <td>
 
-                                {% if a.funcionarios_avaliados %}
-                                <div class="flex flex-wrap gap-1.5">
-                                    {% for funcionario in a.funcionarios_avaliados %}
-                                    <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-700">
-                                        {{ funcionario.nome }}
+                                {% if a.funcionario %}
+
+                                <div class="flex items-center gap-2">
+
+                                    {% if a.funcionario.foto %}
+
+                                    <img src="{{ a.funcionario.foto.url }}" alt="{{ a.funcionario.nome }}"
+                                        class="w-7 h-7 rounded-full object-cover border border-gray-200">
+
+                                    {% else %}
+
+                                    <div
+                                        class="w-7 h-7 rounded-full bg-gradient-to-br from-gray-800 to-green-600 flex items-center justify-center text-white text-xs font-bold">
+                                        {{ a.funcionario.nome|slice:":1" }}
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <span class="font-medium">
+                                        {{ a.funcionario.nome }}
                                     </span>
-                                    {% endfor %}
+
                                 </div>
+
                                 {% else %}
 
                                 <span class="text-gray-400 italic">
@@ -1446,7 +1361,7 @@
                             "categoria": "{{ a.get_categoria_display|escapejs }}",
                             "nota": {{ a.nota }},
                             "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}👍 Elogio{% elif a.tipo_feedback == 'reclamacao' %}⚠️ Reclamação{% else %}💡 Sugestão{% endif %}",
-                            "funcionario": "{% for funcionario in a.funcionarios_avaliados %}{% if not forloop.first %}, {% endif %}{{ funcionario.nome|escapejs }}{% if funcionario.funcoes_display %} — {{ funcionario.funcoes_display|escapejs }}{% endif %}{% empty %}Não informado{% endfor %}",
+                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} — {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}Não informado{% endif %}",
                             "comentario": "{{ a.comentario|default:'Sem comentário'|escapejs }}",
                             "localizacao": "{{ a.localizacao|default:'Não informada'|escapejs }}",
                             "data_criacao": "{{ a.data_criacao|date:'d/m/Y H:i' }}",
@@ -1562,10 +1477,10 @@
                             </p>
 
 
-                            {% if item.funcoes %}
+                            {% if item.cargo %}
 
                             <p class="text-xs text-gray-400">
-                                {{ item.funcoes }}
+                                {{ item.cargo }}
                             </p>
 
                             {% endif %}
@@ -2407,11 +2322,6 @@
                     formatarTextoIA(
                         data.analise ||
                         "Sem resposta da IA."
-                    ) +
-                    (
-                        data.aviso
-                            ? `<p class="mt-3 text-sm text-amber-200">${escapeHTML(data.aviso)}</p>`
-                            : ""
                     );
 
 
@@ -2433,6 +2343,7 @@
 
 
 
+        <script>
 /* =========================================================
             ASSISTENTE IA — POLO FIT
             ========================================================= */
@@ -2444,7 +2355,6 @@
             const limparChat = document.getElementById("limpar-chat");
             const chatContador = document.getElementById("chat-contador");
             const chatSugestoes = document.getElementById("chat-sugestoes");
-            const historicoChat = [];
 
 
             /* =========================================================
@@ -2518,7 +2428,7 @@
            ADICIONAR RESPOSTA DA IA
            ========================================================= */
 
-        function adicionarMensagemIA(texto, aviso = "") {
+        function adicionarMensagemIA(texto) {
             const wrapper = document.createElement("div");
             wrapper.className = "flex items-start gap-3";
 
@@ -2532,7 +2442,6 @@
                     </div>
                     <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
                         ${formatarTextoIA(texto)}
-                        ${aviso ? `<p class="mt-3 border-t border-white/10 pt-2 text-xs text-amber-200">${escapeHTML(aviso)}</p>` : ""}
                     </div>
                 </div>
             `;
@@ -2606,12 +2515,11 @@
            ========================================================= */
 
         async function enviarPergunta(mensagem) {
-            if (!mensagem || !chatForm || chatInput.disabled) {
+            if (!mensagem || !chatForm) {
                 return;
             }
 
             adicionarMensagemUsuario(mensagem);
-            historicoChat.push({ role: "user", content: mensagem });
             chatInput.value = "";
             atualizarContador();
             autoResizeInput();
@@ -2627,10 +2535,7 @@
                         "Content-Type": "application/json",
                         "X-CSRFToken": getCookie("csrftoken")
                     },
-                    body: JSON.stringify({
-                        mensagem: mensagem,
-                        historico: historicoChat.slice(0, -1).slice(-8)
-                    })
+                    body: JSON.stringify({ mensagem: mensagem })
                 });
 
                 const data = await response.json();
@@ -2638,7 +2543,6 @@
                 if (pensando) pensando.remove();
 
                 if (!response.ok) {
-                    historicoChat.pop();
                     adicionarMensagemIA(
                         data.resposta ||
                         data.erro ||
@@ -2647,19 +2551,12 @@
                     return;
                 }
 
-                const resposta = data.resposta ||
-                    "Não consegui obter uma resposta relevante para essa pergunta. Tente formular de outra forma.";
                 adicionarMensagemIA(
-                    resposta,
-                    data.aviso || ""
+                    data.resposta ||
+                    "Não consegui obter uma resposta relevante para essa pergunta. Tente formular de outra forma."
                 );
-                historicoChat.push({ role: "assistant", content: resposta });
-                if (historicoChat.length > 8) {
-                    historicoChat.splice(0, historicoChat.length - 8);
-                }
 
             } catch (error) {
-                historicoChat.pop();
                 const pensando = document.getElementById("chat-pensando");
                 if (pensando) pensando.remove();
 
@@ -2784,10 +2681,6 @@
 
             </div>
         `;
-                historicoChat.length = 0;
-                if (chatSugestoes) {
-                    chatMessages.appendChild(chatSugestoes);
-                }
 
                 chatInput.focus();
 
@@ -2809,7 +2702,6 @@
         }
     </script>
 
-    {% include "feedback/rodape.html" %}
     {% include "feedback/pwa_install.html" %}
 </body>
 
