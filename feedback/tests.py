@@ -326,8 +326,12 @@ class FeedbackViewsTests(TestCase):
         self.assertFalse(gerente.is_superuser)
         self.assertTrue(gerente.has_perm("feedback.view_avaliacao"))
         self.assertTrue(gerente.has_perm("feedback.change_funcionario"))
+        self.assertTrue(gerente.has_perm("feedback.change_avaliacao"))
         self.assertTrue(gerente.has_perm("feedback.add_equipamento"))
         self.assertTrue(gerente.has_perm("feedback.change_exercicio"))
+        self.assertTrue(gerente.has_perm("feedback.view_planotreino"))
+        self.assertTrue(gerente.has_perm("feedback.add_planotreino"))
+        self.assertTrue(gerente.has_perm("feedback.change_planotreino"))
         self.assertTrue(gerente.has_perm("auth.view_user"))
         self.assertTrue(gerente.has_perm("auth.add_user"))
         self.assertTrue(gerente.has_perm("auth.change_user"))
@@ -354,9 +358,14 @@ class FeedbackViewsTests(TestCase):
             self.client.get(reverse("admin:feedback_exercicio_add")).status_code,
             200,
         )
+        self.assertEqual(
+            self.client.get(reverse("admin:feedback_planotreino_changelist")).status_code,
+            200,
+        )
         user_list_response = self.client.get(reverse("admin:auth_user_changelist"))
         self.assertEqual(user_list_response.status_code, 200)
         self.assertContains(user_list_response, "aluno_visivel")
+        self.assertContains(user_list_response, "Treino Ativo")
         usuarios_listados = [
             usuario.username
             for usuario in user_list_response.context["cl"].result_list

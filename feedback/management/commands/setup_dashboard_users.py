@@ -17,6 +17,7 @@ class Command(BaseCommand):
     )
     permission_codenames = (
         "view_avaliacao",
+        "change_avaliacao",
         "view_funcionario",
         "add_funcionario",
         "change_funcionario",
@@ -30,6 +31,14 @@ class Command(BaseCommand):
         "view_exercicio",
         "add_exercicio",
         "change_exercicio",
+        "view_planotreino",
+        "add_planotreino",
+        "change_planotreino",
+        "delete_planotreino",
+        "view_itemplanotreino",
+        "add_itemplanotreino",
+        "change_itemplanotreino",
+        "delete_itemplanotreino",
     )
     user_permission_codenames = ("view_user", "add_user", "change_user")
 

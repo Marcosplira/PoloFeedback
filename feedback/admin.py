@@ -28,6 +28,7 @@ class AlunoUserAdmin(UserAdmin):
         "first_name",
         "last_name",
         "email",
+        "tem_treino_ativo",
         "is_active",
         "date_joined",
     )
@@ -57,6 +58,10 @@ class AlunoUserAdmin(UserAdmin):
         ),
     )
     readonly_fields = ("last_login", "date_joined")
+
+    @admin.display(description="Treino Ativo", boolean=True)
+    def tem_treino_ativo(self, obj):
+        return obj.planos_treino.filter(ativo=True).exists()
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -226,3 +231,8 @@ class PlanoTreinoAdmin(admin.ModelAdmin):
     search_fields = ("nome", "aluno__username", "aluno__first_name", "aluno__last_name")
     readonly_fields = ("criado_em", "atualizado_em")
     inlines = (ItemPlanoTreinoInline,)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "aluno":
+            kwargs["queryset"] = User.objects.filter(is_staff=False).order_by("first_name", "username")
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
