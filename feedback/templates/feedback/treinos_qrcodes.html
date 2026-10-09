@@ -55,7 +55,11 @@
             <div class="no-print rounded-2xl border border-white/10 bg-white/5 p-6 sm:col-span-2 lg:col-span-3">
                 <h2 class="text-lg font-bold">Ainda não há aparelhos ativos.</h2>
                 <p class="mt-2 text-sm text-slate-300">Cadastre primeiro um equipamento na Administração e volte para gerar os códigos.</p>
+                {% if perms.feedback.add_equipamento %}
                 <a href="{% url 'admin:feedback_equipamento_add' %}" class="mt-4 inline-flex rounded-lg bg-lime-300 px-4 py-2 font-bold text-slate-950">Cadastrar aparelho</a>
+                {% else %}
+                <p class="mt-4 text-sm text-amber-200">Sua conta não tem permissão para cadastrar aparelhos. Peça ao administrador para atualizar o acesso da equipe.</p>
+                {% endif %}
             </div>
             {% endfor %}
         </section>

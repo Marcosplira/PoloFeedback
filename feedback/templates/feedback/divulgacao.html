@@ -35,7 +35,22 @@
         <section class="grid gap-5 md:grid-cols-2">
             <article class="rounded-2xl border border-white/10 bg-slate-900 p-6">
                 <h2 class="text-lg font-black">Texto sugerido para apresentar a outras academias</h2>
-                <p class="mt-3 rounded-xl bg-black/30 p-4 text-sm leading-relaxed text-slate-300">{{ mensagem_whatsapp }}</p>
+                <label for="mensagem-sugerida" class="mt-3 block text-sm text-slate-400">
+                    Você pode editar o texto antes de copiar ou compartilhar.
+                </label>
+                <textarea id="mensagem-sugerida" rows="5"
+                    class="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/30 p-4 text-sm leading-relaxed text-slate-200 focus:border-lime-300 focus:outline-none focus:ring-2 focus:ring-lime-300/30">{{ mensagem_whatsapp }}</textarea>
+                <div class="mt-3 flex flex-wrap gap-3">
+                    <button id="copiar-mensagem" type="button"
+                        class="inline-flex min-h-11 items-center rounded-lg border border-white/20 px-4 py-2 font-bold hover:border-lime-300">
+                        Copiar texto
+                    </button>
+                    <a id="compartilhar-mensagem" href="{{ link_whatsapp }}" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex min-h-11 items-center rounded-lg bg-lime-300 px-4 py-2 font-extrabold text-slate-950 hover:bg-lime-200">
+                        Compartilhar texto pelo WhatsApp
+                    </a>
+                </div>
+                <p id="mensagem-copiada" class="mt-2 min-h-5 text-sm text-lime-200" role="status" aria-live="polite"></p>
                 <p class="mt-3 text-xs leading-relaxed text-slate-400">Apresente apenas funções que já estejam ativas na hospedagem. Use dados fictícios em demonstrações e obtenha autorização antes de usar nome, marca, imagens ou dados reais da Polo Fit.</p>
             </article>
             <article class="rounded-2xl border border-white/10 bg-slate-900 p-6">
@@ -50,5 +65,29 @@
             </article>
         </section>
     </main>
+    <script>
+        const mensagemSugerida = document.getElementById("mensagem-sugerida");
+        const botaoCopiarMensagem = document.getElementById("copiar-mensagem");
+        const linkCompartilharMensagem = document.getElementById("compartilhar-mensagem");
+        const statusMensagem = document.getElementById("mensagem-copiada");
+
+        mensagemSugerida.addEventListener("input", function () {
+            linkCompartilharMensagem.href =
+                "https://wa.me/?text=" + encodeURIComponent(mensagemSugerida.value);
+            statusMensagem.textContent = "";
+        });
+
+        botaoCopiarMensagem.addEventListener("click", async function () {
+            try {
+                await navigator.clipboard.writeText(mensagemSugerida.value);
+                statusMensagem.textContent = "Texto copiado. Você já pode colar onde quiser.";
+            } catch (error) {
+                mensagemSugerida.focus();
+                mensagemSugerida.select();
+                statusMensagem.textContent =
+                    "Não foi possível copiar automaticamente. O texto está selecionado; copie usando o teclado.";
+            }
+        });
+    </script>
 </body>
 </html>

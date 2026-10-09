@@ -23,13 +23,14 @@
 ## MVP inicial já implementado
 
 - Modelos para equipamento com identificador QR aleatório, exercício, plano por aluno e itens com séries, repetições, descanso e carga informada pelo professor.
-- Cadastro e manutenção pelo Django Admin, incluindo edição dos itens do plano dentro do próprio plano.
+- Cadastro e manutenção de aparelhos e exercícios pelo Django Admin, incluindo edição dos itens do plano dentro do próprio plano.
+- Contas privadas de gerente recebem permissões mínimas para cadastrar/editar aparelhos e exercícios; exclusão continua reservada a um administrador.
 - Página de QR Codes para impressão, acessível à equipe pelo Dashboard em **QR Treinos** ou diretamente em `/treinos/qrs/`.
 - Rota do aparelho exige login; depois de autenticado, o aluno vê somente itens dos próprios planos ativos que correspondem àquele equipamento.
 - Instruções gerais do aparelho, observações de segurança, orientações por exercício e link de vídeo externo.
 - Contas sem permissão de gerência não acessam Dashboard, análise/chat de IA ou gerador de QR de avaliação.
 
-Para iniciar a demonstração local, aplique `python manage.py migrate`, crie um administrador com `python manage.py createsuperuser` e siga o roteiro **Cadastrar o MVP de treinos por QR Code** no README. As contas de aluno são criadas pela equipe; não há cadastro público de alunos. O domínio escolhido para produção é `https://app.polofitacademias.com.br`, mas ele ainda precisa ser conectado ao serviço de hospedagem e configurado no DNS. Gere os QRs somente depois de confirmar que o domínio abre com HTTPS, acessando a página `/treinos/qrs/` por esse endereço.
+Para iniciar a demonstração local, aplique `python manage.py migrate`, crie um administrador com `python manage.py createsuperuser` e siga o roteiro **Cadastrar o MVP de treinos por QR Code** no README. O aluno pode criar uma conta pela página `/cadastro/aluno/`; a equipe cria e revisa os planos. As contas privadas de gerente recebem permissões para cadastrar e editar aparelhos e exercícios, mas não para excluí-los pelo Admin. O domínio escolhido para produção é `https://app.polofitacademias.com.br`, mas ele ainda precisa ser conectado ao serviço de hospedagem e configurado no DNS. Gere os QRs somente depois de confirmar que o domínio abre com HTTPS, acessando a página `/treinos/qrs/` por esse endereço.
 
 ## 1. Problema a resolver
 

@@ -130,19 +130,19 @@ Para configurar as duas contas privadas do dashboard no Render, defina no painel
 - `DASHBOARD_OWNER_USERNAME` (usuário inicial sugerido: `marcos`)
 - `DASHBOARD_OWNER_PASSWORD` (outra senha privada e forte)
 
-O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard e à gestão de funcionários, sem torná-las superusuárias. O `startCommand` do Render executa as migrações e esse comando antes de iniciar o servidor. Se as variáveis ainda não estiverem preenchidas, o serviço continua no ar e registra um aviso; as contas só são criadas depois de configurar as senhas e reiniciar o serviço. Não há credenciais padrão no código nem na tela de login.
+O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard, à gestão de funcionários e ao cadastro/edição de aparelhos e exercícios, sem torná-las superusuárias nem permitir exclusões pelo Admin. O `startCommand` do Render executa as migrações e esse comando antes de iniciar o servidor. Se as variáveis ainda não estiverem preenchidas, o serviço continua no ar e registra um aviso; as contas só são criadas depois de configurar as senhas e reiniciar o serviço. Não há credenciais padrão no código nem na tela de login.
 
 ### 7. Cadastrar o MVP de treinos por QR Code
 
-No endereço `/admin/`, entre com o administrador e:
+No endereço `/admin/`, entre com uma conta da equipe autorizada (ou com o superusuário local) e:
 
-1. Cadastre os alunos como usuários comuns (sem marcar **Equipe** / `is_staff`).
+1. Oriente cada aluno a criar a própria conta em `/cadastro/aluno/`; ela será uma conta comum, sem acesso à equipe.
 2. Cadastre cada máquina em **Equipamentos de treino**, com instruções e avisos de segurança.
 3. Cadastre os exercícios em **Exercícios**, relacionando o equipamento e, se aprovado, um link para vídeo.
 4. Crie um **Plano de treino**, selecione o aluno e o professor responsável e inclua os exercícios, séries, repetições, descanso e carga orientada pelo professor.
 5. Um membro da equipe imprime os QR Codes em `/treinos/qrs/` ou pelo link **QR Treinos** no Dashboard.
 
-O QR Code identifica apenas o equipamento. O aluno entra com sua conta para ver os exercícios vinculados ao aparelho que pertencem aos próprios planos ativos. Para administrar os planos, o professor deve ter conta da equipe (`is_staff`) e as permissões de visualizar/adicionar/alterar Equipamento, Exercício, Plano de treino e Exercício do plano. A equipe pode imprimir os QR Codes dos aparelhos sem a permissão de visualizar avaliações. O gerente deve ter a permissão `feedback.view_avaliacao` (ou ser superusuário) para abrir Dashboard, IA e QR Codes de avaliação.
+O QR Code identifica apenas o equipamento. O aluno entra com sua conta para ver os exercícios vinculados ao aparelho que pertencem aos próprios planos ativos. Para usar as telas de gestão, o professor deve ter conta da equipe (`is_staff`). As contas privadas criadas por `setup_dashboard_users` também recebem permissões para visualizar, adicionar e alterar equipamentos e exercícios pelo Admin, sem permissão para excluí-los. A equipe pode imprimir os QR Codes dos aparelhos sem a permissão de visualizar avaliações. O gerente deve ter a permissão `feedback.view_avaliacao` (ou ser superusuário) para abrir Dashboard, IA e QR Codes de avaliação.
 
 O link do QR é montado usando o host acessado pelo membro da equipe. O domínio escolhido para a implantação é `https://app.polofitacademias.com.br`; ele já está incluído nos hosts e origens CSRF permitidos do Render. Para que funcione, configure esse domínio personalizado no serviço do Render e cadastre no provedor DNS os registros que o Render indicar. Depois do deploy, confirme que o domínio abre com HTTPS, cadastre os equipamentos e gere os códigos acessando `/treinos/qrs/` por esse domínio. Não imprima QRs gerados por `localhost` para uso pelos alunos. Vídeos externos precisam ser próprios ou licenciados. Carga, séries e repetições são configuradas pelo professor; o sistema não calcula nem prescreve treino.
 

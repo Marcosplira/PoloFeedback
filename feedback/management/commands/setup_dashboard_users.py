@@ -24,6 +24,12 @@ class Command(BaseCommand):
         "add_funcao",
         "change_funcao",
         "view_respostaenquete",
+        "view_equipamento",
+        "add_equipamento",
+        "change_equipamento",
+        "view_exercicio",
+        "add_exercicio",
+        "change_exercicio",
     )
 
     def _disable_legacy_accounts(self, keep_usernames=()):

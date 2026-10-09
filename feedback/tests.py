@@ -304,6 +304,9 @@ class FeedbackViewsTests(TestCase):
         self.assertFalse(gerente.is_superuser)
         self.assertTrue(gerente.has_perm("feedback.view_avaliacao"))
         self.assertTrue(gerente.has_perm("feedback.change_funcionario"))
+        self.assertTrue(gerente.has_perm("feedback.add_equipamento"))
+        self.assertTrue(gerente.has_perm("feedback.change_exercicio"))
+        self.assertFalse(gerente.has_perm("feedback.delete_equipamento"))
         self.assertTrue(gerente.check_password(variaveis["DASHBOARD_MANAGER_PASSWORD"]))
         self.assertTrue(
             self.client.login(
@@ -312,6 +315,14 @@ class FeedbackViewsTests(TestCase):
             )
         )
         self.assertEqual(self.client.get(reverse("dashboard")).status_code, 200)
+        self.assertEqual(
+            self.client.get(reverse("admin:feedback_equipamento_add")).status_code,
+            200,
+        )
+        self.assertEqual(
+            self.client.get(reverse("admin:feedback_exercicio_add")).status_code,
+            200,
+        )
 
     def test_setup_dashboard_users_avisa_quando_faltam_variaveis(self):
         conta_legada = User.objects.create_superuser(
@@ -377,6 +388,9 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Este endereço é local")
         self.assertContains(response, "Compartilhar pelo WhatsApp")
+        self.assertContains(response, 'id="mensagem-sugerida"')
+        self.assertContains(response, "Copiar texto")
+        self.assertContains(response, "encodeURIComponent(mensagemSugerida.value)")
 
     def test_middleware_mostra_tela_de_ajuda_em_erro_operacional_do_banco(self):
         def view_com_banco_indisponivel(request):
@@ -778,6 +792,11 @@ class FeedbackViewsTests(TestCase):
         qrcodes_response = self.client.get(reverse("qrcodes_treinos"))
         self.assertEqual(qrcodes_response.status_code, 200)
         self.assertNotContains(qrcodes_response, 'href="/dashboard/"')
+        self.assertContains(qrcodes_response, "Sua conta não tem permissão para cadastrar aparelhos")
+        self.assertNotContains(
+            qrcodes_response,
+            reverse("admin:feedback_equipamento_add"),
+        )
         self.assertEqual(self.client.get(reverse("dashboard")).status_code, 403)
 
     def test_usuario_aluno_nao_acessa_dashboard_gerencial(self):

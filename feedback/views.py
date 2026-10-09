@@ -11,7 +11,7 @@ from datetime import timedelta
 from functools import wraps
 from urllib.parse import quote
 
-from collections import Counter
+from collections import Counter, defaultdict
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models, transaction
@@ -590,32 +590,43 @@ def dashboard(request):
     # FUNCIONÁRIOS
     # ==========================================================
 
-    todos_funcionarios = (
-        Funcionario.objects.filter(ativo=True)
-        .prefetch_related("avaliacoes", "avaliacoes_multiplas", "funcoes")
-    )
+    todos_funcionarios = Funcionario.objects.filter(ativo=True).prefetch_related("funcoes")
 
     # ==========================================================
     # RANKING DE FUNCIONÁRIOS
     # ==========================================================
 
+    avaliacoes_por_funcionario = defaultdict(dict)
+    avaliacoes_ranking = (
+        Avaliacao.objects.only(
+            "id",
+            "nota",
+            "tipo_feedback",
+            "funcionario_id",
+        )
+        .prefetch_related("funcionarios")
+    )
+    for avaliacao in avaliacoes_ranking:
+        funcionarios_ids = {
+            funcionario.pk for funcionario in avaliacao.funcionarios.all()
+        }
+        if avaliacao.funcionario_id:
+            funcionarios_ids.add(avaliacao.funcionario_id)
+        for funcionario_id in funcionarios_ids:
+            avaliacoes_por_funcionario[funcionario_id][avaliacao.pk] = avaliacao
+
     ranking_funcionarios = []
 
     for func in todos_funcionarios:
-
-        avs = Avaliacao.objects.filter(
-            models.Q(funcionario=func) | models.Q(funcionarios=func)
-        ).distinct()
-
-        total = avs.count()
-
-        elogios = avs.filter(tipo_feedback="elogio").count()
-
-        reclamacoes = avs.filter(tipo_feedback="reclamacao").count()
-
-        sugestoes = avs.filter(tipo_feedback="sugestao").count()
-
-        media_func = avs.aggregate(m=models.Avg("nota"))["m"] or 0
+        avs = list(avaliacoes_por_funcionario.get(func.pk, {}).values())
+        total = len(avs)
+        elogios = sum(avaliacao.tipo_feedback == "elogio" for avaliacao in avs)
+        reclamacoes = sum(
+            avaliacao.tipo_feedback == "reclamacao" for avaliacao in avs
+        )
+        sugestoes = sum(avaliacao.tipo_feedback == "sugestao" for avaliacao in avs)
+        notas = [avaliacao.nota for avaliacao in avs if avaliacao.nota is not None]
+        media_func = sum(notas) / len(notas) if notas else 0
 
         foto_url = ""
 
@@ -667,18 +678,22 @@ def dashboard(request):
 
     locais_ranking = []
 
-    todas_avs = Avaliacao.objects.all()
+    estatisticas_locais = {
+        registro["localizacao"]: registro
+        for registro in Avaliacao.objects.values("localizacao").annotate(
+            total=models.Count("id"),
+            media=models.Avg("nota"),
+        )
+    }
 
     for nome_local, icone in LOCAIS_DEFINIDOS:
-
-        avs_local = todas_avs.filter(localizacao=nome_local)
-
-        total_local = avs_local.count()
+        estatisticas = estatisticas_locais.get(nome_local, {})
+        total_local = estatisticas.get("total", 0)
 
         if total_local == 0:
             continue
 
-        media_local = avs_local.aggregate(m=models.Avg("nota"))["m"] or 0
+        media_local = estatisticas.get("media") or 0
 
         locais_ranking.append(
             {
