@@ -139,6 +139,17 @@ class Command(BaseCommand):
             user.groups.clear()
             user.user_permissions.set(permissions)
 
+        admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
+        if admin_password:
+            admin_user = user_model.objects.filter(username="admin").first()
+            if admin_user is None:
+                admin_user = user_model(username="admin")
+            admin_user.set_password(admin_password)
+            admin_user.is_active = True
+            admin_user.is_staff = True
+            admin_user.is_superuser = True
+            admin_user.save()
+
         self.stdout.write(
             self.style.SUCCESS("As duas contas do dashboard foram configuradas.")
         )

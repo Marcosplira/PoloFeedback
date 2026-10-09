@@ -54,8 +54,11 @@ def staff_required(view_func=None, *, permission=None):
             if not request.user.is_authenticated:
                 return redirect_to_login(request.get_full_path())
             if not request.user.is_staff:
-                return HttpResponseForbidden(
-                    "Acesso permitido somente à equipe da academia."
+                return render(
+                    request,
+                    "feedback/acesso_negado_equipe.html",
+                    {"usuario": request.user},
+                    status=403,
                 )
             if (
                 permission
@@ -1573,3 +1576,10 @@ def ia_chat(request):
     return JsonResponse(
         {"resposta": resposta_local, "modo": "local", "aviso": aviso}
     )
+
+
+def logout_view(request):
+    from django.contrib.auth import logout
+    logout(request)
+    return redirect("login")
+

@@ -28,6 +28,7 @@ from feedback.views import (
     qrcodes_treinos,
     service_worker,
     treino_equipamento,
+    logout_view,
 )
 
 
@@ -74,7 +75,7 @@ urlpatterns = [
     ),
     path(
         "logout/",
-        auth_views.LogoutView.as_view(),
+        logout_view,
         name="logout",
     ),
     path("dashboard/", dashboard, name="dashboard"),

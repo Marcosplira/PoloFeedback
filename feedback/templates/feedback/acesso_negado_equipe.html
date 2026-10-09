@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>Acesso Restrito - Polo Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-slate-900 border border-white/10 rounded-3xl p-6 sm:p-8 text-center shadow-2xl space-y-6">
+        <div class="flex justify-center">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-16 w-auto object-contain">
+        </div>
+
+        <div class="space-y-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400/10 text-amber-300 border border-amber-400/20">
+                🔒 Acesso Restrito à Equipe
+            </span>
+            <h1 class="text-2xl font-black text-white">Área da Equipe da Academia</h1>
+            <p class="text-sm text-slate-300">
+                O Dashboard executivo e o painel administrativo são de uso restrito de professores, recepção e gerência da Polo Fit.
+            </p>
+        </div>
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-left space-y-1">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-bold">Conta conectada no momento:</p>
+            <p class="text-sm font-extrabold text-lime-300">
+                {{ usuario.get_full_name|default:usuario.username }}
+            </p>
+            <p class="text-xs text-slate-400">{{ usuario.email|default:"Conta de Aluno" }}</p>
+        </div>
+
+        <div class="space-y-3 pt-2">
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit"
+                    class="w-full min-h-12 flex items-center justify-center gap-2 rounded-xl bg-lime-300 hover:bg-lime-200 text-slate-950 font-extrabold text-sm transition shadow-lg shadow-lime-300/10">
+                    🚪 Sair e Entrar com Conta da Equipe
+                </button>
+            </form>
+
+            <a href="{% url 'meus_treinos' %}"
+                class="w-full min-h-11 flex items-center justify-center rounded-xl border border-white/20 hover:border-lime-300 hover:text-lime-200 text-white font-bold text-sm transition">
+                💪 Ir para Meus Treinos (Área do Aluno)
+            </a>
+
+            <a href="{% url 'inicio' %}"
+                class="w-full min-h-11 flex items-center justify-center rounded-xl text-slate-400 hover:text-white text-xs font-semibold transition">
+                ← Voltar à Página Inicial
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

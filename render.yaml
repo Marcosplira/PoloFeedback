@@ -17,11 +17,13 @@ services:
       - key: DASHBOARD_MANAGER_USERNAME
         value: gerente
       - key: DASHBOARD_MANAGER_PASSWORD
-        sync: false
+        value: "PoloFitGerente2026!"
       - key: DASHBOARD_OWNER_USERNAME
         value: marcos
       - key: DASHBOARD_OWNER_PASSWORD
-        sync: false
+        value: "PoloFitMarcos2026!"
+      - key: ADMIN_PASSWORD
+        value: "PoloFitAdmin2026!"
       - key: ALLOWED_HOSTS
         value: "polofeedback.onrender.com,app.polofitacademias.com.br,localhost,127.0.0.1"
       - key: CSRF_TRUSTED_ORIGINS
