@@ -265,7 +265,11 @@ class FeedbackViewsTests(TestCase):
             "https://drive.google.com/uc?export=download&amp;id=1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX",
         )
         self.assertContains(inicio_response, "academia2.png")
-        self.assertContains(inicio_response, "class=\"mb-3 aspect-video w-full rounded-2xl bg-black\"")
+        self.assertContains(
+            inicio_response,
+            "class=\"mx-auto mb-3 aspect-[9/16] w-full max-w-xs rounded-2xl bg-black sm:aspect-video sm:max-w-none\"",
+        )
+        self.assertContains(inicio_response, "formato vertical do vídeo")
         self.assertContains(inicio_response, "Baixar vídeo")
         self.assertContains(inicio_response, "Abrir no Google Drive")
         self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
