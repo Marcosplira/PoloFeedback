@@ -5,70 +5,310 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
-    <title>Gestão dos treinos | Polo Fit</title>
+    <title>Treinos por QR — Polo Fit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            color-scheme: light dark;
+            --verde: #a3e635;
+            --verde-soft: rgba(163,230,53,0.12);
+            --bg: #f8fafc;
+            --texto: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--texto);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            padding: 0.5rem 0.85rem;
+            border-radius: 0.5rem;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: #0f172a;
+            background: #f1f5f9;
+        }
+
+        .nav-link.active {
+            color: #0f172a;
+            background: #f1f5f9;
+            font-weight: 700;
+        }
+
+        /* Mockup Smartphone */
+        .phone-mockup {
+            width: 200px;
+            background: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 1.75rem;
+            padding: 1rem 0.85rem;
+            color: #ffffff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .phone-notch {
+            width: 50px;
+            height: 4px;
+            background: #334155;
+            border-radius: 999px;
+            margin: 0 auto 0.75rem;
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-slate-950 text-white">
-    <header class="border-b border-lime-400/20 bg-slate-900">
-        <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
-            <div class="flex items-center gap-3">
-                <img src="{% static 'feedback/LOGO.png' %}" alt="" class="h-10 w-auto">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-lime-300">Área da equipe</p>
-                    <h1 class="text-xl font-black">Gestão dos treinos</h1>
-                </div>
+<body>
+
+    <!-- TOPBAR GERENCIAL -->
+    <header class="topbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-2">
+                    <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-8 w-auto">
+                    <span class="font-black text-sm tracking-tight text-slate-900 hidden sm:inline">Polo Fit</span>
+                </a>
+                <nav class="flex items-center gap-1 overflow-x-auto py-1">
+                    <a href="{% url 'dashboard' %}" class="nav-link">Visão geral</a>
+                    <a href="{% url 'dashboard' %}#para-resolver" class="nav-link">Avaliações</a>
+                    <a href="{% url 'gerar_qrcode' %}" class="nav-link">QR Codes</a>
+                    <a href="{% url 'gestao_treinos' %}" class="nav-link active">Treinos</a>
+                    <a href="{% url 'divulgacao' %}" class="nav-link">Divulgar</a>
+                </nav>
             </div>
-            <div class="flex flex-wrap gap-2">
-                <a href="{% url 'qrcodes_treinos' %}" class="rounded-lg border border-white/20 px-4 py-2 text-sm font-bold hover:bg-white/10">
-                    QR Codes
-                </a>
-                <a href="{% url 'plano_treino_novo' %}" class="rounded-lg bg-lime-300 px-4 py-2 text-sm font-black text-slate-950 hover:bg-lime-200">
-                    Criar plano
-                </a>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1 text-xs font-semibold text-slate-700">
+                    <span class="w-6 h-6 rounded-full bg-slate-900 text-lime-400 flex items-center justify-center font-bold">
+                        {{ request.user.username|first|upper }}
+                    </span>
+                    <span class="hidden md:inline">{{ request.user.username }}</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="mx-auto max-w-5xl px-4 py-8">
-        <p class="mb-6 max-w-3xl text-sm leading-relaxed text-slate-300">
-            Selecione um aluno cadastrado, adicione exercícios e informe séries, repetições, descanso e carga orientada.
-            Apenas a equipe pode criar ou alterar os planos.
-        </p>
-        <section class="space-y-3">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+        <!-- CABEÇALHO DA PÁGINA -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900">Treinos por QR</h1>
+                    <span class="bg-lime-100 text-lime-800 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        Piloto
+                    </span>
+                </div>
+                <p class="text-slate-500 text-sm mt-1">
+                    O aluno escaneia o aparelho e vê o treino que o professor passou para ele.
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{% url 'qrcodes_treinos' %}"
+                   class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm">
+                    📱 Aparelhos e QR
+                </a>
+                <a href="{% url 'plano_treino_novo' %}"
+                   class="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm">
+                    ➕ Novo plano
+                </a>
+            </div>
+        </div>
+
+        <!-- HERO BANNER: COMO FUNCIONA (DO APARELHO PARA O CELULAR) -->
+        <section class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm mb-8">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400 block mb-2">
+                Como Funciona
+            </span>
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div class="flex-1 space-y-6">
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight">
+                        Do aparelho para o celular em 3 passos
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-lime-100 text-lime-800 font-black flex items-center justify-center text-sm mb-3">1</span>
+                            <h3 class="font-extrabold text-sm text-slate-900 mb-1">Escaneia</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Cada aparelho tem seu QR code. O aluno aponta a câmera e identifica o equipamento.
+                            </p>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-lime-100 text-lime-800 font-black flex items-center justify-center text-sm mb-3">2</span>
+                            <h3 class="font-extrabold text-sm text-slate-900 mb-1">Entra na conta</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Com login seguro, o aluno acessa instantaneamente seu plano personalizado.
+                            </p>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-lime-100 text-lime-800 font-black flex items-center justify-center text-sm mb-3">3</span>
+                            <h3 class="font-extrabold text-sm text-slate-900 mb-1">Segue o treino</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Séries, carga orientada, descanso, postura e orientações do professor.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOCKUP SMARTPHONE -->
+                <div class="phone-mockup hidden md:block">
+                    <div class="phone-notch"></div>
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Treino Polo Fit</div>
+                    <div class="font-black text-sm text-white leading-tight">LEG PRESS 45°</div>
+                    <div class="flex items-center gap-2 my-2">
+                        <span class="bg-white/10 text-lime-400 text-[11px] font-bold px-2 py-0.5 rounded">3 × 12</span>
+                        <span class="bg-white/10 text-slate-300 text-[11px] font-bold px-2 py-0.5 rounded">60s</span>
+                    </div>
+                    <p class="text-[10px] text-slate-300 leading-tight bg-white/5 p-2 rounded-lg border border-white/5 mb-3">
+                        <strong class="text-lime-300">Prof:</strong> Desça até 90° e mantenha a coluna apoiada.
+                    </p>
+                    <div class="w-full bg-lime-400 text-slate-950 font-black text-center text-[10px] py-1.5 rounded-lg">
+                        ✓ Série 1 feita
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 COLUNAS: CHECKLIST DO PILOTO & O QUE ISSO RESOLVE -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+            <!-- CHECKLIST DO PILOTO -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider">
+                        Checklist do piloto
+                    </h2>
+                    <span class="text-xs font-bold text-slate-400">1 de 4</span>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer">
+                        <input type="checkbox" checked class="mt-0.5 rounded text-lime-500 focus:ring-lime-400">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">Escolher área e aparelhos</div>
+                            <div class="text-[11px] text-slate-500">Definir os aparelhos da área piloto para fixar os QR codes.</div>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer">
+                        <input type="checkbox" class="mt-0.5 rounded text-lime-500 focus:ring-lime-400">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">Professores revisarem conteúdo</div>
+                            <div class="text-[11px] text-slate-500">Garantir que as orientações e cargas estejam claras.</div>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer">
+                        <input type="checkbox" class="mt-0.5 rounded text-lime-500 focus:ring-lime-400">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">Cadastrar alunos e testar</div>
+                            <div class="text-[11px] text-slate-500">Criar o plano de treino para os primeiros alunos voluntários.</div>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer">
+                        <input type="checkbox" class="mt-0.5 rounded text-lime-500 focus:ring-lime-400">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">Rodar o piloto e avaliar</div>
+                            <div class="text-[11px] text-slate-500">Coletar feedback prático e medir o ganho de autonomia.</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- O QUE ISSO RESOLVE -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h2 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider mb-4">
+                    O que isso resolve
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="text-xs font-bold text-slate-900 mb-0.5">Dúvida no aparelho</div>
+                        <div class="text-[11px] text-slate-500">Aluno regula e executa com segurança na hora.</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="text-xs font-bold text-slate-900 mb-0.5">Ficha de papel</div>
+                        <div class="text-[11px] text-slate-500">Treino no celular, sem perigo de perder a ficha.</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="text-xs font-bold text-slate-900 mb-0.5">Padrão de execução</div>
+                        <div class="text-[11px] text-slate-500">Instruções objetivas para postura correta.</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="text-xs font-bold text-slate-900 mb-0.5">Tempo do professor</div>
+                        <div class="text-[11px] text-slate-500">Professor foca em correção e motivação.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- LISTA DE PLANOS CADASTRADOS -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-black text-slate-900">Planos de treino cadastrados</h2>
+                <span class="text-xs font-bold text-slate-500">{{ planos|length }} planos</span>
+            </div>
+
             {% for plano in planos %}
-            <article class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+            <article class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow transition">
                 <div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <h2 class="text-lg font-bold">{{ plano.nome }}</h2>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-base font-extrabold text-slate-900">{{ plano.nome }}</h3>
                         {% if plano.ativo %}
-                        <span class="rounded-full bg-lime-300/15 px-2 py-1 text-xs font-bold text-lime-200">Ativo</span>
+                        <span class="rounded-full bg-lime-100 px-2 py-0.5 text-xs font-bold text-lime-800">Ativo</span>
                         {% else %}
-                        <span class="rounded-full bg-slate-700 px-2 py-1 text-xs font-bold text-slate-300">Inativo</span>
+                        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">Inativo</span>
                         {% endif %}
                     </div>
-                    <p class="mt-1 text-sm text-slate-300">
-                        Aluno: {{ plano.aluno.get_full_name|default:plano.aluno.username }}
+                    <p class="mt-1 text-xs text-slate-500">
+                        Aluno: <strong class="text-slate-800">{{ plano.aluno.get_full_name|default:plano.aluno.username }}</strong>
                         · {{ plano.quantidade_exercicios }} exercício(s)
                     </p>
                     {% if plano.professor %}
-                    <p class="mt-1 text-xs text-slate-500">Responsável: {{ plano.professor.get_full_name|default:plano.professor.username }}</p>
+                    <p class="mt-0.5 text-[11px] text-slate-400">
+                        Responsável: {{ plano.professor.get_full_name|default:plano.professor.username }}
+                    </p>
                     {% endif %}
                 </div>
                 <a href="{% url 'plano_treino_editar' plano.id %}"
-                    class="inline-flex min-h-11 items-center rounded-lg border border-lime-300 px-4 py-2 text-sm font-bold text-lime-200 hover:bg-lime-300/10">
+                   class="inline-flex items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 text-xs font-bold transition shadow-sm">
                     Editar plano
                 </a>
             </article>
             {% empty %}
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 class="text-lg font-bold">Nenhum plano cadastrado ainda.</h2>
-                <p class="mt-2 text-sm text-slate-300">Crie o primeiro plano para um aluno da Polo Fit.</p>
-                <a href="{% url 'plano_treino_novo' %}" class="mt-4 inline-flex rounded-lg bg-lime-300 px-4 py-2 font-bold text-slate-950 hover:bg-lime-200">
-                    Criar plano
+            <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
+                <span class="text-3xl block mb-2">📋</span>
+                <h3 class="text-base font-bold text-slate-800">Nenhum plano cadastrado ainda.</h3>
+                <p class="mt-1 text-xs text-slate-500">Crie o primeiro plano para os alunos da Polo Fit.</p>
+                <a href="{% url 'plano_treino_novo' %}"
+                   class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 text-xs font-bold transition">
+                    ➕ Criar primeiro plano
                 </a>
             </div>
             {% endfor %}
         </section>
+
     </main>
+
+    {% include "feedback/pwa_install.html" %}
 </body>
 </html>

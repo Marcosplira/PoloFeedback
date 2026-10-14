@@ -857,9 +857,11 @@ def gerar_qrcode(request):
 
     usar_ip = request.GET.get("usar_ip") == "1"
 
-    if request.GET.get("localizacao"):
+    localizacao = request.GET.get("localizacao", "Área de Musculação").strip()
+    if not localizacao:
+        localizacao = "Área de Musculação"
 
-        localizacao = request.GET.get("localizacao").strip()
+    if localizacao:
 
         if usar_ip and ip_local != "127.0.0.1":
 

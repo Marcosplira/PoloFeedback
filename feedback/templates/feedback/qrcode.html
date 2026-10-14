@@ -1,231 +1,389 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
-    <title>Gerar QR Code — Polo Fit</title>
+    <title>QR Codes — Polo Fit</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
+        *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            color-scheme: light dark;
+            --verde: #a3e635;
+            --verde-soft: rgba(163,230,53,0.12);
+            --verde-border: rgba(163,230,53,0.4);
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --texto: #0f172a;
         }
 
-        .header-gradient {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 60%, #0d2a00 100%);
-            border-bottom: 2px solid #33FF00;
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--texto);
+            min-height: 100vh;
+        }
+
+        /* Top Manager Navigation */
+        .topbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            padding: 0.5rem 0.85rem;
+            border-radius: 0.5rem;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: #0f172a;
+            background: #f1f5f9;
+        }
+
+        .nav-link.active {
+            color: #0f172a;
+            background: #f1f5f9;
+            font-weight: 700;
+        }
+
+        /* Location list items */
+        .local-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid transparent;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+            text-decoration: none;
+            transition: all 0.15s;
+            background: #f8fafc;
+        }
+
+        .local-item:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .local-item.active {
+            background: #f0fdf4;
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        /* Cartaz A4 Preview */
+        .cartaz-preview {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            padding: 2.25rem 2rem;
+            text-align: center;
+            max-width: 440px;
+            margin: 0 auto;
         }
 
         @media print {
-            .no-print {
-                display: none !important;
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .cartaz-preview {
+                box-shadow: none !important;
+                border: 2px solid #000 !important;
+                max-width: 100% !important;
+                padding: 3rem 2rem !important;
+                margin: 0 auto !important;
             }
-
-            .print-only {
-                display: block !important;
-            }
-
-            body {
-                background: white !important;
-            }
-
-            .cartaz-impressao {
-                border: 2px solid #111;
-                border-radius: 1.5rem;
-                padding: 2.5rem;
-                text-align: center;
-                max-width: 500px;
-                margin: 2rem auto;
-            }
-        }
-
-        .print-only {
-            display: none;
         }
     </style>
 </head>
+<body>
 
-<body class="bg-[#f0f2f5] min-h-screen">
-
-    <!-- CABEÇALHO -->
-    <header class="header-gradient shadow-xl sticky top-0 z-50 no-print">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
-                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-10 w-auto object-contain">
-                <span class="text-white font-bold text-lg hidden sm:inline">Polo Feedback</span>
-            </a>
-            <div class="flex items-center gap-3">
-                <a href="{% url 'dashboard' %}"
-                    class="flex items-center gap-1.5 border border-[#33FF00] text-[#33FF00] hover:bg-[#33FF00] hover:text-black font-semibold px-4 py-2 rounded-lg text-sm transition">
-                    ← Voltar ao Dashboard
+    <!-- TOPBAR GERENCIAL -->
+    <header class="topbar no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-2">
+                    <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-8 w-auto">
+                    <span class="font-black text-sm tracking-tight text-slate-900 hidden sm:inline">Polo Fit</span>
                 </a>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit"
-                        class="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2 rounded-lg text-sm transition">
-                        Sair
-                    </button>
-                </form>
+                <nav class="flex items-center gap-1 overflow-x-auto py-1">
+                    <a href="{% url 'dashboard' %}" class="nav-link">Visão geral</a>
+                    <a href="{% url 'dashboard' %}#para-resolver" class="nav-link">Avaliações</a>
+                    <a href="{% url 'gerar_qrcode' %}" class="nav-link active">QR Codes</a>
+                    <a href="{% url 'gestao_treinos' %}" class="nav-link">Treinos</a>
+                    <a href="{% url 'divulgacao' %}" class="nav-link">Divulgar</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1 text-xs font-semibold text-slate-700">
+                    <span class="w-6 h-6 rounded-full bg-slate-900 text-lime-400 flex items-center justify-center font-bold">
+                        {{ request.user.username|first|upper }}
+                    </span>
+                    <span class="hidden md:inline">{{ request.user.username }}</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-2xl mx-auto px-4 md:px-6 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
-        <!-- FORMULÁRIO DE GERAÇÃO -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 no-print">
-            <h2 class="text-2xl font-black text-gray-900 mb-1">Gerador de QR Code</h2>
-            <p class="text-gray-500 text-sm mb-6">
-                Clique em um local abaixo para gerar o QR Code instantaneamente, ou digite um nome personalizado.
-            </p>
-
-            <!-- ATALHOS RÁPIDOS DE LOCALIZAÇÃO -->
-            <div class="mb-6">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">⚡ Locais da academia — clique
-                    para gerar</p>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    <a href="?localizacao=Recep%C3%A7%C3%A3o{% if usando_ip %}&usar_ip=1{% endif %}"
-                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Recepção' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
-                        📍 Recepção
-                    </a>
-                    <a href="?localizacao=Academia+Principal{% if usando_ip %}&usar_ip=1{% endif %}"
-                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Academia Principal' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
-                        📍 Academia Principal
-                    </a>
-                    <a href="?localizacao=Vesti%C3%A1rios{% if usando_ip %}&usar_ip=1{% endif %}"
-                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Vestiários' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
-                        📍 Vestiários
-                    </a>
-                    <a href="?localizacao=Studio+de+Pilates{% if usando_ip %}&usar_ip=1{% endif %}"
-                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Studio de Pilates' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
-                        📍 Studio de Pilates
-                    </a>
-                    <a href="?localizacao=%C3%81rea+de+Muscula%C3%A7%C3%A3o{% if usando_ip %}&usar_ip=1{% endif %}"
-                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Área de Musculação' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
-                        📍 Área de Musculação
-                    </a>
-                    <a href="?localizacao=Treinamento+Funcional{% if usando_ip %}&usar_ip=1{% endif %}"
-                        class="text-center text-sm font-semibold px-3 py-2.5 rounded-xl border transition {% if localizacao == 'Treinamento Funcional' %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-gray-50 text-gray-700 border-gray-200 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
-                        📍 Treinamento Funcional
-                    </a>
-                    <a href="?localizacao=Enquete+de+Satisfa%C3%A7%C3%A3o{% if usando_ip %}&usar_ip=1{% endif %}"
-                        class="text-center text-sm font-bold px-3 py-2.5 rounded-xl border transition col-span-2 sm:col-span-3 {% if 'Enquete' in localizacao %}bg-[#0a0a0a] text-[#33FF00] border-[#33FF00]{% else %}bg-lime-50 text-emerald-900 border-lime-300 hover:border-[#33FF00] hover:bg-black hover:text-[#33FF00]{% endif %}">
-                        📋 Gerar QR Code da Enquete de Satisfação (Aulas & Novos Espaços)
-                    </a>
-                </div>
+        <!-- CABEÇALHO DA PÁGINA -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 no-print">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-900">QR Codes</h1>
+                <p class="text-slate-500 text-sm mt-1">
+                    Escolha um local, confira a prévia e imprima. Cada QR já abre a avaliação no local certo.
+                </p>
             </div>
-
-            <form method="get" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Ou digite um
-                        local personalizado</label>
-                    <input type="text" name="localizacao" value="{{ localizacao }}" id="input-localizacao"
-                        placeholder="Ex: Polo Fit Centro, Sala VIP, Espaço Kids..." required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition">
-                </div>
-
-                <!-- OPÇÃO DE IP LOCAL PARA TESTES EM CELULAR -->
-                {% if ip_local and ip_local != "127.0.0.1" %}
-                <div class="bg-green-50/70 border border-green-200 rounded-xl p-3.5 flex items-start gap-3">
-                    <input type="checkbox" id="usar_ip" name="usar_ip" value="1" {% if usando_ip %}checked{% endif %}
-                        class="mt-1 w-4 h-4 text-green-600 rounded focus:ring-green-500">
-                    <label for="usar_ip" class="text-xs text-green-900 cursor-pointer">
-                        <strong class="font-semibold">Gerar URL com IP de rede ({{ ip_local }})</strong><br>
-                        Marque esta opção para permitir que smartphones conectados ao mesmo Wi-Fi consigam escanear e
-                        abrir o formulário sem erro.
-                    </label>
-                </div>
-                {% endif %}
-
-                <button type="submit"
-                    class="w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-sm hover:shadow-md">
-                    ⚡ Gerar QR Code
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="window.print()"
+                    class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm">
+                    🖨️ Imprimir cartaz
                 </button>
-            </form>
-
-            {% if not qrcode_base64 %}
-            <div class="mt-8 bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-8 text-center">
-                <span class="text-4xl block mb-2">📱</span>
-                <p class="text-gray-800 font-semibold">O QR Code aparecerá aqui</p>
-                <p class="text-gray-400 text-xs mt-1">Preencha o campo acima e clique em Gerar.</p>
             </div>
-            {% endif %}
         </div>
 
-        <!-- RESULTADO DO QR CODE -->
-        {% if qrcode_base64 %}
-        <div class="cartaz-impressao bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
+        <!-- GRID PRINCIPAL (2 COLUNAS) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
 
-            <!-- CABEÇALHO DE IMPRESSÃO -->
-            <div class="print-only text-center mb-6">
-                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-16 mx-auto mb-3 object-contain">
-                <h2 class="text-3xl font-black text-gray-900 uppercase tracking-wide">Polo Fit</h2>
-                <p class="text-gray-600 font-medium mt-1">Unidade / Ponto: <span class="font-bold text-black">{{ localizacao }}</span></p>
-            </div>
+            <!-- COLUNA DA ESQUERDA: LISTA DE LOCAIS (5 colunas) -->
+            <div class="lg:col-span-5 space-y-6 no-print">
 
-            <div class="text-center">
-                <div class="no-print mb-4">
-                    <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
-                        QR Code Pronto
-                    </span>
-                    <h3 class="text-xl font-bold text-gray-900 mt-2">{{ localizacao }}</h3>
-                </div>
+                <!-- CARD: LOCAIS DA ACADEMIA -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                            Locais da Academia
+                        </span>
+                        <span class="text-xs font-bold text-slate-400">7 locais</span>
+                    </div>
 
-                <div class="flex justify-center mb-6">
-                    <div class="p-4 bg-white border-4 border-[#0a0a0a] rounded-3xl inline-block shadow-lg">
-                        <img src="data:image/png;base64,{{ qrcode_base64 }}" alt="QR Code para {{ localizacao }}"
-                            class="w-60 h-60">
+                    <div class="space-y-2">
+                        <a href="?localizacao=%C3%81rea+de+Muscula%C3%A7%C3%A3o"
+                           class="local-item {% if localizacao == 'Área de Musculação' %}active{% endif %}">
+                            <div class="flex items-center gap-3">
+                                <span>🏋️</span>
+                                <div>
+                                    <div>Área de Musculação</div>
+                                    <div class="text-[11px] font-normal text-slate-400">Avaliação deste espaço</div>
+                                </div>
+                            </div>
+                            {% if localizacao == 'Área de Musculação' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
+                        </a>
+
+                        <a href="?localizacao=Academia+Principal"
+                           class="local-item {% if localizacao == 'Academia Principal' %}active{% endif %}">
+                            <div class="flex items-center gap-3">
+                                <span>🏢</span>
+                                <div>
+                                    <div>Academia Principal</div>
+                                    <div class="text-[11px] font-normal text-slate-400">Visão geral do salão</div>
+                                </div>
+                            </div>
+                            {% if localizacao == 'Academia Principal' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
+                        </a>
+
+                        <a href="?localizacao=Treinamento+Funcional"
+                           class="local-item {% if localizacao == 'Treinamento Funcional' %}active{% endif %}">
+                            <div class="flex items-center gap-3">
+                                <span>⚡</span>
+                                <div>
+                                    <div>Treinamento Funcional</div>
+                                    <div class="text-[11px] font-normal text-slate-400">Espaço funcional</div>
+                                </div>
+                            </div>
+                            {% if localizacao == 'Treinamento Funcional' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
+                        </a>
+
+                        <a href="?localizacao=Studio+de+Pilates"
+                           class="local-item {% if localizacao == 'Studio de Pilates' %}active{% endif %}">
+                            <div class="flex items-center gap-3">
+                                <span>🧘</span>
+                                <div>
+                                    <div>Studio de Pilates</div>
+                                    <div class="text-[11px] font-normal text-slate-400">Aulas e aparelhos</div>
+                                </div>
+                            </div>
+                            {% if localizacao == 'Studio de Pilates' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
+                        </a>
+
+                        <a href="?localizacao=Vesti%C3%A1rios"
+                           class="local-item {% if localizacao == 'Vestiários' %}active{% endif %}">
+                            <div class="flex items-center gap-3">
+                                <span>🚿</span>
+                                <div>
+                                    <div>Vestiários</div>
+                                    <div class="text-[11px] font-normal text-slate-400">Higiene e estrutura</div>
+                                </div>
+                            </div>
+                            {% if localizacao == 'Vestiários' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
+                        </a>
+
+                        <a href="?localizacao=Recep%C3%A7%C3%A3o"
+                           class="local-item {% if localizacao == 'Recepção' %}active{% endif %}">
+                            <div class="flex items-center gap-3">
+                                <span>🛎️</span>
+                                <div>
+                                    <div>Recepção</div>
+                                    <div class="text-[11px] font-normal text-slate-400">Atendimento e entrada</div>
+                                </div>
+                            </div>
+                            {% if localizacao == 'Recepção' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
+                        </a>
+
+                        <a href="?localizacao=Enquete+de+aulas"
+                           class="local-item {% if 'Enquete' in localizacao %}active{% endif %}">
+                            <div class="flex items-center gap-3">
+                                <span>📋</span>
+                                <div>
+                                    <div>Enquete de aulas</div>
+                                    <div class="text-[11px] font-normal text-slate-400">Próximas aulas e espaços</div>
+                                </div>
+                            </div>
+                            {% if 'Enquete' in localizacao %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
+                        </a>
                     </div>
                 </div>
 
-                <div class="mt-2">
-                    <h4 class="text-xl font-extrabold text-gray-900">Escaneie com a câmera e avalie!</h4>
-                    <p class="text-gray-500 text-sm mt-1">Sua opinião é fundamental para evoluirmos juntos.</p>
+                <!-- CARD: OUTRO LOCAL -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
+                        Outro local
+                    </span>
+                    <p class="text-xs text-slate-500 mb-3">Para um espaço novo ou temporário:</p>
+                    <form method="get" class="flex gap-2">
+                        <input type="text" name="localizacao" placeholder="Ex: Sala de spinning..." required
+                               class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-lime-400">
+                        <button type="submit"
+                                class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-xl text-sm transition">
+                            Criar
+                        </button>
+                    </form>
                 </div>
 
-                <div class="mt-6 bg-gray-50 rounded-xl p-3.5 no-print text-left border border-gray-200">
-                    <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Destino do Link:
+            </div>
+
+            <!-- COLUNA DA DIREITA: PRÉVIA DO CARTAZ (7 colunas) -->
+            <div class="lg:col-span-7 flex flex-col items-center">
+
+                <div class="cartaz-preview w-full">
+                    <div class="flex items-center justify-center gap-2 mb-4">
+                        <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-10 w-auto">
+                        <span class="font-extrabold text-lg text-slate-900">Polo Fit</span>
+                    </div>
+
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">
+                        Como foi seu treino hoje?
+                    </h2>
+
+                    <div class="inline-block bg-slate-100 text-slate-800 text-xs font-bold px-3 py-1 rounded-full mb-6">
+                        {{ localizacao|default:"Área de Musculação" }}
+                    </div>
+
+                    <div class="flex justify-center mb-6">
+                        <div class="p-3 bg-white border-2 border-slate-900 rounded-2xl inline-block shadow-sm">
+                            {% if qrcode_base64 %}
+                            <img src="data:image/png;base64,{{ qrcode_base64 }}"
+                                 alt="QR Code para {{ localizacao }}"
+                                 id="qr-img"
+                                 class="w-56 h-56 object-contain">
+                            {% else %}
+                            <div class="w-56 h-56 flex items-center justify-center bg-slate-100 text-slate-400 font-semibold text-sm">
+                                Gerando QR Code...
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <p class="text-sm font-extrabold text-slate-900">
+                        Aponte a câmera do celular
                     </p>
-                    <p class="text-xs text-gray-700 font-mono break-all">{{ url_gerada }}</p>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Anônimo • Menos de 1 minuto • Sem baixar app
+                    </p>
+
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <p class="text-[11px] font-mono text-slate-400 break-all" id="qr-url-text">{{ url_gerada }}</p>
+                    </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-3 justify-center mt-6 no-print">
-                    <button onclick="window.print()"
-                        class="bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white font-bold px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow">
-                        🖨️ Imprimir Cartaz de Avaliação
+                <!-- BOTÕES DE AÇÃO ABAIXO DO CARTAZ -->
+                <div class="flex flex-wrap items-center justify-center gap-2.5 mt-5 no-print w-full max-w-[440px]">
+                    <button type="button" onclick="window.print()"
+                            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                        🖨️ Imprimir cartaz
                     </button>
-                    <a href="{% url 'gerar_qrcode' %}"
-                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-5 py-3 rounded-xl transition flex items-center justify-center">
-                        Gerar Outro
+                    <a id="btn-download-qr"
+                       href="data:image/png;base64,{{ qrcode_base64 }}"
+                       download="qrcode-{{ localizacao|slugify }}.png"
+                       class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                        💾 Salvar imagem
                     </a>
+                    <button type="button" onclick="copiarLink()"
+                            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                        <span id="label-copiar">🔗 Copiar link</span>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RODAPÉ EXPLICATIVO EM 3 PASSOS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8 border-t border-slate-200 no-print">
+            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
+                <span class="w-7 h-7 rounded-full bg-lime-100 text-lime-800 font-black flex items-center justify-center text-xs flex-shrink-0">1</span>
+                <div>
+                    <h3 class="font-bold text-xs text-slate-900">Imprima o cartaz de cada local em A4</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Impressão limpa e pronta para pendurar ou emoldurar.</p>
                 </div>
             </div>
-        </div>
-        {% endif %}
-
-        <!-- GUIA DE USO -->
-        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mt-6 no-print">
-            <h3 class="font-bold text-amber-900 flex items-center gap-2 mb-2">
-                💡 Como implantar na academia:
-            </h3>
-            <ol class="text-xs text-amber-800 space-y-2 list-decimal list-inside leading-relaxed">
-                <li>Defina o nome da unidade ou setor (ex: <strong>Recepção - Polo Centro</strong>).</li>
-                <li>Clique em <strong>Gerar QR Code</strong> e confira a pré-visualização.</li>
-                <li>Clique em <strong>Imprimir Cartaz</strong> para imprimir diretamente em folha A4.</li>
-                <li>Fixe os cartazes em pontos estratégicos (totens, balcão de entrada, saída de vestiários).</li>
-                <li>Os alunos escaneiam instantaneamente sem necessidade de baixar aplicativo!</li>
-            </ol>
+            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
+                <span class="w-7 h-7 rounded-full bg-lime-100 text-lime-800 font-black flex items-center justify-center text-xs flex-shrink-0">2</span>
+                <div>
+                    <h3 class="font-bold text-xs text-slate-900">Cole onde o aluno para</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Balcão da recepção, bebedouros e saída do vestiário.</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
+                <span class="w-7 h-7 rounded-full bg-lime-100 text-lime-800 font-black flex items-center justify-center text-xs flex-shrink-0">3</span>
+                <div>
+                    <h3 class="font-bold text-xs text-slate-900">Acompanhe as respostas por local</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Filtre por ambiente e saiba onde melhorar na Visão Geral.</p>
+                </div>
+            </div>
         </div>
 
     </main>
 
     {% include "feedback/pwa_install.html" %}
-</body>
 
+    <script>
+        function copiarLink() {
+            const urlText = document.getElementById('qr-url-text').innerText;
+            navigator.clipboard.writeText(urlText).then(() => {
+                const label = document.getElementById('label-copiar');
+                label.innerText = '✅ Copiado!';
+                setTimeout(() => { label.innerText = '🔗 Copiar link'; }, 2000);
+            });
+        }
+    </script>
+</body>
 </html>
