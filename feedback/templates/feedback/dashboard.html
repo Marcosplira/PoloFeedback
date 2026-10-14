@@ -1,2708 +1,1298 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% include "feedback/pwa_meta.html" %}
-
-    <meta name="description" content="Dashboard de avaliações Polo Fit — análise completa de feedbacks dos alunos.">
-
-    <title>Dashboard — Polo Fit</title>
-
-    <!-- Google Fonts -->
+    <title>Painel Gerencial — Polo Fit</title>
+    <meta name="description" content="Painel de gestão da Academia Polo Fit — avaliações, equipe e métricas.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --verde: #a3e635;
+            --verde-soft: rgba(163,230,53,0.12);
+            --verde-border: rgba(163,230,53,0.2);
+            --preto: #0a0a0a;
+            --bg: #0d0d0d;
+            --sidebar-w: 240px;
+            --topbar-h: 64px;
+            --card: #141414;
+            --card-border: rgba(255,255,255,0.07);
+            --texto: #f0f0f0;
+            --texto-suave: rgba(255,255,255,0.45);
+            --linha: rgba(255,255,255,0.06);
         }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            background: linear-gradient(180deg, #f4f7f3 0%, #edf3ef 100%);
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--texto);
+            min-height: 100vh;
         }
 
-        .header-gradient {
-            background: linear-gradient(135deg, #0a0a0a 0%, #121a11 42%, #0b2b00 100%);
-            border-bottom: 2px solid rgba(163, 230, 53, 0.85);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .executive-panel {
-            background: linear-gradient(135deg, rgba(10, 10, 10, 0.98) 0%, rgba(16, 25, 13, 0.95) 100%);
-            border: 1px solid rgba(163, 230, 53, 0.35);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-        }
-
-        .card-stat {
-            background: rgba(255, 255, 255, 0.92);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-            border: 1px solid rgba(15, 23, 42, 0.04);
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-stat::before {
-            content: "";
-            position: absolute;
-            inset: 0 auto auto 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #a3e635, #4ade80, #22c55e);
-        }
-
-        .card-stat:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
-        }
-
-        .tabela-container {
-            background: white;
-            border-radius: 1.25rem;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-            overflow: hidden;
-        }
-
-        thead tr {
-            background: #0a0a0a;
-            color: white;
-        }
-
-        thead th {
-            padding: 1rem 1.25rem;
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #f3f4f6;
-            transition: background 0.15s;
-        }
-
-        tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        tbody td {
-            padding: 0.85rem 1.25rem;
-            font-size: 0.875rem;
-            vertical-align: middle;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-pendente {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-analise {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .badge-resolvida {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-elogio {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-reclamacao {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-sugestao {
-            background: #ede9fe;
-            color: #5b21b6;
-        }
-
-        .btn-detalhes {
-            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-            color: #33FF00;
-            border: 1px solid #33FF00;
-            padding: 5px 14px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-detalhes:hover {
-            background: #33FF00;
-            color: #0a0a0a;
-        }
-
-        .modal-overlay {
+        /* ────────────────────────────────────
+           SIDEBAR
+        ──────────────────────────────────── */
+        .sidebar {
             position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
+            top: 0; left: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: #0a0a0a;
+            border-right: 1px solid var(--linha);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-logo {
+            padding: 1.25rem 1.25rem 1rem;
+            border-bottom: 1px solid var(--linha);
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-decoration: none;
+        }
+
+        .sidebar-logo img { height: 32px; width: auto; }
+
+        .sidebar-logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .sidebar-logo-text strong {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--texto);
+        }
+
+        .sidebar-logo-text span {
+            font-size: 0.65rem;
+            color: var(--verde);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0.75rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .nav-section-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 0.75rem 0.5rem 0.35rem;
+            margin-top: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.625rem;
+            text-decoration: none;
+            color: rgba(255,255,255,0.55);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--texto);
+        }
+
+        .nav-item.ativo {
+            background: var(--verde-soft);
+            color: var(--verde);
+            font-weight: 700;
+        }
+
+        .nav-item .nav-icon {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 0.875rem 0.75rem;
+            border-top: 1px solid var(--linha);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.5rem 0.625rem;
+            border-radius: 0.625rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--verde-soft);
+            border: 1.5px solid var(--verde-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+            color: var(--verde);
+            font-weight: 700;
         }
 
-        .modal-overlay.ativo {
-            opacity: 1;
-            pointer-events: all;
+        .user-info { flex: 1; min-width: 0; }
+
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--texto);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .modal-box {
-            background: white;
-            border-radius: 1.5rem;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-            transform: translateY(24px) scale(0.97);
-            transition: transform 0.25s;
+        .user-role {
+            font-size: 0.65rem;
+            color: var(--verde);
+            font-weight: 600;
         }
 
-        .modal-overlay.ativo .modal-box {
-            transform: translateY(0) scale(1);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-            color: white;
-            padding: 1.5rem 1.75rem;
-            border-radius: 1.5rem 1.5rem 0 0;
+        .btn-logout {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            width: 100%;
         }
 
-        .modal-body {
-            padding: 1.75rem;
+        .btn-logout:hover {
+            background: rgba(239,68,68,0.08);
+            color: #f87171;
         }
 
-        .modal-row {
+        /* ────────────────────────────────────
+           LAYOUT PRINCIPAL
+        ──────────────────────────────────── */
+        .layout {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
             display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f3f4f6;
+            flex-direction: column;
         }
 
-        .modal-row:last-child {
-            border-bottom: none;
+        /* ────────────────────────────────────
+           TOPBAR
+        ──────────────────────────────────── */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--topbar-h);
+            background: rgba(13,13,13,0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--linha);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.75rem;
+            gap: 1rem;
         }
 
-        .modal-icon {
-            font-size: 1.25rem;
-            min-width: 28px;
-            text-align: center;
-            margin-top: 2px;
+        .topbar-greeting {
+            display: flex;
+            flex-direction: column;
         }
 
-        .modal-label {
+        .topbar-greeting .hora {
+            font-size: 0.7rem;
+            color: var(--texto-suave);
+        }
+
+        .topbar-greeting .saudacao {
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+        }
+
+        /* Filtros topbar */
+        .filtros-form {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .select-filtro, .btn-filtro {
+            height: 34px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            color: rgba(255,255,255,0.75);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.775rem;
+            padding: 0 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .select-filtro:focus {
+            border-color: var(--verde-border);
+            color: var(--texto);
+        }
+
+        .btn-filtro {
+            background: var(--verde-soft);
+            border-color: var(--verde-border);
+            color: var(--verde);
+            font-weight: 600;
+        }
+
+        .btn-filtro:hover {
+            background: rgba(163,230,53,0.2);
+        }
+
+        /* ────────────────────────────────────
+           CONTENT
+        ──────────────────────────────────── */
+        .content {
+            flex: 1;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* ────────────────────────────────────
+           CARDS DE MÉTRICAS
+        ──────────────────────────────────── */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .metrics-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .metric-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 1.125rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .metric-card:hover { border-color: rgba(255,255,255,0.12); }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--verde), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .metric-card:first-child::before { opacity: 1; }
+
+        .metric-label {
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.07em;
-            color: #9ca3af;
-            margin-bottom: 2px;
+            letter-spacing: 0.1em;
+            color: var(--texto-suave);
+            margin-bottom: 0.625rem;
         }
 
-        .modal-value {
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            line-height: 1;
+            color: var(--texto);
+        }
+
+        .metric-value.verde { color: var(--verde); }
+        .metric-value.vermelho { color: #f87171; }
+        .metric-value.azul { color: #60a5fa; }
+
+        .metric-sub {
+            font-size: 0.75rem;
+            color: var(--texto-suave);
+            margin-top: 0.375rem;
+        }
+
+        .metric-icon {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            font-size: 1.5rem;
+            opacity: 0.4;
+        }
+
+        /* ────────────────────────────────────
+           GRID 2 COLUNAS
+        ──────────────────────────────────── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 1100px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        /* ────────────────────────────────────
+           SEÇÃO / CARD PAINEL
+        ──────────────────────────────────── */
+        .painel {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 1.125rem;
+            overflow: hidden;
+        }
+
+        .painel-header {
+            padding: 1.125rem 1.5rem;
+            border-bottom: 1px solid var(--linha);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .painel-titulo {
             font-size: 0.9rem;
-            color: #111827;
-            font-weight: 500;
+            font-weight: 800;
+            letter-spacing: -0.01em;
         }
 
-        .modal-close {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.1rem;
+        .painel-sub {
+            font-size: 0.7rem;
+            color: var(--texto-suave);
+            margin-top: 0.15rem;
+        }
+
+        .painel-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.625rem;
+            border-radius: 999px;
+        }
+
+        .badge-vermelho {
+            background: rgba(239,68,68,0.1);
+            color: #f87171;
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+
+        .badge-verde {
+            background: var(--verde-soft);
+            color: var(--verde);
+            border: 1px solid var(--verde-border);
+        }
+
+        .badge-azul {
+            background: rgba(96,165,250,0.1);
+            color: #93c5fd;
+            border: 1px solid rgba(96,165,250,0.2);
+        }
+
+        /* ────────────────────────────────────
+           LISTA DE AVALIAÇÕES
+        ──────────────────────────────────── */
+        .av-lista {
+            display: flex;
+            flex-direction: column;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        .av-lista::-webkit-scrollbar { width: 4px; }
+        .av-lista::-webkit-scrollbar-track { background: transparent; }
+        .av-lista::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; }
+
+        .av-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--linha);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 0.875rem;
+            align-items: start;
+            transition: background 0.15s;
+        }
+
+        .av-item:hover { background: rgba(255,255,255,0.02); }
+        .av-item:last-child { border-bottom: none; }
+
+        .av-nota {
+            width: 36px; height: 36px;
+            border-radius: 0.625rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .ia-card {
-            background: linear-gradient(135deg, #0a0a0a 0%, #0d1f00 100%);
-            border: 1px solid #33FF00;
-            border-radius: 1.25rem;
-            color: white;
-        }
-
-        .ia-resultado {
-            background: rgba(51, 255, 0, 0.08);
-            border: 1px solid rgba(51, 255, 0, 0.3);
-            border-radius: 0.75rem;
-            padding: 1rem 1.25rem;
-            margin-top: 1rem;
             font-size: 0.9rem;
-            line-height: 1.7;
-            color: #e5e7eb;
-            min-height: 80px;
-            white-space: pre-wrap;
+            font-weight: 900;
+            flex-shrink: 0;
         }
 
-        .ia-loading {
-            display: inline-flex;
-            gap: 4px;
-            align-items: center;
+        .nota-5 { background: rgba(74,222,128,0.12); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+        .nota-4 { background: var(--verde-soft); color: var(--verde); border: 1px solid var(--verde-border); }
+        .nota-3 { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+        .nota-2 { background: rgba(251,146,60,0.12); color: #fb923c; border: 1px solid rgba(251,146,60,0.2); }
+        .nota-1 { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+
+        .av-corpo { min-width: 0; }
+
+        .av-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-bottom: 0.375rem;
         }
 
-        .ia-loading span {
-            width: 7px;
-            height: 7px;
-            background: #33FF00;
-            border-radius: 50%;
-            animation: bounce 0.9s infinite;
+        .mini-tag {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid;
         }
 
-        .ia-loading span:nth-child(2) {
-            animation-delay: 0.15s;
+        .tag-elogio { color: #4ade80; border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.08); }
+        .tag-reclamacao { color: #f87171; border-color: rgba(248,113,113,0.25); background: rgba(248,113,113,0.08); }
+        .tag-sugestao { color: #60a5fa; border-color: rgba(96,165,250,0.25); background: rgba(96,165,250,0.08); }
+        .tag-pendente { color: #fbbf24; border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.08); }
+        .tag-em_analise { color: #818cf8; border-color: rgba(129,140,248,0.25); background: rgba(129,140,248,0.08); }
+        .tag-resolvida { color: #4ade80; border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.08); }
+
+        .av-comentario {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
 
-        .ia-loading span:nth-child(3) {
-            animation-delay: 0.3s;
+        .av-info {
+            font-size: 0.7rem;
+            color: var(--texto-suave);
+            margin-top: 0.25rem;
         }
 
-        .chat-shell {
-            background: linear-gradient(180deg, rgba(11, 19, 27, 0.98) 0%, rgba(15, 27, 36, 0.98) 100%);
-            border: 1px solid rgba(163, 230, 53, 0.18);
-            box-shadow: 0 22px 55px rgba(2, 6, 23, 0.28);
-        }
+        .av-acoes { flex-shrink: 0; }
 
-        .chat-message-wrap {
-            scroll-behavior: smooth;
-        }
-
-        .chat-bubble-ai {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.98));
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-        }
-
-        .chat-bubble-user {
-            background: linear-gradient(135deg, #a3e635 0%, #7ae582 100%);
-            color: #0f172a;
-            box-shadow: 0 12px 24px rgba(163, 230, 53, 0.18);
-        }
-
-        .chat-empty-state {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.15);
-        }
-
-        .chat-suggestion {
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            background: rgba(15, 23, 42, 0.78);
-            color: rgba(226, 232, 240, 0.88);
-            transition: all 0.2s ease;
-        }
-
-        .chat-suggestion:hover {
-            border-color: rgba(163, 230, 53, 0.55);
-            background: rgba(15, 23, 42, 0.96);
-            transform: translateY(-1px);
-        }
-
-        .chat-send-btn {
-            background: linear-gradient(135deg, #a3e635 0%, #7ae582 100%);
-            color: #0f172a;
-            box-shadow: 0 10px 22px rgba(163, 230, 53, 0.25);
-        }
-
-        .chat-send-btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(163, 230, 53, 0.32);
-        }
-
-        .chat-send-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .chat-input {
-            background: rgba(15, 23, 42, 0.82);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-        }
-
-        .chat-input:focus {
-            border-color: rgba(163, 230, 53, 0.65);
-            box-shadow: 0 0 0 4px rgba(163, 230, 53, 0.12);
-        }
-
-        @keyframes bounce {
-
-            0%,
-            80%,
-            100% {
-                transform: translateY(0)
-            }
-
-            40% {
-                transform: translateY(-8px)
-            }
-        }
-
-        .card-ranking {
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            border: 1px solid #edf2f7;
-            border-radius: 1.2rem;
-            padding: 1.25rem;
-            transition: all 0.2s;
-            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
-        }
-
-        .card-ranking:hover {
-            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .ranking-1 {
-            border-top: 3px solid #f59e0b;
-        }
-
-        .ranking-2 {
-            border-top: 3px solid #9ca3af;
-        }
-
-        .ranking-3 {
-            border-top: 3px solid #b45309;
-        }
-
-        select {
-            border: 1.5px solid #e5e7eb;
-            border-radius: 0.6rem;
-            padding: 0.65rem 1rem;
-            font-size: 0.875rem;
-            background: white;
-            transition: border-color 0.2s;
-            width: 100%;
-        }
-
-        select:focus {
+        .select-status {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.5rem;
+            color: rgba(255,255,255,0.6);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            padding: 0.35rem 0.625rem;
+            cursor: pointer;
             outline: none;
-            border-color: #33FF00;
-            box-shadow: 0 0 0 3px rgba(51, 255, 0, 0.15);
+            transition: border-color 0.2s;
         }
 
-        .star-on {
-            color: #f59e0b;
+        .select-status:focus { border-color: var(--verde-border); }
+
+        /* ────────────────────────────────────
+           RANKING FUNCIONÁRIOS
+        ──────────────────────────────────── */
+        .func-lista { display: flex; flex-direction: column; }
+
+        .func-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            border-bottom: 1px solid var(--linha);
+            transition: background 0.15s;
         }
 
-        .star-off {
-            color: #d1d5db;
+        .func-item:hover { background: rgba(255,255,255,0.02); }
+        .func-item:last-child { border-bottom: none; }
+
+        .func-rank {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--texto-suave);
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
         }
+
+        .func-rank-1 { color: #fbbf24; }
+        .func-rank-2 { color: rgba(255,255,255,0.5); }
+        .func-rank-3 { color: #b45309; }
+
+        .func-foto-dash {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--verde-soft);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .func-info-dash { flex: 1; min-width: 0; }
+
+        .func-nome-dash {
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .func-cargo-dash {
+            font-size: 0.7rem;
+            color: var(--texto-suave);
+        }
+
+        .func-stats {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .func-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.1rem;
+        }
+
+        .func-stat-val {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--verde);
+        }
+
+        .func-stat-label {
+            font-size: 0.62rem;
+            color: var(--texto-suave);
+        }
+
+        /* ────────────────────────────────────
+           GRÁFICO DE BARRAS (CSS)
+        ──────────────────────────────────── */
+        .bar-chart { padding: 1.25rem 1.5rem; }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            margin-bottom: 0.875rem;
+        }
+
+        .bar-item:last-child { margin-bottom: 0; }
+
+        .bar-label {
+            font-size: 0.775rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--verde), rgba(163,230,53,0.5));
+            transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        .bar-count {
+            font-size: 0.775rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            width: 28px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* ────────────────────────────────────
+           NOTAS DISTRIBUIÇÃO
+        ──────────────────────────────────── */
+        .notas-dist {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        .nota-dist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nota-dist-label {
+            font-size: 0.775rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            width: 30px;
+            flex-shrink: 0;
+        }
+
+        .nota-dist-bar-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .nota-dist-fill {
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        .nota-dist-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--texto-suave);
+            width: 22px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* ────────────────────────────────────
+           LOCAIS
+        ──────────────────────────────────── */
+        .locais-lista { padding: 0.5rem 0; }
+
+        .local-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 1.5rem;
+            border-bottom: 1px solid var(--linha);
+            transition: background 0.15s;
+        }
+
+        .local-item:last-child { border-bottom: none; }
+        .local-item:hover { background: rgba(255,255,255,0.02); }
+
+        .local-icone {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .local-nome {
+            flex: 1;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .local-stat {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--verde);
+        }
+
+        .local-total {
+            font-size: 0.72rem;
+            color: var(--texto-suave);
+            margin-left: 0.5rem;
+        }
+
+        /* ────────────────────────────────────
+           EMPTY STATE
+        ──────────────────────────────────── */
+        .empty {
+            padding: 3rem 1.5rem;
+            text-align: center;
+            color: var(--texto-suave);
+        }
+
+        .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .empty-text { font-size: 0.875rem; }
+
+        /* ────────────────────────────────────
+           AÇÕES RÁPIDAS
+        ──────────────────────────────────── */
+        .acoes-rapidas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .acao-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 0.875rem;
+            text-decoration: none;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.775rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .acao-card:hover {
+            border-color: var(--verde-border);
+            background: var(--verde-soft);
+            color: var(--verde);
+        }
+
+        .acao-icon { font-size: 1.5rem; }
+
+        /* ────────────────────────────────────
+           MOBILE TOGGLE SIDEBAR
+        ──────────────────────────────────── */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem; left: 1rem;
+            z-index: 300;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 0.625rem;
+            width: 40px; height: 40px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--texto);
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.aberta { transform: translateX(0); }
+            .layout { margin-left: 0; }
+            .sidebar-toggle { display: flex; }
+        }
+
+        @media (max-width: 640px) {
+            .content { padding: 1rem; }
+            .topbar { padding: 0 1rem; }
+        }
+
+        /* ────────────────────────────────────
+           SCROLL SUAVE
+        ──────────────────────────────────── */
+        section { scroll-margin-top: calc(var(--topbar-h) + 1rem); }
     </style>
 </head>
+<body>
 
+    <!-- SIDEBAR TOGGLE MOBILE -->
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menu" onclick="toggleSidebar()">☰</button>
 
-<body class="min-h-screen">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar" aria-label="Menu lateral">
+        <a href="{% url 'inicio' %}" class="sidebar-logo" aria-label="Polo Fit — início">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Logo Polo Fit">
+            <div class="sidebar-logo-text">
+                <strong>Polo Fit</strong>
+                <span>Painel Gerencial</span>
+            </div>
+        </a>
 
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Principal</div>
 
-    <!-- ========================================================= -->
-    <!-- CABEÇALHO -->
-    <!-- ========================================================= -->
+            <a href="{% url 'dashboard' %}" class="nav-item ativo" id="nav-dashboard">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </a>
 
-    <header class="header-gradient shadow-xl sticky top-0 z-50">
+            <a href="{% url 'divulgacao' %}" class="nav-item" id="nav-divulgacao">
+                <span class="nav-icon">📣</span>
+                Divulgar
+            </a>
 
-        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3">
+            <a href="{% url 'gerar_qrcode' %}" class="nav-item" id="nav-qrcode">
+                <span class="nav-icon">📱</span>
+                QR Codes
+            </a>
 
-            <!-- LINHA PRINCIPAL -->
-            <div class="flex justify-between items-center mb-2">
-                <div class="flex items-center gap-3">
-                    <a href="{% url 'dashboard' %}" class="flex items-center">
-                        <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-10 w-auto object-contain">
-                    </a>
-                    <div class="hidden md:block">
-                        <p class="text-[9px] uppercase tracking-[0.22em] text-lime-300/80">Painel executivo</p>
-                        <p class="text-sm font-bold text-white">Polo Feedback</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-gray-400 text-xs hidden md:block">👤 {{ request.user.username }}</span>
-                    <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" id="btn-sair"
-                            class="bg-white/10 hover:bg-white/20 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-all">
-                            Sair
-                        </button>
-                    </form>
+            <div class="nav-section-label">Equipe</div>
+
+            <a href="{% url 'gestao_treinos' %}" class="nav-item" id="nav-treinos">
+                <span class="nav-icon">🏋️</span>
+                Treinos
+            </a>
+
+            <a href="{% url 'qrcodes_treinos' %}" class="nav-item" id="nav-qr-treinos">
+                <span class="nav-icon">📌</span>
+                QR dos treinos
+            </a>
+
+            <div class="nav-section-label">Sistema</div>
+
+            <a href="{% url 'configuracao_sistema' %}" class="nav-item" id="nav-config">
+                <span class="nav-icon">⚙️</span>
+                Configurações
+            </a>
+
+            <a href="{% url 'inicio' %}" class="nav-item" id="nav-site">
+                <span class="nav-icon">🌐</span>
+                Ver site
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-avatar">{{ request.user.first_name|first|upper|default:"U" }}</div>
+                <div class="user-info">
+                    <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+                    <div class="user-role">{% if request.user.is_superuser %}Super Admin{% else %}Gerente{% endif %}</div>
                 </div>
             </div>
-
-            <!-- MENU DE NAVEGAÇÃO -->
-            <nav class="flex items-center gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
-                <a href="{% url 'avaliar' %}"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    🏠 Início
-                </a>
-                <a href="{% url 'dashboard' %}"
-                    class="flex-shrink-0 flex items-center gap-1.5 bg-white/10 text-[#a3e635] font-bold px-3 py-1.5 rounded-lg text-xs border border-[#a3e635]/30">
-                    📊 Dashboard
-                </a>
-                <a href="{% url 'dashboard' %}#tabela-avaliacoes"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    📋 Avaliações
-                </a>
-                <a href="{% url 'dashboard' %}#ranking"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    👥 Funcionários
-                </a>
-                <a href="#secao-enquete"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    📋 Enquete
-                </a>
-                <a href="{% url 'gerar_qrcode' %}" id="btn-qrcode"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    📱 QR Codes
-                </a>
-                <a href="{% url 'admin:index' %}"
-                    class="flex-shrink-0 flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg text-xs transition">
-                    ⚙️ Administração
-                </a>
-            </nav>
-
+            <a href="{% url 'logout' %}" class="btn-logout">
+                <span>→</span> Sair da conta
+            </a>
         </div>
+    </aside>
 
-    </header>
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="layout">
 
-
-
-    <!-- ========================================================= -->
-    <!-- CONTEÚDO -->
-    <!-- ========================================================= -->
-
-    <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
-
-
-        <!-- ===================================================== -->
-        <!-- CARDS DE RESUMO -->
-        <!-- ===================================================== -->
-
-        <section class="executive-panel rounded-3xl p-6 md:p-8">
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
-                <div>
-                    <p class="text-xs uppercase tracking-[0.22em] text-lime-300/80 mb-2">Resumo operacional</p>
-                    <h1 class="text-2xl md:text-3xl font-black text-white">Dashboard de desempenho</h1>
-                </div>
-                <div
-                    class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-2 text-sm text-gray-200">
-                    <span class="w-2.5 h-2.5 rounded-full bg-lime-400"></span>
-                    Sistema ativo e atualizado
-                </div>
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-greeting">
+                <span class="hora" id="hora-atual">Carregando...</span>
+                <span class="saudacao">Bom dia, {{ request.user.first_name|default:request.user.username }} 👋</span>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-
-                <!-- TOTAL -->
-
-                <div class="card-stat">
-
-                    <div class="flex items-center gap-3 mb-3">
-
-                        <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-xl">
-                            📋
-                        </div>
-
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Total
-                        </p>
-
-                    </div>
-
-                    <p class="text-4xl font-extrabold text-gray-900">
-                        {{ total_avaliacoes }}
-                    </p>
-
-                    <p class="text-xs text-gray-400 mt-1">
-                        avaliações registradas
-                    </p>
-
-                </div>
-
-
-
-                <!-- MÉDIA -->
-
-                <div class="card-stat">
-
-                    <div class="flex items-center gap-3 mb-3">
-
-                        <div class="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
-                            ⭐
-                        </div>
-
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Média
-                        </p>
-
-                    </div>
-
-                    <p class="text-4xl font-extrabold text-yellow-500">
-                        {{ media_notas }}
-                    </p>
-
-                    <p class="text-xs text-gray-400 mt-1">
-                        nota média geral
-                    </p>
-
-                </div>
-
-
-
-                <!-- ELOGIOS -->
-
-                <div class="card-stat">
-
-                    <div class="flex items-center gap-3 mb-3">
-
-                        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-xl">
-                            👍
-                        </div>
-
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Elogios
-                        </p>
-
-                    </div>
-
-                    <p class="text-4xl font-extrabold text-green-600">
-                        {{ total_elogios }}
-                    </p>
-
-                    <p class="text-xs text-gray-400 mt-1">
-                        feedbacks positivos
-                    </p>
-
-                </div>
-
-
-
-                <!-- RECLAMAÇÕES -->
-
-                <div class="card-stat">
-
-                    <div class="flex items-center gap-3 mb-3">
-
-                        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-xl">
-                            ⚠️
-                        </div>
-
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Reclamações
-                        </p>
-
-                    </div>
-
-                    <p class="text-4xl font-extrabold text-red-600">
-                        {{ total_reclamacoes }}
-                    </p>
-
-                    <p class="text-xs text-gray-400 mt-1">
-                        pontos a melhorar
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ===================================================== -->
-        <!-- ASSISTENTE IA -->
-        <!-- ===================================================== -->
-
-        <section class="chat-shell relative overflow-hidden rounded-[28px] border border-slate-800 shadow-2xl">
-
-            <div class="absolute -top-24 -right-24 w-64 h-64 bg-lime-400/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div class="relative flex items-center justify-between px-5 md:px-7 py-5 border-b border-slate-800/80">
-                <div class="flex items-center gap-4">
-                    <div class="relative flex-shrink-0">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-lime-300 via-lime-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/30 ring-2 ring-lime-300/20">
-                            <span class="text-2xl">🤖</span>
-                        </div>
-                        <span class="absolute -right-1 -bottom-1 w-3.5 h-3.5 bg-lime-400 border-2 border-slate-950 rounded-full"></span>
-                    </div>
-
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h2 class="text-lg md:text-xl font-extrabold text-white tracking-tight">Polo IA</h2>
-                            <span class="px-2 py-0.5 rounded-full border border-lime-400/30 bg-lime-400/10 text-[10px] font-bold uppercase tracking-[0.18em] text-lime-300">IA</span>
-                        </div>
-                        <p class="text-xs md:text-sm text-slate-400 mt-0.5">Analise executiva e apoio operacional em tempo real.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="hidden md:flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-lime-300 font-semibold">
-                        <span class="w-2 h-2 bg-lime-400 rounded-full animate-pulse"></span>
-                        Online
-                    </span>
-
-                    <button type="button" id="limpar-chat" class="w-9 h-9 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-all duration-200" title="Limpar conversa">
-                        🗑️
-                    </button>
-                </div>
-            </div>
-
-            <div id="chat-mensagens" class="chat-message-wrap relative h-[360px] md:h-[400px] overflow-y-auto px-4 md:px-6 py-5 space-y-5 scrollbar-thin">
-                <div class="flex items-start gap-3">
-                    <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">🤖</div>
-
-                    <div class="max-w-[85%]">
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <span class="text-xs font-bold text-lime-300">Polo IA</span>
-                            <span class="text-[10px] text-slate-500">agora</span>
-                        </div>
-
-                        <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
-                            <p class="mb-2 font-medium text-white">Olá! 👋 Sou a assistente executiva da <span class="text-lime-300">Polo Fit</span>.</p>
-                            <p class="text-slate-300">Posso analisar avaliações, reclamações, sugestões, desempenho da equipe e apontar prioridades estratégicas com base nos dados do sistema.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="chat-sugestoes" class="pl-11">
-                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mb-2">Sugestões para começar</p>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Como está a satisfação dos alunos atualmente?">📊 Satisfação dos alunos</button>
-                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais são as principais reclamações dos alunos?">⚠️ Principais reclamações</button>
-                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais funcionários estão se destacando nas avaliações?">🏆 Funcionários destaque</button>
-                        <button type="button" class="chat-suggestion sugestao-chat px-3 py-2 rounded-xl text-xs font-medium transition" data-pergunta="Quais melhorias deveriam ser priorizadas pela academia?">💡 Melhorias prioritárias</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="relative border-t border-slate-800/80 bg-slate-950/90 p-4 md:p-5">
-                <form id="chat-form" class="relative">
-                    <div class="flex items-end gap-2">
-                        <div class="relative flex-1">
-                            <textarea id="chat-input" rows="1" maxlength="1000" placeholder="Pergunte sobre desempenho, reclamações, equipe ou melhorias..." class="chat-input w-full resize-none rounded-2xl text-white placeholder-slate-500 px-4 py-3.5 pr-14 text-sm focus:outline-none transition"></textarea>
-                            <div class="absolute right-3 bottom-3 text-[10px] text-slate-500 font-medium">Shift + Enter</div>
-                        </div>
-
-                        <button id="chat-enviar" type="submit" class="chat-send-btn flex-shrink-0 w-12 h-12 rounded-2xl font-black flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed" title="Enviar mensagem">
-                            ➤
-                        </button>
-                    </div>
-
-                    <div class="flex items-center justify-between mt-2 px-1">
-                        <span class="text-[10px] text-slate-500">Os dados usados pela IA são os dados disponíveis no sistema.</span>
-                        <span id="chat-contador" class="text-[10px] text-slate-500">0/1000</span>
-                    </div>
+            <div class="topbar-right">
+                <form method="get" class="filtros-form" id="form-filtros">
+                    <select name="periodo" class="select-filtro" onchange="this.form.submit()">
+                        <option value="">Todos os períodos</option>
+                        <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>Hoje</option>
+                        <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>7 dias</option>
+                        <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>30 dias</option>
+                    </select>
+                    <select name="tipo" class="select-filtro" onchange="this.form.submit()">
+                        <option value="">Todos os tipos</option>
+                        {% for codigo, nome in tipos_feedback %}
+                        <option value="{{ codigo }}" {% if tipo_filtro == codigo %}selected{% endif %}>{{ nome }}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="status" class="select-filtro" onchange="this.form.submit()">
+                        <option value="">Todos os status</option>
+                        {% for codigo, nome in status_choices %}
+                        <option value="{{ codigo }}" {% if status_filtro == codigo %}selected{% endif %}>{{ nome }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if categoria_filtro or tipo_filtro or status_filtro or periodo_filtro or funcionario_filtro %}
+                    <a href="{% url 'dashboard' %}" class="btn-filtro" style="display:flex;align-items:center;text-decoration:none;height:34px;">✕ Limpar</a>
+                    {% endif %}
                 </form>
             </div>
-        </section>
+        </header>
 
+        <!-- CONTENT -->
+        <main class="content">
 
-
-
-        <!-- ===================================================== -->
-        <!-- GRÁFICOS -->
-        <!-- ===================================================== -->
-
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-
-            <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
-
-                <h3 class="font-bold text-gray-800 mb-1">
-                    📊 Avaliações por Categoria
-                </h3>
-
-                <p class="text-xs text-gray-400 mb-4">
-                    Distribuição dos feedbacks
-                </p>
-
-                <canvas id="graficoCategorias"></canvas>
-
-            </div>
-
-
-            <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
-
-                <h3 class="font-bold text-gray-800 mb-1">
-                    ⭐ Avaliações por Nota
-                </h3>
-
-                <p class="text-xs text-gray-400 mb-4">
-                    Quantidade por estrelas
-                </p>
-
-                <canvas id="graficoNotas"></canvas>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ===================================================== -->
-        <!-- AVALIAÇÕES POR LOCAL                                  -->
-        <!-- ===================================================== -->
-
-        {% if locais_ranking %}
-        <section class="bg-white rounded-2xl shadow p-6 border border-slate-100">
-
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <h3 class="font-bold text-gray-800">📍 Avaliações por Local</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Qual espaço está recebendo mais feedback?</p>
-                </div>
-                <a href="{% url 'gerar_qrcode' %}"
-                    class="text-xs font-semibold text-[#33FF00] border border-[#33FF00] px-3 py-1.5 rounded-lg hover:bg-[#0a0a0a] transition">
-                    📱 Gerar QR Codes
-                </a>
-            </div>
-
-            <div class="space-y-3">
-                {% for local in locais_ranking %}
-                <div class="flex items-center gap-3">
-                    <span class="text-xl w-8 text-center flex-shrink-0">{{ local.icone }}</span>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-semibold text-gray-700 truncate">{{ local.nome }}</span>
-                            <div class="flex items-center gap-2 flex-shrink-0 ml-2">
-                                <span class="text-xs text-yellow-500 font-bold">⭐ {{ local.media }}</span>
-                                <span class="text-xs text-gray-400">{{ local.total }} aval.</span>
-                                <a href="{% url 'gerar_qrcode' %}?localizacao={{ local.nome|urlencode }}"
-                                    class="text-[11px] font-bold text-[#33FF00] bg-[#0a0a0a] hover:bg-[#1a1a1a] px-2 py-0.5 rounded transition shadow-sm"
-                                    title="Gerar QR Code para {{ local.nome }}">
-                                    📱 QR Code
-                                </a>
-                            </div>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-[#a3e635] to-[#4ade80] h-2 rounded-full transition-all"
-                                style="width: {% widthratio local.total locais_ranking.0.total 100 %}%"></div>
-                        </div>
+            <!-- MÉTRICAS PRINCIPAIS -->
+            <section aria-labelledby="metricas-titulo">
+                <h1 id="metricas-titulo" class="visually-hidden">Métricas do painel</h1>
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-icon">⭐</div>
+                        <div class="metric-label">Nota média</div>
+                        <div class="metric-value verde">{{ media_notas|default:"—" }}</div>
+                        <div class="metric-sub">de 5.0 possíveis</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">📋</div>
+                        <div class="metric-label">Avaliações</div>
+                        <div class="metric-value">{{ total_avaliacoes }}</div>
+                        <div class="metric-sub">no período selecionado</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">😍</div>
+                        <div class="metric-label">Elogios</div>
+                        <div class="metric-value verde">{{ total_elogios }}</div>
+                        <div class="metric-sub">feedbacks positivos</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">⚠️</div>
+                        <div class="metric-label">Reclamações</div>
+                        <div class="metric-value {% if total_reclamacoes > 0 %}vermelho{% endif %}">{{ total_reclamacoes }}</div>
+                        <div class="metric-sub">requerem atenção</div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+            </section>
 
-        </section>
-        {% endif %}
+            <!-- LINHA: AVALIAÇÕES PENDENTES + AÇÕES RÁPIDAS -->
+            <div class="grid-3">
 
-        <!-- ===================================================== -->
-        <!-- SEÇÃO: ENQUETE DE SATISFAÇÃO (AULAS & NOVOS ESPAÇOS)  -->
-        <!-- ===================================================== -->
-        <section id="secao-enquete" class="bg-white rounded-2xl shadow p-6 border border-slate-100">
-            <div
-                class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl">📋</span>
-                        <h3 class="font-extrabold text-gray-900 text-lg">Enquete de Satisfação — Aulas Coletivas & Novos
-                            Espaços</h3>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-1">
-                        Resultados da pesquisa oficial dos alunos sobre preferências de modalidades e expansões da
-                        academia.
-                    </p>
-                </div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span
-                        class="inline-flex items-center gap-1.5 bg-lime-100 text-lime-900 text-xs font-bold px-3 py-1.5 rounded-xl border border-lime-300">
-                        ⚡ {{ total_enquetes }} respostas coletadas
-                    </span>
-                    <a href="{% url 'gerar_qrcode' %}?localizacao=Enquete+de+Satisfa%C3%A7%C3%A3o"
-                        class="text-xs font-bold text-black bg-[#a3e635] hover:bg-[#bef264] px-3 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1">
-                        📱 QR Code da Enquete
-                    </a>
-                    <a href="{% url 'enquete' %}" target="_blank"
-                        class="text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
-                        🔗 Abrir Formulário ↗
-                    </a>
-                </div>
-            </div>
-
-            {% if total_enquetes == 0 %}
-            <div class="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-8 text-center">
-                <span class="text-3xl block mb-2">📋</span>
-                <p class="font-bold text-gray-700 text-sm">Nenhuma resposta de enquete registrada ainda.</p>
-                <p class="text-xs text-gray-400 mt-1">Imprima o QR Code da Enquete e divulgue para os alunos responderem
-                    pelo celular!</p>
-                <div class="mt-4 flex justify-center gap-2">
-                    <a href="{% url 'enquete' %}" target="_blank"
-                        class="text-xs font-bold text-[#33FF00] bg-[#0a0a0a] px-3.5 py-2 rounded-xl transition">
-                        Responder Primeiro Teste ➔
-                    </a>
-                </div>
-            </div>
-            {% else %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <!-- 1. AULAS FAVORITAS -->
-                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4
-                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>🔥</span> 1. Aulas Mais Populares / Favoritas
-                    </h4>
-                    <div class="space-y-2.5">
-                        {% for aula, qtd in favoritas_ranking %}
+                <!-- PARA RESOLVER -->
+                <section class="painel" aria-labelledby="resolver-titulo" id="para-resolver">
+                    <div class="painel-header">
                         <div>
-                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                                <span>{{ aula }}</span>
-                                <span class="text-slate-500">{{ qtd }} voto{{ qtd|pluralize:"s" }}</span>
-                            </div>
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-[#a3e635] to-[#22c55e] h-2 rounded-full"
-                                    style="width: {% widthratio qtd total_enquetes 100 %}%"></div>
-                            </div>
+                            <h2 class="painel-titulo" id="resolver-titulo">Para resolver</h2>
+                            <p class="painel-sub">Feedbacks pendentes de ação</p>
                         </div>
-                        {% empty %}
-                        <p class="text-xs text-gray-400">Sem dados ainda.</p>
-                        {% endfor %}
+                        {% with pendentes=avaliacoes|length %}
+                        <span class="painel-badge badge-vermelho">
+                            {{ avaliacoes|length }} no filtro
+                        </span>
+                        {% endwith %}
                     </div>
-                </div>
 
-                <!-- 3. NOVOS ESPAÇOS DESEJADOS -->
-                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4
-                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>🏗️</span> 3. Novos Espaços Mais Desejados
-                    </h4>
-                    <div class="space-y-2.5">
-                        {% for espaco, qtd in espacos_ranking %}
-                        <div>
-                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                                <span class="truncate max-w-[200px]">{{ espaco }}</span>
-                                <span class="text-slate-500">{{ qtd }} voto{{ qtd|pluralize:"s" }}</span>
-                            </div>
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-blue-400 to-indigo-500 h-2 rounded-full"
-                                    style="width: {% widthratio qtd total_enquetes 100 %}%"></div>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p class="text-xs text-gray-400">Sem dados ainda.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- 2. PARTICIPAÇÃO EM AULAS COLETIVAS -->
-                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4
-                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>👥</span> 2. Frequência em Aulas Coletivas
-                    </h4>
-                    <div class="space-y-2">
-                        {% for item, qtd in participacao_ranking %}
-                        <div
-                            class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
-                            <span class="font-medium text-slate-700">{{ item }}</span>
-                            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">{{ qtd }}</span>
-                        </div>
-                        {% empty %}
-                        <p class="text-xs text-gray-400">Sem dados ainda.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- 4. AULAS QUE PRECISAM DE ATENÇÃO -->
-                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                    <h4
-                        class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                        <span>⚠️</span> 4. Aulas que Precisam de Mais Atenção
-                    </h4>
-                    <div class="space-y-2">
-                        {% for aula, qtd in melhorias_ranking %}
-                        <div
-                            class="flex items-center justify-between text-xs p-2 bg-white rounded-xl border border-slate-200">
-                            <span class="font-medium text-slate-700">{{ aula }}</span>
-                            <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{{ qtd }} voto{{
-                                qtd|pluralize:"s" }}</span>
-                        </div>
-                        {% empty %}
-                        <p class="text-xs text-gray-400">Sem dados ainda.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- MURAL DE SUGESTÕES E ELOGIOS RECENTES DA ENQUETE -->
-            {% if ultimas_enquetes %}
-            <div class="mt-6 pt-5 border-t border-slate-200">
-                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
-                    💬 Últimas Contribuições dos Alunos (Perguntas 5 e 6):
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {% for resp in ultimas_enquetes %}
-                    {% if resp.sugestao_valor or resp.elogio_colaborador or resp.aula_falta %}
-                    <div class="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1.5 shadow-sm">
-                        <div class="flex justify-between text-[11px] text-slate-400">
-                            <span>Resposta #{{ resp.id }}</span>
-                            <span>{{ resp.data_criacao|date:"d/m H:i" }}</span>
-                        </div>
-                        {% if resp.aula_falta %}
-                        <p><strong class="text-slate-700">Sente falta de:</strong> <span class="text-slate-600">{{
-                                resp.aula_falta }}</span></p>
-                        {% endif %}
-                        {% if resp.sugestao_valor %}
-                        <p><strong class="text-slate-700">Agregaria valor:</strong> <span class="text-slate-600">{{
-                                resp.sugestao_valor }}</span></p>
-                        {% endif %}
-                        {% if resp.elogio_colaborador %}
-                        <p class="text-emerald-700 bg-emerald-50 p-1.5 rounded-lg"><strong>💚 Elogio:</strong> {{
-                            resp.elogio_colaborador }}</p>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-
-            {% endif %}
-        </section>
-
-
-
-        <!-- ===================================================== -->
-        <!-- FILTROS -->
-        <!-- ===================================================== -->
-
-        <section class="bg-white rounded-2xl shadow p-6 border border-slate-100">
-
-            <div class="flex items-center justify-between gap-3 mb-4">
-                <h3 class="font-bold text-gray-800">
-                    🔍 Filtrar Avaliações
-                </h3>
-                <div class="flex items-center gap-2">
-                    {% if periodo_filtro == 'hoje' %}
-                    <span class="text-xs font-semibold bg-lime-100 text-lime-700 px-2.5 py-1 rounded-full">📅
-                        Hoje</span>
-                    {% elif periodo_filtro == 'semana' %}
-                    <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">📅 Esta
-                        semana</span>
-                    {% elif periodo_filtro == 'mes' %}
-                    <span class="text-xs font-semibold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">📅
-                        Últimos 30 dias</span>
-                    {% else %}
-                    <span class="text-[10px] uppercase tracking-[0.18em] text-slate-400">filtros ativos</span>
-                    {% endif %}
-                </div>
-            </div>
-
-
-            <form method="get" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-
-
-                <!-- PERÍODO -->
-
-                <select name="periodo" id="filtro-periodo">
-                    <option value="">Todo período</option>
-                    <option value="hoje" {% if periodo_filtro == 'hoje' %}selected{% endif %}>📅 Hoje</option>
-                    <option value="semana" {% if periodo_filtro == 'semana' %}selected{% endif %}>📅 Esta semana</option>
-                    <option value="mes" {% if periodo_filtro == 'mes' %}selected{% endif %}>📅 Últimos 30 dias</option>
-                </select>
-
-
-                <!-- CATEGORIA -->
-
-                <select name="categoria" id="filtro-categoria">
-
-                    <option value="">
-                        Todas categorias
-                    </option>
-
-                    {% for codigo, nome in categorias %}
-                    <option value="{{ codigo }}" {% if categoria_filtro == codigo %}selected{% endif %}>
-                        {{ nome }}
-                    </option>
-                    {% endfor %}
-                </select>
-
-                <select name="tipo" id="filtro-tipo">
-                    <option value="">
-                        Todos tipos
-                    </option>
-                    {% for codigo, nome in tipos_feedback %}
-                    <option value="{{ codigo }}" {% if tipo_filtro == codigo %}selected{% endif %}>
-                        {{ nome }}
-                    </option>
-                    {% endfor %}
-                </select>
-
-                <select name="status" id="filtro-status">
-                    <option value="">
-                        Todos status
-                    </option>
-                    {% for codigo, nome in status_choices %}
-                    <option value="{{ codigo }}" {% if status_filtro == codigo %}selected{% endif %}>
-                        {{ nome }}
-                    </option>
-                    {% endfor %}
-                </select>
-
-                <select name="funcionario" id="filtro-funcionario">
-                    <option value="">
-                        Todos funcionários
-                    </option>
-                    {% for func in funcionarios %}
-                    <option value="{{ func.id }}" {% if funcionario_filtro == func.id|stringformat:"s" %}selected{% endif %}>
-                        {{ func.nome }}
-                    </option>
-                    {% endfor %}
-                </select>
-
-
-
-                <!-- BOTÕES -->
-
-                <div class="flex gap-3 sm:col-span-2 md:col-span-3 lg:col-span-5">
-
-                    <button type="submit" id="btn-filtrar"
-                        class="flex-1 bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-2.5 rounded-xl transition-all duration-200">
-                        Filtrar
-                    </button>
-
-
-                    <a href="{% url 'dashboard' %}" id="btn-limpar"
-                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-center transition-all duration-200">
-                        Limpar Filtros
-                    </a>
-
-                </div>
-
-            </form>
-
-        </section>
-
-
-
-        <!-- ===================================================== -->
-        <!-- TABELA DE AVALIAÇÕES -->
-        <!-- ===================================================== -->
-
-        <section id="tabela-avaliacoes">
-
-            <div class="flex items-center justify-between mb-4">
-
-                <h2 class="text-xl font-bold text-gray-800">
-                    📝 Avaliações Recentes
-                </h2>
-
-
-                <span class="text-sm text-gray-400 bg-white px-3 py-1 rounded-full shadow">
-
-                    {{ total_avaliacoes }}
-
-                    resultado{% if total_avaliacoes != 1 %}s{% endif %}
-
-                </span>
-
-            </div>
-
-
-            <div class="tabela-container overflow-x-auto">
-
-                <table class="w-full text-sm text-left">
-
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Categoria
-                            </th>
-
-                            <th>
-                                Funcionário
-                            </th>
-
-                            <th>
-                                Nota
-                            </th>
-
-                            <th>
-                                Tipo
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Data
-                            </th>
-
-                            <th class="text-center">
-                                Detalhes
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-
-                        {% for a in avaliacoes %}
-
-
-                        <tr>
-
-
-                            <!-- CATEGORIA -->
-
-                            <td>
-
-                                <span class="font-medium text-gray-800">
-                                    {{ a.get_categoria_display }}
-                                </span>
-
-                            </td>
-
-
-
-                            <!-- FUNCIONÁRIO -->
-
-                            <td>
-
-                                {% if a.funcionario %}
-
-                                <div class="flex items-center gap-2">
-
-                                    {% if a.funcionario.foto %}
-
-                                    <img src="{{ a.funcionario.foto.url }}" alt="{{ a.funcionario.nome }}"
-                                        class="w-7 h-7 rounded-full object-cover border border-gray-200">
-
-                                    {% else %}
-
-                                    <div
-                                        class="w-7 h-7 rounded-full bg-gradient-to-br from-gray-800 to-green-600 flex items-center justify-center text-white text-xs font-bold">
-                                        {{ a.funcionario.nome|slice:":1" }}
+                    <div class="av-lista" id="lista-avaliacoes">
+                        {% if avaliacoes %}
+                            {% for av in avaliacoes %}
+                            <div class="av-item">
+                                <div class="av-nota nota-{{ av.nota }}">{{ av.nota }}★</div>
+                                <div class="av-corpo">
+                                    <div class="av-tags">
+                                        {% with tipos=av.tipos_feedback|default_if_none:'' %}
+                                        {% if 'elogio' in tipos or av.tipo_feedback == 'elogio' %}
+                                        <span class="mini-tag tag-elogio">Elogio</span>
+                                        {% endif %}
+                                        {% if 'reclamacao' in tipos or av.tipo_feedback == 'reclamacao' %}
+                                        <span class="mini-tag tag-reclamacao">Reclamação</span>
+                                        {% endif %}
+                                        {% if 'sugestao' in tipos or av.tipo_feedback == 'sugestao' %}
+                                        <span class="mini-tag tag-sugestao">Sugestão</span>
+                                        {% endif %}
+                                        {% endwith %}
+                                        <span class="mini-tag tag-{{ av.status }}">
+                                            {% if av.status == 'pendente' %}Pendente
+                                            {% elif av.status == 'em_analise' %}Em análise
+                                            {% else %}Resolvida{% endif %}
+                                        </span>
                                     </div>
-
+                                    {% if av.comentario %}
+                                    <div class="av-comentario" title="{{ av.comentario }}">{{ av.comentario|truncatechars:80 }}</div>
+                                    {% else %}
+                                    <div class="av-comentario" style="color:rgba(255,255,255,0.2);font-style:italic;">Sem comentário</div>
                                     {% endif %}
-
-
-                                    <span class="font-medium">
-                                        {{ a.funcionario.nome }}
-                                    </span>
-
+                                    <div class="av-info">
+                                        {{ av.data_criacao|date:"d/m/Y H:i" }}
+                                        {% if av.localizacao %} · {{ av.localizacao }}{% endif %}
+                                        {% if av.funcionarios_avaliados %}
+                                        · {% for f in av.funcionarios_avaliados %}{{ f.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-
-                                {% else %}
-
-                                <span class="text-gray-400 italic">
-                                    Não informado
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-
-                            <!-- NOTA -->
-
-                            <td>
-
-                                <span>
-
-                                    {% for i in "12345" %}
-
-                                    {% if forloop.counter <= a.nota %} <span class="star-on">★</span>
-
-                                {% else %}
-
-                                <span class="star-off">★</span>
-
-                                {% endif %}
-
-                                {% endfor %}
-
-                                </span>
-
-                            </td>
-
-
-
-                            <!-- TIPO -->
-
-                            <td>
-
-                                {% if a.tipo_feedback == "elogio" %}
-
-                                <span class="badge badge-elogio">
-                                    👍 Elogio
-                                </span>
-
-                                {% elif a.tipo_feedback == "reclamacao" %}
-
-                                <span class="badge badge-reclamacao">
-                                    ⚠️ Reclamação
-                                </span>
-
-                                {% else %}
-
-                                <span class="badge badge-sugestao">
-                                    💡 Sugestão
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-
-                            <!-- STATUS -->
-
-                            <td>
-
-                                {% if a.status == "resolvida" %}
-
-                                <span class="badge badge-resolvida">
-                                    ✅ Resolvida
-                                </span>
-
-                                {% elif a.status == "em_analise" %}
-
-                                <span class="badge badge-analise">
-                                    🔍 Em análise
-                                </span>
-
-                                {% else %}
-
-                                <span class="badge badge-pendente">
-                                    🕐 Pendente
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-
-                            <!-- DATA -->
-
-                            <td class="text-gray-500 whitespace-nowrap">
-
-                                {{ a.data_criacao|date:"d/m/Y H:i" }}
-
-                            </td>
-
-
-
-                            <!-- DETALHES -->
-
-                            <td class="text-center">
-
-                                <button class="btn-detalhes" id="btn-detalhes-{{ a.pk }}"
-                                    onclick="abrirModal({{ a.pk }})" title="Ver detalhes">
-                                    🔎 Ver detalhes
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-
-                        <!-- DADOS DO MODAL -->
-
-                        <script type="application/json" id="avaliacao-{{ a.pk }}">
-                        {
-                            "id": {{ a.pk }},
-                            "categoria": "{{ a.get_categoria_display|escapejs }}",
-                            "nota": {{ a.nota }},
-                            "tipo_feedback": "{% if a.tipo_feedback == 'elogio' %}👍 Elogio{% elif a.tipo_feedback == 'reclamacao' %}⚠️ Reclamação{% else %}💡 Sugestão{% endif %}",
-                            "funcionario": "{% if a.funcionario %}{{ a.funcionario.nome|escapejs }}{% if a.funcionario.cargo %} — {{ a.funcionario.cargo|escapejs }}{% endif %}{% else %}Não informado{% endif %}",
-                            "comentario": "{{ a.comentario|default:'Sem comentário'|escapejs }}",
-                            "localizacao": "{{ a.localizacao|default:'Não informada'|escapejs }}",
-                            "data_criacao": "{{ a.data_criacao|date:'d/m/Y H:i' }}",
-                            "status": "{% if a.status == 'resolvida' %}✅ Resolvida{% elif a.status == 'em_analise' %}🔍 Em Análise{% else %}🕐 Pendente{% endif %}",
-                            "status_raw": "{{ a.status }}",
-                            "resolvido_por": "{% if a.resolvido_por %}{{ a.resolvido_por.username|escapejs }}{% endif %}",
-                            "data_resolucao": "{% if a.data_resolucao %}{{ a.data_resolucao|date:'d/m/Y H:i' }}{% endif %}",
-                            "origem": "{% if a.origem == 'gerente' %}Gerente/Admin{% else %}Aluno (QR Code){% endif %}"
-                        }
-                        </script>
-
-
-                        {% empty %}
-
-
-                        <tr>
-
-                            <td colspan="7" class="py-16 text-center text-gray-400">
-
-                                <div class="text-4xl mb-3">
-                                    📭
+                                <div class="av-acoes">
+                                    <form method="post" action="{% url 'dashboard' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="avaliacao_id" value="{{ av.pk }}">
+                                        <input type="hidden" name="filtros_ativos" value="{{ request.GET.urlencode }}">
+                                        <select
+                                            name="novo_status"
+                                            class="select-status"
+                                            onchange="this.form.submit()"
+                                            aria-label="Mudar status da avaliação {{ av.pk }}"
+                                        >
+                                            <option value="pendente" {% if av.status == 'pendente' %}selected{% endif %}>Pendente</option>
+                                            <option value="em_analise" {% if av.status == 'em_analise' %}selected{% endif %}>Em análise</option>
+                                            <option value="resolvida" {% if av.status == 'resolvida' %}selected{% endif %}>Resolvida</option>
+                                        </select>
+                                    </form>
                                 </div>
-
-                                <p class="font-medium">
-                                    Nenhuma avaliação encontrada
-                                </p>
-
-                                <p class="text-sm mt-1">
-                                    Tente remover algum filtro
-                                </p>
-
-                            </td>
-
-                        </tr>
-
-
-                        {% endfor %}
-
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ===================================================== -->
-        <!-- RANKING -->
-        <!-- ===================================================== -->
-
-        <section id="ranking">
-
-            <h2 class="text-xl font-bold text-gray-800 mb-4">
-                🏆 Ranking de Funcionários
-            </h2>
-
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-
-                {% for item in ranking_funcionarios %}
-
-
-                <div class="card-ranking
-                    {% if forloop.counter == 1 %}
-                        ranking-1
-                    {% elif forloop.counter == 2 %}
-                        ranking-2
-                    {% elif forloop.counter == 3 %}
-                        ranking-3
-                    {% endif %}">
-
-
-                    <div class="flex items-center gap-3 mb-4">
-
-                        <span class="text-2xl">
-
-                            {% if forloop.counter == 1 %}
-                            🥇
-                            {% elif forloop.counter == 2 %}
-                            🥈
-                            {% elif forloop.counter == 3 %}
-                            🥉
-                            {% else %}
-                            #{{ forloop.counter }}
-                            {% endif %}
-
-                        </span>
-
-
-                        {% if item.foto %}
-
-                        <img src="{{ item.foto }}" alt="{{ item.nome }}"
-                            class="w-12 h-12 rounded-full object-cover border-2 border-gray-100">
-
+                            </div>
+                            {% endfor %}
                         {% else %}
-
-                        <div
-                            class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-800 to-green-600 flex items-center justify-center text-white font-bold text-lg">
-                            {{ item.nome|slice:":1" }}
-                        </div>
-
+                            <div class="empty">
+                                <div class="empty-icon">✅</div>
+                                <p class="empty-text">Nenhuma avaliação no filtro atual.</p>
+                            </div>
                         {% endif %}
+                    </div>
+                </section>
 
-
+                <!-- AÇÕES RÁPIDAS -->
+                <section class="painel" aria-labelledby="acoes-titulo">
+                    <div class="painel-header">
                         <div>
-
-                            <p class="font-bold text-gray-900">
-                                {{ item.nome }}
-                            </p>
-
-
-                            {% if item.cargo %}
-
-                            <p class="text-xs text-gray-400">
-                                {{ item.cargo }}
-                            </p>
-
-                            {% endif %}
-
+                            <h2 class="painel-titulo" id="acoes-titulo">Ações rápidas</h2>
+                            <p class="painel-sub">Acesso direto às funções</p>
                         </div>
-
+                    </div>
+                    <div class="acoes-rapidas">
+                        <a href="{% url 'divulgacao' %}" class="acao-card">
+                            <span class="acao-icon">📣</span>
+                            Divulgar
+                        </a>
+                        <a href="{% url 'gerar_qrcode' %}" class="acao-card">
+                            <span class="acao-icon">📱</span>
+                            QR Code
+                        </a>
+                        <a href="{% url 'enquete' %}" class="acao-card" target="_blank">
+                            <span class="acao-icon">📋</span>
+                            Ver enquete
+                        </a>
+                        <a href="{% url 'avaliar' %}" class="acao-card" target="_blank">
+                            <span class="acao-icon">⭐</span>
+                            Ver avaliação
+                        </a>
+                        <a href="{% url 'gestao_treinos' %}" class="acao-card">
+                            <span class="acao-icon">🏋️</span>
+                            Treinos
+                        </a>
+                        <a href="{% url 'configuracao_sistema' %}" class="acao-card">
+                            <span class="acao-icon">⚙️</span>
+                            Config
+                        </a>
                     </div>
 
-
-
-                    <div class="grid grid-cols-3 gap-2 text-center mb-3">
-
-
-                        <div class="bg-green-50 rounded-lg p-2">
-
-                            <p class="text-green-700 font-bold text-lg">
-                                {{ item.elogios }}
-                            </p>
-
-                            <p class="text-xs text-green-600">
-                                Elogios
-                            </p>
-
-                        </div>
-
-
-                        <div class="bg-red-50 rounded-lg p-2">
-
-                            <p class="text-red-700 font-bold text-lg">
-                                {{ item.reclamacoes }}
-                            </p>
-
-                            <p class="text-xs text-red-600">
-                                Reclamações
-                            </p>
-
-                        </div>
-
-
-                        <div class="bg-purple-50 rounded-lg p-2">
-
-                            <p class="text-purple-700 font-bold text-lg">
-                                {{ item.sugestoes }}
-                            </p>
-
-                            <p class="text-xs text-purple-600">
-                                Sugestões
-                            </p>
-
-                        </div>
-
+                    {% if gemini_configured %}
+                    <div style="padding: 0 1.25rem 1.25rem;">
+                        <a href="{% url 'ia_chat' %}" style="display:flex;align-items:center;gap:0.5rem;padding:0.875rem;background:linear-gradient(135deg,rgba(163,230,53,0.1),rgba(99,102,241,0.1));border:1px solid rgba(163,230,53,0.2);border-radius:0.875rem;text-decoration:none;color:var(--texto);">
+                            <span style="font-size:1.25rem;">🤖</span>
+                            <div>
+                                <div style="font-size:0.8rem;font-weight:700;">Análise com IA</div>
+                                <div style="font-size:0.7rem;color:var(--texto-suave);">Gemini disponível</div>
+                            </div>
+                        </a>
                     </div>
-
-
-                    <div class="flex items-center justify-between text-sm pt-2 border-t border-gray-100">
-
-                        <span class="text-gray-500">
-                            ⭐ Média:
-                            <strong>{{ item.media }}</strong>
-                        </span>
-
-                        <span class="text-gray-500">
-                            📊 Total:
-                            <strong>{{ item.total }}</strong>
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                {% empty %}
-
-
-                <div class="col-span-3 text-center text-gray-400 py-10">
-
-                    <div class="text-3xl mb-2">
-                        👤
-                    </div>
-
-                    <p>
-                        Nenhum funcionário cadastrado.
-                    </p>
-
-                </div>
-
-
-                {% endfor %}
+                    {% endif %}
+                </section>
 
             </div>
 
-        </section>
+            <!-- LINHA: CATEGORIA + NOTAS -->
+            <div class="grid-2">
 
+                <!-- POR ÁREA (CATEGORIA) -->
+                <section class="painel" aria-labelledby="area-titulo" id="por-area">
+                    <div class="painel-header">
+                        <div>
+                            <h2 class="painel-titulo" id="area-titulo">Por área</h2>
+                            <p class="painel-sub">Volume de avaliações por setor</p>
+                        </div>
+                    </div>
+                    {% with max_cat=avaliacoes_categoria|dictsort:"quantidade"|last %}
+                    <div class="bar-chart">
+                        {% for item in avaliacoes_categoria %}
+                        <div class="bar-item">
+                            <div class="bar-label">{{ item.nome }}</div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:{% if max_cat.quantidade > 0 %}{% widthratio item.quantidade max_cat.quantidade 100 %}%{% else %}0%{% endif %}"></div>
+                            </div>
+                            <div class="bar-count">{{ item.quantidade }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endwith %}
+                </section>
 
-    </main>
+                <!-- DISTRIBUIÇÃO DE NOTAS -->
+                <section class="painel" aria-labelledby="notas-titulo">
+                    <div class="painel-header">
+                        <div>
+                            <h2 class="painel-titulo" id="notas-titulo">Distribuição de notas</h2>
+                            <p class="painel-sub">Quantidade por estrelas</p>
+                        </div>
+                    </div>
+                    {% with max_nota=avaliacoes_nota|dictsort:"quantidade"|last %}
+                    <div class="notas-dist">
+                        {% for item in avaliacoes_nota|dictsort:"-nota" %}
+                        <div class="nota-dist-item">
+                            <div class="nota-dist-label">{{ item.nota }}★</div>
+                            <div class="nota-dist-bar-track">
+                                <div class="nota-dist-fill"
+                                    style="width:{% if max_nota.quantidade > 0 %}{% widthratio item.quantidade max_nota.quantidade 100 %}%{% else %}0%{% endif %};
+                                    background:{% if item.nota == 5 %}#4ade80{% elif item.nota == 4 %}#a3e635{% elif item.nota == 3 %}#fbbf24{% elif item.nota == 2 %}#fb923c{% else %}#f87171{% endif %}">
+                                </div>
+                            </div>
+                            <div class="nota-dist-count">{{ item.quantidade }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endwith %}
+                </section>
+            </div>
 
+            <!-- LINHA: EQUIPE + LOCAIS -->
+            <div class="grid-2">
 
+                <!-- RANKING EQUIPE -->
+                <section class="painel" aria-labelledby="equipe-titulo" id="equipe">
+                    <div class="painel-header">
+                        <div>
+                            <h2 class="painel-titulo" id="equipe-titulo">Equipe</h2>
+                            <p class="painel-sub">Ranking por elogios e nota</p>
+                        </div>
+                        <span class="painel-badge badge-verde">{{ ranking_funcionarios|length }} membros</span>
+                    </div>
 
-    <!-- ========================================================= -->
-    <!-- MODAL DE DETALHES -->
-    <!-- ========================================================= -->
+                    <div class="func-lista">
+                        {% if ranking_funcionarios %}
+                            {% for item in ranking_funcionarios %}
+                            <div class="func-item">
+                                <span class="func-rank func-rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                                {% if item.foto %}
+                                <img src="{{ item.foto }}" alt="{{ item.nome }}" class="func-foto-dash">
+                                {% else %}
+                                <div class="func-foto-dash">👤</div>
+                                {% endif %}
+                                <div class="func-info-dash">
+                                    <div class="func-nome-dash">{{ item.nome }}</div>
+                                    <div class="func-cargo-dash">{{ item.funcoes }}</div>
+                                </div>
+                                <div class="func-stats">
+                                    <div class="func-stat">
+                                        <div class="func-stat-val">{{ item.media }}</div>
+                                        <div class="func-stat-label">Média</div>
+                                    </div>
+                                    <div class="func-stat">
+                                        <div class="func-stat-val" style="color:#4ade80">{{ item.elogios }}</div>
+                                        <div class="func-stat-label">Elogios</div>
+                                    </div>
+                                    <div class="func-stat">
+                                        <div class="func-stat-val">{{ item.total }}</div>
+                                        <div class="func-stat-label">Total</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty">
+                                <div class="empty-icon">👥</div>
+                                <p class="empty-text">Nenhum funcionário com avaliações ainda.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
 
-    <div id="modal-detalhes" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo"
-        onclick="fecharModalExterno(event)">
+                <!-- POR LOCAL -->
+                <section class="painel" aria-labelledby="local-titulo" id="por-local">
+                    <div class="painel-header">
+                        <div>
+                            <h2 class="painel-titulo" id="local-titulo">Por local</h2>
+                            <p class="painel-sub">Avaliações por setor da academia</p>
+                        </div>
+                    </div>
 
-        <div class="modal-box">
-
-
-            <div class="modal-header">
-
-                <div>
-
-                    <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">
-                        Avaliação
-                    </p>
-
-                    <h2 id="modal-titulo" class="text-lg font-bold text-white">
-                        Detalhes da Avaliação
-                    </h2>
-
-                </div>
-
-
-                <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">
-                    ✕
-                </button>
+                    {% if locais_ranking %}
+                    <div class="locais-lista">
+                        {% for local in locais_ranking %}
+                        <div class="local-item">
+                            <span class="local-icone">{{ local.icone }}</span>
+                            <span class="local-nome">{{ local.nome }}</span>
+                            <div>
+                                <span class="local-stat">{{ local.media }}★</span>
+                                <span class="local-total">({{ local.total }})</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty">
+                        <div class="empty-icon">📍</div>
+                        <p class="empty-text">Nenhum dado de localização ainda.</p>
+                    </div>
+                    {% endif %}
+                </section>
 
             </div>
 
-
-            <div class="modal-body" id="modal-corpo"></div>
-
-
-            <div class="px-6 pb-6" id="modal-acoes"></div>
-
-        </div>
-
+        </main>
     </div>
 
-
-
-    <!-- ========================================================= -->
-    <!-- DADOS DOS GRÁFICOS -->
-    <!-- ========================================================= -->
-
-    {{ avaliacoes_categoria|json_script:"dados-categorias" }}
-
-    {{ avaliacoes_nota|json_script:"dados-notas" }}
-
-
-
-    <!-- ========================================================= -->
-    <!-- JAVASCRIPT -->
-    <!-- ========================================================= -->
+    <style>
+        .visually-hidden {
+            position: absolute;
+            width: 1px; height: 1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+        }
+    </style>
 
     <script>
+        // Hora atual
+        function atualizarHora() {
+            const agora = new Date();
+            const horas = agora.getHours();
+            const min = String(agora.getMinutes()).padStart(2, '0');
+            const seg = String(agora.getSeconds()).padStart(2, '0');
+            const dia = agora.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+            document.getElementById('hora-atual').textContent =
+                dia.charAt(0).toUpperCase() + dia.slice(1) + ' · ' + horas + ':' + min + ':' + seg;
+        }
+        atualizarHora();
+        setInterval(atualizarHora, 1000);
 
-
-        /* ======================================================= */
-        /* GRÁFICOS */
-        /* ======================================================= */
-
-        const dc =
-            JSON.parse(
-                document.getElementById("dados-categorias").textContent
-            );
-
-
-        const dn =
-            JSON.parse(
-                document.getElementById("dados-notas").textContent
-            );
-
-
-        const ctxCat =
-            document.getElementById("graficoCategorias");
-
-
-        if (ctxCat) {
-
-            new Chart(ctxCat, {
-
-                type: "bar",
-
-                data: {
-
-                    labels: dc.map(
-                        i => i.nome
-                    ),
-
-                    datasets: [{
-
-                        label: "Avaliações",
-
-                        data: dc.map(
-                            i => i.quantidade
-                        ),
-
-                        backgroundColor: [
-                            "rgba(51,255,0,0.8)",
-                            "rgba(51,255,0,0.65)",
-                            "rgba(51,255,0,0.5)",
-                            "rgba(51,255,0,0.38)",
-                            "rgba(51,255,0,0.25)",
-                            "rgba(51,255,0,0.15)"
-                        ],
-
-                        borderColor: "#33FF00",
-
-                        borderWidth: 1,
-
-                        borderRadius: 6
-
-                    }]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    plugins: {
-
-                        legend: {
-                            display: false
-                        }
-
-                    },
-
-                    scales: {
-
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: "#f3f4f6"
-                            }
-                        },
-
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-
-                    }
-
-                }
-
-            });
-
+        // Sidebar mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('aberta');
         }
 
-
-
-        const ctxNot =
-            document.getElementById("graficoNotas");
-
-
-        if (ctxNot) {
-
-            new Chart(ctxNot, {
-
-                type: "bar",
-
-                data: {
-
-                    labels: dn.map(
-                        i => i.nota + " ★"
-                    ),
-
-                    datasets: [{
-
-                        label: "Avaliações",
-
-                        data: dn.map(
-                            i => i.quantidade
-                        ),
-
-                        backgroundColor: [
-                            "rgba(239,68,68,0.75)",
-                            "rgba(249,115,22,0.75)",
-                            "rgba(234,179,8,0.75)",
-                            "rgba(132,204,22,0.75)",
-                            "rgba(34,197,94,0.75)"
-                        ],
-
-                        borderWidth: 1,
-
-                        borderRadius: 6
-
-                    }]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    plugins: {
-
-                        legend: {
-                            display: false
-                        }
-
-                    },
-
-                    scales: {
-
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: "#f3f4f6"
-                            }
-                        },
-
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-
-                    }
-
-                }
-
-            });
-
-        }
-
-
-
-        /* ======================================================= */
-        /* MODAL DE DETALHES */
-        /* ======================================================= */
-
-        function estrelas(nota) {
-
-            let s = "";
-
-            for (let i = 1; i <= 5; i++) {
-
-                s += i <= nota
-
-                    ? '<span style="color:#f59e0b;font-size:1.2rem">★</span>'
-
-                    : '<span style="color:#d1d5db;font-size:1.2rem">★</span>';
-
+        // Marcar nav ativo
+        const path = window.location.pathname;
+        document.querySelectorAll('.nav-item').forEach(link => {
+            if (link.getAttribute('href') === path) {
+                link.classList.add('ativo');
+            } else if (link.id !== 'nav-dashboard') {
+                link.classList.remove('ativo');
             }
-
-            return s;
-
-        }
-
-
-
-        function abrirModal(id) {
-
-            const el =
-                document.getElementById(
-                    "avaliacao-" + id
-                );
-
-
-            if (!el) return;
-
-
-            const d =
-                JSON.parse(
-                    el.textContent
-                );
-
-
-            let corpo = "";
-
-
-            corpo += modalLinha(
-                "📂",
-                "Categoria",
-                d.categoria
-            );
-
-
-            corpo += modalLinha(
-                "⭐",
-                "Nota",
-                estrelas(d.nota) +
-                ' <span style="color:#6b7280;font-size:0.8rem">(' +
-                d.nota +
-                '/5)</span>'
-            );
-
-
-            corpo += modalLinha(
-                "💬",
-                "Tipo de Feedback",
-                d.tipo_feedback
-            );
-
-
-            corpo += modalLinha(
-                "👤",
-                "Funcionário Avaliado",
-                d.funcionario
-            );
-
-
-            corpo += modalLinha(
-                "📍",
-                "Localização",
-                d.localizacao
-            );
-
-
-            corpo += modalLinha(
-                "🕐",
-                "Data e Hora",
-                d.data_criacao
-            );
-
-
-            corpo += modalLinha(
-                "🌐",
-                "Origem",
-                d.origem
-            );
-
-
-            corpo += `
-                <div
-                    class="modal-row"
-                    style="flex-direction:column;align-items:flex-start"
-                >
-
-                    <div
-                        style="display:flex;align-items:flex-start;gap:0.75rem;width:100%"
-                    >
-
-                        <span class="modal-icon">
-                            📝
-                        </span>
-
-                        <div style="flex:1">
-
-                            <p class="modal-label">
-                                Comentário do Aluno
-                            </p>
-
-                            <p
-                                class="modal-value"
-                                style="white-space:pre-wrap;line-height:1.6"
-                            >
-                                ${d.comentario}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-
-
-            corpo += modalLinha(
-                "🔖",
-                "Status Atual",
-                d.status
-            );
-
-
-            if (
-                d.status_raw === "resolvida" &&
-                d.resolvido_por
-            ) {
-
-                corpo += modalLinha(
-                    "✅",
-                    "Resolvida por",
-                    "<strong>" +
-                    d.resolvido_por +
-                    "</strong>"
-                );
-
-
-                if (d.data_resolucao) {
-
-                    corpo += modalLinha(
-                        "📅",
-                        "Data de Resolução",
-                        d.data_resolucao
-                    );
-
-                }
-
-            }
-
-
-            document.getElementById(
-                "modal-corpo"
-            ).innerHTML = corpo;
-
-
-            const filtrosAtivos =
-                window.location.search.replace(
-                    "?",
-                    ""
-                );
-
-
-            document.getElementById(
-                "modal-acoes"
-            ).innerHTML = `
-
-                <div
-                    style="
-                        border-top:1px solid #f3f4f6;
-                        padding-top:1rem
-                    "
-                >
-
-                    <p
-                        style="
-                            font-size:0.75rem;
-                            font-weight:700;
-                            color:#9ca3af;
-                            text-transform:uppercase;
-                            letter-spacing:0.07em;
-                            margin-bottom:0.75rem
-                        "
-                    >
-                        Alterar Status
-                    </p>
-
-
-                    <form
-                        method="post"
-                        action="/dashboard/"
-                        style="
-                            display:flex;
-                            gap:0.5rem;
-                            flex-wrap:wrap
-                        "
-                    >
-
-                        <input
-                            type="hidden"
-                            name="csrfmiddlewaretoken"
-                            value="${getCookie('csrftoken')}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="avaliacao_id"
-                            value="${d.id}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="filtros_ativos"
-                            value="${filtrosAtivos}
-                        >
-
-
-                        <button
-                            type="submit"
-                            name="novo_status"
-                            value="pendente"
-                            style="
-                                flex:1;
-                                padding:0.5rem;
-                                border-radius:0.5rem;
-                                font-size:0.8rem;
-                                font-weight:600;
-                                border:1px solid #fcd34d;
-                                background:#fef3c7;
-                                color:#92400e;
-                                cursor:pointer
-                            "
-                        >
-                            🕐 Pendente
-                        </button>
-
-
-                        <button
-                            type="submit"
-                            name="novo_status"
-                            value="em_analise"
-                            style="
-                                flex:1;
-                                padding:0.5rem;
-                                border-radius:0.5rem;
-                                font-size:0.8rem;
-                                font-weight:600;
-                                border:1px solid #93c5fd;
-                                background:#dbeafe;
-                                color:#1e40af;
-                                cursor:pointer
-                            "
-                        >
-                            🔍 Em Análise
-                        </button>
-
-
-                        <button
-                            type="submit"
-                            name="novo_status"
-                            value="resolvida"
-                            style="
-                                flex:1;
-                                padding:0.5rem;
-                                border-radius:0.5rem;
-                                font-size:0.8rem;
-                                font-weight:600;
-                                border:1px solid #6ee7b7;
-                                background:#d1fae5;
-                                color:#065f46;
-                                cursor:pointer
-                            "
-                        >
-                            ✅ Resolvida
-                        </button>
-
-                    </form>
-
-                </div>
-
-            `;
-
-
-            document
-                .getElementById("modal-detalhes")
-                .classList.add("ativo");
-
-
-            document.body.style.overflow = "hidden";
-
-        }
-
-
-
-        function modalLinha(
-            icon,
-            label,
-            value
-        ) {
-
-            return `
-
-                <div class="modal-row">
-
-                    <span class="modal-icon">
-                        ${icon}
-                    </span>
-
-                    <div>
-
-                        <p class="modal-label">
-                            ${label}
-                        </p>
-
-                        <p class="modal-value">
-                            ${value}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-
-
-
-        function fecharModal() {
-
-            document
-                .getElementById("modal-detalhes")
-                .classList.remove("ativo");
-
-
-            document.body.style.overflow = "";
-
-        }
-
-
-
-        function fecharModalExterno(e) {
-
-            if (
-                e.target ===
-                document.getElementById("modal-detalhes")
-            ) {
-
-                fecharModal();
-
-            }
-
-        }
-
-
-
-        document.addEventListener(
-            "keydown",
-            e => {
-
-                if (e.key === "Escape") {
-
-                    fecharModal();
-
-                }
-
-            }
-        );
-
-
-
-        function getCookie(name) {
-
-            let v = null;
-
-
-            if (
-                document.cookie &&
-                document.cookie !== ""
-            ) {
-
-                document.cookie
-                    .split(";")
-                    .forEach(c => {
-
-                        c = c.trim();
-
-
-                        if (
-                            c.startsWith(
-                                name + "="
-                            )
-                        ) {
-
-                            v = decodeURIComponent(
-                                c.slice(
-                                    name.length + 1
-                                )
-                            );
-
-                        }
-
-                    });
-
-            }
-
-
-            return v;
-
-        }
-
-
-
-        /* ======================================================= */
-        /* ANÁLISE COM IA */
-        /* ======================================================= */
-
-        async function analisarComIA() {
-
-            const btn =
-                document.getElementById(
-                    "btn-ia"
-                );
-
-
-            const resultDiv =
-                document.getElementById(
-                    "ia-resultado"
-                );
-
-
-            const textoDiv =
-                document.getElementById(
-                    "ia-texto"
-                );
-
-
-            btn.disabled = true;
-
-
-            btn.innerHTML = `
-                <span class="ia-loading">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
-                Analisando...
-            `;
-
-
-            resultDiv.classList.remove(
-                "hidden"
-            );
-
-
-            textoDiv.innerHTML = `
-                <span class="ia-loading">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
-                Processando os dados com Inteligência Artificial...
-            `;
-
-
-            try {
-
-                const resp =
-                    await fetch(
-                        "/ia/analisar/"
-                    );
-
-
-                if (!resp.ok) {
-
-                    throw new Error(
-                        "Erro " + resp.status
-                    );
-
-                }
-
-
-                const data =
-                    await resp.json();
-
-
-                textoDiv.innerHTML =
-                    formatarTextoIA(
-                        data.analise ||
-                        "Sem resposta da IA."
-                    );
-
-
-            } catch (err) {
-
-                textoDiv.innerHTML =
-                    "❌ Não foi possível conectar à IA. Verifique a configuração da chave de API.";
-
-            }
-
-
-            btn.disabled = false;
-
-
-            btn.innerHTML =
-                "✨ Gerar Análise";
-
-        }
-
-
-
-        <script>
-/* =========================================================
-            ASSISTENTE IA — POLO FIT
-            ========================================================= */
-
-            const chatForm = document.getElementById("chat-form");
-            const chatInput = document.getElementById("chat-input");
-            const chatMessages = document.getElementById("chat-mensagens");
-            const chatEnviar = document.getElementById("chat-enviar");
-            const limparChat = document.getElementById("limpar-chat");
-            const chatContador = document.getElementById("chat-contador");
-            const chatSugestoes = document.getElementById("chat-sugestoes");
-
-
-            /* =========================================================
-               FORMATAÇÃO SEGURA DA RESPOSTA DA IA
-               ========================================================= */
-
-            function formatarTextoIA(texto) {
-            if (!texto) {
-                return "Não consegui gerar uma resposta no momento.";
-            }
-
-            let seguro = String(texto)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/\"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-
-            seguro = seguro.replace(/\*\*(.*?)\*\*/g, "<strong class='text-white font-bold'>$1</strong>");
-            seguro = seguro.replace(/\*(.*?)\*/g, "<em>$1</em>");
-            seguro = seguro.replace(/^### (.*?)$/gm, "<div class='font-bold text-lime-300 text-sm mt-3 mb-1'>$1</div>");
-            seguro = seguro.replace(/^## (.*?)$/gm, "<div class='font-bold text-lime-300 text-base mt-3 mb-1'>$1</div>");
-            seguro = seguro.replace(/^[-•] (.*?)$/gm, "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400'>•</span><span>$1</span></div>");
-            seguro = seguro.replace(/^(\d+)\. (.*?)$/gm, "<div class='flex gap-2 ml-1 my-1'><span class='text-lime-400 font-bold'>$1.</span><span>$2</span></div>");
-            seguro = seguro.replace(/\n/g, "<br>");
-
-            return seguro;
-        }
-
-        function horaAtual() {
-
-            return new Date().toLocaleTimeString(
-                "pt-BR",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                }
-            );
-
-        }
-
-
-        /* =========================================================
-           ADICIONAR MENSAGEM DO USUÁRIO
-           ========================================================= */
-
-        function adicionarMensagemUsuario(mensagem) {
-            const wrapper = document.createElement("div");
-            wrapper.className = "flex justify-end items-start gap-3";
-
-            wrapper.innerHTML = `
-                <div class="max-w-[85%]">
-                    <div class="flex justify-end items-center gap-2 mb-1.5">
-                        <span class="text-[10px] text-slate-500">${horaAtual()}</span>
-                        <span class="text-xs font-bold text-slate-300">Você</span>
-                    </div>
-                    <div class="chat-bubble-user rounded-2xl rounded-tr-md px-4 py-3 text-sm leading-relaxed font-medium shadow-sm">
-                        ${escapeHTML(mensagem)}
-                    </div>
-                </div>
-
-                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-sm">👤</div>
-            `;
-
-            chatMessages.appendChild(wrapper);
-            rolarChat();
-        }
-
-
-        /* =========================================================
-           ADICIONAR RESPOSTA DA IA
-           ========================================================= */
-
-        function adicionarMensagemIA(texto) {
-            const wrapper = document.createElement("div");
-            wrapper.className = "flex items-start gap-3";
-
-            wrapper.innerHTML = `
-                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">🤖</div>
-
-                <div class="max-w-[88%]">
-                    <div class="flex items-center gap-2 mb-1.5">
-                        <span class="text-xs font-bold text-lime-300">Polo IA</span>
-                        <span class="text-[10px] text-slate-500">${horaAtual()}</span>
-                    </div>
-                    <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200 shadow-sm">
-                        ${formatarTextoIA(texto)}
-                    </div>
-                </div>
-            `;
-
-            chatMessages.appendChild(wrapper);
-            rolarChat();
-        }
-
-
-        /* =========================================================
-           INDICADOR "PENSANDO"
-           ========================================================= */
-
-        function adicionarPensando() {
-            const wrapper = document.createElement("div");
-            wrapper.id = "chat-pensando";
-            wrapper.className = "flex items-start gap-3";
-
-            wrapper.innerHTML = `
-                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">🤖</div>
-
-                <div>
-                    <div class="text-xs font-bold text-lime-300 mb-1.5">Polo IA</div>
-                    <div class="chat-bubble-ai rounded-2xl rounded-tl-md px-4 py-3">
-                        <div class="flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce"></span>
-                            <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce" style="animation-delay:0.15s"></span>
-                            <span class="w-2 h-2 rounded-full bg-lime-400 animate-bounce" style="animation-delay:0.3s"></span>
-                            <span class="ml-2 text-xs text-slate-400">Digitando...</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            chatMessages.appendChild(wrapper);
-            rolarChat();
-        }
-
-
-        /* =========================================================
-           ROLAGEM
-           ========================================================= */
-
-        function rolarChat() {
-
-            chatMessages.scrollTo({
-                top: chatMessages.scrollHeight,
-                behavior: "smooth"
-            });
-
-        }
-
-
-        /* =========================================================
-           ESCAPE HTML
-           ========================================================= */
-
-        function escapeHTML(texto) {
-
-            const div = document.createElement("div");
-
-            div.textContent = texto;
-
-            return div.innerHTML;
-
-        }
-
-
-        /* =========================================================
-           ENVIAR PERGUNTA
-           ========================================================= */
-
-        async function enviarPergunta(mensagem) {
-            if (!mensagem || !chatForm) {
-                return;
-            }
-
-            adicionarMensagemUsuario(mensagem);
-            chatInput.value = "";
-            atualizarContador();
-            autoResizeInput();
-
-            chatInput.disabled = true;
-            chatEnviar.disabled = true;
-            adicionarPensando();
-
-            try {
-                const response = await fetch("/ia/chat/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": getCookie("csrftoken")
-                    },
-                    body: JSON.stringify({ mensagem: mensagem })
-                });
-
-                const data = await response.json();
-                const pensando = document.getElementById("chat-pensando");
-                if (pensando) pensando.remove();
-
-                if (!response.ok) {
-                    adicionarMensagemIA(
-                        data.resposta ||
-                        data.erro ||
-                        "Não foi possível processar sua pergunta no momento. Tente novamente em alguns segundos."
-                    );
-                    return;
-                }
-
-                adicionarMensagemIA(
-                    data.resposta ||
-                    "Não consegui obter uma resposta relevante para essa pergunta. Tente formular de outra forma."
-                );
-
-            } catch (error) {
-                const pensando = document.getElementById("chat-pensando");
-                if (pensando) pensando.remove();
-
-                adicionarMensagemIA(
-                    "Não foi possível conectar ao assistente naquele momento. Verifique a conexão e tente novamente, ou use a análise do dashboard como alternativa."
-                );
-                console.error("Erro no chatbot:", error);
-            } finally {
-                chatInput.disabled = false;
-                chatEnviar.disabled = false;
-                chatInput.focus();
-                rolarChat();
-            }
-        }
-
-
-        /* =========================================================
-           FORMULÁRIO
-           ========================================================= */
-
-        function autoResizeInput() {
-            if (!chatInput) return;
-            chatInput.style.height = 'auto';
-            chatInput.style.height = Math.min(chatInput.scrollHeight, 160) + 'px';
-        }
-
-        if (chatForm && chatInput) {
-            chatForm.addEventListener("submit", function (event) {
-                event.preventDefault();
-                const mensagem = chatInput.value.trim();
-                if (!mensagem) return;
-                enviarPergunta(mensagem);
-            });
-
-            chatInput.addEventListener("keydown", function (event) {
-                if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    chatForm.requestSubmit();
-                }
-            });
-
-            chatInput.addEventListener("input", function () {
-                atualizarContador();
-                autoResizeInput();
-            });
-        }
-
-
-        /* =========================================================
-           CONTADOR
-           ========================================================= */
-
-        function atualizarContador() {
-
-            if (!chatContador || !chatInput) {
-                return;
-            }
-
-            chatContador.textContent =
-                `${chatInput.value.length}/1000`;
-
-        }
-
-
-        /* =========================================================
-           SUGESTÕES
-           ========================================================= */
-
-        document.querySelectorAll(".sugestao-chat").forEach(function (botao) {
-
-            botao.addEventListener("click", function () {
-
-                const pergunta = this.dataset.pergunta;
-
-                if (!pergunta) {
-                    return;
-                }
-
-                enviarPergunta(pergunta);
-
-            });
-
         });
-
-
-        /* =========================================================
-           LIMPAR CONVERSA
-           ========================================================= */
-
-        if (limparChat) {
-
-            limparChat.addEventListener("click", function () {
-
-                chatMessages.innerHTML = `
-            <div class="flex items-start gap-3">
-
-                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
-                    🤖
-                </div>
-
-                <div class="max-w-[85%]">
-
-                    <div class="flex items-center gap-2 mb-1">
-
-                        <span class="text-xs font-bold text-lime-300">
-                            Assistente Polo Fit
-                        </span>
-
-                        <span class="text-[10px] text-slate-500">
-                            agora
-                        </span>
-
-                    </div>
-
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed text-slate-200">
-
-                        Olá! 👋 Como posso ajudar você hoje?
-
-                    </div>
-
-                </div>
-
-            </div>
-        `;
-
-                chatInput.focus();
-
-            });
-
-        }
-
-
-        /* =========================================================
-           FOCO INICIAL
-           ========================================================= */
-
-        if (chatInput) {
-
-            atualizarContador();
-
-            chatInput.focus();
-
-        }
     </script>
-
-    {% include "feedback/pwa_install.html" %}
 </body>
-
 </html>

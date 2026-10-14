@@ -1,39 +1,263 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
-    <title>Entrar - Polo Fit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Entrar — Polo Fit</title>
+    <meta name="description" content="Acesse o painel de gestão da Academia Polo Fit.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        .fundo-principal {
-            background-image: url("{% static 'feedback/academia1.png' %}");
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        .bg {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(10,10,10,0.65), rgba(10,10,10,0.85)),
+                url("{% static 'feedback/academia1.png' %}");
             background-size: cover;
             background-position: center;
+            z-index: 0;
+        }
+
+        .glow {
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(163,230,53,0.08), transparent 70%);
+            top: -100px; right: -100px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 1.25rem;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header img {
+            height: 52px;
+            width: auto;
+            margin-bottom: 0.75rem;
+            filter: drop-shadow(0 4px 12px rgba(163,230,53,0.25));
+        }
+
+        .card-header h1 {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #a3e635;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-header p {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .card-body {
+            background: #111111;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.375rem;
+            color: #f0f0f0;
+        }
+
+        .card-sub {
+            font-size: 0.825rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 1.75rem;
+            line-height: 1.5;
+        }
+
+        .field {
+            margin-bottom: 1.125rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.775rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.03em;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 0.875rem;
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            padding: 0.875rem 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: rgba(163,230,53,0.5);
+            box-shadow: 0 0 0 3px rgba(163,230,53,0.08);
+        }
+
+        .btn-entrar {
+            width: 100%;
+            background: #a3e635;
+            color: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 0.975rem;
+            padding: 0.9375rem;
+            border-radius: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-entrar:hover {
+            background: #b8f048;
+            transform: translateY(-1px);
+        }
+
+        .erro {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 0.875rem;
+            padding: 0.875rem 1rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+
+        .erro span { font-size: 1.1rem; }
+
+        .erro p {
+            font-size: 0.825rem;
+            color: #fca5a5;
+            font-weight: 500;
+        }
+
+        .card-links {
+            margin-top: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .card-links a {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .card-links a:hover { color: #a3e635; }
+
+        .card-links .destaque {
+            color: #a3e635;
+            font-weight: 600;
+        }
+
+        .aviso-conta {
+            margin-top: 1.25rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 0.75rem;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.25);
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .voltar {
+            position: fixed;
+            top: 1rem; left: 1rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.5rem 0.875rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.625rem;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .voltar:hover {
+            color: #a3e635;
+            background: rgba(163,230,53,0.06);
         }
     </style>
 </head>
+<body>
+    <div class="bg" aria-hidden="true"></div>
+    <div class="glow" aria-hidden="true"></div>
 
-<body class="min-h-screen flex items-center justify-center fundo-principal relative p-4">
-    <!-- OVERLAY ESCURO -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+    <a href="{% url 'inicio' %}" class="voltar">← Início</a>
 
-    <div class="relative w-full max-w-md">
-        <!-- LOGO / TÍTULO EM CIMA -->
-        <div class="text-center mb-6">
-            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-16 mx-auto mb-2 object-contain drop-shadow-lg">
-            <h1 class="text-3xl font-black text-white drop-shadow-lg tracking-wide">POLO FIT</h1>
-            <p class="text-white/80 mt-1 font-medium">Treinos e Polo Feedback</p>
+    <div class="card">
+        <div class="card-header">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit">
+            <h1>Polo Feedback</h1>
+            <p>Painel de gestão da Academia Polo Fit</p>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-2xl p-8">
-            <div class="text-center mb-8">
-                <h2 class="text-xl font-bold text-gray-800">Acesse sua conta</h2>
-                <p class="text-gray-500 text-sm mt-1">Entre para ver sua área da Polo Fit</p>
+        <div class="card-body">
+            <h2 class="card-title">Bem-vindo de volta</h2>
+            <p class="card-sub">Entre com suas credenciais para acessar o painel.</p>
+
+            {% if form.errors %}
+            <div class="erro" role="alert">
+                <span>⚠️</span>
+                <p>Usuário ou senha incorretos. Tente novamente.</p>
             </div>
+            {% endif %}
 
             <form method="post">
                 {% csrf_token %}
@@ -43,47 +267,48 @@
                 <input type="hidden" name="next" value="{{ next }}">
                 {% endif %}
 
-                <div class="mb-5">
-                    <label for="id_username" class="block text-sm font-semibold text-gray-700 mb-2">Usuário</label>
-                    <input type="text" name="username" id="id_username" required autofocus
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition"
-                        placeholder="Digite seu usuário">
+                <div class="field">
+                    <label for="id_username">Usuário</label>
+                    <input
+                        type="text"
+                        name="username"
+                        id="id_username"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        placeholder="Digite seu usuário"
+                    >
                 </div>
 
-                <div class="mb-6">
-                    <label for="id_password" class="block text-sm font-semibold text-gray-700 mb-2">Senha</label>
-                    <input type="password" name="password" id="id_password" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#33FF00] focus:border-transparent transition"
-                        placeholder="Digite sua senha">
+                <div class="field">
+                    <label for="id_password">Senha</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="id_password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="Digite sua senha"
+                    >
                 </div>
 
-                {% if form.errors %}
-                <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 mb-5 flex items-start gap-3">
-                    <span class="text-xl">⚠️</span>
-                    <p class="font-medium text-sm">Usuário ou senha incorretos. Tente novamente.</p>
-                </div>
-                {% endif %}
-
-                <button type="submit"
-                    class="w-full bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#33FF00] border border-[#33FF00] font-bold py-3.5 rounded-xl transition shadow-lg hover:shadow-green-500/10">
-                    Entrar
+                <button type="submit" class="btn-entrar" id="btn-submit-login">
+                    Entrar no painel →
                 </button>
             </form>
 
-            <p class="mt-6 text-center text-sm text-gray-600">
-                Ainda não tem conta de aluno?
-                <a href="{% url 'cadastro_aluno' %}" class="font-bold text-green-700 hover:underline">
-                    Criar conta
+            <div class="card-links">
+                <a href="{% url 'cadastro_aluno' %}">
+                    Aluno? <span class="destaque">Criar conta de aluno</span>
                 </a>
-            </p>
-            <p class="mt-3 text-center text-xs text-gray-500">
-                Não existe login padrão “admin/admin”. A equipe usa uma conta individual fornecida pela administração.
-            </p>
-        </div>
+            </div>
 
-        <p class="text-center text-white/60 text-xs mt-6">© 2026 Polo Fit • Sua opinião faz a diferença</p>
+            <div class="aviso-conta">
+                Contas da equipe são fornecidas pela administração da Polo Fit. Não há login padrão "admin/admin".
+            </div>
+        </div>
     </div>
+
     {% include "feedback/pwa_install.html" %}
 </body>
-
 </html>

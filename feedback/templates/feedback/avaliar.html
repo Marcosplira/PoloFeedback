@@ -1,504 +1,988 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
-    <title>Polo Feedback - Polo Fit</title>
-    <meta name="description" content="Avalie sua experiência na Polo Fit. Sua opinião ajuda a academia a melhorar.">
+    <title>Avaliar — Polo Fit</title>
+    <meta name="description" content="Avalie sua experiência na Academia Polo Fit em menos de 1 minuto.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { font-family: 'Inter', sans-serif; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .fundo-principal {
-            background-image: url("{% static 'feedback/academia1.png' %}");
+        :root {
+            --verde: #a3e635;
+            --verde-escuro: #65a30d;
+            --preto: #0a0a0a;
+            --cinza-escuro: #111111;
+            --cinza-card: #161616;
+            --cinza-borda: rgba(255,255,255,0.08);
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--preto);
+            color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.25rem;
+            height: 60px;
+            background: rgba(10,10,10,0.95);
+            border-bottom: 1px solid rgba(163,230,53,0.12);
+            flex-shrink: 0;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #f0f0f0;
+        }
+
+        .navbar-logo img { height: 30px; width: auto; }
+        .navbar-logo span { font-weight: 800; font-size: 1rem; }
+
+        .nav-back {
+            text-decoration: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover { color: var(--verde); }
+
+        /* ── WRAPPER PRINCIPAL ── */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background-image:
+                linear-gradient(rgba(10,10,10,0.82), rgba(10,10,10,0.92)),
+                url("{% static 'feedback/academia1.png' %}");
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
-        }
-        .fundo-overlay {
-            background: rgba(0, 0, 0, 0.52);
-            backdrop-filter: blur(3px);
         }
 
-        /* NAVBAR */
-        .navbar {
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(163, 230, 53, 0.25);
+        /* ── CARD CENTRAL ── */
+        .av-card {
+            background: var(--cinza-card);
+            border: 1px solid rgba(163,230,53,0.15);
+            border-radius: 1.75rem;
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
-        /* CARD DE LOCAL */
-        .local-btn {
+        .av-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .av-card-logo {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--verde);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── PROGRESS BAR ── */
+        .progress-bar-wrap {
+            padding: 0 1.5rem 1.25rem;
+            padding-top: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 3px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.4s;
+        }
+
+        .progress-step.ativo { background: var(--verde); }
+        .progress-step.concluido { background: rgba(163,230,53,0.5); }
+
+        .progress-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.35);
+        }
+
+        .progress-label .passo-atual { color: var(--verde); font-weight: 600; }
+
+        /* ── TELAS ── */
+        .telas-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tela {
+            display: none;
+            padding: 2rem 1.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tela.ativa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .tela-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .tela-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        /* ── BOTÕES DE OPÇÃO ── */
+        .opcoes-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .opcoes-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .opcoes-grid.cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .opcao-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.5rem;
             padding: 1rem 0.5rem;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
             border-radius: 1rem;
-            border: 2px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.06);
-            color: white;
-            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
             font-size: 0.8rem;
             text-align: center;
-            transition: all 0.2s;
-            cursor: pointer;
-            text-decoration: none;
         }
-        .local-btn:hover {
-            border-color: rgba(163,230,53,0.6);
-            background: rgba(163,230,53,0.08);
-            transform: translateY(-2px);
+
+        .opcao-btn .icone { font-size: 1.75rem; }
+
+        .opcao-btn:hover {
+            border-color: rgba(163,230,53,0.4);
+            background: rgba(163,230,53,0.06);
         }
-        .local-btn.ativo {
-            border-color: #a3e635;
-            background: rgba(163,230,53,0.15);
+
+        .opcao-btn.selecionado {
+            border-color: var(--verde);
+            background: rgba(163,230,53,0.12);
             color: #d9f99d;
-            box-shadow: 0 0 0 3px rgba(163,230,53,0.18);
-        }
-        .local-btn .icone {
-            font-size: 1.6rem;
-            line-height: 1;
+            box-shadow: 0 0 0 3px rgba(163,230,53,0.12);
         }
 
-        /* BANNER LOCAL SELECIONADO */
-        .banner-local {
-            background: linear-gradient(135deg, rgba(10,10,10,0.92), rgba(15,30,5,0.92));
-            border: 1px solid rgba(163,230,53,0.4);
-            backdrop-filter: blur(10px);
-            border-radius: 1.25rem;
+        /* ── ESTRELAS ── */
+        .estrelas-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 1rem 0 2rem;
         }
 
-        /* CARD DO FORMULÁRIO */
-        .form-card {
-            background: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-        }
-
-        /* Card de funcionário */
-        .card-func input[type="checkbox"] { display: none; }
-        .card-func input[type="checkbox"]:checked + .func-inner {
-            border-color: #16a34a;
-            background-color: #f0fdf4;
-            box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
-        }
-        .card-func .func-inner {
+        .estrela-btn {
+            font-size: 2.75rem;
             cursor: pointer;
-            border: 2px solid #e5e7eb;
-            border-radius: 1rem;
-            padding: 0.75rem 0.5rem;
+            border: none;
+            background: none;
+            color: rgba(255,255,255,0.12);
+            transition: color 0.15s, transform 0.15s;
+            line-height: 1;
+            padding: 0.25rem;
+        }
+
+        .estrela-btn:hover,
+        .estrela-btn.ativa {
+            color: var(--verde);
+            transform: scale(1.15);
+        }
+
+        .nota-display {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .nota-numero {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--verde);
+            letter-spacing: -0.05em;
+        }
+
+        .nota-texto {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 0.25rem;
+        }
+
+        /* ── TAGS ── */
+        .tags-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.625rem;
+        }
+
+        .tag-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.5rem 0.875rem;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.03);
+            border-radius: 999px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.75);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tag-btn:hover {
+            border-color: rgba(163,230,53,0.4);
+            color: #f0f0f0;
+        }
+
+        .tag-btn.selecionada {
+            border-color: var(--verde);
+            background: rgba(163,230,53,0.12);
+            color: #d9f99d;
+        }
+
+        /* ── FUNCIONÁRIOS ── */
+        .func-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 360px) {
+            .func-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .func-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.4rem;
+            padding: 0.875rem 0.5rem;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            border-radius: 1rem;
+            cursor: pointer;
+            color: rgba(255,255,255,0.8);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
             transition: all 0.2s;
         }
-        .card-func .func-inner:hover { border-color: #86efac; }
+
+        .func-btn:hover {
+            border-color: rgba(163,230,53,0.4);
+            background: rgba(163,230,53,0.05);
+        }
+
+        .func-btn.selecionado {
+            border-color: var(--verde);
+            background: rgba(163,230,53,0.12);
+            color: #d9f99d;
+        }
+
         .func-foto {
-            width: 64px; height: 64px;
-            border-radius: 50%; object-fit: cover;
-            border: 2px solid #e5e7eb;
-        }
-        .func-foto-placeholder {
-            width: 64px; height: 64px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0A0A0A, #33FF00);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; color: white; font-weight: bold;
+            object-fit: cover;
+            background: rgba(255,255,255,0.1);
         }
 
-        /* SEÇÃO DO LOCAL — STEP CARD */
-        .step-card {
-            background: rgba(9, 13, 20, 0.45);
-            border: 1px solid rgba(255,255,255,0.15);
-            backdrop-filter: blur(12px);
-            border-radius: 1.5rem;
+        .func-foto-placeholder {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(163,230,53,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
         }
 
-        /* RODAPÉ DISCRETO */
-        footer a { transition: color 0.2s; }
-        footer a:hover { color: #a3e635; }
+        .func-pular {
+            margin-top: 0.75rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .link-pular {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.35);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            padding: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .link-pular:hover { color: rgba(255,255,255,0.6); }
+
+        /* ── TEXTAREA ── */
+        .comentario-box {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            padding: 1rem;
+            resize: vertical;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .comentario-box::placeholder { color: rgba(255,255,255,0.25); }
+
+        .comentario-box:focus {
+            border-color: rgba(163,230,53,0.4);
+        }
+
+        /* ── TIPO FEEDBACK ── */
+        .tipo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tipo-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 1rem 0.5rem;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            border-radius: 1rem;
+            cursor: pointer;
+            color: rgba(255,255,255,0.7);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .tipo-btn:hover {
+            border-color: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .tipo-btn.selecionado.elogio {
+            border-color: #4ade80;
+            background: rgba(74,222,128,0.12);
+            color: #86efac;
+        }
+
+        .tipo-btn.selecionado.sugestao {
+            border-color: #60a5fa;
+            background: rgba(96,165,250,0.12);
+            color: #93c5fd;
+        }
+
+        .tipo-btn.selecionado.reclamacao {
+            border-color: #f87171;
+            background: rgba(248,113,113,0.12);
+            color: #fca5a5;
+        }
+
+        .tipo-btn .tipo-icone { font-size: 1.5rem; }
+
+        /* ── FOOTER DOS BOTÕES ── */
+        .tela-footer {
+            padding: 1rem 1.5rem 1.75rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .btn-voltar {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.875rem 1.25rem;
+            border-radius: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-voltar:hover {
+            background: rgba(255,255,255,0.1);
+            color: #f0f0f0;
+        }
+
+        .btn-continuar {
+            flex: 1;
+            background: var(--verde);
+            color: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 0.975rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-continuar:hover:not(:disabled) {
+            background: #b8f048;
+            transform: translateY(-1px);
+        }
+
+        .btn-continuar:disabled {
+            background: rgba(163,230,53,0.25);
+            color: rgba(10,10,10,0.4);
+            cursor: not-allowed;
+        }
+
+        /* ── TELA DE SUCESSO ── */
+        .sucesso-wrap {
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+
+        .sucesso-icone {
+            width: 80px;
+            height: 80px;
+            background: rgba(163,230,53,0.12);
+            border: 2px solid rgba(163,230,53,0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+            animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .sucesso-titulo {
+            font-size: 1.75rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.75rem;
+        }
+
+        .sucesso-desc {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .sucesso-nova {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--verde);
+            color: #0a0a0a;
+            font-weight: 800;
+            font-size: 0.9rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.875rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .sucesso-nova:hover { background: #b8f048; }
+
+        /* ── ERROS ── */
+        .erros-lista {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 0.875rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .erros-lista li {
+            color: #fca5a5;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            list-style: none;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .erros-lista li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #f87171;
+        }
     </style>
 </head>
+<body>
 
-<body class="min-h-screen fundo-principal relative">
-    <div class="fixed inset-0 fundo-overlay -z-10"></div>
-
-    <!-- ========================================================= -->
-    <!-- NAVBAR                                                    -->
-    <!-- ========================================================= -->
-    <nav class="navbar sticky top-0 z-50 px-4 py-3">
-        <div class="max-w-2xl mx-auto flex items-center justify-between">
-            <a href="{% url 'inicio' %}" class="flex items-center gap-2">
-                <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-9 object-contain drop-shadow">
-                <span class="text-white font-black text-base hidden sm:block tracking-tight">Polo Feedback</span>
-            </a>
-            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs sm:gap-2 sm:text-sm">
-                <a href="{% url 'inicio' %}"
-                   class="inline-flex min-h-11 flex-shrink-0 items-center whitespace-nowrap text-white/80 hover:text-[#a3e635] font-semibold px-2.5 sm:px-3 py-2 rounded-lg transition">
-                    🏠 Início
-                </a>
-                <a href="#escolher-local"
-                   class="inline-flex min-h-11 flex-shrink-0 items-center whitespace-nowrap text-white/80 hover:text-[#a3e635] font-semibold px-2.5 sm:px-3 py-2 rounded-lg transition">
-                    📍 Local
-                </a>
-                <a href="#formulario"
-                   aria-current="page"
-                   class="inline-flex min-h-11 flex-shrink-0 items-center whitespace-nowrap bg-[#a3e635] hover:bg-[#bef264] text-black font-black px-2.5 sm:px-3.5 py-2 rounded-lg transition">
-                    📝 Avaliar
-                </a>
-                <a href="{% url 'enquete' %}"
-                   class="inline-flex min-h-11 flex-shrink-0 items-center whitespace-nowrap text-white/80 hover:text-[#a3e635] border border-white/20 hover:border-[#a3e635] font-bold px-2.5 sm:px-3.5 py-2 rounded-lg transition"
-                   title="Responder Enquete de Satisfação">
-                    📋 Enquete
-                </a>
-                <a href="{% url 'dashboard' %}"
-                   class="inline-flex min-h-11 flex-shrink-0 items-center gap-1 whitespace-nowrap bg-white/10 hover:bg-white/20 text-[#a3e635] border border-[#a3e635]/40 hover:border-[#a3e635] font-black px-2.5 sm:px-3.5 py-2 rounded-lg transition shadow-sm"
-                   title="Acessar o Painel do Gerente">
-                    📊 Dashboard
-                </a>
-            </div>
-        </div>
+    <nav class="navbar" aria-label="Navegação">
+        <a href="{% url 'inicio' %}" class="navbar-logo">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Logo Polo Fit">
+            <span>Polo Fit</span>
+        </a>
+        <a href="{% url 'inicio' %}" class="nav-back">← Voltar ao início</a>
     </nav>
 
-    <!-- ========================================================= -->
-    <!-- CARROSSEL                                                 -->
-    <!-- ========================================================= -->
-    <div class="max-w-2xl mx-auto px-4 pt-5">
-        <div class="relative overflow-hidden rounded-2xl shadow-2xl border border-white/15">
-            <img id="imagemCarrossel" src="{% static 'feedback/academia3.png' %}" alt="Polo Fit"
-                class="w-full h-52 md:h-72 object-cover">
-            <button type="button" onclick="imagemAnterior()"
-                class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-9 h-9 flex items-center justify-center text-sm">❮</button>
-            <button type="button" onclick="proximaImagem()"
-                class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-9 h-9 flex items-center justify-center text-sm">❯</button>
-            <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-                <button type="button" onclick="mostrarImagem(0)" class="indicador w-2.5 h-2.5 rounded-full bg-white"></button>
-                <button type="button" onclick="mostrarImagem(1)" class="indicador w-2.5 h-2.5 rounded-full bg-white/50"></button>
-                <button type="button" onclick="mostrarImagem(2)" class="indicador w-2.5 h-2.5 rounded-full bg-white/50"></button>
+    <div class="main-wrapper">
+        <div class="av-card">
+
+            <div class="av-card-header">
+                <span class="av-card-logo">Polo Feedback</span>
+                <span style="font-size:0.7rem;color:rgba(255,255,255,0.25);">v2.0</span>
             </div>
-        </div>
-    </div>
-    <script>
-        const imagens = [
-            "{% static 'feedback/academia3.png' %}",
-            "{% static 'feedback/academia1.png' %}",
-            "{% static 'feedback/academia2.png' %}"
-        ];
-        let imagemAtual = 0;
-        function mostrarImagem(n) {
-            imagemAtual = n;
-            document.getElementById("imagemCarrossel").src = imagens[n];
-            document.querySelectorAll(".indicador").forEach((el, i) => {
-                el.classList.toggle("bg-white", i === n);
-                el.classList.toggle("bg-white/50", i !== n);
-            });
-        }
-        function proximaImagem() { mostrarImagem((imagemAtual + 1) % imagens.length); }
-        function imagemAnterior() { mostrarImagem((imagemAtual - 1 + imagens.length) % imagens.length); }
-        setInterval(proximaImagem, 5000);
-    </script>
 
-    <!-- ========================================================= -->
-    <!-- CONTEÚDO PRINCIPAL                                        -->
-    <!-- ========================================================= -->
-    <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
-
-        <!-- HERO -->
-        <div class="text-center">
-            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-12 mx-auto mb-3 object-contain drop-shadow-lg">
-            <h1 class="text-3xl font-black text-white drop-shadow-lg">Polo Feedback</h1>
-            <p class="text-white/75 mt-2 text-sm max-w-xs mx-auto">
-                Sua opinião fortalece a experiência e impulsiona a melhoria contínua.
-            </p>
-            <div class="mt-4 flex items-center justify-center gap-2.5 flex-wrap">
-                <a href="#escolher-local"
-                   class="bg-[#a3e635] hover:bg-[#bef264] text-black font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
-                    📝 Fazer Avaliação
-                </a>
-                <a href="{% url 'enquete' %}"
-                   class="bg-lime-400/20 hover:bg-lime-400/30 text-[#d9f99d] border border-[#a3e635]/60 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow flex items-center gap-1.5"
-                   title="Responder Enquete sobre Aulas e Espaços">
-                    📋 Responder Enquete (Aulas & Novos Espaços)
-                </a>
-                <a href="{% url 'dashboard' %}"
-                   class="bg-black/60 hover:bg-black/85 text-[#a3e635] border border-[#a3e635]/60 hover:border-[#a3e635] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow backdrop-blur-sm flex items-center gap-1.5"
-                   title="Acessar o Painel do Gerente">
-                    📊 Dashboard
-                </a>
-            </div>
-        </div>
-
-        <!-- BANNER: LOCAL SELECIONADO -->
-        {% if localizacao and localizacao != 'Geral' %}
-        <div class="banner-local p-4 flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">
-                    {% if localizacao == 'Recepção' %}🧑‍💼
-                    {% elif localizacao == 'Academia Principal' %}🏋️
-                    {% elif localizacao == 'Vestiários' %}🚿
-                    {% elif localizacao == 'Studio de Pilates' %}🧘
-                    {% elif localizacao == 'Área de Musculação' %}💪
-                    {% elif localizacao == 'Treinamento Funcional' %}🏃
-                    {% else %}📍{% endif %}
-                </span>
-                <div>
-                    <p class="text-[10px] uppercase tracking-[0.2em] text-lime-300/70">Você está avaliando</p>
-                    <p class="text-white font-black text-base leading-tight">{{ localizacao }}</p>
-                    <p class="text-white/50 text-xs">Sua opinião sobre este espaço ajuda a Polo Fit a melhorar.</p>
+            <!-- PROGRESS BAR -->
+            <div class="progress-bar-wrap">
+                <div class="progress-steps" id="progress-steps">
+                    <!-- gerado via JS -->
+                </div>
+                <div class="progress-label">
+                    Passo <span class="passo-atual" id="progress-texto">1</span> de 5
                 </div>
             </div>
-            <a href="#escolher-local"
-               class="flex-shrink-0 text-xs border border-white/20 text-white/70 hover:border-lime-300/60 hover:text-lime-200 px-3 py-1.5 rounded-lg transition font-semibold">
-                📍 Trocar local
-            </a>
-        </div>
-        {% endif %}
-
-        <!-- ===================================================== -->
-        <!-- ETAPA: ESCOLHER LOCAL                                 -->
-        <!-- ===================================================== -->
-        <div id="escolher-local" class="step-card p-5">
-            <div class="mb-4">
-                <p class="text-[10px] uppercase tracking-[0.24em] text-lime-200/70 mb-1">Etapa 1 de 2</p>
-                <h2 class="text-xl font-black text-white">📍 Onde você está avaliando?</h2>
-                <p class="text-white/60 text-sm mt-1">Selecione o local onde deseja deixar sua avaliação.</p>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <a href="?localizacao=Geral#escolher-local"
-                   class="local-btn {% if localizacao == 'Geral' %}ativo{% endif %}">
-                    <span class="icone">🌐</span>
-                    <span>Geral</span>
-                </a>
-                <a href="?localizacao=Recep%C3%A7%C3%A3o#escolher-local"
-                   class="local-btn {% if localizacao == 'Recepção' %}ativo{% endif %}">
-                    <span class="icone">🧑‍💼</span>
-                    <span>Recepção</span>
-                </a>
-                <a href="?localizacao=Academia+Principal#escolher-local"
-                   class="local-btn {% if localizacao == 'Academia Principal' %}ativo{% endif %}">
-                    <span class="icone">🏋️</span>
-                    <span>Academia Principal</span>
-                </a>
-                <a href="?localizacao=Vesti%C3%A1rios#escolher-local"
-                   class="local-btn {% if localizacao == 'Vestiários' %}ativo{% endif %}">
-                    <span class="icone">🚿</span>
-                    <span>Vestiários</span>
-                </a>
-                <a href="?localizacao=Studio+de+Pilates#escolher-local"
-                   class="local-btn {% if localizacao == 'Studio de Pilates' %}ativo{% endif %}">
-                    <span class="icone">🧘</span>
-                    <span>Studio de Pilates</span>
-                </a>
-                <a href="?localizacao=%C3%81rea+de+Muscula%C3%A7%C3%A3o#escolher-local"
-                   class="local-btn {% if localizacao == 'Área de Musculação' %}ativo{% endif %}">
-                    <span class="icone">💪</span>
-                    <span>Área de Musculação</span>
-                </a>
-                <a href="?localizacao=Treinamento+Funcional#escolher-local"
-                   class="local-btn {% if localizacao == 'Treinamento Funcional' %}ativo{% endif %}">
-                    <span class="icone">🏃</span>
-                    <span>Treinamento Funcional</span>
-                </a>
-            </div>
-
-            {% if localizacao %}
-            <div class="mt-4 flex items-center justify-between bg-lime-400/10 border border-lime-300/30 rounded-xl px-4 py-3">
-                <div class="flex items-center gap-2">
-                    <span class="text-lime-300 font-bold text-sm">✓ Local selecionado:</span>
-                    <span class="text-white font-black text-sm">{{ localizacao }}</span>
-                </div>
-                <a href="#formulario"
-                   class="bg-[#a3e635] hover:bg-[#bef264] text-black font-black text-sm px-4 py-2 rounded-lg transition shadow">
-                    Continuar →
-                </a>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- ===================================================== -->
-        <!-- ETAPA: FORMULÁRIO DE AVALIAÇÃO                        -->
-        <!-- ===================================================== -->
-        <div id="formulario" class="form-card p-6">
-            <p class="text-[10px] uppercase tracking-[0.22em] text-gray-400 mb-1">Etapa 2 de 2</p>
-            <h2 class="text-xl font-bold text-gray-800 mb-1">Como está sendo sua experiência?</h2>
-            <p class="text-xs text-gray-400 mb-5">
-                📍 Avaliando: <strong class="text-gray-700">{{ localizacao }}</strong>
-            </p>
 
             {% if erros %}
-            <div class="mb-5 bg-red-50 border border-red-300 rounded-xl p-4">
-                <p class="text-sm font-semibold text-red-700 mb-2">⚠️ Por favor, atente-se às opções:</p>
-                <ul class="list-disc list-inside space-y-1">
+            <div style="padding: 1rem 1.5rem 0;">
+                <ul class="erros-lista">
                     {% for erro in erros %}
-                    <li class="text-sm text-red-600">{{ erro }}</li>
+                    <li>{{ erro }}</li>
                     {% endfor %}
                 </ul>
             </div>
             {% endif %}
 
-            <form method="POST" id="form-avaliacao">
+            <form method="post" action="{% url 'avaliar' %}" id="form-avaliar" novalidate>
                 {% csrf_token %}
-                <input type="hidden" name="localizacao" value="{{ localizacao }}">
+                <input type="hidden" name="nota" id="campo-nota" value="{{ nota_selecionada }}">
+                <input type="hidden" name="localizacao" id="campo-localizacao" value="{{ localizacao }}">
+                <input type="hidden" name="comentario" id="campo-comentario">
 
-                <!-- FUNCIONÁRIO -->
-                {% if funcionarios %}
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-800 mb-1">Quem te atendeu?</label>
-                    <p class="text-xs text-gray-400 mb-3">Opcional — marque um ou mais funcionários.</p>
-                    <div class="grid grid-cols-3 gap-3">
-                        {% for func in funcionarios %}
-                        <label class="card-func">
-                            <input type="checkbox" name="funcionarios_ids" value="{{ func.pk }}"
-                                {% if func.pk|stringformat:"s" in funcionarios_ids_selecionados %}checked{% endif %}>
-                            <div class="func-inner">
-                                {% if func.foto_url %}
-                                <img src="{{ func.foto_url }}" alt="{{ func.nome }}" class="func-foto">
+                <!-- CAMPOS OCULTOS PARA ARRAYS -->
+                <div id="campos-categorias"></div>
+                <div id="campos-tipos"></div>
+                <div id="campos-funcionarios"></div>
+
+                <div class="telas-container">
+
+                    <!-- TELA 1: ONDE VOCÊ ESTÁ? -->
+                    <div class="tela ativa" id="tela-1">
+                        <p class="tela-title">Onde você está agora?</p>
+                        <p class="tela-subtitle">Selecione o setor que deseja avaliar.</p>
+                        <div class="opcoes-grid cols-2">
+                            <button type="button" class="opcao-btn" data-cat="atendimento" onclick="selecionarCategoria(this)">
+                                <span class="icone">🤝</span> Atendimento
+                            </button>
+                            <button type="button" class="opcao-btn" data-cat="professores" onclick="selecionarCategoria(this)">
+                                <span class="icone">🏋️</span> Professores
+                            </button>
+                            <button type="button" class="opcao-btn" data-cat="equipamentos" onclick="selecionarCategoria(this)">
+                                <span class="icone">⚙️</span> Equipamentos
+                            </button>
+                            <button type="button" class="opcao-btn" data-cat="limpeza" onclick="selecionarCategoria(this)">
+                                <span class="icone">🧹</span> Limpeza
+                            </button>
+                            <button type="button" class="opcao-btn" data-cat="estrutura" onclick="selecionarCategoria(this)">
+                                <span class="icone">🏢</span> Estrutura
+                            </button>
+                            <button type="button" class="opcao-btn" data-cat="geral" onclick="selecionarCategoria(this)">
+                                <span class="icone">⭐</span> Geral
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TELA 2: QUE NOTA? -->
+                    <div class="tela" id="tela-2">
+                        <p class="tela-title">Que nota você dá?</p>
+                        <p class="tela-subtitle">Toque em uma estrela para avaliar de 1 a 5.</p>
+
+                        <div class="nota-display">
+                            <div class="nota-numero" id="nota-numero">—</div>
+                            <div class="nota-texto" id="nota-texto">Selecione uma nota</div>
+                        </div>
+
+                        <div class="estrelas-wrap" role="group" aria-label="Avaliação por estrelas">
+                            <button type="button" class="estrela-btn" data-nota="1" onclick="selecionarNota(1)" aria-label="1 estrela">★</button>
+                            <button type="button" class="estrela-btn" data-nota="2" onclick="selecionarNota(2)" aria-label="2 estrelas">★</button>
+                            <button type="button" class="estrela-btn" data-nota="3" onclick="selecionarNota(3)" aria-label="3 estrelas">★</button>
+                            <button type="button" class="estrela-btn" data-nota="4" onclick="selecionarNota(4)" aria-label="4 estrelas">★</button>
+                            <button type="button" class="estrela-btn" data-nota="5" onclick="selecionarNota(5)" aria-label="5 estrelas">★</button>
+                        </div>
+                    </div>
+
+                    <!-- TELA 3: O QUE MARCOU? -->
+                    <div class="tela" id="tela-3">
+                        <p class="tela-title">O que marcou?</p>
+                        <p class="tela-subtitle">Selecione o tipo do seu feedback. Pode escolher mais de um.</p>
+
+                        <div class="tipo-grid">
+                            <button type="button" class="tipo-btn elogio" data-tipo="elogio" onclick="toggleTipo(this)">
+                                <span class="tipo-icone">😍</span>
+                                Elogio
+                            </button>
+                            <button type="button" class="tipo-btn sugestao" data-tipo="sugestao" onclick="toggleTipo(this)">
+                                <span class="tipo-icone">💡</span>
+                                Sugestão
+                            </button>
+                            <button type="button" class="tipo-btn reclamacao" data-tipo="reclamacao" onclick="toggleTipo(this)">
+                                <span class="tipo-icone">😕</span>
+                                Reclamação
+                            </button>
+                        </div>
+
+                        <p class="tela-subtitle" style="margin-top:1.5rem;margin-bottom:0.75rem;">
+                            Quer contar mais? <span style="color:rgba(255,255,255,0.3)">(opcional)</span>
+                        </p>
+                        <textarea
+                            id="textarea-comentario"
+                            class="comentario-box"
+                            placeholder="Descreva sua experiência com mais detalhes..."
+                            maxlength="500"
+                        ></textarea>
+                    </div>
+
+                    <!-- TELA 4: QUEM TE ATENDEU? -->
+                    <div class="tela" id="tela-4">
+                        <p class="tela-title">Quem te atendeu?</p>
+                        <p class="tela-subtitle">Identifique o professor ou atendente (opcional).</p>
+
+                        <div class="func-grid" id="grade-funcionarios">
+                            {% for f in funcionarios %}
+                            <button type="button" class="func-btn" data-id="{{ f.pk }}" onclick="toggleFuncionario(this)">
+                                {% if f.foto_url %}
+                                <img src="{{ f.foto_url }}" alt="{{ f.nome }}" class="func-foto" loading="lazy">
                                 {% else %}
-                                <div class="func-foto-placeholder">{{ func.nome|slice:":1" }}</div>
+                                <div class="func-foto-placeholder">👤</div>
                                 {% endif %}
-                                <span class="text-xs font-bold text-gray-800 text-center leading-tight">{{ func.nome }}</span>
-                                {% if func.funcoes_display %}
-                                <span class="text-xs text-gray-500 text-center leading-tight">{{ func.funcoes_display }}</span>
-                                {% endif %}
+                                {{ f.nome|truncatechars:12 }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                        <div class="func-pular">
+                            <button type="button" class="link-pular" onclick="pularFuncionarios()">
+                                Pular esta etapa
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TELA 5: CONFIRMAR E ENVIAR -->
+                    <div class="tela" id="tela-5">
+                        <p class="tela-title">Tudo pronto!</p>
+                        <p class="tela-subtitle">Confira seu feedback antes de enviar.</p>
+
+                        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:1rem;padding:1.25rem;margin-bottom:1.5rem;">
+                            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.8rem;color:rgba(255,255,255,0.4)">Setor</span>
+                                    <span id="resumo-categoria" style="font-size:0.875rem;font-weight:600;color:#d9f99d">—</span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.8rem;color:rgba(255,255,255,0.4)">Nota</span>
+                                    <span id="resumo-nota" style="font-size:0.875rem;font-weight:600;color:var(--verde)">—</span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.8rem;color:rgba(255,255,255,0.4)">Tipo</span>
+                                    <span id="resumo-tipo" style="font-size:0.875rem;font-weight:600;color:#f0f0f0">—</span>
+                                </div>
+                                <div id="resumo-func-row" style="display:none;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.8rem;color:rgba(255,255,255,0.4)">Profissional</span>
+                                    <span id="resumo-func" style="font-size:0.875rem;font-weight:600;color:#f0f0f0">—</span>
+                                </div>
                             </div>
-                        </label>
-                        {% endfor %}
+                        </div>
                     </div>
-                </div>
-                {% endif %}
 
-                <!-- CATEGORIAS -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-800 mb-1">O que você deseja avaliar?</label>
-                    <p class="text-xs text-gray-400 mb-3">Você pode escolher mais de uma opção.</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="atendimento"
-                                {% if 'atendimento' in categorias_selecionadas %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🧑‍💼 Atendimento</span></label>
-                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="limpeza"
-                                {% if 'limpeza' in categorias_selecionadas %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🧹 Limpeza</span></label>
-                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="equipamentos"
-                                {% if 'equipamentos' in categorias_selecionadas %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🏋️ Equipamentos</span></label>
-                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="professores"
-                                {% if 'professores' in categorias_selecionadas %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">👨‍🏫 Professores</span></label>
-                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="estrutura"
-                                {% if 'estrutura' in categorias_selecionadas %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">🏢 Estrutura</span></label>
-                        <label class="cursor-pointer"><input type="checkbox" name="categorias" value="geral"
-                                {% if 'geral' in categorias_selecionadas %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl px-3 py-4 font-semibold text-gray-700 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-300 transition">⭐ Geral</span></label>
-                    </div>
-                </div>
+                </div><!-- /telas-container -->
 
-                <!-- NOTA -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-800 mb-3">Como você avalia? <span class="text-gray-400 font-normal">(1 a 5 estrelas)</span></label>
-                    <div class="grid grid-cols-5 gap-2">
-                        {% for n in "12345" %}
-                        <label class="cursor-pointer text-center">
-                            <input type="radio" name="nota" value="{{ n }}" required
-                                {% if nota_selecionada == n %}checked{% endif %}
-                                class="sr-only peer">
-                            <span class="flex flex-col items-center justify-center border-2 border-gray-200 rounded-xl py-3 peer-checked:border-yellow-400 peer-checked:bg-yellow-50 transition">
-                                <span class="text-2xl text-yellow-400">★</span>
-                                <span class="text-xs font-bold mt-1 text-gray-600">{{ n }}</span>
-                            </span>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- TIPO DE FEEDBACK -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-800 mb-3">Tipo de feedback</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <label class="cursor-pointer"><input type="checkbox" name="tipos_feedback" value="elogio"
-                                {% if 'elogio' in tipos_selecionados %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl py-3 px-2 font-semibold text-gray-700 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 transition">👍<span
-                                    class="block text-sm mt-1">Elogio</span></span></label>
-                        <label class="cursor-pointer"><input type="checkbox" name="tipos_feedback" value="sugestao"
-                                {% if 'sugestao' in tipos_selecionados %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl py-3 px-2 font-semibold text-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 transition">💡<span
-                                    class="block text-sm mt-1">Sugestão</span></span></label>
-                        <label class="cursor-pointer"><input type="checkbox" name="tipos_feedback" value="reclamacao"
-                                {% if 'reclamacao' in tipos_selecionados %}checked{% endif %}
-                                class="sr-only peer"><span
-                                class="block text-center border-2 border-gray-200 rounded-xl py-3 px-2 font-semibold text-gray-700 peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700 transition">⚠️<span
-                                    class="block text-sm mt-1">Reclamação</span></span></label>
-                    </div>
-                </div>
-
-                <!-- COMENTÁRIO -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-800 mb-2">Quer deixar um comentário? <span class="font-normal text-gray-400">(opcional)</span></label>
-                    <textarea name="comentario" id="comentario" rows="4"
-                        placeholder="Escreva aqui sua opinião, elogio ou sugestão..."
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#a3e635] text-sm resize-none">{{ comentario }}</textarea>
-                </div>
-
-                <!-- AÇÕES -->
-                <div class="flex gap-3">
-                    <button type="button" onclick="limparFormulario()"
-                        class="flex-shrink-0 border border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-700 font-semibold px-4 py-3 rounded-xl transition text-sm">
-                        🔄 Limpar
+                <!-- FOOTER COM BOTÕES -->
+                <div class="tela-footer">
+                    <button type="button" class="btn-voltar" id="btn-voltar" onclick="voltarTela()" style="display:none;">
+                        ← Voltar
                     </button>
-                    <button type="submit"
-                        class="flex-1 bg-[#0a0a0a] hover:bg-[#1a1a1a] text-[#a3e635] border border-[#a3e635] font-black py-3.5 rounded-xl transition shadow-md text-base">
-                        ✅ Enviar Avaliação
+                    <button type="button" class="btn-continuar" id="btn-continuar" onclick="avancarTela()" disabled>
+                        Continuar →
+                    </button>
+                    <button type="submit" class="btn-continuar" id="btn-enviar" style="display:none;">
+                        ✅ Enviar avaliação
                     </button>
                 </div>
+
             </form>
-        </div>
 
-    </div><!-- fim conteúdo -->
-
-    <!-- ========================================================= -->
-    <!-- RODAPÉ DISCRETO                                           -->
-    <!-- ========================================================= -->
-    <div class="max-w-2xl mx-auto px-4 text-center">
-        {% include "feedback/rodape.html" %}
-        <div class="mt-3">
-            {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="text-white/30 hover:text-white/60 text-xs transition">
-                🔐 Área do gerente
-            </a>
-            {% else %}
-            <a href="{% url 'login' %}?next={% url 'dashboard' %}" class="text-white/30 hover:text-white/60 text-xs transition">
-                🔐 Área do gerente (Acesso administrativo)
-            </a>
-            {% endif %}
         </div>
     </div>
 
-    <script>
-        function limparFormulario() {
-            if (!confirm('Limpar todas as respostas do formulário?')) return;
-            document.querySelectorAll('#form-avaliacao input[type="checkbox"]').forEach(el => el.checked = false);
-            document.querySelectorAll('#form-avaliacao input[type="radio"]').forEach(el => el.checked = false);
-            document.getElementById('comentario').value = '';
-        }
-    </script>
-
     {% include "feedback/pwa_install.html" %}
-</body>
 
+    <script>
+        // ── ESTADO ──
+        const TOTAL_TELAS = 5;
+        let telaAtual = 1;
+
+        const estado = {
+            categorias: [],
+            nota: null,
+            tipos: [],
+            comentario: '',
+            funcionarios: [],
+        };
+
+        const notaTextos = ['', '😟 Muito ruim', '😕 Ruim', '😐 Regular', '😊 Bom', '🤩 Excelente'];
+        const catNomes = {
+            atendimento: 'Atendimento', professores: 'Professores',
+            equipamentos: 'Equipamentos', limpeza: 'Limpeza',
+            estrutura: 'Estrutura', geral: 'Geral'
+        };
+        const tipoNomes = {elogio: 'Elogio 😍', sugestao: 'Sugestão 💡', reclamacao: 'Reclamação 😕'};
+
+        // ── PROGRESSO ──
+        function atualizarProgress() {
+            const container = document.getElementById('progress-steps');
+            container.innerHTML = '';
+            for (let i = 1; i <= TOTAL_TELAS; i++) {
+                const div = document.createElement('div');
+                div.className = 'progress-step';
+                if (i < telaAtual) div.classList.add('concluido');
+                if (i === telaAtual) div.classList.add('ativo');
+                container.appendChild(div);
+            }
+            document.getElementById('progress-texto').textContent = telaAtual;
+        }
+
+        // ── NAVEGAÇÃO ──
+        function avancarTela() {
+            if (telaAtual === 3) {
+                estado.comentario = document.getElementById('textarea-comentario').value;
+                document.getElementById('campo-comentario').value = estado.comentario;
+            }
+
+            if (telaAtual === TOTAL_TELAS) return;
+
+            document.getElementById('tela-' + telaAtual).classList.remove('ativa');
+            telaAtual++;
+            document.getElementById('tela-' + telaAtual).classList.add('ativa');
+
+            if (telaAtual === TOTAL_TELAS) {
+                atualizarResumo();
+            }
+
+            atualizarUI();
+            window.scrollTo(0, 0);
+        }
+
+        function voltarTela() {
+            if (telaAtual === 1) return;
+            document.getElementById('tela-' + telaAtual).classList.remove('ativa');
+            telaAtual--;
+            document.getElementById('tela-' + telaAtual).classList.add('ativa');
+            atualizarUI();
+        }
+
+        function atualizarUI() {
+            atualizarProgress();
+
+            document.getElementById('btn-voltar').style.display = telaAtual > 1 ? 'block' : 'none';
+            document.getElementById('btn-continuar').style.display = telaAtual < TOTAL_TELAS ? 'flex' : 'none';
+            document.getElementById('btn-enviar').style.display = telaAtual === TOTAL_TELAS ? 'flex' : 'none';
+
+            atualizarBotaoContinuar();
+        }
+
+        function atualizarBotaoContinuar() {
+            const btn = document.getElementById('btn-continuar');
+            let pode = false;
+
+            if (telaAtual === 1) pode = estado.categorias.length > 0;
+            else if (telaAtual === 2) pode = estado.nota !== null;
+            else if (telaAtual === 3) pode = estado.tipos.length > 0;
+            else pode = true;
+
+            btn.disabled = !pode;
+        }
+
+        // ── SELEÇÃO: CATEGORIA ──
+        function selecionarCategoria(btn) {
+            const cat = btn.dataset.cat;
+            const idx = estado.categorias.indexOf(cat);
+            if (idx === -1) {
+                estado.categorias.push(cat);
+                btn.classList.add('selecionado');
+            } else {
+                estado.categorias.splice(idx, 1);
+                btn.classList.remove('selecionado');
+            }
+            sincronizarCamposOcultos('categorias', 'categorias', 'campos-categorias');
+            atualizarBotaoContinuar();
+        }
+
+        // ── SELEÇÃO: NOTA ──
+        function selecionarNota(n) {
+            estado.nota = n;
+            document.getElementById('campo-nota').value = n;
+            document.getElementById('nota-numero').textContent = n + '★';
+            document.getElementById('nota-texto').textContent = notaTextos[n];
+
+            document.querySelectorAll('.estrela-btn').forEach(btn => {
+                btn.classList.toggle('ativa', parseInt(btn.dataset.nota) <= n);
+            });
+
+            atualizarBotaoContinuar();
+        }
+
+        // ── SELEÇÃO: TIPO ──
+        function toggleTipo(btn) {
+            const tipo = btn.dataset.tipo;
+            const idx = estado.tipos.indexOf(tipo);
+            if (idx === -1) {
+                estado.tipos.push(tipo);
+                btn.classList.add('selecionado');
+            } else {
+                estado.tipos.splice(idx, 1);
+                btn.classList.remove('selecionado');
+            }
+            sincronizarCamposOcultos('tipos_feedback', 'tipos', 'campos-tipos');
+            atualizarBotaoContinuar();
+        }
+
+        // ── SELEÇÃO: FUNCIONÁRIO ──
+        function toggleFuncionario(btn) {
+            const id = btn.dataset.id;
+            const idx = estado.funcionarios.indexOf(id);
+            if (idx === -1) {
+                estado.funcionarios.push(id);
+                btn.classList.add('selecionado');
+            } else {
+                estado.funcionarios.splice(idx, 1);
+                btn.classList.remove('selecionado');
+            }
+            sincronizarCamposOcultos('funcionarios_ids', 'funcionarios', 'campos-funcionarios');
+        }
+
+        function pularFuncionarios() {
+            estado.funcionarios = [];
+            document.querySelectorAll('.func-btn').forEach(b => b.classList.remove('selecionado'));
+            sincronizarCamposOcultos('funcionarios_ids', 'funcionarios', 'campos-funcionarios');
+            avancarTela();
+        }
+
+        // ── CAMPOS OCULTOS ──
+        function sincronizarCamposOcultos(nomeCampo, chaveEstado, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            estado[chaveEstado].forEach(val => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = nomeCampo;
+                input.value = val;
+                container.appendChild(input);
+            });
+        }
+
+        // ── RESUMO (TELA 5) ──
+        function atualizarResumo() {
+            const catNome = estado.categorias.map(c => catNomes[c] || c).join(', ') || '—';
+            const tipoNome = estado.tipos.map(t => tipoNomes[t] || t).join(', ') || '—';
+            const notaEstrelas = estado.nota ? estado.nota + ' ★'.repeat(estado.nota) : '—';
+
+            document.getElementById('resumo-categoria').textContent = catNome;
+            document.getElementById('resumo-nota').textContent = notaEstrelas;
+            document.getElementById('resumo-tipo').textContent = tipoNome;
+
+            const funcsBtn = document.querySelectorAll('.func-btn.selecionado');
+            if (funcsBtn.length > 0) {
+                const nomes = Array.from(funcsBtn).map(b => b.textContent.trim()).join(', ');
+                document.getElementById('resumo-func').textContent = nomes;
+                document.getElementById('resumo-func-row').style.display = 'flex';
+            }
+        }
+
+        // ── RESTAURAR ESTADO (em caso de erro de validação) ──
+        (function restaurarEstado() {
+            const notaInicial = document.getElementById('campo-nota').value;
+            if (notaInicial) {
+                selecionarNota(parseInt(notaInicial));
+            }
+        })();
+
+        // ── INIT ──
+        atualizarProgress();
+        atualizarUI();
+    </script>
+</body>
 </html>
