@@ -244,6 +244,37 @@ def inicio(request):
     )
 
 
+def baixar_video(request):
+    """
+    Redireciona diretamente para o download do vídeo da Polo Fit no Google Drive,
+    resolvendo o formulário de confirmação de arquivo grande para iniciar o download
+    direto sem a tela de aviso de verificação de vírus.
+    """
+    file_id = "1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX"
+    try:
+        url = f"https://drive.google.com/uc?export=download&id={file_id}"
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            html = resp.read().decode("utf-8", errors="ignore")
+            uuid_match = re.search(r'name="uuid"\s+value="([^"]+)"', html)
+            if uuid_match:
+                uuid_val = uuid_match.group(1)
+                direct_url = (
+                    f"https://drive.usercontent.google.com/download"
+                    f"?id={file_id}&export=download&confirm=t&uuid={uuid_val}"
+                )
+                return redirect(direct_url)
+    except Exception as exc:
+        logger.warning("Falha ao obter link direto do vídeo no Google Drive: %s", exc)
+
+    return redirect(
+        f"https://drive.usercontent.google.com/download?id={file_id}&export=download&confirm=t"
+    )
+
+
 def enquete(request):
     """
     Página da Enquete de Satisfação com as 6 perguntas oficiais.
@@ -636,14 +667,7 @@ def dashboard(request):
         notas = [avaliacao.nota for avaliacao in avs if avaliacao.nota is not None]
         media_func = sum(notas) / len(notas) if notas else 0
 
-        foto_url = ""
-
-        if func.foto:
-
-            try:
-                foto_url = func.foto.url
-            except ValueError:
-                foto_url = ""
+        foto_url = func.foto_url or ""
 
         ranking_funcionarios.append(
             {

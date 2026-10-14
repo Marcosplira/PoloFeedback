@@ -12,6 +12,7 @@ from django.urls import reverse
 
 from feedback.views import (
     avaliar,
+    baixar_video,
     dashboard,
     configuracao_sistema,
     divulgacao,
@@ -55,6 +56,7 @@ urlpatterns = [
     path("", inicio, name="inicio"),
     path("avaliar/", avaliar, name="avaliar"),
     path("enquete/", enquete, name="enquete"),
+    path("baixar-video/", baixar_video, name="baixar_video"),
     path(
         "login/",
         LoginPoloFitView.as_view(),

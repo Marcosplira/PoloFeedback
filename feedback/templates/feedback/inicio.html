@@ -535,7 +535,7 @@
             text-decoration: none;
         }
 
-        /* ── VÍDEO ── */
+        /* ── VÍDEO (VERTICAL - TOUR POLO FIT) ── */
         .video-section {
             background: var(--cinza-escuro);
             border-top: 1px solid rgba(255,255,255,0.05);
@@ -547,56 +547,437 @@
             max-width: 1100px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
+            grid-template-columns: 320px 1fr;
+            gap: 3.5rem;
             align-items: center;
         }
 
-        @media (max-width: 768px) {
-            .video-grid { grid-template-columns: 1fr; }
+        @media (max-width: 860px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                text-align: center;
+            }
         }
 
-        .video-frame-wrap {
+        .video-player-card {
             position: relative;
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 9/16;
+            margin: 0 auto;
             border-radius: 1.5rem;
             overflow: hidden;
-            border: 1px solid rgba(163,230,53,0.15);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             background: #000;
+            border: 2px solid rgba(163,230,53,0.35);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 35px rgba(163,230,53,0.15);
         }
 
-        .video-frame-wrap iframe {
+        .video-player-card iframe {
             display: block;
             width: 100%;
+            height: 100%;
             aspect-ratio: 9/16;
             border: none;
         }
 
-        @media (min-width: 640px) {
-            .video-frame-wrap iframe { aspect-ratio: 16/9; }
+        .video-poster {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.92) 100%),
+                        url("{% static 'feedback/academia1.png' %}") center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 1rem;
+            cursor: pointer;
+            z-index: 2;
+            transition: opacity 0.35s ease;
+        }
+
+        .video-poster.escondido {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .video-play-btn {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: var(--verde);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 35px rgba(163,230,53,0.7);
+            transition: transform 0.25s, box-shadow 0.25s;
+            margin: auto;
+            color: #0a0a0a;
+            font-size: 1.6rem;
+            padding-left: 4px;
+        }
+
+        .video-player-card:hover .video-play-btn {
+            transform: scale(1.1);
+            box-shadow: 0 0 45px rgba(163,230,53,0.9);
+        }
+
+        .video-badge-tour {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.02em;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.65);
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(8px);
         }
 
         .video-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-top: 1.25rem;
+            gap: 0.85rem;
+            margin-top: 1.5rem;
         }
 
-        .video-link {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--verde);
+        @media (max-width: 860px) {
+            .video-links {
+                justify-content: center;
+            }
+        }
+
+        .video-link-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: var(--verde);
+            color: #0a0a0a;
             text-decoration: none;
-            padding: 0.4rem 0.875rem;
-            border: 1px solid rgba(163,230,53,0.25);
-            border-radius: 0.5rem;
-            transition: background 0.2s, color 0.2s;
+            padding: 0.75rem 1.35rem;
+            border-radius: 0.75rem;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+            box-shadow: 0 4px 20px rgba(163,230,53,0.25);
         }
 
-        .video-link:hover {
-            background: rgba(163,230,53,0.08);
+        .video-link-primary:hover {
+            transform: translateY(-2px);
+            background: #bbf451;
+            box-shadow: 0 6px 25px rgba(163,230,53,0.4);
         }
+
+        .video-link-sec {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            text-decoration: none;
+            padding: 0.75rem 1.35rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        .video-link-sec:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: var(--verde);
+            color: var(--verde);
+        }
+
+        /* ── SEÇÃO DE PLANOS POLO FIT ── */
+        .planos-section {
+            background: #080808;
+            border-top: 1px solid rgba(163,230,53,0.15);
+            border-bottom: 1px solid rgba(163,230,53,0.15);
+            padding: 5.5rem 1.5rem;
+            position: relative;
+        }
+
+        .planos-container {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .planos-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .planos-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(163,230,53,0.1);
+            border: 1px solid rgba(163,230,53,0.3);
+            color: var(--verde);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            margin-bottom: 0.85rem;
+        }
+
+        .planos-title {
+            font-size: clamp(1.85rem, 4vw, 2.85rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            line-height: 1.15;
+            color: #fff;
+        }
+
+        .planos-title .destaque-plano {
+            color: var(--verde);
+            display: block;
+        }
+
+        .planos-sub {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 0.75rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .planos-grid-principais {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .planos-grid-principais { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 620px) {
+            .planos-grid-principais { grid-template-columns: 1fr; }
+        }
+
+        .plano-card {
+            background: #111111;
+            border: 1.5px solid rgba(163,230,53,0.35);
+            border-radius: 1.25rem;
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .plano-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--verde);
+            box-shadow: 0 15px 35px rgba(163,230,53,0.18);
+        }
+
+        .plano-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .plano-icon-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 0.75rem;
+            border: 1.5px solid var(--verde);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: var(--verde);
+            background: rgba(163,230,53,0.08);
+            flex-shrink: 0;
+            font-size: 1.15rem;
+        }
+
+        .plano-nome {
+            font-size: 0.95rem;
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .plano-preco-box {
+            background: var(--verde);
+            color: #000;
+            border-radius: 0.65rem;
+            padding: 0.55rem 0.75rem;
+            font-size: 1.35rem;
+            font-weight: 900;
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.4rem;
+        }
+
+        .plano-periodo {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 1.25rem;
+        }
+
+        .plano-beneficios {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            margin-bottom: 1.5rem;
+            padding-top: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .plano-beneficios li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .plano-check {
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            border: 1.5px solid var(--verde);
+            color: var(--verde);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .planos-grid-secundarios {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .planos-grid-secundarios { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 620px) {
+            .planos-grid-secundarios { grid-template-columns: 1fr; }
+        }
+
+        .plano-mini-card {
+            background: #111111;
+            border: 1.5px solid rgba(163,230,53,0.3);
+            border-radius: 1.25rem;
+            padding: 1.35rem 1.15rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .plano-mini-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--verde);
+            box-shadow: 0 10px 25px rgba(163,230,53,0.15);
+        }
+
+        .plano-mini-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .plano-mini-icon {
+            font-size: 1.5rem;
+            color: var(--verde);
+        }
+
+        .plano-mini-badge-sub {
+            background: rgba(163,230,53,0.12);
+            border: 1px solid var(--verde);
+            color: var(--verde);
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.4rem;
+            display: inline-block;
+            margin-top: 0.35rem;
+            text-align: center;
+        }
+
+        .plano-mini-desc {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.65);
+            margin-top: 0.65rem;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .planos-grid-terciarios {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .planos-grid-terciarios { grid-template-columns: 1fr; }
+        }
+
+        .planos-diferenciais-bar {
+            background: rgba(163,230,53,0.04);
+            border: 1px solid rgba(163,230,53,0.25);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-around;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .diferencial-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #fff;
+            letter-spacing: 0.03em;
+        }
+
+        .diferencial-item span {
+            font-size: 1.25rem;
+            color: var(--verde);
+        }
+
+        .planos-cta-wrap {
+            margin-top: 2rem;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
 
         /* ── CTA FINAL ── */
         .cta-final {
@@ -768,35 +1149,277 @@
         </div>
     </section>
 
-    <!-- VÍDEO DA ACADEMIA -->
+    <!-- VÍDEO DA ACADEMIA (VERTICAL - TOUR POLO FIT) -->
     <section class="video-section" aria-labelledby="video-titulo">
         <div class="video-grid">
-            <div>
-                <div class="section-label">Conheça a academia</div>
-                <h2 class="section-title" id="video-titulo">A Polo Fit em movimento</h2>
-                <p class="section-desc">
-                    Veja como é treinar na Polo Fit — estrutura, equipamentos
-                    e uma equipe dedicada ao seu resultado.
-                </p>
-                <div class="video-links">
-                    <a href="https://drive.google.com/uc?export=download&id=1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX"
-                        target="_blank" rel="noopener noreferrer" class="video-link">
-                        ⬇ Baixar vídeo
-                    </a>
-                    <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
-                        target="_blank" rel="noopener noreferrer" class="video-link">
-                        ▶ Abrir no Google Drive
-                    </a>
-                </div>
-            </div>
-            <div class="video-frame-wrap">
+            <div class="video-player-card">
                 <iframe
+                    id="iframe-tour"
                     src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
                     title="Vídeo de apresentação da Academia Polo Fit"
                     allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                     allowfullscreen
                     loading="lazy">
                 </iframe>
+                <div class="video-poster" id="video-poster" onclick="iniciarVideoTour()">
+                    <span class="video-badge-tour">Polo Fit</span>
+                    <div class="video-play-btn" aria-label="Assistir tour da academia">▶</div>
+                    <span class="video-badge-tour">Tour pela Polo Fit</span>
+                </div>
+            </div>
+            <div>
+                <div class="section-label">Conheça a Polo Fit</div>
+                <h2 class="section-title" id="video-titulo">Um tour pela academia</h2>
+                <p class="section-desc">
+                    Musculação, funcional, ginástica, aulas coletivas e muito mais aqui na Polo Academia.
+                    Conheça nossa estrutura moderna e veja de perto a energia de treinar com a gente.
+                </p>
+                <div class="video-links">
+                    <a href="{% url 'baixar_video' %}" target="_blank" rel="noopener noreferrer" class="video-link-primary">
+                        ⬇ Baixar vídeo
+                    </a>
+                    <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
+                        target="_blank" rel="noopener noreferrer" class="video-link-sec">
+                        ▶ Abrir no Google Drive
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE PLANOS POLOFIT ACADEMIAS -->
+    <section class="planos-section" id="planos" aria-labelledby="planos-titulo">
+        <div class="planos-container">
+            <div class="planos-header">
+                <div class="planos-pill">
+                    ⚡ Mais saúde, mais possibilidades
+                </div>
+                <h2 class="planos-title" id="planos-titulo">
+                    Planos que se encaixam
+                    <span class="destaque-plano">no seu estilo de vida</span>
+                </h2>
+                <p class="planos-sub">Treino hoje, conquistas sempre</p>
+            </div>
+
+            <!-- GRID 1: PLANOS PRINCIPAIS -->
+            <div class="planos-grid-principais">
+                <!-- PLANO ANUAL -->
+                <div class="plano-card">
+                    <div>
+                        <div class="plano-card-header">
+                            <div class="plano-icon-badge">12</div>
+                            <div class="plano-nome">Plano Anual</div>
+                        </div>
+                        <div class="plano-preco-box">R$ 1.020,00</div>
+                        <div class="plano-periodo">/ 12 meses</div>
+                        <ul class="plano-beneficios">
+                            <li><span class="plano-check">✓</span> Avaliação física</li>
+                            <li><span class="plano-check">✓</span> Treino personalizado</li>
+                            <li><span class="plano-check">✓</span> Aulas coletivas</li>
+                            <li><span class="plano-check">✓</span> Mais economia</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Anual%20da%20Polo%20Fit!"
+                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        Escolher Plano Anual
+                    </a>
+                </div>
+
+                <!-- PLANO SEMESTRAL -->
+                <div class="plano-card">
+                    <div>
+                        <div class="plano-card-header">
+                            <div class="plano-icon-badge">6</div>
+                            <div class="plano-nome">Plano Semestral</div>
+                        </div>
+                        <div class="plano-preco-box">R$ 570,00</div>
+                        <div class="plano-periodo">/ 6 meses</div>
+                        <ul class="plano-beneficios">
+                            <li><span class="plano-check">✓</span> Avaliação física</li>
+                            <li><span class="plano-check">✓</span> Treino personalizado</li>
+                            <li><span class="plano-check">✓</span> Aulas coletivas</li>
+                            <li><span class="plano-check">✓</span> Mais tempo para evoluir</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Semestral%20da%20Polo%20Fit!"
+                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        Escolher Semestral
+                    </a>
+                </div>
+
+                <!-- PLANO TRIMESTRAL -->
+                <div class="plano-card">
+                    <div>
+                        <div class="plano-card-header">
+                            <div class="plano-icon-badge">3</div>
+                            <div class="plano-nome">Plano Trimestral</div>
+                        </div>
+                        <div class="plano-preco-box">R$ 315,00</div>
+                        <div class="plano-periodo">/ 3 meses</div>
+                        <ul class="plano-beneficios">
+                            <li><span class="plano-check">✓</span> Avaliação física</li>
+                            <li><span class="plano-check">✓</span> Treino personalizado</li>
+                            <li><span class="plano-check">✓</span> Aulas coletivas</li>
+                            <li><span class="plano-check">✓</span> Resultados em menos tempo</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Trimestral%20da%20Polo%20Fit!"
+                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        Escolher Trimestral
+                    </a>
+                </div>
+
+                <!-- PLANO MENSAL -->
+                <div class="plano-card">
+                    <div>
+                        <div class="plano-card-header">
+                            <div class="plano-icon-badge">📅</div>
+                            <div class="plano-nome">Plano Mensal</div>
+                        </div>
+                        <div class="plano-preco-box">R$ 120,00</div>
+                        <div class="plano-periodo">/ mês</div>
+                        <ul class="plano-beneficios">
+                            <li><span class="plano-check">✓</span> Avaliação física</li>
+                            <li><span class="plano-check">✓</span> Treino personalizado</li>
+                            <li><span class="plano-check">✓</span> Aulas coletivas</li>
+                            <li><span class="plano-check">✓</span> Mais flexibilidade</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Mensal%20da%20Polo%20Fit!"
+                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        Escolher Mensal
+                    </a>
+                </div>
+            </div>
+
+            <!-- GRID 2: PLANOS SECUNDÁRIOS / ESPECIAIS -->
+            <div class="planos-grid-secundarios">
+                <!-- PLANO ANUAL RECORRENTE -->
+                <div class="plano-mini-card">
+                    <div>
+                        <div class="plano-mini-header">
+                            <span class="plano-mini-icon">🔄</span>
+                            <div class="plano-nome">Plano Anual Recorrente</div>
+                        </div>
+                        <div class="plano-preco-box">R$ 110,00</div>
+                        <div class="plano-periodo">/ mês</div>
+                        <div class="plano-mini-desc">Mais economia, mesmo benefício</div>
+                    </div>
+                </div>
+
+                <!-- PLANO FAMILIAR -->
+                <div class="plano-mini-card">
+                    <div>
+                        <div class="plano-mini-header">
+                            <span class="plano-mini-icon">👥</span>
+                            <div>
+                                <div class="plano-nome">Plano Familiar</div>
+                                <span class="plano-mini-badge-sub">Mínimo 3 integrantes</span>
+                            </div>
+                        </div>
+                        <div class="plano-preco-box">R$ 270,00</div>
+                        <div class="plano-mini-desc">Saúde em família, é ainda melhor</div>
+                    </div>
+                </div>
+
+                <!-- PLANO SEMANAL -->
+                <div class="plano-mini-card">
+                    <div>
+                        <div class="plano-mini-header">
+                            <div class="plano-icon-badge" style="width:36px; height:36px; font-size: 0.95rem;">7</div>
+                            <div class="plano-nome">Plano Semanal</div>
+                        </div>
+                        <div class="plano-preco-box">R$ 49,99</div>
+                        <div class="plano-mini-desc">Uma semana para sentir a diferença</div>
+                    </div>
+                </div>
+
+                <!-- PLANO QUINZENAL -->
+                <div class="plano-mini-card">
+                    <div>
+                        <div class="plano-mini-header">
+                            <div class="plano-icon-badge" style="width:36px; height:36px; font-size: 0.95rem;">15</div>
+                            <div>
+                                <div class="plano-nome">Plano Quinzenal</div>
+                                <span class="plano-mini-badge-sub">15 diárias</span>
+                            </div>
+                        </div>
+                        <div class="plano-preco-box">R$ 85,00</div>
+                        <div class="plano-mini-desc">Para usar no mês, com total flexibilidade</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRID 3: DIÁRIA, VOUCHER E HORÁRIO ESPECIAL -->
+            <div class="planos-grid-terciarios">
+                <!-- DIÁRIA -->
+                <div class="plano-mini-card">
+                    <div>
+                        <div class="plano-mini-header">
+                            <span class="plano-mini-icon">🎫</span>
+                            <div class="plano-nome">Diária Avulsa</div>
+                        </div>
+                        <div class="plano-preco-box">R$ 20,00</div>
+                        <div class="plano-mini-desc">Treine quando quiser sem mensalidade</div>
+                    </div>
+                </div>
+
+                <!-- PACOTE DE VOUCHER -->
+                <div class="plano-mini-card">
+                    <div>
+                        <div class="plano-mini-header">
+                            <span class="plano-mini-icon">🎟️</span>
+                            <div>
+                                <div class="plano-nome">Pacote de Voucher</div>
+                                <span class="plano-mini-badge-sub">15 Vouchers</span>
+                            </div>
+                        </div>
+                        <div class="plano-preco-box">R$ 120,00</div>
+                        <div class="plano-mini-desc">Para usar como quiser no prazo de 90 dias</div>
+                    </div>
+                </div>
+
+                <!-- PLANO HORÁRIO ESPECIAL -->
+                <div class="plano-mini-card">
+                    <div>
+                        <div class="plano-mini-header">
+                            <span class="plano-mini-icon">🕒</span>
+                            <div>
+                                <div class="plano-nome">Plano Horário Especial</div>
+                                <span class="plano-mini-badge-sub" style="background:var(--verde); color:#000;">NOVO</span>
+                            </div>
+                        </div>
+                        <div class="plano-preco-box">R$ 70,00</div>
+                        <div class="plano-mini-desc">Entrada na academia das 09h30 às 13h30</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIFERENCIAIS BAR -->
+            <div class="planos-diferenciais-bar">
+                <div class="diferencial-item">
+                    <span>🏋️</span> Equipamentos Modernos
+                </div>
+                <div class="diferencial-item">
+                    <span>👥</span> Ambiente Acolhedor
+                </div>
+                <div class="diferencial-item">
+                    <span>🛡️</span> Segurança e Conforto
+                </div>
+                <div class="diferencial-item">
+                    <span>💚</span> Saúde e Bem-Estar
+                </div>
+            </div>
+
+            <div class="planos-cta-wrap">
+                <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20os%20planos%20da%20Polo%20Fit!"
+                    target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.95rem 2rem; font-size: 1rem;">
+                    💬 Falar com a recepção no WhatsApp
+                </a>
+                <a href="{% static 'feedback/planos-polofit.jpg' %}"
+                    target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding: 0.95rem 1.75rem; font-size: 0.95rem;">
+                    🖼️ Ver tabela oficial completa
+                </a>
             </div>
         </div>
     </section>
@@ -876,13 +1499,43 @@
 
     <!-- FOOTER -->
     <footer>
-        <p>
-            &copy; 2025 Academia Polo Fit — Picuí, PB
-            &nbsp;·&nbsp;
-            <a href="{% url 'login' %}">Área da equipe</a>
-        </p>
+        <div style="max-width: 720px; margin: 0 auto; text-align: center;">
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-bottom: 0.75rem;">
+                Software desenvolvido por <strong style="color: var(--verde);">Marcos Paulo Santos Lira</strong>
+            </p>
+            <div style="text-align: left; font-size: 0.78rem; color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 0.75rem; padding: 1.15rem; margin: 0.75rem auto 1.5rem;">
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.65rem;">
+                    <li>
+                        <strong style="color: rgba(255,255,255,0.95);">Tecnologia em Sistemas para Internet — Tecnólogo</strong><br>
+                        Instituto Federal de Educação, Ciência e Tecnologia da Paraíba (IFPB), Campus Picuí — PB. Concluído em 2026.
+                    </li>
+                    <li>
+                        <strong style="color: rgba(255,255,255,0.95);">Técnico em Eletrônica — Subsequente</strong><br>
+                        Instituto Federal de Educação, Ciência e Tecnologia da Paraíba (IFPB), Campus Picuí — PB.
+                    </li>
+                    <li>
+                        <strong style="color: rgba(255,255,255,0.95);">Técnico em Informática</strong><br>
+                        Instituto Federal de Educação, Ciência e Tecnologia da Paraíba (IFPB), Campus Picuí — PB.
+                    </li>
+                </ul>
+            </div>
+            <p style="font-size: 0.8rem; color: rgba(255,255,255,0.4);">
+                &copy; {% now "Y" %} Academia Polo Fit — Picuí, PB
+                &nbsp;·&nbsp;
+                <a href="{% url 'login' %}">Área da equipe</a>
+            </p>
+        </div>
     </footer>
 
     {% include "feedback/pwa_install.html" %}
+
+    <script>
+        function iniciarVideoTour() {
+            const poster = document.getElementById('video-poster');
+            if (poster) {
+                poster.classList.add('escondido');
+            }
+        }
+    </script>
 </body>
 </html>
