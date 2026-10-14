@@ -12,6 +12,7 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
+            color-scheme: dark;
             --verde: #a3e635;
             --verde-soft: rgba(163,230,53,0.12);
             --verde-border: rgba(163,230,53,0.2);
@@ -265,6 +266,14 @@
             cursor: pointer;
             transition: all 0.2s;
             outline: none;
+            color-scheme: dark;
+        }
+
+        .select-filtro option,
+        .select-status option,
+        select option {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
         }
 
         .select-filtro:focus {
@@ -537,6 +546,7 @@
             cursor: pointer;
             outline: none;
             transition: border-color 0.2s;
+            color-scheme: dark;
         }
 
         .select-status:focus { border-color: var(--verde-border); }
@@ -1151,7 +1161,7 @@
                     </div>
                     {% with max_nota=avaliacoes_nota|dictsort:"quantidade"|last %}
                     <div class="notas-dist">
-                        {% for item in avaliacoes_nota|dictsort:"-nota" %}
+                        {% for item in avaliacoes_nota|dictsortreversed:"nota" %}
                         <div class="nota-dist-item">
                             <div class="nota-dist-label">{{ item.nota }}★</div>
                             <div class="nota-dist-bar-track">

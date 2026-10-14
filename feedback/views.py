@@ -466,7 +466,7 @@ def dashboard(request):
 
     if periodo_filtro:
 
-        agora = timezone.now()
+        agora = timezone.localtime()
 
         if periodo_filtro == "hoje":
 
@@ -591,7 +591,7 @@ def dashboard(request):
             "nota": n,
             "quantidade": cont_nota.get(n, 0),
         }
-        for n in range(1, 6)
+        for n in range(5, 0, -1)
     ]
 
     # ==========================================================
