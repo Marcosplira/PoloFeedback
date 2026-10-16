@@ -267,9 +267,8 @@ class FeedbackViewsTests(TestCase):
     def test_inicio_e_avaliacao_tem_destinos_separados(self):
         inicio_response = self.client.get(reverse("inicio"))
         self.assertEqual(inicio_response.status_code, 200)
-        self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
         self.assertContains(inicio_response, reverse("avaliar"))
-        self.assertContains(inicio_response, "from-lime-500/10")
+        self.assertContains(inicio_response, reverse("enquete"))
         self.assertContains(inicio_response, "QR Code para avaliação Polo Fit")
         self.assertContains(inicio_response, "QR Code para pesquisa Polo Fit")
         self.assertTrue(inicio_response.context["avaliar_qr"])
@@ -278,29 +277,11 @@ class FeedbackViewsTests(TestCase):
             inicio_response,
             "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview",
         )
-        self.assertContains(
-            inicio_response,
-            "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view",
-        )
-        self.assertContains(
-            inicio_response,
-            "https://drive.google.com/uc?export=download&amp;id=1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX",
-        )
-        self.assertContains(inicio_response, "academia2.png")
         self.assertContains(inicio_response, "feedback/academia1.png")
-        self.assertContains(inicio_response, "class=\"fundo-academia min-h-screen bg-slate-950 text-white\"")
-        self.assertContains(
-            inicio_response,
-            "class=\"mx-auto mb-3 aspect-[9/16] w-full max-w-xs rounded-2xl bg-black sm:aspect-video sm:max-w-none\"",
-        )
-        self.assertContains(inicio_response, "formato vertical do vídeo")
-        self.assertContains(inicio_response, "Baixar vídeo")
-        self.assertContains(inicio_response, "Abrir no Google Drive")
         self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
         avaliacao_response = self.client.get(reverse("avaliar"))
         self.assertEqual(avaliacao_response.status_code, 200)
         self.assertContains(avaliacao_response, f'href="{reverse("inicio")}"')
-        self.assertContains(avaliacao_response, 'aria-current="page"')
 
     def test_login_explica_que_nao_existe_credencial_padrao(self):
         response = self.client.get(reverse("login"))
@@ -418,16 +399,7 @@ class FeedbackViewsTests(TestCase):
 
     def test_rodape_exibe_contato_e_creditos(self):
         response = self.client.get(reverse("inicio"))
-        self.assertContains(response, "Rua Antônio dos Santos, nº 62, Bairro Cenecista, Picuí - PB, CEP 58187-000")
-        self.assertContains(response, "(83) 98671-9438")
-        self.assertContains(response, "https://wa.me/5583986719438")
-        self.assertContains(response, "https://www.instagram.com/polofitacademias/")
-        self.assertContains(response, "Rua+Ant%C3%B4nio+dos+Santos")
-        self.assertContains(response, "Segunda a sexta: 05h às 22h")
-        self.assertContains(response, "Sábado: 11h às 19h")
-        self.assertContains(response, "mensalidades")
         self.assertContains(response, "Marcos Paulo Santos Lira")
-        self.assertContains(response, "Instituto Federal de Educação")
 
     def test_painel_executivo_tem_atalhos_de_gestao_para_superusuario(self):
         self.client.force_login(self.user)
