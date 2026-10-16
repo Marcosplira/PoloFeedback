@@ -98,6 +98,12 @@
             margin-bottom: 1.25rem;
         }
 
+        .step-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .btn-voltar {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
@@ -111,12 +117,21 @@
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
+            text-decoration: none;
         }
 
         .btn-voltar:hover {
             color: var(--verde);
             border-color: var(--verde-border);
             background: var(--verde-soft);
+        }
+
+        .page-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--verde);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .step-indicator {
