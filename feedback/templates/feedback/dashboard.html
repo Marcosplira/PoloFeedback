@@ -246,6 +246,29 @@
             gap: 0.875rem;
         }
 
+        .btn-topbar-voltar {
+            height: 34px;
+            padding: 0 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 0.5rem;
+            color: rgba(255,255,255,0.85);
+            font-size: 0.775rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-topbar-voltar:hover {
+            background: rgba(163,230,53,0.12);
+            border-color: rgba(163,230,53,0.35);
+            color: var(--verde);
+        }
+
         /* Filtros topbar */
         .filtros-form {
             display: flex;
@@ -902,9 +925,9 @@
                 Configurações
             </a>
 
-            <a href="{% url 'inicio' %}" class="nav-item" id="nav-site">
-                <span class="nav-icon">🌐</span>
-                Ver site
+            <a href="{% url 'inicio' %}" class="nav-item" id="nav-site" title="Voltar para a página inicial">
+                <span class="nav-icon">←</span>
+                Voltar ao Início
             </a>
         </nav>
 
@@ -933,6 +956,9 @@
             </div>
 
             <div class="topbar-right">
+                <a href="{% url 'inicio' %}" class="btn-topbar-voltar" title="Voltar à página inicial">
+                    <span>←</span> Voltar ao Início
+                </a>
                 <form method="get" class="filtros-form" id="form-filtros">
                     <select name="periodo" class="select-filtro" onchange="this.form.submit()">
                         <option value="">Todos os períodos</option>

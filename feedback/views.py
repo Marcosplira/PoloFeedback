@@ -904,12 +904,9 @@ def gerar_qrcode(request):
         protocolo = "https" if request.is_secure() else "http"
 
         if "enquete" in localizacao.lower():
-
             url_gerada = f"{protocolo}://{host}/enquete/"
-
         else:
-
-            url_gerada = f"{protocolo}://{host}/" f"?localizacao={localizacao}"
+            url_gerada = f"{protocolo}://{host}/avaliar/?localizacao={quote(localizacao)}"
 
         qrcode_base64 = _gerar_qrcode_base64(url_gerada, box_size=10)
 

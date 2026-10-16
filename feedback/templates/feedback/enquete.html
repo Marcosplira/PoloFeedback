@@ -33,10 +33,52 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: 5rem 1rem 2rem;
             position: relative;
             overflow-x: hidden;
         }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.25rem;
+            height: 60px;
+            background: rgba(10,10,10,0.95);
+            border-bottom: 1px solid rgba(163,230,53,0.12);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            width: 100%;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #f0f0f0;
+        }
+
+        .navbar-logo img { height: 30px; width: auto; }
+        .navbar-logo span { font-weight: 800; font-size: 1rem; }
+
+        .nav-back {
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover { color: var(--verde); }
 
         .bg-overlay {
             position: fixed;
@@ -98,12 +140,6 @@
             margin-bottom: 1.25rem;
         }
 
-        .step-header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
         .btn-voltar {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
@@ -117,21 +153,12 @@
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            text-decoration: none;
         }
 
         .btn-voltar:hover {
             color: var(--verde);
             border-color: var(--verde-border);
             background: var(--verde-soft);
-        }
-
-        .page-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--verde);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .step-indicator {
@@ -452,6 +479,14 @@
     </style>
 </head>
 <body>
+    <nav class="navbar" aria-label="Navegação">
+        <a href="{% url 'inicio' %}" class="navbar-logo">
+            <img src="{% static 'feedback/LOGO.png' %}" alt="Logo Polo Fit">
+            <span>Polo Fit</span>
+        </a>
+        <a href="{% url 'inicio' %}" class="nav-back">← Voltar ao Início</a>
+    </nav>
+
     <div class="bg-overlay" aria-hidden="true"></div>
     <div class="glow" aria-hidden="true"></div>
 

@@ -62,10 +62,10 @@ class PlanoTreinoForm(forms.ModelForm):
         )
         for field in self.fields.values():
             field.widget.attrs["class"] = (
-                "w-full rounded-xl border border-slate-600 bg-slate-950 "
-                "px-3 py-2 text-white focus:border-lime-300 focus:outline-none"
+                "w-full rounded-xl border border-slate-300 bg-white "
+                "px-3.5 py-2.5 text-slate-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 focus:outline-none transition text-sm"
             )
-        self.fields["ativo"].widget.attrs["class"] = "h-4 w-4 accent-lime-300"
+        self.fields["ativo"].widget.attrs["class"] = "h-4 w-4 rounded accent-lime-600 cursor-pointer"
 
 
 class ItemPlanoTreinoForm(forms.ModelForm):
@@ -99,8 +99,8 @@ class ItemPlanoTreinoForm(forms.ModelForm):
         self.fields["exercicio"].empty_label = "Selecione um exercício"
         for field in self.fields.values():
             field.widget.attrs["class"] = (
-                "w-full rounded-lg border border-slate-600 bg-slate-950 "
-                "px-3 py-2 text-white focus:border-lime-300 focus:outline-none"
+                "w-full rounded-lg border border-slate-300 bg-white "
+                "px-3 py-2 text-slate-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-400/20 focus:outline-none transition text-sm"
             )
 
 ItemPlanoTreinoFormSet = inlineformset_factory(
