@@ -11,27 +11,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
-        :root {
-            color-scheme: dark;
-            --verde: #a3e635;
-            --verde-soft: rgba(163,230,53,0.12);
-            --verde-border: rgba(163,230,53,0.4);
-            --bg: #0a0a0a;
-            --card: #141414;
-            --texto: #f0f0f0;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--texto);
+            background-color: #020617; /* slate-950 */
+            color: #f8fafc;
             min-height: 100vh;
         }
 
         /* Top Manager Navigation */
         .topbar {
-            background: #0a0a0a;
-            border-bottom: 1px solid rgba(163,230,53,0.15);
+            background: #0f172a; /* slate-900 */
+            border-bottom: 1px solid rgba(163,230,53,0.2);
             position: sticky;
             top: 0;
             z-index: 50;
@@ -40,7 +30,7 @@
         .nav-link {
             font-size: 0.85rem;
             font-weight: 600;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.7);
             padding: 0.5rem 0.85rem;
             border-radius: 0.5rem;
             transition: all 0.15s;
@@ -51,13 +41,13 @@
         }
 
         .nav-link:hover {
-            color: var(--verde);
-            background: rgba(163,230,53,0.08);
+            color: #bef264;
+            background: rgba(163,230,53,0.1);
         }
 
         .nav-link.active {
-            color: var(--verde);
-            background: rgba(163,230,53,0.12);
+            color: #bef264;
+            background: rgba(163,230,53,0.15);
             font-weight: 700;
         }
 
@@ -68,24 +58,25 @@
             justify-content: space-between;
             padding: 0.75rem 1rem;
             border-radius: 0.75rem;
-            border: 1.5px solid transparent;
+            border: 1px solid rgba(255,255,255,0.08);
             font-size: 0.875rem;
             font-weight: 600;
-            color: #334155;
+            color: #cbd5e1;
             text-decoration: none;
             transition: all 0.15s;
-            background: #f8fafc;
+            background: rgba(2, 6, 23, 0.6);
         }
 
         .local-item:hover {
-            background: #f1f5f9;
-            color: #0f172a;
+            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(163,230,53,0.3);
+            color: #ffffff;
         }
 
         .local-item.active {
-            background: #f0fdf4;
-            border-color: #86efac;
-            color: #166534;
+            background: rgba(163,230,53,0.12);
+            border-color: rgba(163,230,53,0.5);
+            color: #bef264;
         }
 
         /* Cartaz A4 Preview */
@@ -93,7 +84,7 @@
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 1.25rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             padding: 2.25rem 2rem;
             text-align: center;
             max-width: 440px;
@@ -102,7 +93,7 @@
 
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; padding: 0 !important; }
+            body { background: white !important; padding: 0 !important; color: black !important; }
             .cartaz-preview {
                 box-shadow: none !important;
                 border: 2px solid #000 !important;
@@ -113,265 +104,271 @@
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-slate-950 text-white flex flex-col justify-between">
 
-    <!-- TOPBAR GERENCIAL -->
-    <header class="topbar no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-6">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-2">
-                    <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-8 w-auto">
-                    <span class="font-black text-sm tracking-tight text-slate-900 hidden sm:inline">Polo Fit</span>
-                </a>
-                <nav class="flex items-center gap-1 overflow-x-auto py-1">
-                    <a href="{% url 'dashboard' %}" class="nav-link">Visão geral</a>
-                    <a href="{% url 'dashboard' %}#para-resolver" class="nav-link">Avaliações</a>
-                    <a href="{% url 'gerar_qrcode' %}" class="nav-link active">QR Codes</a>
-                    <a href="{% url 'gestao_treinos' %}" class="nav-link">Treinos</a>
-                    <a href="{% url 'divulgacao' %}" class="nav-link">Divulgar</a>
-                </nav>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1 text-xs font-semibold text-slate-700">
-                    <span class="w-6 h-6 rounded-full bg-slate-900 text-lime-400 flex items-center justify-center font-bold">
-                        {{ request.user.username|first|upper }}
-                    </span>
-                    <span class="hidden md:inline">{{ request.user.username }}</span>
+    <div>
+        <!-- TOPBAR GERENCIAL -->
+        <header class="topbar no-print">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <a href="{% url 'dashboard' %}" class="flex items-center gap-2">
+                        <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-8 w-auto">
+                        <span class="font-black text-sm tracking-tight text-white hidden sm:inline">Polo Fit</span>
+                    </a>
+                    <nav class="flex items-center gap-1 overflow-x-auto py-1">
+                        <a href="{% url 'dashboard' %}" class="nav-link">Visão geral</a>
+                        <a href="{% url 'dashboard' %}#para-resolver" class="nav-link">Avaliações</a>
+                        <a href="{% url 'gerar_qrcode' %}" class="nav-link active">QR Codes</a>
+                        <a href="{% url 'gestao_treinos' %}" class="nav-link">Treinos</a>
+                        <a href="{% url 'divulgacao' %}" class="nav-link">Divulgar</a>
+                    </nav>
                 </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-
-        <!-- CABEÇALHO DA PÁGINA -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 no-print">
-            <div>
-                <h1 class="text-2xl sm:text-3xl font-black text-slate-900">QR Codes</h1>
-                <p class="text-slate-500 text-sm mt-1">
-                    Escolha um local, confira a prévia e imprima. Cada QR já abre a avaliação no local certo.
-                </p>
-            </div>
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="window.print()"
-                    class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm">
-                    🖨️ Imprimir cartaz
-                </button>
-            </div>
-        </div>
-
-        <!-- GRID PRINCIPAL (2 COLUNAS) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-
-            <!-- COLUNA DA ESQUERDA: LISTA DE LOCAIS (5 colunas) -->
-            <div class="lg:col-span-5 space-y-6 no-print">
-
-                <!-- CARD: LOCAIS DA ACADEMIA -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                            Locais da Academia
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 bg-slate-800 border border-white/10 rounded-full px-3 py-1 text-xs font-semibold text-slate-200">
+                        <span class="w-6 h-6 rounded-full bg-lime-400 text-slate-950 flex items-center justify-center font-bold">
+                            {{ request.user.username|first|upper }}
                         </span>
-                        <span class="text-xs font-bold text-slate-400">7 locais</span>
-                    </div>
-
-                    <div class="space-y-2">
-                        <a href="?localizacao=%C3%81rea+de+Muscula%C3%A7%C3%A3o"
-                           class="local-item {% if localizacao == 'Área de Musculação' %}active{% endif %}">
-                            <div class="flex items-center gap-3">
-                                <span>🏋️</span>
-                                <div>
-                                    <div>Área de Musculação</div>
-                                    <div class="text-[11px] font-normal text-slate-400">Avaliação deste espaço</div>
-                                </div>
-                            </div>
-                            {% if localizacao == 'Área de Musculação' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
-                        </a>
-
-                        <a href="?localizacao=Academia+Principal"
-                           class="local-item {% if localizacao == 'Academia Principal' %}active{% endif %}">
-                            <div class="flex items-center gap-3">
-                                <span>🏢</span>
-                                <div>
-                                    <div>Academia Principal</div>
-                                    <div class="text-[11px] font-normal text-slate-400">Visão geral do salão</div>
-                                </div>
-                            </div>
-                            {% if localizacao == 'Academia Principal' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
-                        </a>
-
-                        <a href="?localizacao=Treinamento+Funcional"
-                           class="local-item {% if localizacao == 'Treinamento Funcional' %}active{% endif %}">
-                            <div class="flex items-center gap-3">
-                                <span>⚡</span>
-                                <div>
-                                    <div>Treinamento Funcional</div>
-                                    <div class="text-[11px] font-normal text-slate-400">Espaço funcional</div>
-                                </div>
-                            </div>
-                            {% if localizacao == 'Treinamento Funcional' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
-                        </a>
-
-                        <a href="?localizacao=Studio+de+Pilates"
-                           class="local-item {% if localizacao == 'Studio de Pilates' %}active{% endif %}">
-                            <div class="flex items-center gap-3">
-                                <span>🧘</span>
-                                <div>
-                                    <div>Studio de Pilates</div>
-                                    <div class="text-[11px] font-normal text-slate-400">Aulas e aparelhos</div>
-                                </div>
-                            </div>
-                            {% if localizacao == 'Studio de Pilates' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
-                        </a>
-
-                        <a href="?localizacao=Vesti%C3%A1rios"
-                           class="local-item {% if localizacao == 'Vestiários' %}active{% endif %}">
-                            <div class="flex items-center gap-3">
-                                <span>🚿</span>
-                                <div>
-                                    <div>Vestiários</div>
-                                    <div class="text-[11px] font-normal text-slate-400">Higiene e estrutura</div>
-                                </div>
-                            </div>
-                            {% if localizacao == 'Vestiários' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
-                        </a>
-
-                        <a href="?localizacao=Recep%C3%A7%C3%A3o"
-                           class="local-item {% if localizacao == 'Recepção' %}active{% endif %}">
-                            <div class="flex items-center gap-3">
-                                <span>🛎️</span>
-                                <div>
-                                    <div>Recepção</div>
-                                    <div class="text-[11px] font-normal text-slate-400">Atendimento e entrada</div>
-                                </div>
-                            </div>
-                            {% if localizacao == 'Recepção' %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
-                        </a>
-
-                        <a href="?localizacao=Enquete+de+aulas"
-                           class="local-item {% if 'Enquete' in localizacao %}active{% endif %}">
-                            <div class="flex items-center gap-3">
-                                <span>📋</span>
-                                <div>
-                                    <div>Enquete de aulas</div>
-                                    <div class="text-[11px] font-normal text-slate-400">Próximas aulas e espaços</div>
-                                </div>
-                            </div>
-                            {% if 'Enquete' in localizacao %}<span class="text-lime-600 font-bold">✓</span>{% endif %}
-                        </a>
+                        <span class="hidden md:inline">{{ request.user.username }}</span>
                     </div>
                 </div>
+            </div>
+        </header>
 
-                <!-- CARD: OUTRO LOCAL -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
-                        Outro local
-                    </span>
-                    <p class="text-xs text-slate-500 mb-3">Para um espaço novo ou temporário:</p>
-                    <form method="get" class="flex gap-2">
-                        <input type="text" name="localizacao" placeholder="Ex: Sala de spinning..." required
-                               class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-lime-400">
-                        <button type="submit"
-                                class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-xl text-sm transition">
-                            Criar
-                        </button>
-                    </form>
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+            <!-- CABEÇALHO DA PÁGINA -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 no-print">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-white">QR Codes para Avaliação</h1>
+                    <p class="text-slate-400 text-sm mt-1">
+                        Escolha um local, confira a prévia e imprima. Cada QR já abre a avaliação no local certo.
+                    </p>
                 </div>
-
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.print()"
+                        class="inline-flex items-center gap-2 bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm">
+                        🖨️ Imprimir cartaz
+                    </button>
+                </div>
             </div>
 
-            <!-- COLUNA DA DIREITA: PRÉVIA DO CARTAZ (7 colunas) -->
-            <div class="lg:col-span-7 flex flex-col items-center">
+            <!-- GRID PRINCIPAL (2 COLUNAS) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
 
-                <div class="cartaz-preview w-full">
-                    <div class="flex items-center justify-center gap-2 mb-4">
-                        <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-10 w-auto">
-                        <span class="font-extrabold text-lg text-slate-900">Polo Fit</span>
-                    </div>
+                <!-- COLUNA DA ESQUERDA: LISTA DE LOCAIS (5 colunas) -->
+                <div class="lg:col-span-5 space-y-6 no-print">
 
-                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">
-                        Como foi seu treino hoje?
-                    </h2>
+                    <!-- CARD: LOCAIS DA ACADEMIA -->
+                    <div class="bg-slate-900 rounded-2xl border border-white/10 p-5 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-lime-300">
+                                Locais da Academia
+                            </span>
+                            <span class="text-xs font-bold text-slate-400">7 locais</span>
+                        </div>
 
-                    <div class="inline-block bg-slate-100 text-slate-800 text-xs font-bold px-3 py-1 rounded-full mb-6">
-                        {{ localizacao|default:"Área de Musculação" }}
-                    </div>
+                        <div class="space-y-2">
+                            <a href="?localizacao=%C3%81rea+de+Muscula%C3%A7%C3%A3o"
+                               class="local-item {% if localizacao == 'Área de Musculação' %}active{% endif %}">
+                                <div class="flex items-center gap-3">
+                                    <span>🏋️</span>
+                                    <div>
+                                        <div class="text-white">Área de Musculação</div>
+                                        <div class="text-[11px] font-normal text-slate-400">Avaliação deste espaço</div>
+                                    </div>
+                                </div>
+                                {% if localizacao == 'Área de Musculação' %}<span class="text-lime-400 font-bold">✓</span>{% endif %}
+                            </a>
 
-                    <div class="flex justify-center mb-6">
-                        <div class="p-3 bg-white border-2 border-slate-900 rounded-2xl inline-block shadow-sm">
-                            {% if qrcode_base64 %}
-                            <img src="data:image/png;base64,{{ qrcode_base64 }}"
-                                 alt="QR Code para {{ localizacao }}"
-                                 id="qr-img"
-                                 class="w-56 h-56 object-contain">
-                            {% else %}
-                            <div class="w-56 h-56 flex items-center justify-center bg-slate-100 text-slate-400 font-semibold text-sm">
-                                Gerando QR Code...
-                            </div>
-                            {% endif %}
+                            <a href="?localizacao=Academia+Principal"
+                               class="local-item {% if localizacao == 'Academia Principal' %}active{% endif %}">
+                                <div class="flex items-center gap-3">
+                                    <span>🏢</span>
+                                    <div>
+                                        <div class="text-white">Academia Principal</div>
+                                        <div class="text-[11px] font-normal text-slate-400">Visão geral do salão</div>
+                                    </div>
+                                </div>
+                                {% if localizacao == 'Academia Principal' %}<span class="text-lime-400 font-bold">✓</span>{% endif %}
+                            </a>
+
+                            <a href="?localizacao=Treinamento+Funcional"
+                               class="local-item {% if localizacao == 'Treinamento Funcional' %}active{% endif %}">
+                                <div class="flex items-center gap-3">
+                                    <span>⚡</span>
+                                    <div>
+                                        <div class="text-white">Treinamento Funcional</div>
+                                        <div class="text-[11px] font-normal text-slate-400">Espaço funcional</div>
+                                    </div>
+                                </div>
+                                {% if localizacao == 'Treinamento Funcional' %}<span class="text-lime-400 font-bold">✓</span>{% endif %}
+                            </a>
+
+                            <a href="?localizacao=Studio+de+Pilates"
+                               class="local-item {% if localizacao == 'Studio de Pilates' %}active{% endif %}">
+                                <div class="flex items-center gap-3">
+                                    <span>🧘</span>
+                                    <div>
+                                        <div class="text-white">Studio de Pilates</div>
+                                        <div class="text-[11px] font-normal text-slate-400">Aulas e aparelhos</div>
+                                    </div>
+                                </div>
+                                {% if localizacao == 'Studio de Pilates' %}<span class="text-lime-400 font-bold">✓</span>{% endif %}
+                            </a>
+
+                            <a href="?localizacao=Vesti%C3%A1rios"
+                               class="local-item {% if localizacao == 'Vestiários' %}active{% endif %}">
+                                <div class="flex items-center gap-3">
+                                    <span>🚿</span>
+                                    <div>
+                                        <div class="text-white">Vestiários</div>
+                                        <div class="text-[11px] font-normal text-slate-400">Higiene e estrutura</div>
+                                    </div>
+                                </div>
+                                {% if localizacao == 'Vestiários' %}<span class="text-lime-400 font-bold">✓</span>{% endif %}
+                            </a>
+
+                            <a href="?localizacao=Recep%C3%A7%C3%A3o"
+                               class="local-item {% if localizacao == 'Recepção' %}active{% endif %}">
+                                <div class="flex items-center gap-3">
+                                    <span>🛎️</span>
+                                    <div>
+                                        <div class="text-white">Recepção</div>
+                                        <div class="text-[11px] font-normal text-slate-400">Atendimento e entrada</div>
+                                    </div>
+                                </div>
+                                {% if localizacao == 'Recepção' %}<span class="text-lime-400 font-bold">✓</span>{% endif %}
+                            </a>
+
+                            <a href="?localizacao=Enquete+de+aulas"
+                               class="local-item {% if 'Enquete' in localizacao %}active{% endif %}">
+                                <div class="flex items-center gap-3">
+                                    <span>📋</span>
+                                    <div>
+                                        <div class="text-white">Enquete de aulas</div>
+                                        <div class="text-[11px] font-normal text-slate-400">Próximas aulas e espaços</div>
+                                    </div>
+                                </div>
+                                {% if 'Enquete' in localizacao %}<span class="text-lime-400 font-bold">✓</span>{% endif %}
+                            </a>
                         </div>
                     </div>
 
-                    <p class="text-sm font-extrabold text-slate-900">
-                        Aponte a câmera do celular
-                    </p>
-                    <p class="text-xs text-slate-500 mt-1">
-                        Anônimo • Menos de 1 minuto • Sem baixar app
-                    </p>
+                    <!-- CARD: OUTRO LOCAL -->
+                    <div class="bg-slate-900 rounded-2xl border border-white/10 p-5 shadow-sm">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-lime-300 block mb-1">
+                            Outro local personalizado
+                        </span>
+                        <p class="text-xs text-slate-400 mb-3">Para um espaço novo ou temporário:</p>
+                        <form method="get" class="flex gap-2">
+                            <input type="text" name="localizacao" placeholder="Ex: Sala de spinning..." required
+                                   class="flex-1 bg-slate-950 border border-white/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-lime-400">
+                            <button type="submit"
+                                    class="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-4 py-2 rounded-xl text-sm transition">
+                                Criar
+                            </button>
+                        </form>
+                    </div>
 
-                    <div class="mt-4 pt-4 border-t border-slate-100">
-                        <p class="text-[11px] font-mono text-slate-400 break-all" id="qr-url-text">{{ url_gerada }}</p>
+                </div>
+
+                <!-- COLUNA DA DIREITA: PRÉVIA DO CARTAZ (7 colunas) -->
+                <div class="lg:col-span-7 flex flex-col items-center">
+
+                    <div class="cartaz-preview w-full">
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-10 w-auto">
+                            <span class="font-extrabold text-lg text-slate-900">Polo Fit</span>
+                        </div>
+
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">
+                            Como foi seu treino hoje?
+                        </h2>
+
+                        <div class="inline-block bg-slate-100 text-slate-800 text-xs font-bold px-3 py-1 rounded-full mb-6">
+                            {{ localizacao|default:"Área de Musculação" }}
+                        </div>
+
+                        <div class="flex justify-center mb-6">
+                            <div class="p-3 bg-white border-2 border-slate-900 rounded-2xl inline-block shadow-sm">
+                                {% if qrcode_base64 %}
+                                <img src="data:image/png;base64,{{ qrcode_base64 }}"
+                                     alt="QR Code para {{ localizacao }}"
+                                     id="qr-img"
+                                     class="w-56 h-56 object-contain">
+                                {% else %}
+                                <div class="w-56 h-56 flex items-center justify-center bg-slate-100 text-slate-400 font-semibold text-sm">
+                                    Gerando QR Code...
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <p class="text-sm font-extrabold text-slate-900">
+                            Aponte a câmera do celular
+                        </p>
+                        <p class="text-xs text-slate-500 mt-1">
+                            Anônimo • Menos de 1 minuto • Sem baixar app
+                        </p>
+
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <p class="text-[11px] font-mono text-slate-400 break-all" id="qr-url-text">{{ url_gerada }}</p>
+                        </div>
+                    </div>
+
+                    <!-- BOTÕES DE AÇÃO ABAIXO DO CARTAZ -->
+                    <div class="flex flex-wrap items-center justify-center gap-2.5 mt-5 no-print w-full max-w-[440px]">
+                        <button type="button" onclick="window.print()"
+                                class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-lime-400 hover:bg-lime-300 text-slate-950 font-black py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                            🖨️ Imprimir cartaz
+                        </button>
+                        <a id="btn-download-qr"
+                           href="data:image/png;base64,{{ qrcode_base64 }}"
+                           download="qrcode-{{ localizacao|slugify }}.png"
+                           class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 border border-white/20 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                            💾 Salvar imagem
+                        </a>
+                        <button type="button" onclick="copiarLink()"
+                                class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 border border-white/20 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
+                            <span id="label-copiar">🔗 Copiar link</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RODAPÉ EXPLICATIVO EM 3 PASSOS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8 border-t border-white/10 no-print">
+                <div class="bg-slate-900 rounded-xl border border-white/10 p-4 shadow-sm flex items-start gap-3">
+                    <span class="w-7 h-7 rounded-full bg-lime-400 text-slate-950 font-black flex items-center justify-center text-xs flex-shrink-0">1</span>
+                    <div>
+                        <h3 class="font-bold text-xs text-white">Imprima o cartaz de cada local em A4</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Impressão limpa e pronta para pendurar ou emoldurar.</p>
                     </div>
                 </div>
-
-                <!-- BOTÕES DE AÇÃO ABAIXO DO CARTAZ -->
-                <div class="flex flex-wrap items-center justify-center gap-2.5 mt-5 no-print w-full max-w-[440px]">
-                    <button type="button" onclick="window.print()"
-                            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
-                        🖨️ Imprimir cartaz
-                    </button>
-                    <a id="btn-download-qr"
-                       href="data:image/png;base64,{{ qrcode_base64 }}"
-                       download="qrcode-{{ localizacao|slugify }}.png"
-                       class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
-                        💾 Salvar imagem
-                    </a>
-                    <button type="button" onclick="copiarLink()"
-                            class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm">
-                        <span id="label-copiar">🔗 Copiar link</span>
-                    </button>
+                <div class="bg-slate-900 rounded-xl border border-white/10 p-4 shadow-sm flex items-start gap-3">
+                    <span class="w-7 h-7 rounded-full bg-lime-400 text-slate-950 font-black flex items-center justify-center text-xs flex-shrink-0">2</span>
+                    <div>
+                        <h3 class="font-bold text-xs text-white">Cole onde o aluno para</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Balcão da recepção, bebedouros e saída do vestiário.</p>
+                    </div>
                 </div>
-
-            </div>
-
-        </div>
-
-        <!-- RODAPÉ EXPLICATIVO EM 3 PASSOS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8 border-t border-slate-200 no-print">
-            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
-                <span class="w-7 h-7 rounded-full bg-lime-100 text-lime-800 font-black flex items-center justify-center text-xs flex-shrink-0">1</span>
-                <div>
-                    <h3 class="font-bold text-xs text-slate-900">Imprima o cartaz de cada local em A4</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Impressão limpa e pronta para pendurar ou emoldurar.</p>
+                <div class="bg-slate-900 rounded-xl border border-white/10 p-4 shadow-sm flex items-start gap-3">
+                    <span class="w-7 h-7 rounded-full bg-lime-400 text-slate-950 font-black flex items-center justify-center text-xs flex-shrink-0">3</span>
+                    <div>
+                        <h3 class="font-bold text-xs text-white">Acompanhe as respostas por local</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Filtre por ambiente e saiba onde melhorar na Visão Geral.</p>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
-                <span class="w-7 h-7 rounded-full bg-lime-100 text-lime-800 font-black flex items-center justify-center text-xs flex-shrink-0">2</span>
-                <div>
-                    <h3 class="font-bold text-xs text-slate-900">Cole onde o aluno para</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Balcão da recepção, bebedouros e saída do vestiário.</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
-                <span class="w-7 h-7 rounded-full bg-lime-100 text-lime-800 font-black flex items-center justify-center text-xs flex-shrink-0">3</span>
-                <div>
-                    <h3 class="font-bold text-xs text-slate-900">Acompanhe as respostas por local</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Filtre por ambiente e saiba onde melhorar na Visão Geral.</p>
-                </div>
-            </div>
-        </div>
 
-    </main>
+        </main>
+    </div>
+
+    <div class="no-print">
+        {% include "feedback/rodape.html" %}
+    </div>
 
     {% include "feedback/pwa_install.html" %}
 

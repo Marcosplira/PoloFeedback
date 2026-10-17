@@ -832,18 +832,83 @@ def configuracao_sistema(request):
 
     executor = MigrationExecutor(connection)
     pendentes = executor.migration_plan(executor.loader.graph.leaf_nodes())
-    return render(
-        request,
-        "feedback/configuracao_sistema.html",
+
+    total_avaliacoes = Avaliacao.objects.count()
+    total_planos = PlanoTreino.objects.count()
+    total_respostas_enquete = RespostaEnquete.objects.count()
+    total_funcionarios = Funcionario.objects.count()
+
+    User = get_user_model()
+    total_usuarios = User.objects.count()
+    total_alunos = User.objects.filter(is_staff=False).count()
+
+    ia_gemini_ativo = bool(getattr(settings, "GEMINI_API_KEY", None))
+
+    modulos = [
         {
-            "banco_engine": connection.settings_dict["ENGINE"],
-            "migracoes_pendentes": [
-                f"{migration.app_label}.{migration.name}"
-                for migration, _ in pendentes
-            ],
-            "migracoes_ok": not pendentes,
+            "nome": "Treinos por QR Code (Piloto)",
+            "descricao": "Aparelhos com QR code para exibição direta da ficha e séries do aluno",
+            "status": "Ativo",
+            "icone": "📱",
+            "url": reverse("gestao_treinos"),
+            "badge_color": "emerald",
         },
-    )
+        {
+            "nome": "Avaliações e Satisfação (NPS)",
+            "descricao": "Coleta contínua de feedback por totens, cartazes ou link direto",
+            "status": "Ativo",
+            "icone": "⭐",
+            "url": reverse("dashboard"),
+            "badge_color": "emerald",
+        },
+        {
+            "nome": "Pesquisa de Demanda e Aulas",
+            "descricao": "Enquete interativa para novas modalidades, horários e melhorias",
+            "status": "Ativo",
+            "icone": "📊",
+            "url": reverse("enquete"),
+            "badge_color": "emerald",
+        },
+        {
+            "nome": "Inteligência Artificial (Google Gemini)",
+            "descricao": "Geração automática de diagnósticos executivos e resumos de gestão",
+            "status": "Configurada" if ia_gemini_ativo else "Pronto p/ Ativar",
+            "icone": "🤖",
+            "url": reverse("dashboard"),
+            "badge_color": "emerald" if ia_gemini_ativo else "amber",
+        },
+        {
+            "nome": "PWA & Acesso Mobile",
+            "descricao": "Instalação instantânea no celular dos alunos e da equipe sem App Store",
+            "status": "Ativo",
+            "icone": "📲",
+            "url": reverse("inicio"),
+            "badge_color": "emerald",
+        },
+    ]
+
+    contexto = {
+        "banco_engine": connection.settings_dict["ENGINE"],
+        "migracoes_pendentes": [
+            f"{migration.app_label}.{migration.name}"
+            for migration, _ in pendentes
+        ],
+        "migracoes_ok": not pendentes,
+        "total_avaliacoes": total_avaliacoes,
+        "total_planos": total_planos,
+        "total_respostas_enquete": total_respostas_enquete,
+        "total_usuarios": total_usuarios,
+        "total_alunos": total_alunos,
+        "total_funcionarios": total_funcionarios,
+        "ia_gemini_ativo": ia_gemini_ativo,
+        "modulos": modulos,
+        "unidade_nome": "Academia Polo Fit",
+        "unidade_cidade": "Picuí - PB",
+        "unidade_endereco": "Rua Antônio dos Santos, nº 62, Bairro Cenecista",
+        "unidade_telefone": "(83) 98671-9438",
+        "unidade_horario": "Seg-Sex: 05h às 22h · Sáb: 11h às 19h",
+    }
+    return render(request, "feedback/configuracao_sistema.html", contexto)
 
 
 @staff_required(permission="feedback.view_avaliacao")
