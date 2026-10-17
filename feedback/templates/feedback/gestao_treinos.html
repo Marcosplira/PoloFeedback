@@ -12,11 +12,11 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         :root {
-            color-scheme: light dark;
+            color-scheme: dark;
             --verde: #a3e635;
             --verde-soft: rgba(163,230,53,0.12);
-            --bg: #f8fafc;
-            --texto: #0f172a;
+            --bg: #0a0a0a;
+            --texto: #f0f0f0;
         }
 
         body {
@@ -27,8 +27,8 @@
         }
 
         .topbar {
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
+            background: #0a0a0a;
+            border-bottom: 1px solid rgba(163,230,53,0.15);
             position: sticky;
             top: 0;
             z-index: 50;
@@ -37,7 +37,7 @@
         .nav-link {
             font-size: 0.85rem;
             font-weight: 600;
-            color: #64748b;
+            color: rgba(255,255,255,0.6);
             padding: 0.5rem 0.85rem;
             border-radius: 0.5rem;
             transition: all 0.15s;
@@ -48,13 +48,13 @@
         }
 
         .nav-link:hover {
-            color: #0f172a;
-            background: #f1f5f9;
+            color: var(--verde);
+            background: rgba(163,230,53,0.08);
         }
 
         .nav-link.active {
-            color: #0f172a;
-            background: #f1f5f9;
+            color: var(--verde);
+            background: rgba(163,230,53,0.12);
             font-weight: 700;
         }
 

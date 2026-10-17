@@ -492,6 +492,14 @@
 
     <div class="enquete-wrapper">
         <div class="enquete-card">
+            
+            <!-- HEADER COM VOLTAR E TÍTULO -->
+            <div class="step-header">
+                <div class="step-header-left">
+                    <a href="{% url 'inicio' %}" class="btn-voltar">← Voltar</a>
+                    <span class="page-title">Pesquisa Polo Fit</span>
+                </div>
+            </div>
 
             <form id="form-enquete" method="POST" action="{% url 'enquete' %}">
                 {% csrf_token %}
@@ -523,7 +531,6 @@
                 <!-- TELA 1: VOCÊ FAZ AULAS COLETIVAS? -->
                 <div class="step-screen" id="step-1">
                     <div class="step-header">
-                        <button type="button" class="btn-voltar" onclick="goToStep(0)">← Voltar</button>
                         <span class="step-indicator">Pergunta 1 de 5</span>
                     </div>
                     <div class="progress-bar-container">
@@ -571,7 +578,6 @@
                 <!-- TELA 2A: QUAIS AULAS VOCÊ MAIS CURTE? (Para quem faz aulas) -->
                 <div class="step-screen" id="step-2a">
                     <div class="step-header">
-                        <button type="button" class="btn-voltar" onclick="goToStep(1)">← Voltar</button>
                         <span class="step-indicator">Pergunta 2 de 5</span>
                     </div>
                     <div class="progress-bar-container">
@@ -669,7 +675,6 @@
                 <!-- TELA 2B: O QUE TE FARIA EXPERIMENTAR UMA AULA? (Para quem não faz aulas) -->
                 <div class="step-screen" id="step-2b">
                     <div class="step-header">
-                        <button type="button" class="btn-voltar" onclick="goToStep(1)">← Voltar</button>
                         <span class="step-indicator">Pergunta 2 de 5</span>
                     </div>
                     <div class="progress-bar-container">

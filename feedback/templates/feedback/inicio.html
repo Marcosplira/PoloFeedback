@@ -1,16 +1,25 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% include "feedback/pwa_meta.html" %}
     <title>Polo Fit | Feedback & Avaliações</title>
-    <meta name="description" content="Avalie sua experiência na Academia Polo Fit. Sua opinião ajuda a equipe a melhorar cada vez mais.">
+    <meta name="description"
+        content="Avalie sua experiência na Academia Polo Fit. Sua opinião ajuda a equipe a melhorar cada vez mais.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
             --verde: #a3e635;
@@ -23,7 +32,9 @@
             --texto-suave: #a0a0a0;
         }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -36,16 +47,18 @@
         /* ── NAVBAR ── */
         .navbar {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 1.5rem;
             height: 64px;
-            background: rgba(10,10,10,0.9);
+            background: rgba(10, 10, 10, 0.9);
             backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(163,230,53,0.15);
+            border-bottom: 1px solid rgba(163, 230, 53, 0.15);
             transition: background 0.3s;
         }
 
@@ -76,7 +89,7 @@
 
         .nav-link {
             text-decoration: none;
-            color: rgba(255,255,255,0.75);
+            color: rgba(255, 255, 255, 0.75);
             font-size: 0.875rem;
             font-weight: 500;
             padding: 0.5rem 0.875rem;
@@ -86,7 +99,7 @@
 
         .nav-link:hover {
             color: var(--verde);
-            background: rgba(163,230,53,0.08);
+            background: rgba(163, 230, 53, 0.08);
         }
 
         .btn-entrar {
@@ -121,16 +134,17 @@
         .hero-bg {
             position: absolute;
             inset: 0;
-            background-image:
-                linear-gradient(rgba(10,10,10,0.55), rgba(10,10,10,0.75)),
-                url("{% static 'feedback/academia1.png' %}");
+            background-image: linear-gradient(rgba(10, 10, 10, 0.55), rgba(10, 10, 10, 0.75)),
+            url("{% static 'feedback/academia1.png' %}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
 
         @media (max-width: 640px) {
-            .hero-bg { background-attachment: scroll; }
+            .hero-bg {
+                background-attachment: scroll;
+            }
         }
 
         .hero-glow {
@@ -139,7 +153,7 @@
             right: -5%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(163,230,53,0.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(163, 230, 53, 0.12) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -156,16 +170,22 @@
         }
 
         @media (max-width: 768px) {
-            .hero-content { grid-template-columns: 1fr; text-align: center; }
-            .hero-cta { justify-content: center; }
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-cta {
+                justify-content: center;
+            }
         }
 
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            background: rgba(163,230,53,0.12);
-            border: 1px solid rgba(163,230,53,0.3);
+            background: rgba(163, 230, 53, 0.12);
+            border: 1px solid rgba(163, 230, 53, 0.3);
             color: var(--verde);
             font-size: 0.75rem;
             font-weight: 700;
@@ -193,7 +213,7 @@
 
         .hero-desc {
             font-size: 1.05rem;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             line-height: 1.7;
             max-width: 480px;
             margin-bottom: 2rem;
@@ -217,21 +237,21 @@
             border-radius: 0.875rem;
             text-decoration: none;
             transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 20px rgba(163,230,53,0.25);
+            box-shadow: 0 4px 20px rgba(163, 230, 53, 0.25);
         }
 
         .btn-primary:hover {
             background: #b8f048;
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(163,230,53,0.35);
+            box-shadow: 0 8px 30px rgba(163, 230, 53, 0.35);
         }
 
         .btn-secondary {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            border: 1.5px solid rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.85);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.85);
             font-weight: 600;
             font-size: 0.975rem;
             padding: 0.875rem 1.75rem;
@@ -243,40 +263,43 @@
         .btn-secondary:hover {
             border-color: var(--verde);
             color: var(--verde);
-            background: rgba(163,230,53,0.05);
+            background: rgba(163, 230, 53, 0.05);
         }
 
         /* ── HERO CARD ── */
         .hero-card {
-            background: rgba(22,22,22,0.85);
-            border: 1px solid rgba(163,230,53,0.2);
+            background: rgba(22, 22, 22, 0.85);
+            border: 1px solid rgba(163, 230, 53, 0.2);
             border-radius: 1.5rem;
             backdrop-filter: blur(12px);
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
 
         .hero-card-header {
             padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
         .hero-card-dot {
-            width: 10px; height: 10px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
         }
 
         .hero-card-title {
             font-size: 0.8rem;
             font-weight: 600;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             margin-left: auto;
         }
 
-        .hero-card-body { padding: 1.5rem; }
+        .hero-card-body {
+            padding: 1.5rem;
+        }
 
         .stat-row {
             display: grid;
@@ -286,8 +309,8 @@
         }
 
         .stat-item {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
             border-radius: 1rem;
             padding: 1rem;
             text-align: center;
@@ -303,15 +326,15 @@
 
         .stat-label {
             font-size: 0.7rem;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.4);
             margin-top: 0.35rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .mini-avaliacao {
-            background: rgba(163,230,53,0.06);
-            border: 1px solid rgba(163,230,53,0.2);
+            background: rgba(163, 230, 53, 0.06);
+            border: 1px solid rgba(163, 230, 53, 0.2);
             border-radius: 1rem;
             padding: 1rem 1.25rem;
             display: flex;
@@ -332,7 +355,7 @@
 
         .mini-av-texto {
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             margin-top: 0.15rem;
         }
 
@@ -361,7 +384,7 @@
 
         .section-desc {
             font-size: 1rem;
-            color: rgba(255,255,255,0.55);
+            color: rgba(255, 255, 255, 0.55);
             line-height: 1.7;
             max-width: 520px;
             margin-bottom: 3rem;
@@ -376,7 +399,7 @@
 
         .passo-card {
             background: var(--cinza-card);
-            border: 1px solid rgba(255,255,255,0.07);
+            border: 1px solid rgba(255, 255, 255, 0.07);
             border-radius: 1.25rem;
             padding: 1.75rem 1.5rem;
             position: relative;
@@ -385,26 +408,30 @@
         }
 
         .passo-card:hover {
-            border-color: rgba(163,230,53,0.3);
+            border-color: rgba(163, 230, 53, 0.3);
             transform: translateY(-3px);
         }
 
         .passo-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             height: 2px;
             background: linear-gradient(90deg, var(--verde), transparent);
             opacity: 0;
             transition: opacity 0.3s;
         }
 
-        .passo-card:hover::before { opacity: 1; }
+        .passo-card:hover::before {
+            opacity: 1;
+        }
 
         .passo-numero {
             font-size: 2.5rem;
             font-weight: 900;
-            color: rgba(163,230,53,0.15);
+            color: rgba(163, 230, 53, 0.15);
             line-height: 1;
             margin-bottom: 1rem;
             letter-spacing: -0.05em;
@@ -423,15 +450,15 @@
 
         .passo-desc {
             font-size: 0.85rem;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             line-height: 1.6;
         }
 
         /* ── QR CODES ── */
         .qr-section {
             background: var(--cinza-escuro);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding: 4rem 1.5rem;
         }
 
@@ -445,8 +472,13 @@
         }
 
         @media (max-width: 768px) {
-            .qr-grid { grid-template-columns: 1fr; }
-            .qr-cards { flex-direction: column; }
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .qr-cards {
+                flex-direction: column;
+            }
         }
 
         .qr-cards {
@@ -457,7 +489,7 @@
 
         .qr-card {
             background: var(--cinza-card);
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 1.25rem;
             padding: 1.5rem;
             text-align: center;
@@ -466,7 +498,9 @@
             transition: border-color 0.3s;
         }
 
-        .qr-card:hover { border-color: rgba(163,230,53,0.3); }
+        .qr-card:hover {
+            border-color: rgba(163, 230, 53, 0.3);
+        }
 
         .qr-card h3 {
             font-size: 0.875rem;
@@ -487,7 +521,7 @@
             display: block;
             margin-top: 0.75rem;
             font-size: 0.75rem;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.4);
             text-decoration: underline;
             text-underline-offset: 3px;
             word-break: break-all;
@@ -505,13 +539,15 @@
 
         .info-card {
             background: var(--cinza-card);
-            border: 1px solid rgba(255,255,255,0.07);
+            border: 1px solid rgba(255, 255, 255, 0.07);
             border-radius: 1.25rem;
             padding: 2rem 1.75rem;
             transition: border-color 0.3s;
         }
 
-        .info-card:hover { border-color: rgba(163,230,53,0.25); }
+        .info-card:hover {
+            border-color: rgba(163, 230, 53, 0.25);
+        }
 
         .info-card-icon {
             font-size: 2rem;
@@ -526,7 +562,7 @@
 
         .info-card p {
             font-size: 0.875rem;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             line-height: 1.6;
         }
 
@@ -538,8 +574,8 @@
         /* ── VÍDEO (VERTICAL - TOUR POLO FIT) ── */
         .video-section {
             background: var(--cinza-escuro);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding: 5rem 1.5rem;
         }
 
@@ -569,8 +605,8 @@
             border-radius: 1.5rem;
             overflow: hidden;
             background: #000;
-            border: 2px solid rgba(163,230,53,0.35);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 35px rgba(163,230,53,0.15);
+            border: 2px solid rgba(163, 230, 53, 0.35);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(163, 230, 53, 0.15);
         }
 
         .video-player-card iframe {
@@ -584,8 +620,8 @@
         .video-poster {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.92) 100%),
-                        url("{% static 'feedback/academia1.png' %}") center/cover no-repeat;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.92) 100%),
+            url("{% static 'feedback/academia1.png' %}") center/cover no-repeat;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -609,7 +645,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 35px rgba(163,230,53,0.7);
+            box-shadow: 0 0 35px rgba(163, 230, 53, 0.7);
             transition: transform 0.25s, box-shadow 0.25s;
             margin: auto;
             color: #0a0a0a;
@@ -619,7 +655,7 @@
 
         .video-player-card:hover .video-play-btn {
             transform: scale(1.1);
-            box-shadow: 0 0 45px rgba(163,230,53,0.9);
+            box-shadow: 0 0 45px rgba(163, 230, 53, 0.9);
         }
 
         .video-badge-tour {
@@ -627,11 +663,11 @@
             font-weight: 700;
             color: #fff;
             letter-spacing: 0.02em;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-            background: rgba(0,0,0,0.65);
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.65);
             padding: 0.4rem 0.95rem;
             border-radius: 9999px;
-            border: 1px solid rgba(255,255,255,0.18);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(8px);
         }
 
@@ -660,13 +696,13 @@
             padding: 0.75rem 1.35rem;
             border-radius: 0.75rem;
             transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
-            box-shadow: 0 4px 20px rgba(163,230,53,0.25);
+            box-shadow: 0 4px 20px rgba(163, 230, 53, 0.25);
         }
 
         .video-link-primary:hover {
             transform: translateY(-2px);
             background: #bbf451;
-            box-shadow: 0 6px 25px rgba(163,230,53,0.4);
+            box-shadow: 0 6px 25px rgba(163, 230, 53, 0.4);
         }
 
         .video-link-sec {
@@ -675,17 +711,17 @@
             gap: 0.5rem;
             font-size: 0.9rem;
             font-weight: 600;
-            background: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.06);
             color: #fff;
             text-decoration: none;
             padding: 0.75rem 1.35rem;
             border-radius: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             transition: background 0.2s, border-color 0.2s, color 0.2s;
         }
 
         .video-link-sec:hover {
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             border-color: var(--verde);
             color: var(--verde);
         }
@@ -693,8 +729,8 @@
         /* ── SEÇÃO DE PLANOS POLO FIT ── */
         .planos-section {
             background: #080808;
-            border-top: 1px solid rgba(163,230,53,0.15);
-            border-bottom: 1px solid rgba(163,230,53,0.15);
+            border-top: 1px solid rgba(163, 230, 53, 0.15);
+            border-bottom: 1px solid rgba(163, 230, 53, 0.15);
             padding: 5.5rem 1.5rem;
             position: relative;
         }
@@ -713,8 +749,8 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            background: rgba(163,230,53,0.1);
-            border: 1px solid rgba(163,230,53,0.3);
+            background: rgba(163, 230, 53, 0.1);
+            border: 1px solid rgba(163, 230, 53, 0.3);
             color: var(--verde);
             font-size: 0.75rem;
             font-weight: 800;
@@ -741,7 +777,7 @@
 
         .planos-sub {
             font-size: 0.95rem;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             margin-top: 0.75rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
@@ -756,15 +792,20 @@
         }
 
         @media (max-width: 1024px) {
-            .planos-grid-principais { grid-template-columns: repeat(2, 1fr); }
+            .planos-grid-principais {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
+
         @media (max-width: 620px) {
-            .planos-grid-principais { grid-template-columns: 1fr; }
+            .planos-grid-principais {
+                grid-template-columns: 1fr;
+            }
         }
 
         .plano-card {
             background: #111111;
-            border: 1.5px solid rgba(163,230,53,0.35);
+            border: 1.5px solid rgba(163, 230, 53, 0.35);
             border-radius: 1.25rem;
             padding: 1.5rem 1.25rem;
             display: flex;
@@ -777,7 +818,7 @@
         .plano-card:hover {
             transform: translateY(-5px);
             border-color: var(--verde);
-            box-shadow: 0 15px 35px rgba(163,230,53,0.18);
+            box-shadow: 0 15px 35px rgba(163, 230, 53, 0.18);
         }
 
         .plano-card-header {
@@ -797,7 +838,7 @@
             justify-content: center;
             font-weight: 900;
             color: var(--verde);
-            background: rgba(163,230,53,0.08);
+            background: rgba(163, 230, 53, 0.08);
             flex-shrink: 0;
             font-size: 1.15rem;
         }
@@ -826,7 +867,7 @@
             font-size: 0.75rem;
             font-weight: 700;
             text-align: center;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             text-transform: uppercase;
             letter-spacing: 0.06em;
             margin-bottom: 1.25rem;
@@ -839,9 +880,9 @@
             gap: 0.55rem;
             margin-bottom: 1.5rem;
             padding-top: 0.85rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             font-size: 0.85rem;
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
         }
 
         .plano-beneficios li {
@@ -872,15 +913,20 @@
         }
 
         @media (max-width: 1024px) {
-            .planos-grid-secundarios { grid-template-columns: repeat(2, 1fr); }
+            .planos-grid-secundarios {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
+
         @media (max-width: 620px) {
-            .planos-grid-secundarios { grid-template-columns: 1fr; }
+            .planos-grid-secundarios {
+                grid-template-columns: 1fr;
+            }
         }
 
         .plano-mini-card {
             background: #111111;
-            border: 1.5px solid rgba(163,230,53,0.3);
+            border: 1.5px solid rgba(163, 230, 53, 0.3);
             border-radius: 1.25rem;
             padding: 1.35rem 1.15rem;
             display: flex;
@@ -892,7 +938,7 @@
         .plano-mini-card:hover {
             transform: translateY(-4px);
             border-color: var(--verde);
-            box-shadow: 0 10px 25px rgba(163,230,53,0.15);
+            box-shadow: 0 10px 25px rgba(163, 230, 53, 0.15);
         }
 
         .plano-mini-header {
@@ -908,7 +954,7 @@
         }
 
         .plano-mini-badge-sub {
-            background: rgba(163,230,53,0.12);
+            background: rgba(163, 230, 53, 0.12);
             border: 1px solid var(--verde);
             color: var(--verde);
             font-size: 0.68rem;
@@ -923,7 +969,7 @@
 
         .plano-mini-desc {
             font-size: 0.78rem;
-            color: rgba(255,255,255,0.65);
+            color: rgba(255, 255, 255, 0.65);
             margin-top: 0.65rem;
             line-height: 1.4;
             text-align: center;
@@ -937,12 +983,14 @@
         }
 
         @media (max-width: 900px) {
-            .planos-grid-terciarios { grid-template-columns: 1fr; }
+            .planos-grid-terciarios {
+                grid-template-columns: 1fr;
+            }
         }
 
         .planos-diferenciais-bar {
-            background: rgba(163,230,53,0.04);
-            border: 1px solid rgba(163,230,53,0.25);
+            background: rgba(163, 230, 53, 0.04);
+            border: 1px solid rgba(163, 230, 53, 0.25);
             border-radius: 1.25rem;
             padding: 1.5rem;
             display: flex;
@@ -981,9 +1029,9 @@
 
         /* ── CTA FINAL ── */
         .cta-final {
-            background: linear-gradient(135deg, rgba(20,35,5,0.9), rgba(10,10,10,0.95));
-            border-top: 1px solid rgba(163,230,53,0.1);
-            border-bottom: 1px solid rgba(163,230,53,0.1);
+            background: linear-gradient(135deg, rgba(20, 35, 5, 0.9), rgba(10, 10, 10, 0.95));
+            border-top: 1px solid rgba(163, 230, 53, 0.1);
+            border-bottom: 1px solid rgba(163, 230, 53, 0.1);
             padding: 5rem 1.5rem;
             text-align: center;
         }
@@ -997,7 +1045,7 @@
 
         .cta-final p {
             font-size: 1rem;
-            color: rgba(255,255,255,0.55);
+            color: rgba(255, 255, 255, 0.55);
             max-width: 480px;
             margin: 0 auto 2rem;
             line-height: 1.7;
@@ -1008,29 +1056,32 @@
             padding: 2rem 1.5rem;
             text-align: center;
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.3);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            color: rgba(255, 255, 255, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         footer a {
-            color: rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.4);
             text-decoration: none;
         }
 
-        footer a:hover { color: var(--verde); }
+        footer a:hover {
+            color: var(--verde);
+        }
 
         /* ── AVISO LOCAL ── */
         .aviso-local {
-            background: rgba(251,191,36,0.08);
-            border: 1px solid rgba(251,191,36,0.25);
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.25);
             border-radius: 0.875rem;
             padding: 0.875rem 1.25rem;
             font-size: 0.8rem;
-            color: rgba(251,191,36,0.85);
+            color: rgba(251, 191, 36, 0.85);
             margin-bottom: 2rem;
         }
     </style>
 </head>
+
 <body>
 
     <!-- NAVBAR -->
@@ -1043,13 +1094,13 @@
             <a href="{% url 'avaliar' %}" class="nav-link">Avaliar</a>
             <a href="{% url 'enquete' %}" class="nav-link">Pesquisa</a>
             {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="btn-entrar">
-                    <span>⚡</span> Painel
-                </a>
+            <a href="{% url 'dashboard' %}" class="btn-entrar">
+                <span>⚡</span> Painel
+            </a>
             {% else %}
-                <a href="{% url 'login' %}" class="btn-entrar" id="btn-login-navbar">
-                    <span>→</span> Entrar
-                </a>
+            <a href="{% url 'login' %}" class="btn-entrar" id="btn-login-navbar">
+                <span>→</span> Entrar
+            </a>
             {% endif %}
         </div>
     </nav>
@@ -1153,13 +1204,9 @@
     <section class="video-section" aria-labelledby="video-titulo">
         <div class="video-grid">
             <div class="video-player-card">
-                <iframe
-                    id="iframe-tour"
-                    src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
+                <iframe id="iframe-tour" src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
                     title="Vídeo de apresentação da Academia Polo Fit"
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                    allowfullscreen
-                    loading="lazy">
+                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy">
                 </iframe>
                 <div class="video-poster" id="video-poster" onclick="iniciarVideoTour()">
                     <span class="video-badge-tour">Polo Fit</span>
@@ -1175,11 +1222,12 @@
                     Conheça nossa estrutura moderna e veja de perto a energia de treinar com a gente.
                 </p>
                 <div class="video-links">
-                    <a href="{% url 'baixar_video' %}" target="_blank" rel="noopener noreferrer" class="video-link-primary">
+                    <a href="{% url 'baixar_video' %}" target="_blank" rel="noopener noreferrer"
+                        class="video-link-primary">
                         ⬇ Baixar vídeo
                     </a>
-                    <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
-                        target="_blank" rel="noopener noreferrer" class="video-link-sec">
+                    <a href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view" target="_blank"
+                        rel="noopener noreferrer" class="video-link-sec">
                         ▶ Abrir no Google Drive
                     </a>
                 </div>
@@ -1220,7 +1268,8 @@
                         </ul>
                     </div>
                     <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Anual%20da%20Polo%20Fit!"
-                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        target="_blank" rel="noopener noreferrer" class="btn-primary"
+                        style="padding: 0.65rem; font-size: 0.85rem;">
                         Escolher Plano Anual
                     </a>
                 </div>
@@ -1242,7 +1291,8 @@
                         </ul>
                     </div>
                     <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Semestral%20da%20Polo%20Fit!"
-                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        target="_blank" rel="noopener noreferrer" class="btn-primary"
+                        style="padding: 0.65rem; font-size: 0.85rem;">
                         Escolher Semestral
                     </a>
                 </div>
@@ -1264,7 +1314,8 @@
                         </ul>
                     </div>
                     <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Trimestral%20da%20Polo%20Fit!"
-                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        target="_blank" rel="noopener noreferrer" class="btn-primary"
+                        style="padding: 0.65rem; font-size: 0.85rem;">
                         Escolher Trimestral
                     </a>
                 </div>
@@ -1286,7 +1337,8 @@
                         </ul>
                     </div>
                     <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Mensal%20da%20Polo%20Fit!"
-                        target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.65rem; font-size: 0.85rem;">
+                        target="_blank" rel="noopener noreferrer" class="btn-primary"
+                        style="padding: 0.65rem; font-size: 0.85rem;">
                         Escolher Mensal
                     </a>
                 </div>
@@ -1386,7 +1438,8 @@
                             <span class="plano-mini-icon">🕒</span>
                             <div>
                                 <div class="plano-nome">Plano Horário Especial</div>
-                                <span class="plano-mini-badge-sub" style="background:var(--verde); color:#000;">NOVO</span>
+                                <span class="plano-mini-badge-sub"
+                                    style="background:var(--verde); color:#000;">NOVO</span>
                             </div>
                         </div>
                         <div class="plano-preco-box">R$ 70,00</div>
@@ -1413,11 +1466,12 @@
 
             <div class="planos-cta-wrap">
                 <a href="https://wa.me/5583986719438?text=Ol%C3%A1%2C%20gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20os%20planos%20da%20Polo%20Fit!"
-                    target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 0.95rem 2rem; font-size: 1rem;">
+                    target="_blank" rel="noopener noreferrer" class="btn-primary"
+                    style="padding: 0.95rem 2rem; font-size: 1rem;">
                     💬 Falar com a recepção no WhatsApp
                 </a>
-                <a href="{% static 'feedback/planos-polofit.jpg' %}"
-                    target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding: 0.95rem 1.75rem; font-size: 0.95rem;">
+                <a href="{% static 'feedback/planos-polofit.jpg' %}" target="_blank" rel="noopener noreferrer"
+                    class="btn-secondary" style="padding: 0.95rem 1.75rem; font-size: 0.95rem;">
                     🖼️ Ver tabela oficial completa
                 </a>
             </div>
@@ -1430,10 +1484,12 @@
             <div>
                 <div class="section-label">Acesso rápido</div>
                 <h2 class="section-title" id="qrcodes-titulo">Acesse pelo QR Code</h2>
-                <p class="section-desc">Escaneie com a câmera do celular para abrir direto o formulário ou a pesquisa.</p>
+                <p class="section-desc">Escaneie com a câmera do celular para abrir direto o formulário ou a pesquisa.
+                </p>
                 {% if not link_funciona_publicamente %}
                 <div class="aviso-local" role="status">
-                    ⚠️ Estes QR Codes usam o endereço local. Publique o site em HTTPS para compartilhá-los com os alunos.
+                    ⚠️ Estes QR Codes usam o endereço local. Publique o site em HTTPS para compartilhá-los com os
+                    alunos.
                 </div>
                 {% endif %}
             </div>
@@ -1503,11 +1559,14 @@
             <p style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-bottom: 0.75rem;">
                 Software desenvolvido por <strong style="color: var(--verde);">Marcos Paulo Santos Lira</strong>
             </p>
-            <div style="text-align: left; font-size: 0.78rem; color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 0.75rem; padding: 1.15rem; margin: 0.75rem auto 1.5rem;">
+            <div
+                style="text-align: left; font-size: 0.78rem; color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 0.75rem; padding: 1.15rem; margin: 0.75rem auto 1.5rem;">
                 <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.65rem;">
                     <li>
-                        <strong style="color: rgba(255,255,255,0.95);">Tecnologia em Sistemas para Internet — Tecnólogo</strong><br>
-                        Instituto Federal de Educação, Ciência e Tecnologia da Paraíba (IFPB), Campus Picuí — PB. Concluído em 2026.
+                        <strong style="color: rgba(255,255,255,0.95);">Tecnologia em Sistemas para Internet —
+                            Tecnólogo</strong><br>
+                        Instituto Federal de Educação, Ciência e Tecnologia da Paraíba (IFPB), Campus Picuí — PB.
+                        Concluído em 2026.
                     </li>
                     <li>
                         <strong style="color: rgba(255,255,255,0.95);">Técnico em Eletrônica — Subsequente</strong><br>
@@ -1538,4 +1597,5 @@
         }
     </script>
 </body>
+
 </html>
