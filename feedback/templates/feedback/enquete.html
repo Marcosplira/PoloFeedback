@@ -1,85 +1,148 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     {% include "feedback/pwa_meta.html" %}
+
     <title>Enquete de Aulas e Espaços — Polo Fit</title>
+
     <meta name="description" content="Ajude a escolher as próximas aulas e espaços da Academia Polo Fit.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
         :root {
-            color-scheme: light;
+            color-scheme: dark;
+
             --verde: #65a30d;
             --verde-btn: #84cc16;
             --verde-soft: #f7fee7;
             --verde-border: #bef264;
-            --bg: #f8fafc;
+
+            --bg: #090909;
             --card-bg: #ffffff;
-            --linha: #e2e8f0;
-            --texto: #0f172a;
-            --texto-suave: #64748b;
+            --linha: #27272a;
+
+            --texto: #f8fafc;
+            --texto-suave: #a1a1aa;
+
+            --texto-card: #0f172a;
+            --texto-card-suave: #64748b;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--texto);
+            margin: 0;
             min-height: 100vh;
+
+            font-family: 'Inter', sans-serif;
+
+            background:
+                radial-gradient(circle at top center,
+                    rgba(101, 163, 13, 0.08),
+                    transparent 35%),
+                var(--bg);
+
+            color: var(--texto);
+
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+
             padding: 5rem 1rem 2rem;
+
             position: relative;
             overflow-x: hidden;
         }
 
-        /* ── NAVBAR ── */
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
         .navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
+
+            height: 60px;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             padding: 0 1.25rem;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.95);
-            border-bottom: 1px solid #e2e8f0;
+
+            background: rgba(9, 9, 9, 0.96);
+            border-bottom: 1px solid #1f1f1f;
+
             backdrop-filter: blur(12px);
-            z-index: 100;
-            width: 100%;
+            -webkit-backdrop-filter: blur(12px);
+
+            z-index: 1000;
         }
 
         .navbar-logo {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+
+            color: #f8fafc;
             text-decoration: none;
-            color: #0f172a;
+
+            min-width: 0;
         }
 
-        .navbar-logo img { height: 30px; width: auto; }
-        .navbar-logo span { font-weight: 800; font-size: 1rem; color: #0f172a; }
+        .navbar-logo img {
+            width: auto;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .navbar-logo span {
+            font-weight: 800;
+            font-size: 1rem;
+            white-space: nowrap;
+        }
 
         .nav-back {
-            text-decoration: none;
-            color: #64748b;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            transition: color 0.2s;
+
+            color: #a1a1aa;
+            text-decoration: none;
+
+            font-size: 0.8rem;
+            font-weight: 600;
+
+            transition: color 0.2s ease;
         }
 
-        .nav-back:hover { color: #16a34a; }
+        .nav-back:hover {
+            color: var(--verde-btn);
+        }
+
+        /* =========================================================
+           FUNDO
+        ========================================================= */
 
         .bg-overlay {
             display: none;
@@ -89,40 +152,53 @@
             display: none;
         }
 
+        /* =========================================================
+           CONTAINER PRINCIPAL
+        ========================================================= */
+
         .enquete-wrapper {
             position: relative;
             z-index: 10;
+
             width: 100%;
             max-width: 440px;
+
             margin: auto;
         }
 
         .enquete-card {
-            background: #ffffff;
+            width: 100%;
+
+            background: var(--card-bg);
+
             border: 1px solid #e2e8f0;
             border-radius: 1.75rem;
+
             padding: 1.75rem 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.25),
+                0 30px 70px rgba(0, 0, 0, 0.15);
+
             display: flex;
             flex-direction: column;
+
             min-height: 540px;
-            color: #0f172a;
+
+            color: var(--texto-card);
         }
 
-        @media (max-width: 480px) {
-            body { padding: 4.5rem 0.5rem 1rem; }
-            .enquete-card {
-                padding: 1.5rem 1.25rem;
-                border-radius: 1.5rem;
-                min-height: calc(100vh - 5.5rem);
-            }
-        }
+        /* =========================================================
+           CABEÇALHO
+        ========================================================= */
 
-        /* Top Bar */
         .step-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
+            gap: 0.75rem;
+
             margin-bottom: 1.25rem;
         }
 
@@ -132,19 +208,42 @@
             gap: 0.75rem;
         }
 
+        .page-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+
+            color: var(--verde);
+
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         .btn-voltar {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            border-radius: 0.75rem;
-            padding: 0.4rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
+
             gap: 0.35rem;
+
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+
+            color: #475569;
+
+            border-radius: 0.75rem;
+
+            padding: 0.4rem 0.75rem;
+
+            font-size: 0.75rem;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                color 0.2s ease,
+                border-color 0.2s ease,
+                background 0.2s ease;
+
             text-decoration: none;
         }
 
@@ -154,18 +253,16 @@
             background: #e2e8f0;
         }
 
-        .page-title {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: #65a30d;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+        /* =========================================================
+           PROGRESSO
+        ========================================================= */
 
         .step-indicator {
             font-size: 0.75rem;
             font-weight: 700;
-            color: #65a30d;
+
+            color: var(--verde);
+
             letter-spacing: 0.05em;
             text-transform: uppercase;
         }
@@ -173,95 +270,157 @@
         .progress-bar-container {
             width: 100%;
             height: 5px;
+
             background: #e2e8f0;
+
             border-radius: 999px;
+
             overflow: hidden;
+
             margin-bottom: 1.5rem;
         }
 
         .progress-bar {
             height: 100%;
-            background: #84cc16;
+
+            background: linear-gradient(90deg,
+                    #65a30d,
+                    #84cc16);
+
             border-radius: 999px;
+
             transition: width 0.3s ease;
         }
 
-        /* Question Styles */
+        /* =========================================================
+           TÍTULOS
+        ========================================================= */
+
         .question-title {
+            margin: 0 0 0.35rem;
+
             font-size: 1.35rem;
             font-weight: 900;
+
             letter-spacing: -0.02em;
             line-height: 1.25;
-            color: #0f172a;
-            margin-bottom: 0.35rem;
+
+            color: var(--texto-card);
         }
 
         .question-sub {
+            margin: 0 0 1.5rem;
+
             font-size: 0.825rem;
-            color: #64748b;
-            margin-bottom: 1.5rem;
             line-height: 1.4;
+
+            color: var(--texto-card-suave);
         }
 
-        /* Option Cards (Single select) */
+        /* =========================================================
+           OPÇÕES DE RÁDIO
+        ========================================================= */
+
+        .radio-options-list {
+            display: flex;
+            flex-direction: column;
+        }
+
         .radio-option {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
+            gap: 0.75rem;
+
+            width: 100%;
+
             background: #f8fafc;
+
             border: 1.5px solid #e2e8f0;
             border-radius: 1rem;
+
             padding: 0.9rem 1.1rem;
+
             margin-bottom: 0.65rem;
+
             cursor: pointer;
-            transition: all 0.2s ease;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+
             user-select: none;
         }
 
         .radio-option:hover {
-            border-color: #84cc16;
-            background: #f7fee7;
+            border-color: var(--verde-btn);
+            background: var(--verde-soft);
+
+            transform: translateY(-1px);
         }
 
         .radio-option.selected {
-            border-color: #65a30d;
-            background: #f7fee7;
-            box-shadow: 0 0 0 1px #65a30d;
+            border-color: var(--verde);
+
+            background: var(--verde-soft);
+
+            box-shadow:
+                0 0 0 1px var(--verde),
+                0 5px 15px rgba(101, 163, 13, 0.08);
         }
 
         .radio-option-text {
             display: flex;
             align-items: center;
+
             gap: 0.75rem;
+
             font-size: 0.9rem;
             font-weight: 600;
+
             color: #1e293b;
+
+            line-height: 1.35;
         }
 
         .radio-circle {
             width: 20px;
             height: 20px;
+
+            flex: 0 0 20px;
+
             border-radius: 50%;
+
             border: 2px solid #cbd5e1;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
+
             background: #ffffff;
+
+            transition: all 0.2s ease;
         }
 
         .radio-option.selected .radio-circle {
-            border-color: #65a30d;
-            background: #65a30d;
+            border-color: var(--verde);
+
+            background: var(--verde);
         }
 
         .radio-circle::after {
             content: '';
+
             width: 8px;
             height: 8px;
+
             border-radius: 50%;
+
             background: #ffffff;
+
             display: none;
         }
 
@@ -269,186 +428,354 @@
             display: block;
         }
 
-        /* Multi-select Grid Tiles */
+        /* =========================================================
+           GRID DE OPÇÕES
+        ========================================================= */
+
         .tiles-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
             gap: 0.6rem;
+
             margin-bottom: 1rem;
         }
 
         .tile-option {
+            min-height: 58px;
+
             background: #f8fafc;
+
             border: 1.5px solid #e2e8f0;
             border-radius: 0.875rem;
+
             padding: 0.75rem 0.85rem;
+
             display: flex;
             align-items: center;
+
             gap: 0.6rem;
+
             cursor: pointer;
-            transition: all 0.2s ease;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+
             user-select: none;
+
             font-size: 0.85rem;
             font-weight: 600;
+
             color: #1e293b;
+
+            line-height: 1.25;
         }
 
         .tile-option:hover {
-            border-color: #84cc16;
-            background: #f7fee7;
+            border-color: var(--verde-btn);
+            background: var(--verde-soft);
+
+            transform: translateY(-1px);
         }
 
         .tile-option.selected {
-            border-color: #65a30d;
-            background: #f7fee7;
+            border-color: var(--verde);
+
+            background: var(--verde-soft);
+
             color: #0f172a;
+
             font-weight: 700;
-            box-shadow: 0 0 0 1px #65a30d;
+
+            box-shadow:
+                0 0 0 1px var(--verde),
+                0 4px 12px rgba(101, 163, 13, 0.08);
         }
 
         .tile-icon {
             font-size: 1.15rem;
+
             line-height: 1;
-            flex-shrink: 0;
+
+            flex: 0 0 auto;
         }
 
-        /* Chips / Tags */
+        .col-span-2 {
+            grid-column: span 2;
+        }
+
+        /* =========================================================
+           TAGS
+        ========================================================= */
+
         .tag-chips {
             display: flex;
+
             flex-wrap: wrap;
+
             gap: 0.45rem;
+
             margin-bottom: 1rem;
         }
 
         .tag-chip {
             background: #f1f5f9;
+
             border: 1px solid #e2e8f0;
+
             color: #334155;
+
             font-size: 0.75rem;
             font-weight: 600;
+
             padding: 0.35rem 0.75rem;
+
             border-radius: 999px;
+
             cursor: pointer;
-            transition: all 0.2s;
+
+            transition: all 0.2s ease;
+
             user-select: none;
         }
 
         .tag-chip:hover {
-            border-color: #84cc16;
+            border-color: var(--verde-btn);
+
             color: #365314;
+
             background: #ecfccb;
+
+            transform: translateY(-1px);
         }
 
-        /* Inputs & Textareas */
+        /* =========================================================
+           INPUTS
+        ========================================================= */
+
         .enquete-input {
             width: 100%;
+
             background: #f8fafc;
+
             border: 1.5px solid #cbd5e1;
+
             border-radius: 0.875rem;
+
             padding: 0.75rem 1rem;
+
             color: #0f172a;
+
+            font-family: inherit;
+
             font-size: 0.85rem;
+
             outline: none;
-            transition: border-color 0.2s;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+
             margin-top: 0.5rem;
         }
 
-        .enquete-input:focus {
-            border-color: #65a30d;
+        .enquete-input::placeholder,
+        .enquete-textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .enquete-input:focus,
+        .enquete-textarea:focus {
+            border-color: var(--verde);
+
             background: #ffffff;
-            box-shadow: 0 0 0 2px rgba(101, 163, 13, 0.2);
+
+            box-shadow:
+                0 0 0 3px rgba(101, 163, 13, 0.15);
         }
 
         .enquete-textarea {
             width: 100%;
+
             background: #f8fafc;
+
             border: 1.5px solid #cbd5e1;
+
             border-radius: 0.875rem;
+
             padding: 0.85rem 1rem;
+
             color: #0f172a;
+
+            font-family: inherit;
+
             font-size: 0.85rem;
+
+            line-height: 1.5;
+
             outline: none;
-            resize: none;
-            transition: border-color 0.2s;
+
+            resize: vertical;
+
+            min-height: 110px;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
         }
 
-        .enquete-textarea:focus {
-            border-color: #65a30d;
-            background: #ffffff;
-            box-shadow: 0 0 0 2px rgba(101, 163, 13, 0.2);
-        }
+        /* =========================================================
+           BOTÕES
+        ========================================================= */
 
-        /* Actions Footer */
         .step-footer {
             margin-top: auto;
+
             padding-top: 1.25rem;
+
             display: flex;
             flex-direction: column;
+
             gap: 0.6rem;
         }
 
         .btn-avancar {
             width: 100%;
-            background: #84cc16;
+
+            background: var(--verde-btn);
+
             color: #0f172a;
+
             border: none;
+
             border-radius: 0.875rem;
+
             padding: 0.95rem;
+
+            font-family: inherit;
+
             font-size: 0.95rem;
             font-weight: 800;
+
             cursor: pointer;
-            transition: all 0.2s;
+
+            transition: all 0.2s ease;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             gap: 0.5rem;
-            box-shadow: 0 4px 14px rgba(132, 204, 22, 0.35);
+
+            box-shadow:
+                0 4px 14px rgba(132, 204, 22, 0.35);
         }
 
         .btn-avancar:hover {
-            background: #65a30d;
+            background: var(--verde);
+
             color: #ffffff;
+
             transform: translateY(-1px);
+
+            box-shadow:
+                0 6px 18px rgba(101, 163, 13, 0.3);
+        }
+
+        .btn-avancar:active {
+            transform: translateY(0);
         }
 
         .btn-pular {
+            width: 100%;
+
             text-align: center;
+
+            font-family: inherit;
+
             font-size: 0.775rem;
+
             color: #64748b;
-            background: none;
+
+            background: transparent;
+
             border: none;
+
             cursor: pointer;
+
             padding: 0.4rem;
-            transition: color 0.2s;
+
+            transition: color 0.2s ease;
         }
 
-        .btn-pular:hover { color: #0f172a; text-decoration: underline; }
+        .btn-pular:hover {
+            color: #0f172a;
 
-        /* Step Visibility */
-        .step-screen { display: none; flex-direction: column; flex: 1; }
-        .step-screen.active { display: flex; }
+            text-decoration: underline;
+        }
 
-        /* Splash Screen */
+        /* =========================================================
+           TELAS
+        ========================================================= */
+
+        .step-screen {
+            display: none;
+
+            flex-direction: column;
+
+            flex: 1;
+
+            width: 100%;
+        }
+
+        .step-screen.active {
+            display: flex;
+        }
+
+        /* =========================================================
+           SPLASH
+        ========================================================= */
+
         .splash-badge {
             display: inline-flex;
             align-items: center;
+
             gap: 0.35rem;
+
+            width: fit-content;
+
             background: #ecfccb;
+
             border: 1px solid #bef264;
+
             color: #365314;
+
             font-size: 0.725rem;
             font-weight: 700;
+
             padding: 0.35rem 0.75rem;
+
             border-radius: 999px;
+
             text-transform: uppercase;
             letter-spacing: 0.08em;
+
             margin-bottom: 1.25rem;
-            align-self: flex-start;
         }
 
         .meta-pills {
             display: flex;
+
+            flex-wrap: wrap;
+
             gap: 0.65rem;
+
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
         }
@@ -456,506 +783,1650 @@
         .meta-pill {
             display: inline-flex;
             align-items: center;
+
             gap: 0.4rem;
+
             background: #f1f5f9;
+
             border: 1px solid #e2e8f0;
+
             border-radius: 0.625rem;
+
             padding: 0.4rem 0.75rem;
+
             font-size: 0.75rem;
             font-weight: 600;
+
             color: #475569;
         }
 
-        /* Success Step */
+        /* =========================================================
+           SUCESSO
+        ========================================================= */
+
         .success-icon {
             width: 72px;
             height: 72px;
+
             background: #ecfccb;
+
             border: 2px solid #84cc16;
+
             border-radius: 50%;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             color: #365314;
+
             font-size: 2.2rem;
+
             margin: 1.5rem auto;
-            box-shadow: 0 4px 15px rgba(132, 204, 22, 0.25);
+
+            box-shadow:
+                0 4px 15px rgba(132, 204, 22, 0.25);
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .enquete-wrapper+footer {
+            width: 100%;
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 480px) {
+
+            body {
+                padding:
+                    4.5rem 0.5rem 1rem;
+            }
+
+            .navbar {
+                padding: 0 0.9rem;
+            }
+
+            .navbar-logo img {
+                height: 28px;
+            }
+
+            .navbar-logo span {
+                font-size: 0.95rem;
+            }
+
+            .nav-back {
+                font-size: 0.72rem;
+            }
+
+            .enquete-card {
+                padding: 1.5rem 1.25rem;
+
+                border-radius: 1.5rem;
+
+                min-height:
+                    calc(100vh - 5.5rem);
+            }
+
+            .question-title {
+                font-size: 1.25rem;
+            }
+
+            .question-sub {
+                font-size: 0.8rem;
+            }
+
+            .tiles-grid {
+                gap: 0.5rem;
+            }
+
+            .tile-option {
+                min-height: 54px;
+
+                padding:
+                    0.7rem 0.65rem;
+
+                font-size: 0.78rem;
+            }
+
+            .tile-icon {
+                font-size: 1rem;
+            }
+
+            .radio-option {
+                padding:
+                    0.85rem 0.85rem;
+            }
+
+            .radio-option-text {
+                font-size: 0.82rem;
+            }
+        }
+
+        @media (max-width: 350px) {
+
+            .navbar-logo span {
+                display: none;
+            }
+
+            .nav-back {
+                font-size: 0.68rem;
+            }
+
+            .enquete-card {
+                padding:
+                    1.25rem 1rem;
+            }
+
+            .tiles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .col-span-2 {
+                grid-column: span 1;
+            }
         }
     </style>
 </head>
+
 <body>
-    <nav class="navbar" aria-label="Navegação">
+
+    <!-- =========================================================
+         NAVBAR
+    ========================================================= -->
+
+    <nav class="navbar" aria-label="Navegação principal">
+
         <a href="{% url 'inicio' %}" class="navbar-logo">
             <img src="{% static 'feedback/LOGO.png' %}" alt="Logo Polo Fit">
+
             <span>Polo Fit</span>
         </a>
-        <a href="{% url 'inicio' %}" class="nav-back">← Voltar ao Início</a>
+
+        <a href="{% url 'inicio' %}" class="nav-back">
+            ← Voltar ao Início
+        </a>
+
     </nav>
 
-    <div class="bg-overlay" aria-hidden="true"></div>
-    <div class="glow" aria-hidden="true"></div>
 
-    <div class="enquete-wrapper">
+    <!-- Elementos decorativos -->
+
+    <div class="bg-overlay" aria-hidden="true">
+    </div>
+
+    <div class="glow" aria-hidden="true">
+    </div>
+
+
+    <!-- =========================================================
+         PESQUISA
+    ========================================================= -->
+
+    <main class="enquete-wrapper">
+
         <div class="enquete-card">
-            
-            <!-- HEADER COM VOLTAR E TÍTULO -->
+
+            <!-- Cabeçalho -->
+
             <div class="step-header">
+
                 <div class="step-header-left">
-                    <a href="{% url 'inicio' %}" class="btn-voltar">← Voltar</a>
-                    <span class="page-title">Pesquisa Polo Fit</span>
+
+                    <span class="page-title">
+                        Pesquisa Polo Fit
+                    </span>
+
                 </div>
+
             </div>
 
+
+            <!-- =================================================
+                 FORMULÁRIO
+            ================================================= -->
+
             <form id="form-enquete" method="POST" action="{% url 'enquete' %}">
+
                 {% csrf_token %}
 
-                <!-- TELA 0: CAPA / SPLASH -->
+
+                <!-- =================================================
+                     TELA 0 — CAPA
+                ================================================= -->
+
                 <div class="step-screen active" id="step-0">
+
                     <div class="splash-badge">
-                        <span>📋</span> Pesquisa Polo Fit
+                        <span>📋</span>
+                        Pesquisa Polo Fit
                     </div>
-                    <h1 class="question-title" style="font-size: 1.65rem; margin-top: 0.5rem;">
+
+
+                    <h1 class="question-title" style="
+                            font-size: 1.65rem;
+                            margin-top: 0.5rem;
+                        ">
                         Ajude a escolher as próximas aulas
                     </h1>
-                    <p class="question-sub" style="font-size: 0.95rem; margin-top: 0.75rem;">
-                        Suas respostas ajudam a Polo Fit a decidir quais novas modalidades, horários e espaços teremos na academia.
+
+
+                    <p class="question-sub" style="
+                            font-size: 0.95rem;
+                            margin-top: 0.75rem;
+                        ">
+                        Suas respostas ajudam a Polo Fit a decidir
+                        quais novas modalidades, horários e espaços
+                        teremos na academia.
                     </p>
 
+
                     <div class="meta-pills">
-                        <span class="meta-pill">⏱️ 1-2 min</span>
-                        <span class="meta-pill">🔒 100% Anônimo</span>
+
+                        <span class="meta-pill">
+                            ⏱️ 1-2 min
+                        </span>
+
+                        <span class="meta-pill">
+                            🔒 100% Anônimo
+                        </span>
+
                     </div>
+
 
                     <div class="step-footer" style="margin-top: auto;">
-                        <button type="button" class="btn-avancar" onclick="goToStep(1)">
+
+                        <button type="button" class="btn-avancar" onclick="goToStep('1')">
                             Começar pesquisa →
                         </button>
+
                     </div>
+
                 </div>
 
-                <!-- TELA 1: VOCÊ FAZ AULAS COLETIVAS? -->
+
+                <!-- =================================================
+                     TELA 1 — PARTICIPA DE AULAS
+                ================================================= -->
+
                 <div class="step-screen" id="step-1">
+
                     <div class="step-header">
-                        <span class="step-indicator">Pergunta 1 de 5</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: 20%;"></div>
+
+                        <span class="step-indicator">
+                            Pergunta 1 de 5
+                        </span>
+
                     </div>
 
-                    <h2 class="question-title">Você faz aulas coletivas?</h2>
-                    <p class="question-sub">Musculação, dança, funcional, jump, etc.</p>
+
+                    <div class="progress-bar-container">
+
+                        <div class="progress-bar" style="width: 20%;"></div>
+
+                    </div>
+
+
+                    <h2 class="question-title">
+                        Você faz aulas coletivas?
+                    </h2>
+
+
+                    <p class="question-sub">
+                        Musculação, dança, funcional, jump, etc.
+                    </p>
+
 
                     <div class="radio-options-list">
-                        <label class="radio-option" onclick="selectRadio(this, 'participa_aulas', 'Sim, com frequência')">
+
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Sim, com frequência'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>🔥</span> Sim, com frequência
+                                <span>🔥</span>
+                                <span>Sim, com frequência</span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
-                        <label class="radio-option" onclick="selectRadio(this, 'participa_aulas', 'Às vezes')">
+
+
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Às vezes'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>🗓️</span> Às vezes
+                                <span>🗓️</span>
+                                <span>Às vezes</span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
-                        <label class="radio-option" onclick="selectRadio(this, 'participa_aulas', 'Queria fazer, mas horários não batem')">
+
+
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Queria fazer, mas horários não batem'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>⏰</span> Queria fazer, mas horários não batem
+                                <span>⏰</span>
+                                <span>
+                                    Queria fazer, mas horários não batem
+                                </span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
-                        <label class="radio-option" onclick="selectRadio(this, 'participa_aulas', 'Não participo')">
+
+
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Não participo'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>🚶‍♂️</span> Não participo
+                                <span>🚶‍♂️</span>
+                                <span>Não participo</span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
+
                     </div>
+
+
                     <input type="hidden" name="participa_aulas" id="input_participa_aulas" value="">
 
+
                     <div class="step-footer">
+
                         <button type="button" class="btn-avancar" id="btn-next-1" onclick="handleStep1Next()">
                             Avançar →
                         </button>
+
                     </div>
+
                 </div>
 
-                <!-- TELA 2A: QUAIS AULAS VOCÊ MAIS CURTE? (Para quem faz aulas) -->
+
+                <!-- =================================================
+                     TELA 2A — AULAS FAVORITAS
+                ================================================= -->
+
                 <div class="step-screen" id="step-2a">
+
                     <div class="step-header">
-                        <span class="step-indicator">Pergunta 2 de 5</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: 40%;"></div>
+
+                        <button type="button" class="btn-voltar" onclick="goToStep('1')">
+                            ← Voltar
+                        </button>
+
+                        <span class="step-indicator">
+                            Pergunta 2 de 5
+                        </span>
+
                     </div>
 
-                    <h2 class="question-title">Quais aulas você mais curte?</h2>
-                    <p class="question-sub">Marque todas que você gosta ou frequenta:</p>
+
+                    <div class="progress-bar-container">
+
+                        <div class="progress-bar" style="width: 40%;"></div>
+
+                    </div>
+
+
+                    <h2 class="question-title">
+                        Quais aulas você mais curte?
+                    </h2>
+
+
+                    <p class="question-sub">
+                        Marque todas que você gosta ou frequenta:
+                    </p>
+
 
                     <div class="tiles-grid">
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Musculação')">
-                            <span class="tile-icon">🏋️</span> Musculação
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Musculação'
+                            )">
+                            <span class="tile-icon">🏋️</span>
+                            <span>Musculação</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Dança')">
-                            <span class="tile-icon">💃</span> Dança
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Dança'
+                            )">
+                            <span class="tile-icon">💃</span>
+                            <span>Dança</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Muay Thai')">
-                            <span class="tile-icon">🥊</span> Muay Thai
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Muay Thai'
+                            )">
+                            <span class="tile-icon">🥊</span>
+                            <span>Muay Thai</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Pilates')">
-                            <span class="tile-icon">🧘</span> Pilates
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Pilates'
+                            )">
+                            <span class="tile-icon">🧘</span>
+                            <span>Pilates</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Spinning')">
-                            <span class="tile-icon">🚴</span> Spinning
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Spinning'
+                            )">
+                            <span class="tile-icon">🚴</span>
+                            <span>Spinning</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Funcional')">
-                            <span class="tile-icon">⚡</span> Funcional
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Funcional'
+                            )">
+                            <span class="tile-icon">⚡</span>
+                            <span>Funcional</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'GAP')">
-                            <span class="tile-icon">🎯</span> GAP
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'GAP'
+                            )">
+                            <span class="tile-icon">🎯</span>
+                            <span>GAP</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Hidroginástica')">
-                            <span class="tile-icon">🏊</span> Hidroginástica
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Hidroginástica'
+                            )">
+                            <span class="tile-icon">🏊</span>
+                            <span>Hidroginástica</span>
                         </div>
+
                     </div>
 
-                    <input type="text" name="aulas_favoritas_outra" placeholder="Outra aula? Digite aqui..." class="enquete-input">
+
+                    <input type="text" name="aulas_favoritas_outra" placeholder="Outra aula? Digite aqui..."
+                        class="enquete-input">
+
+
                     <div id="hidden-aulas-favoritas"></div>
 
+
                     <div class="step-footer">
+
                         <button type="button" class="btn-avancar" onclick="goToStep('3a')">
                             Avançar →
                         </button>
+
                     </div>
+
                 </div>
 
-                <!-- TELA 3A: ALGUMA AULA PRECISA MELHORAR? (Para quem faz aulas) -->
+
+                <!-- =================================================
+                     TELA 3A — MELHORIAS
+                ================================================= -->
+
                 <div class="step-screen" id="step-3a">
+
                     <div class="step-header">
-                        <button type="button" class="btn-voltar" onclick="goToStep('2a')">← Voltar</button>
-                        <span class="step-indicator">Pergunta 3 de 5</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: 60%;"></div>
+
+                        <button type="button" class="btn-voltar" onclick="goToStep('2a')">
+                            ← Voltar
+                        </button>
+
+                        <span class="step-indicator">
+                            Pergunta 3 de 5
+                        </span>
+
                     </div>
 
-                    <h2 class="question-title">Alguma aula precisa melhorar?</h2>
-                    <p class="question-sub">Marque as que merecem mais atenção:</p>
+
+                    <div class="progress-bar-container">
+
+                        <div class="progress-bar" style="width: 60%;"></div>
+
+                    </div>
+
+
+                    <h2 class="question-title">
+                        Alguma aula precisa melhorar?
+                    </h2>
+
+
+                    <p class="question-sub">
+                        Marque as que merecem mais atenção:
+                    </p>
+
 
                     <div class="tiles-grid">
+
                         <div class="tile-option col-span-2" onclick="toggleNenhuma(this)">
-                            <span class="tile-icon">✨</span> Nenhuma, todas estão ótimas!
+                            <span class="tile-icon">✨</span>
+                            <span>Nenhuma, todas estão ótimas!</span>
                         </div>
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Funcional')">
-                            <span class="tile-icon">⚡</span> Funcional
+
+
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Funcional'
+                            )">
+                            <span class="tile-icon">⚡</span>
+                            <span>Funcional</span>
                         </div>
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Dança')">
-                            <span class="tile-icon">💃</span> Dança
+
+
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Dança'
+                            )">
+                            <span class="tile-icon">💃</span>
+                            <span>Dança</span>
                         </div>
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Jump')">
-                            <span class="tile-icon">🤸</span> Jump
+
+
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Jump'
+                            )">
+                            <span class="tile-icon">🤸</span>
+                            <span>Jump</span>
                         </div>
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'GAP')">
-                            <span class="tile-icon">🎯</span> GAP
+
+
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'GAP'
+                            )">
+                            <span class="tile-icon">🎯</span>
+                            <span>GAP</span>
                         </div>
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Hidroginástica')">
-                            <span class="tile-icon">🏊</span> Hidroginástica
+
+
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Hidroginástica'
+                            )">
+                            <span class="tile-icon">🏊</span>
+                            <span>Hidroginástica</span>
                         </div>
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Spinning')">
-                            <span class="tile-icon">🚴</span> Spinning
+
+
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Spinning'
+                            )">
+                            <span class="tile-icon">🚴</span>
+                            <span>Spinning</span>
                         </div>
+
                     </div>
 
-                    <input type="text" name="aula_falta" placeholder="Outra sugestão para as aulas..." class="enquete-input">
+
+                    <input type="text" name="aula_falta" placeholder="Outra sugestão para as aulas..."
+                        class="enquete-input">
+
+
                     <div id="hidden-aula-melhoria"></div>
 
+
                     <div class="step-footer">
-                        <button type="button" class="btn-avancar" onclick="goToStep(4)">
+
+                        <button type="button" class="btn-avancar" onclick="goToStep('4')">
                             Avançar →
                         </button>
-                        <button type="button" class="btn-pular" onclick="goToStep(4)">Pular esta pergunta</button>
+
+                        <button type="button" class="btn-pular" onclick="goToStep('4')">
+                            Pular esta pergunta
+                        </button>
+
                     </div>
+
                 </div>
 
-                <!-- TELA 2B: O QUE TE FARIA EXPERIMENTAR UMA AULA? (Para quem não faz aulas) -->
+
+                <!-- =================================================
+                     TELA 2B — PARA QUEM NÃO FAZ AULAS
+                ================================================= -->
+
                 <div class="step-screen" id="step-2b">
+
                     <div class="step-header">
-                        <span class="step-indicator">Pergunta 2 de 5</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: 50%;"></div>
+
+                        <button type="button" class="btn-voltar" onclick="goToStep('1')">
+                            ← Voltar
+                        </button>
+
+                        <span class="step-indicator">
+                            Pergunta 2 de 5
+                        </span>
+
                     </div>
 
-                    <h2 class="question-title">O que te faria experimentar uma aula?</h2>
-                    <p class="question-sub">Marque o que ajudaria você a começar:</p>
+
+                    <div class="progress-bar-container">
+
+                        <div class="progress-bar" style="width: 40%;"></div>
+
+                    </div>
+
+
+                    <h2 class="question-title">
+                        O que te faria experimentar uma aula?
+                    </h2>
+
+
+                    <p class="question-sub">
+                        Marque o que ajudaria você a começar:
+                    </p>
+
 
                     <div class="radio-options-list">
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Horários flexíveis')">
+
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Horários flexíveis'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>⏰</span> Ter horários que casem com minha rotina
+                                <span>⏰</span>
+                                <span>
+                                    Ter horários que casem com minha rotina
+                                </span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Ter companhia')">
+
+
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Ter companhia'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>👥</span> Ter companhia / ir com amigos
+                                <span>👥</span>
+                                <span>
+                                    Ter companhia / ir com amigos
+                                </span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Aula experimental')">
+
+
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Aula experimental'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>🎟️</span> Ter aula experimental gratuita
+                                <span>🎟️</span>
+                                <span>
+                                    Ter aula experimental gratuita
+                                </span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Professor moderado')">
+
+
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Professor moderado'
+                            )">
+
                             <div class="radio-option-text">
-                                <span>🤝</span> Professor puxar menos no início
+                                <span>🤝</span>
+                                <span>
+                                    Professor puxar menos no início
+                                </span>
                             </div>
+
                             <div class="radio-circle"></div>
+
                         </label>
+
                     </div>
+
 
                     <div class="step-footer">
-                        <button type="button" class="btn-avancar" onclick="goToStep(4)">
+
+                        <button type="button" class="btn-avancar" onclick="goToStep('4')">
                             Avançar →
                         </button>
-                        <button type="button" class="btn-pular" onclick="goToStep(4)">Pular esta pergunta</button>
+
+                        <button type="button" class="btn-pular" onclick="goToStep('4')">
+                            Pular esta pergunta
+                        </button>
+
                     </div>
+
                 </div>
 
-                <!-- TELA 4: QUE ESPAÇO NOVO FARIA DIFERENÇA? -->
+
+                <!-- =================================================
+                     TELA 4 — NOVO ESPAÇO
+                ================================================= -->
+
                 <div class="step-screen" id="step-4">
+
                     <div class="step-header">
-                        <button type="button" class="btn-voltar" onclick="handleStep4Back()">← Voltar</button>
-                        <span class="step-indicator">Pergunta 4 de 5</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: 80%;"></div>
+
+                        <button type="button" class="btn-voltar" onclick="handleStep4Back()">
+                            ← Voltar
+                        </button>
+
+                        <span class="step-indicator">
+                            Pergunta 4 de 5
+                        </span>
+
                     </div>
 
-                    <h2 class="question-title">Que espaço novo faria diferença?</h2>
-                    <p class="question-sub">Marque quantos você gostaria de ter na Polo Fit:</p>
+
+                    <div class="progress-bar-container">
+
+                        <div class="progress-bar" style="width: 80%;"></div>
+
+                    </div>
+
+
+                    <h2 class="question-title">
+                        Que espaço novo faria diferença?
+                    </h2>
+
+
+                    <p class="question-sub">
+                        Marque quantos você gostaria de ter na Polo Fit:
+                    </p>
+
 
                     <div class="tiles-grid">
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Sala de bike')">
-                            <span class="tile-icon">🚴</span> Sala de bike
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Sala de bike'
+                            )">
+                            <span class="tile-icon">🚴</span>
+                            <span>Sala de bike</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Cross / Funcional')">
-                            <span class="tile-icon">🏋️</span> Cross / Funcional
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Cross / Funcional'
+                            )">
+                            <span class="tile-icon">🏋️</span>
+                            <span>Cross / Funcional</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Yoga')">
-                            <span class="tile-icon">🧘</span> Yoga
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Yoga'
+                            )">
+                            <span class="tile-icon">🧘</span>
+                            <span>Yoga</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Espaço Kids')">
-                            <span class="tile-icon">🧸</span> Espaço Kids
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Espaço Kids'
+                            )">
+                            <span class="tile-icon">🧸</span>
+                            <span>Espaço Kids</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Espaço Recovery')">
-                            <span class="tile-icon">💆</span> Espaço Recovery
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Espaço Recovery'
+                            )">
+                            <span class="tile-icon">💆</span>
+                            <span>Espaço Recovery</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Lutas')">
-                            <span class="tile-icon">🥊</span> Lutas
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Lutas'
+                            )">
+                            <span class="tile-icon">🥊</span>
+                            <span>Lutas</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Alongamento')">
-                            <span class="tile-icon">🤸</span> Alongamento
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Alongamento'
+                            )">
+                            <span class="tile-icon">🤸</span>
+                            <span>Alongamento</span>
                         </div>
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Nenhum')">
-                            <span class="tile-icon">❌</span> Nenhum
+
+
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Nenhum'
+                            )">
+                            <span class="tile-icon">❌</span>
+                            <span>Nenhum</span>
                         </div>
+
                     </div>
 
-                    <input type="text" name="novo_espaco_outro" placeholder="Outra sugestão de espaço..." class="enquete-input">
+
+                    <input type="text" name="novo_espaco_outro" placeholder="Outra sugestão de espaço..."
+                        class="enquete-input">
+
+
                     <div id="hidden-novo-espaco"></div>
 
+
                     <div class="step-footer">
-                        <button type="button" class="btn-avancar" onclick="goToStep(5)">
+
+                        <button type="button" class="btn-avancar" onclick="goToStep('5')">
                             Avançar →
                         </button>
-                        <button type="button" class="btn-pular" onclick="goToStep(5)">Pular esta pergunta</button>
+
+                        <button type="button" class="btn-pular" onclick="goToStep('5')">
+                            Pular esta pergunta
+                        </button>
+
                     </div>
+
                 </div>
 
-                <!-- TELA 5: O QUE FAZ FALTA NA POLO FIT? -->
+
+                <!-- =================================================
+                     TELA 5 — SUGESTÃO FINAL
+                ================================================= -->
+
                 <div class="step-screen" id="step-5">
+
                     <div class="step-header">
-                        <button type="button" class="btn-voltar" onclick="goToStep(4)">← Voltar</button>
-                        <span class="step-indicator">Última pergunta</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: 100%;"></div>
+
+                        <button type="button" class="btn-voltar" onclick="goToStep('4')">
+                            ← Voltar
+                        </button>
+
+                        <span class="step-indicator">
+                            Última pergunta
+                        </span>
+
                     </div>
 
-                    <h2 class="question-title">O que faz falta na Polo Fit?</h2>
-                    <p class="question-sub">Toque nas sugestões rápidas ou digite o que quiser:</p>
+
+                    <div class="progress-bar-container">
+
+                        <div class="progress-bar" style="width: 100%;"></div>
+
+                    </div>
+
+
+                    <h2 class="question-title">
+                        O que faz falta na Polo Fit?
+                    </h2>
+
+
+                    <p class="question-sub">
+                        Toque nas sugestões rápidas ou digite o que quiser:
+                    </p>
+
 
                     <div class="tag-chips">
-                        <span class="tag-chip" onclick="addTagChip('+ Mais horários de aulas')">+ Mais horários</span>
-                        <span class="tag-chip" onclick="addTagChip('+ Climatização extra')">+ Climatização</span>
-                        <span class="tag-chip" onclick="addTagChip('+ Mais aparelhos')">+ Mais aparelhos</span>
-                        <span class="tag-chip" onclick="addTagChip('+ Higienização contínua')">+ Higienização</span>
-                        <span class="tag-chip" onclick="addTagChip('+ App de treinos completo')">+ App de treinos</span>
+
+                        <span class="tag-chip" onclick="addTagChip('+ Mais horários de aulas')">
+                            + Mais horários
+                        </span>
+
+                        <span class="tag-chip" onclick="addTagChip('+ Climatização extra')">
+                            + Climatização
+                        </span>
+
+                        <span class="tag-chip" onclick="addTagChip('+ Mais aparelhos')">
+                            + Mais aparelhos
+                        </span>
+
+                        <span class="tag-chip" onclick="addTagChip('+ Higienização contínua')">
+                            + Higienização
+                        </span>
+
+                        <span class="tag-chip" onclick="addTagChip('+ App de treinos completo')">
+                            + App de treinos
+                        </span>
+
                     </div>
 
-                    <textarea
-                        name="sugestao_valor"
-                        id="sugestao_valor"
-                        rows="4"
+
+                    <textarea name="sugestao_valor" id="sugestao_valor" rows="4"
                         placeholder="Escreva sua sugestão ou opinião sincera aqui..."
-                        class="enquete-textarea"
-                    ></textarea>
+                        class="enquete-textarea"></textarea>
 
-                    <!-- SEÇÃO RETRÁTIL DE ELOGIO À EQUIPE (OPCIONAL) -->
+
+                    <!-- ELOGIO -->
+
                     <div style="margin-top: 1rem;">
-                        <button type="button" class="text-xs font-bold text-lime-700 hover:text-lime-800 hover:underline flex items-center gap-1"
-                            onclick="document.getElementById('bloco-elogio').classList.toggle('hidden')">
-                            <span>💬</span> Quer deixar um elogio para a equipe? (Opcional)
+
+                        <button type="button"
+                            class="text-xs font-bold text-lime-700 hover:text-lime-800 hover:underline flex items-center gap-1"
+                            onclick="toggleElogio()">
+                            <span>💬</span>
+
+                            Quer deixar um elogio para a equipe?
+                            (Opcional)
+
                         </button>
+
+
                         <div id="bloco-elogio" class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                            <textarea
-                                name="elogio_colaborador"
-                                rows="2"
+
+                            <textarea name="elogio_colaborador" rows="2"
                                 placeholder="Elogie um professor, recepcionista ou equipe..."
-                                class="enquete-textarea text-xs"
-                            ></textarea>
+                                class="enquete-textarea text-xs"></textarea>
+
                         </div>
+
                     </div>
+
+
+                    <!-- BOTÕES -->
 
                     <div class="step-footer">
+
                         <button type="submit" class="btn-avancar" id="btn-submit-enquete">
                             Enviar respostas ✅
                         </button>
-                        <button type="submit" class="btn-pular">Enviar sem comentários adicionais</button>
+
+                        <button type="button" class="btn-pular" onclick="enviarSemComentario()">
+                            Enviar sem comentários adicionais
+                        </button>
+
                     </div>
+
                 </div>
 
             </form>
 
         </div>
-    </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         RODAPÉ
+    ========================================================= -->
 
     {% include "feedback/rodape.html" %}
 
+
+    <!-- PWA -->
+
     {% include "feedback/pwa_install.html" %}
 
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================= -->
+
     <script>
-        let currentStep = 0;
+
+        /* =========================================================
+           ESTADO DA PESQUISA
+        ========================================================= */
+
+        let currentStep = '0';
+
         let participatesInClasses = true;
 
         const tileSelections = {
+
             aulas_favoritas: new Set(),
+
             aula_melhoria: new Set(),
+
             novo_espaco: new Set()
+
         };
 
+
+        /* =========================================================
+           IR PARA UMA ETAPA
+        ========================================================= */
+
         function goToStep(step) {
-            document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById('step-' + step);
-            if (target) {
-                target.classList.add('active');
-                currentStep = step;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const stepId = String(step);
+
+            const target = document.getElementById(
+                'step-' + stepId
+            );
+
+            if (!target) {
+                console.warn(
+                    'Etapa não encontrada:',
+                    'step-' + stepId
+                );
+
+                return;
             }
+
+
+            document
+                .querySelectorAll('.step-screen')
+                .forEach(function (screen) {
+
+                    screen.classList.remove('active');
+
+                });
+
+
+            target.classList.add('active');
+
+            currentStep = stepId;
+
+
+            /*
+             * Volta para o topo da pesquisa.
+             * O pequeno atraso evita conflito
+             * com a troca de display.
+             */
+
+            setTimeout(function () {
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+            }, 20);
+
         }
 
-        function selectRadio(element, inputName, value) {
+
+        /* =========================================================
+           SELEÇÃO DA PRIMEIRA PERGUNTA
+        ========================================================= */
+
+        function selectRadio(
+            element,
+            inputName,
+            value
+        ) {
+
             const parent = element.parentElement;
-            parent.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+
+            if (!parent) {
+                return;
+            }
+
+
+            parent
+                .querySelectorAll('.radio-option')
+                .forEach(function (option) {
+
+                    option.classList.remove('selected');
+
+                });
+
+
             element.classList.add('selected');
-            document.getElementById('input_' + inputName).value = value;
+
+
+            const input = document.getElementById(
+                'input_' + inputName
+            );
+
+
+            if (input) {
+
+                input.value = value;
+
+            }
+
 
             if (inputName === 'participa_aulas') {
-                participatesInClasses = (value === 'Sim, com frequência' || value === 'Às vezes');
+
+                participatesInClasses =
+                    value === 'Sim, com frequência' ||
+                    value === 'Às vezes';
+
             }
+
         }
+
+
+        /* =========================================================
+           AVANÇAR DA PERGUNTA 1
+        ========================================================= */
 
         function handleStep1Next() {
-            const val = document.getElementById('input_participa_aulas').value;
-            if (!val) {
-                // Seleciona primeira opção por padrão se clicar direto
-                const first = document.querySelector('#step-1 .radio-option');
-                if (first) first.click();
+
+            const input =
+                document.getElementById(
+                    'input_participa_aulas'
+                );
+
+
+            const value =
+                input ? input.value : '';
+
+
+            /*
+             * Se o usuário não escolher nenhuma opção,
+             * seleciona a primeira automaticamente.
+             */
+
+            if (!value) {
+
+                const first =
+                    document.querySelector(
+                        '#step-1 .radio-option'
+                    );
+
+
+                if (first) {
+
+                    first.click();
+
+                }
+
             }
+
+
             if (participatesInClasses) {
+
                 goToStep('2a');
+
             } else {
+
                 goToStep('2b');
+
             }
+
         }
+
+
+        /* =========================================================
+           VOLTAR DA PERGUNTA 4
+        ========================================================= */
 
         function handleStep4Back() {
+
             if (participatesInClasses) {
+
                 goToStep('3a');
+
             } else {
+
                 goToStep('2b');
+
             }
+
         }
 
-        function toggleTile(element, group, value) {
-            element.classList.toggle('selected');
-            if (tileSelections[group].has(value)) {
-                tileSelections[group].delete(value);
-            } else {
-                tileSelections[group].add(value);
+
+        /* =========================================================
+           SELEÇÃO DE TILES
+        ========================================================= */
+
+        function toggleTile(
+            element,
+            group,
+            value
+        ) {
+
+            if (!tileSelections[group]) {
+
+                tileSelections[group] = new Set();
+
             }
+
+
+            element.classList.toggle('selected');
+
+
+            if (
+                tileSelections[group].has(value)
+            ) {
+
+                tileSelections[group].delete(value);
+
+            } else {
+
+                tileSelections[group].add(value);
+
+            }
+
+
+            /*
+             * Para opções que utilizam o estilo
+             * radio-option, também atualizamos
+             * a classe visual.
+             */
+
+            if (
+                element.classList.contains(
+                    'radio-option'
+                )
+            ) {
+
+                /*
+                 * Aqui mantemos seleção múltipla,
+                 * porque a pergunta permite marcar
+                 * mais de uma opção.
+                 */
+
+            }
+
+
             updateHiddenInputs(group);
+
         }
+
+
+        /* =========================================================
+           NENHUMA AULA PRECISA MELHORAR
+        ========================================================= */
 
         function toggleNenhuma(element) {
-            const isSelected = element.classList.toggle('selected');
-            const step = document.getElementById('step-3a');
-            const otherTiles = step.querySelectorAll('.tile-option:not(.col-span-2)');
+
+            const step =
+                document.getElementById('step-3a');
+
+
+            if (!step) {
+                return;
+            }
+
+
+            const isSelected =
+                element.classList.toggle(
+                    'selected'
+                );
+
+
+            const otherTiles =
+                step.querySelectorAll(
+                    '.tile-option:not(.col-span-2)'
+                );
+
+
             if (isSelected) {
-                otherTiles.forEach(t => t.classList.remove('selected'));
+
+                otherTiles.forEach(
+                    function (tile) {
+
+                        tile.classList.remove(
+                            'selected'
+                        );
+
+                    }
+                );
+
+
                 tileSelections.aula_melhoria.clear();
-                tileSelections.aula_melhoria.add('Nenhuma, todas estão ótimas');
+
+                tileSelections.aula_melhoria.add(
+                    'Nenhuma, todas estão ótimas'
+                );
+
             } else {
-                tileSelections.aula_melhoria.delete('Nenhuma, todas estão ótimas');
+
+                tileSelections.aula_melhoria.delete(
+                    'Nenhuma, todas estão ótimas'
+                );
+
             }
-            updateHiddenInputs('aula_melhoria');
+
+
+            updateHiddenInputs(
+                'aula_melhoria'
+            );
+
         }
 
-        function toggleMelhoria(element, value) {
-            const step = document.getElementById('step-3a');
-            const nenhuma = step.querySelector('.tile-option.col-span-2');
-            nenhuma.classList.remove('selected');
-            tileSelections.aula_melhoria.delete('Nenhuma, todas estão ótimas');
 
-            element.classList.toggle('selected');
-            if (tileSelections.aula_melhoria.has(value)) {
-                tileSelections.aula_melhoria.delete(value);
-            } else {
-                tileSelections.aula_melhoria.add(value);
+        /* =========================================================
+           SELEÇÃO DE MELHORIAS
+        ========================================================= */
+
+        function toggleMelhoria(
+            element,
+            value
+        ) {
+
+            const step =
+                document.getElementById('step-3a');
+
+
+            if (!step) {
+                return;
             }
-            updateHiddenInputs('aula_melhoria');
+
+
+            const nenhuma =
+                step.querySelector(
+                    '.tile-option.col-span-2'
+                );
+
+
+            if (nenhuma) {
+
+                nenhuma.classList.remove(
+                    'selected'
+                );
+
+            }
+
+
+            tileSelections.aula_melhoria.delete(
+                'Nenhuma, todas estão ótimas'
+            );
+
+
+            element.classList.toggle(
+                'selected'
+            );
+
+
+            if (
+                tileSelections.aula_melhoria.has(value)
+            ) {
+
+                tileSelections.aula_melhoria.delete(
+                    value
+                );
+
+            } else {
+
+                tileSelections.aula_melhoria.add(
+                    value
+                );
+
+            }
+
+
+            updateHiddenInputs(
+                'aula_melhoria'
+            );
+
         }
+
+
+        /* =========================================================
+           INPUTS OCULTOS
+        ========================================================= */
 
         function updateHiddenInputs(group) {
+
             const containerMap = {
-                aulas_favoritas: 'hidden-aulas-favoritas',
-                aula_melhoria: 'hidden-aula-melhoria',
-                novo_espaco: 'hidden-novo-espaco'
+
+                aulas_favoritas:
+                    'hidden-aulas-favoritas',
+
+                aula_melhoria:
+                    'hidden-aula-melhoria',
+
+                novo_espaco:
+                    'hidden-novo-espaco'
+
             };
-            const container = document.getElementById(containerMap[group]);
-            if (!container) return;
+
+
+            const container =
+                document.getElementById(
+                    containerMap[group]
+                );
+
+
+            if (!container) {
+                return;
+            }
+
+
             container.innerHTML = '';
-            tileSelections[group].forEach(val => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = group;
-                input.value = val;
-                container.appendChild(input);
-            });
+
+
+            tileSelections[group].forEach(
+                function (value) {
+
+                    const input =
+                        document.createElement(
+                            'input'
+                        );
+
+
+                    input.type = 'hidden';
+
+                    input.name = group;
+
+                    input.value = value;
+
+
+                    container.appendChild(
+                        input
+                    );
+
+                }
+            );
+
         }
 
+
+        /* =========================================================
+           ADICIONAR TAG À SUGESTÃO
+        ========================================================= */
+
         function addTagChip(text) {
-            const textarea = document.getElementById('sugestao_valor');
-            if (!textarea.value) {
-                textarea.value = text;
-            } else {
-                textarea.value += ' ' + text;
+
+            const textarea =
+                document.getElementById(
+                    'sugestao_valor'
+                );
+
+
+            if (!textarea) {
+                return;
             }
+
+
+            if (!textarea.value.trim()) {
+
+                textarea.value = text;
+
+            } else {
+
+                textarea.value +=
+                    ' ' + text;
+
+            }
+
+
             textarea.focus();
+
         }
+
+
+        /* =========================================================
+           ABRIR/FECHAR ELOGIO
+        ========================================================= */
+
+        function toggleElogio() {
+
+            const bloco =
+                document.getElementById(
+                    'bloco-elogio'
+                );
+
+
+            if (!bloco) {
+                return;
+            }
+
+
+            bloco.classList.toggle(
+                'hidden'
+            );
+
+        }
+
+
+        /* =========================================================
+           ENVIAR SEM COMENTÁRIO
+        ========================================================= */
+
+        function enviarSemComentario() {
+
+            const textarea =
+                document.getElementById(
+                    'sugestao_valor'
+                );
+
+
+            if (textarea) {
+
+                textarea.value = '';
+
+            }
+
+
+            const elogio =
+                document.querySelector(
+                    'textarea[name="elogio_colaborador"]'
+                );
+
+
+            if (elogio) {
+
+                elogio.value = '';
+
+            }
+
+
+            const form =
+                document.getElementById(
+                    'form-enquete'
+                );
+
+
+            if (form) {
+
+                form.submit();
+
+            }
+
+        }
+
+
+        /* =========================================================
+           PROTEÇÃO CONTRA DUPLO ENVIO
+        ========================================================= */
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
+
+                const form =
+                    document.getElementById(
+                        'form-enquete'
+                    );
+
+
+                if (!form) {
+                    return;
+                }
+
+
+                form.addEventListener(
+                    'submit',
+                    function () {
+
+                        const submitButton =
+                            document.getElementById(
+                                'btn-submit-enquete'
+                            );
+
+
+                        if (submitButton) {
+
+                            submitButton.disabled = true;
+
+                            submitButton.innerHTML =
+                                'Enviando... ⏳';
+
+                            submitButton.style.opacity =
+                                '0.7';
+
+                            submitButton.style.cursor =
+                                'wait';
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
     </script>
+
 </body>
+
 </html>
