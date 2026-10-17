@@ -16,6 +16,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
 
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         *,
         *::before,
@@ -24,21 +26,25 @@
         }
 
         :root {
+            color-scheme: dark;
+
             --verde: #65a30d;
             --verde-btn: #84cc16;
-            --verde-claro: #a3e635;
             --verde-soft: #f7fee7;
+            --verde-border: #bef264;
 
-            --texto: #ffffff;
-            --texto-suave: rgba(255, 255, 255, 0.70);
+            --bg: #090909;
+            --card-bg: #ffffff;
+            --linha: #27272a;
 
-            --borda: rgba(255, 255, 255, 0.14);
-            --card: rgba(8, 12, 14, 0.86);
-            --card-soft: rgba(255, 255, 255, 0.07);
+            --texto: #f8fafc;
+            --texto-suave: #a1a1aa;
+
+            --texto-card: #0f172a;
+            --texto-card-suave: #64748b;
         }
 
         html {
-            min-height: 100%;
             scroll-behavior: smooth;
         }
 
@@ -47,47 +53,23 @@
             min-height: 100vh;
 
             font-family: 'Inter', sans-serif;
+
+            background:
+                radial-gradient(circle at top center,
+                    rgba(101, 163, 13, 0.08),
+                    transparent 35%),
+                var(--bg);
+
             color: var(--texto);
-
-            /*
-             * FOTO DA ACADEMIA
-             * O arquivo já existe no projeto:
-             * static/feedback/academia1.png
-             */
-            background-image: linear-gradient(rgba(4, 7, 8, 0.48),
-                rgba(4, 7, 8, 0.82)),
-            url("{% static 'feedback/academia1.png' %}");
-
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
 
             display: flex;
             flex-direction: column;
             align-items: center;
 
-            padding: 0 16px 35px;
+            padding: 5rem 1rem 2rem;
 
+            position: relative;
             overflow-x: hidden;
-        }
-
-        /*
-         * Camada adicional para deixar a fotografia
-         * parecida com a página Avaliar.
-         */
-        .background-overlay {
-            position: fixed;
-            inset: 0;
-
-            background:
-                linear-gradient(180deg,
-                    rgba(0, 0, 0, 0.15) 0%,
-                    rgba(0, 0, 0, 0.35) 45%,
-                    rgba(0, 0, 0, 0.72) 100%);
-
-            pointer-events: none;
-            z-index: 0;
         }
 
         /* =========================================================
@@ -95,77 +77,83 @@
         ========================================================= */
 
         .navbar {
-            position: relative;
-            z-index: 20;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
 
-            width: 100%;
-            max-width: 1100px;
-
-            height: 70px;
+            height: 60px;
 
             display: flex;
             align-items: center;
             justify-content: space-between;
 
-            padding: 0 4px;
+            padding: 0 1.25rem;
 
-            margin-bottom: 20px;
+            background: rgba(9, 9, 9, 0.96);
+            border-bottom: 1px solid #1f1f1f;
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            z-index: 1000;
         }
 
         .navbar-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.5rem;
 
-            color: #fff;
+            color: #f8fafc;
             text-decoration: none;
 
-            font-size: 1.15rem;
-            font-weight: 800;
+            min-width: 0;
         }
 
         .navbar-logo img {
-            width: 44px;
-            height: 44px;
-
+            width: auto;
+            height: 30px;
             object-fit: contain;
         }
 
         .navbar-logo span {
-            color: #fff;
+            font-weight: 800;
+            font-size: 1rem;
+            white-space: nowrap;
         }
 
         .nav-back {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 0.35rem;
 
-            color: rgba(255, 255, 255, 0.92);
+            color: #a1a1aa;
             text-decoration: none;
 
-            padding: 10px 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
 
-            border-radius: 12px;
-
-            background: rgba(255, 255, 255, 0.09);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-
-            font-size: 0.82rem;
-            font-weight: 700;
-
-            transition: all 0.2s ease;
+            transition: color 0.2s ease;
         }
 
         .nav-back:hover {
-            background: rgba(255, 255, 255, 0.17);
-            transform: translateY(-1px);
+            color: var(--verde-btn);
         }
 
         /* =========================================================
-           CONTAINER
+           FUNDO
+        ========================================================= */
+
+        .bg-overlay {
+            display: none;
+        }
+
+        .glow {
+            display: none;
+        }
+
+        /* =========================================================
+           CONTAINER PRINCIPAL
         ========================================================= */
 
         .enquete-wrapper {
@@ -173,40 +161,35 @@
             z-index: 10;
 
             width: 100%;
-            max-width: 720px;
+            max-width: 440px;
 
-            margin: 0 auto 35px;
+            margin: auto;
         }
 
         .enquete-card {
             width: 100%;
 
-            background:
-                linear-gradient(145deg,
-                    rgba(15, 20, 22, 0.92),
-                    rgba(5, 9, 10, 0.88));
+            background: var(--card-bg);
 
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            border: 1px solid #e2e8f0;
+            border-radius: 1.75rem;
 
-            border-radius: 28px;
-
-            padding: 28px;
+            padding: 1.75rem 1.5rem;
 
             box-shadow:
-                0 30px 80px rgba(0, 0, 0, 0.50),
-                0 10px 30px rgba(0, 0, 0, 0.30);
-
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+                0 10px 30px rgba(0, 0, 0, 0.25),
+                0 30px 70px rgba(0, 0, 0, 0.15);
 
             display: flex;
             flex-direction: column;
 
-            min-height: 610px;
+            min-height: 540px;
+
+            color: var(--texto-card);
         }
 
         /* =========================================================
-           HEADER DA ENQUETE
+           CABEÇALHO
         ========================================================= */
 
         .step-header {
@@ -214,13 +197,25 @@
             align-items: center;
             justify-content: space-between;
 
-            margin-bottom: 20px;
+            gap: 0.75rem;
+
+            margin-bottom: 1.25rem;
         }
 
         .step-header-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 0.75rem;
+        }
+
+        .page-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+
+            color: var(--verde);
+
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .btn-voltar {
@@ -228,65 +223,61 @@
             align-items: center;
             justify-content: center;
 
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.13);
+            gap: 0.35rem;
 
-            color: rgba(255, 255, 255, 0.86);
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
 
-            border-radius: 11px;
+            color: #475569;
 
-            padding: 9px 13px;
+            border-radius: 0.75rem;
 
-            font-size: 0.78rem;
-            font-weight: 700;
+            padding: 0.4rem 0.75rem;
+
+            font-size: 0.75rem;
+            font-weight: 600;
 
             cursor: pointer;
 
-            transition: all 0.2s ease;
+            transition:
+                color 0.2s ease,
+                border-color 0.2s ease,
+                background 0.2s ease;
 
             text-decoration: none;
         }
 
         .btn-voltar:hover {
-            background: rgba(255, 255, 255, 0.15);
-            color: #fff;
-        }
-
-        .page-title {
-            font-size: 0.82rem;
-            font-weight: 900;
-
-            color: var(--verde-claro);
-
-            text-transform: uppercase;
-            letter-spacing: 0.07em;
-        }
-
-        .step-indicator {
-            font-size: 0.74rem;
-            font-weight: 800;
-
-            color: var(--verde-claro);
-
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            color: #0f172a;
+            border-color: #cbd5e1;
+            background: #e2e8f0;
         }
 
         /* =========================================================
            PROGRESSO
         ========================================================= */
 
+        .step-indicator {
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            color: var(--verde);
+
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
         .progress-bar-container {
             width: 100%;
             height: 5px;
 
-            background: rgba(255, 255, 255, 0.10);
+            background: #e2e8f0;
 
             border-radius: 999px;
 
             overflow: hidden;
 
-            margin-bottom: 24px;
+            margin-bottom: 1.5rem;
         }
 
         .progress-bar {
@@ -294,7 +285,7 @@
 
             background: linear-gradient(90deg,
                     #65a30d,
-                    #a3e635);
+                    #84cc16);
 
             border-radius: 999px;
 
@@ -302,31 +293,28 @@
         }
 
         /* =========================================================
-           PERGUNTAS
+           TÍTULOS
         ========================================================= */
 
         .question-title {
-            font-size: clamp(1.35rem, 4vw, 1.75rem);
+            margin: 0 0 0.35rem;
 
+            font-size: 1.35rem;
             font-weight: 900;
 
-            letter-spacing: -0.025em;
-
+            letter-spacing: -0.02em;
             line-height: 1.25;
 
-            color: #fff;
-
-            margin: 0 0 8px;
+            color: var(--texto-card);
         }
 
         .question-sub {
-            font-size: 0.88rem;
+            margin: 0 0 1.5rem;
 
-            color: rgba(255, 255, 255, 0.66);
+            font-size: 0.825rem;
+            line-height: 1.4;
 
-            margin: 0 0 24px;
-
-            line-height: 1.55;
+            color: var(--texto-card-suave);
         }
 
         /* =========================================================
@@ -334,87 +322,93 @@
         ========================================================= */
 
         .radio-options-list {
-            width: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .radio-option {
             display: flex;
-
             align-items: center;
             justify-content: space-between;
 
+            gap: 0.75rem;
+
             width: 100%;
 
-            background: rgba(255, 255, 255, 0.055);
+            background: #f8fafc;
 
-            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1rem;
 
-            border-radius: 15px;
+            padding: 0.9rem 1.1rem;
 
-            padding: 15px 16px;
-
-            margin-bottom: 10px;
+            margin-bottom: 0.65rem;
 
             cursor: pointer;
 
-            transition: all 0.2s ease;
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
 
             user-select: none;
         }
 
         .radio-option:hover {
-            border-color: rgba(163, 230, 53, 0.65);
-
-            background: rgba(163, 230, 53, 0.08);
+            border-color: var(--verde-btn);
+            background: var(--verde-soft);
 
             transform: translateY(-1px);
         }
 
         .radio-option.selected {
-            border-color: #84cc16;
+            border-color: var(--verde);
 
-            background: rgba(132, 204, 22, 0.13);
+            background: var(--verde-soft);
 
             box-shadow:
-                0 0 0 1px rgba(132, 204, 22, 0.35);
+                0 0 0 1px var(--verde),
+                0 5px 15px rgba(101, 163, 13, 0.08);
         }
 
         .radio-option-text {
             display: flex;
             align-items: center;
 
-            gap: 11px;
+            gap: 0.75rem;
 
-            font-size: 0.90rem;
-            font-weight: 650;
+            font-size: 0.9rem;
+            font-weight: 600;
 
-            color: rgba(255, 255, 255, 0.92);
+            color: #1e293b;
 
             line-height: 1.35;
         }
 
         .radio-circle {
-            width: 21px;
-            height: 21px;
+            width: 20px;
+            height: 20px;
 
-            flex-shrink: 0;
+            flex: 0 0 20px;
 
             border-radius: 50%;
 
-            border: 2px solid rgba(255, 255, 255, 0.30);
+            border: 2px solid #cbd5e1;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            background: rgba(255, 255, 255, 0.03);
+            background: #ffffff;
 
             transition: all 0.2s ease;
         }
 
         .radio-option.selected .radio-circle {
-            border-color: #84cc16;
-            background: #65a30d;
+            border-color: var(--verde);
+
+            background: var(--verde);
         }
 
         .radio-circle::after {
@@ -425,7 +419,7 @@
 
             border-radius: 50%;
 
-            background: #fff;
+            background: #ffffff;
 
             display: none;
         }
@@ -435,7 +429,7 @@
         }
 
         /* =========================================================
-           TILES
+           GRID DE OPÇÕES
         ========================================================= */
 
         .tiles-grid {
@@ -443,56 +437,63 @@
 
             grid-template-columns: repeat(2, minmax(0, 1fr));
 
-            gap: 10px;
+            gap: 0.6rem;
 
-            margin-bottom: 14px;
+            margin-bottom: 1rem;
         }
 
         .tile-option {
-            background: rgba(255, 255, 255, 0.055);
+            min-height: 58px;
 
-            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            background: #f8fafc;
 
-            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 0.875rem;
 
-            padding: 14px 13px;
-
-            min-height: 60px;
+            padding: 0.75rem 0.85rem;
 
             display: flex;
             align-items: center;
 
-            gap: 9px;
+            gap: 0.6rem;
 
             cursor: pointer;
 
-            transition: all 0.2s ease;
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
 
             user-select: none;
 
-            font-size: 0.84rem;
-            font-weight: 650;
+            font-size: 0.85rem;
+            font-weight: 600;
 
-            color: rgba(255, 255, 255, 0.90);
+            color: #1e293b;
+
+            line-height: 1.25;
         }
 
         .tile-option:hover {
-            border-color: rgba(163, 230, 53, 0.60);
-
-            background: rgba(163, 230, 53, 0.08);
+            border-color: var(--verde-btn);
+            background: var(--verde-soft);
 
             transform: translateY(-1px);
         }
 
         .tile-option.selected {
-            border-color: #84cc16;
+            border-color: var(--verde);
 
-            background: rgba(132, 204, 22, 0.14);
+            background: var(--verde-soft);
 
-            color: #fff;
+            color: #0f172a;
+
+            font-weight: 700;
 
             box-shadow:
-                0 0 0 1px rgba(132, 204, 22, 0.32);
+                0 0 0 1px var(--verde),
+                0 4px 12px rgba(101, 163, 13, 0.08);
         }
 
         .tile-icon {
@@ -500,7 +501,7 @@
 
             line-height: 1;
 
-            flex-shrink: 0;
+            flex: 0 0 auto;
         }
 
         .col-span-2 {
@@ -508,106 +509,30 @@
         }
 
         /* =========================================================
-           INPUTS
-        ========================================================= */
-
-        .enquete-input {
-            width: 100%;
-
-            background: rgba(255, 255, 255, 0.065);
-
-            border: 1.5px solid rgba(255, 255, 255, 0.14);
-
-            border-radius: 13px;
-
-            padding: 13px 15px;
-
-            color: #fff;
-
-            font-family: inherit;
-            font-size: 0.85rem;
-
-            outline: none;
-
-            transition: all 0.2s ease;
-
-            margin-top: 5px;
-        }
-
-        .enquete-input::placeholder {
-            color: rgba(255, 255, 255, 0.40);
-        }
-
-        .enquete-input:focus {
-            border-color: #84cc16;
-
-            background: rgba(255, 255, 255, 0.09);
-
-            box-shadow:
-                0 0 0 3px rgba(132, 204, 22, 0.12);
-        }
-
-        .enquete-textarea {
-            width: 100%;
-
-            background: rgba(255, 255, 255, 0.065);
-
-            border: 1.5px solid rgba(255, 255, 255, 0.14);
-
-            border-radius: 13px;
-
-            padding: 14px 15px;
-
-            color: #fff;
-
-            font-family: inherit;
-            font-size: 0.86rem;
-
-            outline: none;
-
-            resize: vertical;
-
-            transition: all 0.2s ease;
-        }
-
-        .enquete-textarea::placeholder {
-            color: rgba(255, 255, 255, 0.40);
-        }
-
-        .enquete-textarea:focus {
-            border-color: #84cc16;
-
-            background: rgba(255, 255, 255, 0.09);
-
-            box-shadow:
-                0 0 0 3px rgba(132, 204, 22, 0.12);
-        }
-
-        /* =========================================================
-           CHIPS
+           TAGS
         ========================================================= */
 
         .tag-chips {
             display: flex;
+
             flex-wrap: wrap;
 
-            gap: 8px;
+            gap: 0.45rem;
 
-            margin-bottom: 14px;
+            margin-bottom: 1rem;
         }
 
         .tag-chip {
-            background: rgba(255, 255, 255, 0.07);
+            background: #f1f5f9;
 
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            border: 1px solid #e2e8f0;
 
-            color: rgba(255, 255, 255, 0.78);
+            color: #334155;
 
-            font-size: 0.73rem;
+            font-size: 0.75rem;
+            font-weight: 600;
 
-            font-weight: 700;
-
-            padding: 7px 12px;
+            padding: 0.35rem 0.75rem;
 
             border-radius: 999px;
 
@@ -619,11 +544,90 @@
         }
 
         .tag-chip:hover {
-            border-color: #84cc16;
+            border-color: var(--verde-btn);
 
-            color: #fff;
+            color: #365314;
 
-            background: rgba(132, 204, 22, 0.12);
+            background: #ecfccb;
+
+            transform: translateY(-1px);
+        }
+
+        /* =========================================================
+           INPUTS
+        ========================================================= */
+
+        .enquete-input {
+            width: 100%;
+
+            background: #f8fafc;
+
+            border: 1.5px solid #cbd5e1;
+
+            border-radius: 0.875rem;
+
+            padding: 0.75rem 1rem;
+
+            color: #0f172a;
+
+            font-family: inherit;
+
+            font-size: 0.85rem;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+
+            margin-top: 0.5rem;
+        }
+
+        .enquete-input::placeholder,
+        .enquete-textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .enquete-input:focus,
+        .enquete-textarea:focus {
+            border-color: var(--verde);
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 3px rgba(101, 163, 13, 0.15);
+        }
+
+        .enquete-textarea {
+            width: 100%;
+
+            background: #f8fafc;
+
+            border: 1.5px solid #cbd5e1;
+
+            border-radius: 0.875rem;
+
+            padding: 0.85rem 1rem;
+
+            color: #0f172a;
+
+            font-family: inherit;
+
+            font-size: 0.85rem;
+
+            line-height: 1.5;
+
+            outline: none;
+
+            resize: vertical;
+
+            min-height: 110px;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
         }
 
         /* =========================================================
@@ -633,34 +637,31 @@
         .step-footer {
             margin-top: auto;
 
-            padding-top: 24px;
+            padding-top: 1.25rem;
 
             display: flex;
             flex-direction: column;
 
-            gap: 9px;
+            gap: 0.6rem;
         }
 
         .btn-avancar {
             width: 100%;
 
-            background: linear-gradient(135deg,
-                    #84cc16,
-                    #65a30d);
+            background: var(--verde-btn);
 
-            color: #10150a;
+            color: #0f172a;
 
             border: none;
 
-            border-radius: 14px;
+            border-radius: 0.875rem;
 
-            padding: 15px;
+            padding: 0.95rem;
 
             font-family: inherit;
 
-            font-size: 0.94rem;
-
-            font-weight: 900;
+            font-size: 0.95rem;
+            font-weight: 800;
 
             cursor: pointer;
 
@@ -670,19 +671,21 @@
             align-items: center;
             justify-content: center;
 
-            gap: 7px;
+            gap: 0.5rem;
 
             box-shadow:
-                0 7px 20px rgba(101, 163, 13, 0.30);
+                0 4px 14px rgba(132, 204, 22, 0.35);
         }
 
         .btn-avancar:hover {
-            transform: translateY(-2px);
+            background: var(--verde);
+
+            color: #ffffff;
+
+            transform: translateY(-1px);
 
             box-shadow:
-                0 10px 26px rgba(101, 163, 13, 0.40);
-
-            filter: brightness(1.05);
+                0 6px 18px rgba(101, 163, 13, 0.3);
         }
 
         .btn-avancar:active {
@@ -690,11 +693,15 @@
         }
 
         .btn-pular {
+            width: 100%;
+
             text-align: center;
 
-            font-size: 0.76rem;
+            font-family: inherit;
 
-            color: rgba(255, 255, 255, 0.52);
+            font-size: 0.775rem;
+
+            color: #64748b;
 
             background: transparent;
 
@@ -702,15 +709,13 @@
 
             cursor: pointer;
 
-            padding: 7px;
-
-            font-family: inherit;
+            padding: 0.4rem;
 
             transition: color 0.2s ease;
         }
 
         .btn-pular:hover {
-            color: rgba(255, 255, 255, 0.90);
+            color: #0f172a;
 
             text-decoration: underline;
         }
@@ -726,7 +731,7 @@
 
             flex: 1;
 
-            min-height: 490px;
+            width: 100%;
         }
 
         .step-screen.active {
@@ -739,32 +744,29 @@
 
         .splash-badge {
             display: inline-flex;
-
             align-items: center;
 
-            gap: 6px;
+            gap: 0.35rem;
 
-            align-self: flex-start;
+            width: fit-content;
 
-            background: rgba(132, 204, 22, 0.13);
+            background: #ecfccb;
 
-            border: 1px solid rgba(163, 230, 53, 0.30);
+            border: 1px solid #bef264;
 
-            color: #bef264;
+            color: #365314;
 
-            font-size: 0.70rem;
+            font-size: 0.725rem;
+            font-weight: 700;
 
-            font-weight: 800;
-
-            padding: 7px 12px;
+            padding: 0.35rem 0.75rem;
 
             border-radius: 999px;
 
             text-transform: uppercase;
-
             letter-spacing: 0.08em;
 
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
 
         .meta-pills {
@@ -772,181 +774,152 @@
 
             flex-wrap: wrap;
 
-            gap: 9px;
+            gap: 0.65rem;
 
-            margin-top: 18px;
-
-            margin-bottom: 20px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .meta-pill {
             display: inline-flex;
-
             align-items: center;
 
-            gap: 6px;
+            gap: 0.4rem;
 
-            background: rgba(255, 255, 255, 0.065);
+            background: #f1f5f9;
 
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: 1px solid #e2e8f0;
 
-            border-radius: 10px;
+            border-radius: 0.625rem;
 
-            padding: 8px 11px;
+            padding: 0.4rem 0.75rem;
 
-            font-size: 0.73rem;
+            font-size: 0.75rem;
+            font-weight: 600;
 
-            font-weight: 700;
-
-            color: rgba(255, 255, 255, 0.68);
+            color: #475569;
         }
 
         /* =========================================================
-           ELOGIO
+           SUCESSO
         ========================================================= */
 
-        .elogio-toggle {
-            margin-top: 16px;
+        .success-icon {
+            width: 72px;
+            height: 72px;
 
-            background: transparent;
+            background: #ecfccb;
 
-            border: none;
+            border: 2px solid #84cc16;
 
-            color: #bef264;
-
-            font-family: inherit;
-
-            font-size: 0.76rem;
-
-            font-weight: 800;
-
-            cursor: pointer;
+            border-radius: 50%;
 
             display: flex;
-
             align-items: center;
+            justify-content: center;
 
-            gap: 5px;
-        }
+            color: #365314;
 
-        .elogio-toggle:hover {
-            color: #d9f99d;
+            font-size: 2.2rem;
 
-            text-decoration: underline;
-        }
+            margin: 1.5rem auto;
 
-        .elogio-box {
-            margin-top: 9px;
-
-            padding: 12px;
-
-            background: rgba(255, 255, 255, 0.045);
-
-            border: 1px solid rgba(255, 255, 255, 0.10);
-
-            border-radius: 13px;
-        }
-
-        .hidden {
-            display: none !important;
+            box-shadow:
+                0 4px 15px rgba(132, 204, 22, 0.25);
         }
 
         /* =========================================================
-           RODAPÉ
+           FOOTER
         ========================================================= */
 
-        footer {
-            position: relative;
-            z-index: 5;
-
+        .enquete-wrapper+footer {
             width: 100%;
-
-            max-width: 720px;
-
-            text-align: center;
-
-            color: rgba(255, 255, 255, 0.62);
-
-            margin-top: 5px;
         }
 
         /* =========================================================
-           RESPONSIVO
+           MOBILE
         ========================================================= */
-
-        @media (max-width: 700px) {
-
-            body {
-                background-attachment: scroll;
-
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            .navbar {
-                height: 64px;
-            }
-
-            .navbar-logo span {
-                display: none;
-            }
-
-            .navbar-logo img {
-                width: 42px;
-                height: 42px;
-            }
-
-            .nav-back {
-                font-size: 0.76rem;
-
-                padding: 9px 12px;
-            }
-
-            .enquete-card {
-                border-radius: 24px;
-
-                padding: 23px 20px;
-
-                min-height: 590px;
-            }
-        }
 
         @media (max-width: 480px) {
 
             body {
-                padding-left: 7px;
-                padding-right: 7px;
-                padding-bottom: 20px;
+                padding:
+                    4.5rem 0.5rem 1rem;
             }
 
             .navbar {
-                padding: 0 4px;
+                padding: 0 0.9rem;
+            }
 
-                margin-bottom: 12px;
+            .navbar-logo img {
+                height: 28px;
+            }
+
+            .navbar-logo span {
+                font-size: 0.95rem;
             }
 
             .nav-back {
                 font-size: 0.72rem;
             }
 
-            .enquete-wrapper {
-                margin-bottom: 25px;
-            }
-
             .enquete-card {
-                border-radius: 21px;
+                padding: 1.5rem 1.25rem;
 
-                padding: 21px 17px;
+                border-radius: 1.5rem;
 
-                min-height: calc(100vh - 90px);
+                min-height:
+                    calc(100vh - 5.5rem);
             }
 
             .question-title {
-                font-size: 1.28rem;
+                font-size: 1.25rem;
             }
 
             .question-sub {
+                font-size: 0.8rem;
+            }
+
+            .tiles-grid {
+                gap: 0.5rem;
+            }
+
+            .tile-option {
+                min-height: 54px;
+
+                padding:
+                    0.7rem 0.65rem;
+
+                font-size: 0.78rem;
+            }
+
+            .tile-icon {
+                font-size: 1rem;
+            }
+
+            .radio-option {
+                padding:
+                    0.85rem 0.85rem;
+            }
+
+            .radio-option-text {
                 font-size: 0.82rem;
+            }
+        }
+
+        @media (max-width: 350px) {
+
+            .navbar-logo span {
+                display: none;
+            }
+
+            .nav-back {
+                font-size: 0.68rem;
+            }
+
+            .enquete-card {
+                padding:
+                    1.25rem 1rem;
             }
 
             .tiles-grid {
@@ -956,32 +929,17 @@
             .col-span-2 {
                 grid-column: span 1;
             }
-
-            .tile-option {
-                min-height: 55px;
-            }
-
-            .radio-option {
-                padding: 14px;
-            }
-
-            .step-screen {
-                min-height: 500px;
-            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- FUNDO ESCURO SOBRE A FOTO -->
-    <div class="background-overlay" aria-hidden="true"></div>
-
     <!-- =========================================================
          NAVBAR
-    ========================================================== -->
+    ========================================================= -->
 
-    <nav class="navbar" aria-label="Navegação">
+    <nav class="navbar" aria-label="Navegação principal">
 
         <a href="{% url 'inicio' %}" class="navbar-logo">
             <img src="{% static 'feedback/LOGO.png' %}" alt="Logo Polo Fit">
@@ -996,23 +954,28 @@
     </nav>
 
 
+    <!-- Elementos decorativos -->
+
+    <div class="bg-overlay" aria-hidden="true">
+    </div>
+
+    <div class="glow" aria-hidden="true">
+    </div>
+
+
     <!-- =========================================================
-         ENQUETE
-    ========================================================== -->
+         PESQUISA
+    ========================================================= -->
 
     <main class="enquete-wrapper">
 
         <div class="enquete-card">
 
-            <!-- HEADER -->
+            <!-- Cabeçalho -->
 
             <div class="step-header">
 
                 <div class="step-header-left">
-
-                    <a href="{% url 'inicio' %}" class="btn-voltar">
-                        ← Voltar
-                    </a>
 
                     <span class="page-title">
                         Pesquisa Polo Fit
@@ -1023,14 +986,18 @@
             </div>
 
 
+            <!-- =================================================
+                 FORMULÁRIO
+            ================================================= -->
+
             <form id="form-enquete" method="POST" action="{% url 'enquete' %}">
 
                 {% csrf_token %}
 
 
                 <!-- =================================================
-                     TELA 0
-                ================================================== -->
+                     TELA 0 — CAPA
+                ================================================= -->
 
                 <div class="step-screen active" id="step-0">
 
@@ -1039,17 +1006,24 @@
                         Pesquisa Polo Fit
                     </div>
 
-                    <h1 class="question-title" style="font-size: 1.65rem;">
+
+                    <h1 class="question-title" style="
+                            font-size: 1.65rem;
+                            margin-top: 0.5rem;
+                        ">
                         Ajude a escolher as próximas aulas
                     </h1>
 
-                    <p class="question-sub">
 
+                    <p class="question-sub" style="
+                            font-size: 0.95rem;
+                            margin-top: 0.75rem;
+                        ">
                         Suas respostas ajudam a Polo Fit a decidir
                         quais novas modalidades, horários e espaços
                         teremos na academia.
-
                     </p>
+
 
                     <div class="meta-pills">
 
@@ -1063,9 +1037,10 @@
 
                     </div>
 
-                    <div class="step-footer">
 
-                        <button type="button" class="btn-avancar" onclick="goToStep(1)">
+                    <div class="step-footer" style="margin-top: auto;">
+
+                        <button type="button" class="btn-avancar" onclick="goToStep('1')">
                             Começar pesquisa →
                         </button>
 
@@ -1075,8 +1050,8 @@
 
 
                 <!-- =================================================
-                     TELA 1
-                ================================================== -->
+                     TELA 1 — PARTICIPA DE AULAS
+                ================================================= -->
 
                 <div class="step-screen" id="step-1">
 
@@ -1088,15 +1063,18 @@
 
                     </div>
 
+
                     <div class="progress-bar-container">
 
                         <div class="progress-bar" style="width: 20%;"></div>
 
                     </div>
 
+
                     <h2 class="question-title">
                         Você faz aulas coletivas?
                     </h2>
+
 
                     <p class="question-sub">
                         Musculação, dança, funcional, jump, etc.
@@ -1105,12 +1083,15 @@
 
                     <div class="radio-options-list">
 
-                        <label class="radio-option"
-                            onclick="selectRadio(this, 'participa_aulas', 'Sim, com frequência')">
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Sim, com frequência'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>🔥</span>
-                                Sim, com frequência
+                                <span>Sim, com frequência</span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1118,11 +1099,15 @@
                         </label>
 
 
-                        <label class="radio-option" onclick="selectRadio(this, 'participa_aulas', 'Às vezes')">
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Às vezes'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>🗓️</span>
-                                Às vezes
+                                <span>Às vezes</span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1130,12 +1115,17 @@
                         </label>
 
 
-                        <label class="radio-option"
-                            onclick="selectRadio(this, 'participa_aulas', 'Queria fazer, mas horários não batem')">
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Queria fazer, mas horários não batem'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>⏰</span>
-                                Queria fazer, mas horários não batem
+                                <span>
+                                    Queria fazer, mas horários não batem
+                                </span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1143,11 +1133,15 @@
                         </label>
 
 
-                        <label class="radio-option" onclick="selectRadio(this, 'participa_aulas', 'Não participo')">
+                        <label class="radio-option" onclick="selectRadio(
+                                this,
+                                'participa_aulas',
+                                'Não participo'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>🚶‍♂️</span>
-                                Não participo
+                                <span>Não participo</span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1172,12 +1166,16 @@
 
 
                 <!-- =================================================
-                     TELA 2A
-                ================================================== -->
+                     TELA 2A — AULAS FAVORITAS
+                ================================================= -->
 
                 <div class="step-screen" id="step-2a">
 
                     <div class="step-header">
+
+                        <button type="button" class="btn-voltar" onclick="goToStep('1')">
+                            ← Voltar
+                        </button>
 
                         <span class="step-indicator">
                             Pergunta 2 de 5
@@ -1185,15 +1183,18 @@
 
                     </div>
 
+
                     <div class="progress-bar-container">
 
                         <div class="progress-bar" style="width: 40%;"></div>
 
                     </div>
 
+
                     <h2 class="question-title">
                         Quais aulas você mais curte?
                     </h2>
+
 
                     <p class="question-sub">
                         Marque todas que você gosta ou frequenta:
@@ -1202,51 +1203,83 @@
 
                     <div class="tiles-grid">
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Musculação')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Musculação'
+                            )">
                             <span class="tile-icon">🏋️</span>
-                            Musculação
+                            <span>Musculação</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Dança')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Dança'
+                            )">
                             <span class="tile-icon">💃</span>
-                            Dança
+                            <span>Dança</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Muay Thai')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Muay Thai'
+                            )">
                             <span class="tile-icon">🥊</span>
-                            Muay Thai
+                            <span>Muay Thai</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Pilates')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Pilates'
+                            )">
                             <span class="tile-icon">🧘</span>
-                            Pilates
+                            <span>Pilates</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Spinning')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Spinning'
+                            )">
                             <span class="tile-icon">🚴</span>
-                            Spinning
+                            <span>Spinning</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Funcional')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Funcional'
+                            )">
                             <span class="tile-icon">⚡</span>
-                            Funcional
+                            <span>Funcional</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'GAP')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'GAP'
+                            )">
                             <span class="tile-icon">🎯</span>
-                            GAP
+                            <span>GAP</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'aulas_favoritas', 'Hidroginástica')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'aulas_favoritas',
+                                'Hidroginástica'
+                            )">
                             <span class="tile-icon">🏊</span>
-                            Hidroginástica
+                            <span>Hidroginástica</span>
                         </div>
 
                     </div>
@@ -1254,6 +1287,7 @@
 
                     <input type="text" name="aulas_favoritas_outra" placeholder="Outra aula? Digite aqui..."
                         class="enquete-input">
+
 
                     <div id="hidden-aulas-favoritas"></div>
 
@@ -1270,8 +1304,8 @@
 
 
                 <!-- =================================================
-                     TELA 3A
-                ================================================== -->
+                     TELA 3A — MELHORIAS
+                ================================================= -->
 
                 <div class="step-screen" id="step-3a">
 
@@ -1299,6 +1333,7 @@
                         Alguma aula precisa melhorar?
                     </h2>
 
+
                     <p class="question-sub">
                         Marque as que merecem mais atenção:
                     </p>
@@ -1308,43 +1343,61 @@
 
                         <div class="tile-option col-span-2" onclick="toggleNenhuma(this)">
                             <span class="tile-icon">✨</span>
-                            Nenhuma, todas estão ótimas!
+                            <span>Nenhuma, todas estão ótimas!</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Funcional')">
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Funcional'
+                            )">
                             <span class="tile-icon">⚡</span>
-                            Funcional
+                            <span>Funcional</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Dança')">
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Dança'
+                            )">
                             <span class="tile-icon">💃</span>
-                            Dança
+                            <span>Dança</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Jump')">
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Jump'
+                            )">
                             <span class="tile-icon">🤸</span>
-                            Jump
+                            <span>Jump</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'GAP')">
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'GAP'
+                            )">
                             <span class="tile-icon">🎯</span>
-                            GAP
+                            <span>GAP</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Hidroginástica')">
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Hidroginástica'
+                            )">
                             <span class="tile-icon">🏊</span>
-                            Hidroginástica
+                            <span>Hidroginástica</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleMelhoria(this, 'Spinning')">
+                        <div class="tile-option" onclick="toggleMelhoria(
+                                this,
+                                'Spinning'
+                            )">
                             <span class="tile-icon">🚴</span>
-                            Spinning
+                            <span>Spinning</span>
                         </div>
 
                     </div>
@@ -1353,16 +1406,17 @@
                     <input type="text" name="aula_falta" placeholder="Outra sugestão para as aulas..."
                         class="enquete-input">
 
+
                     <div id="hidden-aula-melhoria"></div>
 
 
                     <div class="step-footer">
 
-                        <button type="button" class="btn-avancar" onclick="goToStep(4)">
+                        <button type="button" class="btn-avancar" onclick="goToStep('4')">
                             Avançar →
                         </button>
 
-                        <button type="button" class="btn-pular" onclick="goToStep(4)">
+                        <button type="button" class="btn-pular" onclick="goToStep('4')">
                             Pular esta pergunta
                         </button>
 
@@ -1372,12 +1426,16 @@
 
 
                 <!-- =================================================
-                     TELA 2B
-                ================================================== -->
+                     TELA 2B — PARA QUEM NÃO FAZ AULAS
+                ================================================= -->
 
                 <div class="step-screen" id="step-2b">
 
                     <div class="step-header">
+
+                        <button type="button" class="btn-voltar" onclick="goToStep('1')">
+                            ← Voltar
+                        </button>
 
                         <span class="step-indicator">
                             Pergunta 2 de 5
@@ -1388,7 +1446,7 @@
 
                     <div class="progress-bar-container">
 
-                        <div class="progress-bar" style="width: 50%;"></div>
+                        <div class="progress-bar" style="width: 40%;"></div>
 
                     </div>
 
@@ -1397,6 +1455,7 @@
                         O que te faria experimentar uma aula?
                     </h2>
 
+
                     <p class="question-sub">
                         Marque o que ajudaria você a começar:
                     </p>
@@ -1404,11 +1463,17 @@
 
                     <div class="radio-options-list">
 
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Horários flexíveis')">
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Horários flexíveis'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>⏰</span>
-                                Ter horários que casem com minha rotina
+                                <span>
+                                    Ter horários que casem com minha rotina
+                                </span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1416,11 +1481,17 @@
                         </label>
 
 
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Ter companhia')">
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Ter companhia'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>👥</span>
-                                Ter companhia / ir com amigos
+                                <span>
+                                    Ter companhia / ir com amigos
+                                </span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1428,11 +1499,17 @@
                         </label>
 
 
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Aula experimental')">
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Aula experimental'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>🎟️</span>
-                                Ter aula experimental gratuita
+                                <span>
+                                    Ter aula experimental gratuita
+                                </span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1440,11 +1517,17 @@
                         </label>
 
 
-                        <label class="radio-option" onclick="toggleTile(this, 'aula_melhoria', 'Professor moderado')">
+                        <label class="radio-option" onclick="toggleTile(
+                                this,
+                                'aula_melhoria',
+                                'Professor moderado'
+                            )">
 
                             <div class="radio-option-text">
                                 <span>🤝</span>
-                                Professor puxar menos no início
+                                <span>
+                                    Professor puxar menos no início
+                                </span>
                             </div>
 
                             <div class="radio-circle"></div>
@@ -1456,11 +1539,11 @@
 
                     <div class="step-footer">
 
-                        <button type="button" class="btn-avancar" onclick="goToStep(4)">
+                        <button type="button" class="btn-avancar" onclick="goToStep('4')">
                             Avançar →
                         </button>
 
-                        <button type="button" class="btn-pular" onclick="goToStep(4)">
+                        <button type="button" class="btn-pular" onclick="goToStep('4')">
                             Pular esta pergunta
                         </button>
 
@@ -1470,8 +1553,8 @@
 
 
                 <!-- =================================================
-                     TELA 4
-                ================================================== -->
+                     TELA 4 — NOVO ESPAÇO
+                ================================================= -->
 
                 <div class="step-screen" id="step-4">
 
@@ -1499,6 +1582,7 @@
                         Que espaço novo faria diferença?
                     </h2>
 
+
                     <p class="question-sub">
                         Marque quantos você gostaria de ter na Polo Fit:
                     </p>
@@ -1506,51 +1590,83 @@
 
                     <div class="tiles-grid">
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Sala de bike')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Sala de bike'
+                            )">
                             <span class="tile-icon">🚴</span>
-                            Sala de bike
+                            <span>Sala de bike</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Cross / Funcional')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Cross / Funcional'
+                            )">
                             <span class="tile-icon">🏋️</span>
-                            Cross / Funcional
+                            <span>Cross / Funcional</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Yoga')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Yoga'
+                            )">
                             <span class="tile-icon">🧘</span>
-                            Yoga
+                            <span>Yoga</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Espaço Kids')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Espaço Kids'
+                            )">
                             <span class="tile-icon">🧸</span>
-                            Espaço Kids
+                            <span>Espaço Kids</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Espaço Recovery')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Espaço Recovery'
+                            )">
                             <span class="tile-icon">💆</span>
-                            Espaço Recovery
+                            <span>Espaço Recovery</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Lutas')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Lutas'
+                            )">
                             <span class="tile-icon">🥊</span>
-                            Lutas
+                            <span>Lutas</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Alongamento')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Alongamento'
+                            )">
                             <span class="tile-icon">🤸</span>
-                            Alongamento
+                            <span>Alongamento</span>
                         </div>
 
 
-                        <div class="tile-option" onclick="toggleTile(this, 'novo_espaco', 'Nenhum')">
+                        <div class="tile-option" onclick="toggleTile(
+                                this,
+                                'novo_espaco',
+                                'Nenhum'
+                            )">
                             <span class="tile-icon">❌</span>
-                            Nenhum
+                            <span>Nenhum</span>
                         </div>
 
                     </div>
@@ -1559,16 +1675,17 @@
                     <input type="text" name="novo_espaco_outro" placeholder="Outra sugestão de espaço..."
                         class="enquete-input">
 
+
                     <div id="hidden-novo-espaco"></div>
 
 
                     <div class="step-footer">
 
-                        <button type="button" class="btn-avancar" onclick="goToStep(5)">
+                        <button type="button" class="btn-avancar" onclick="goToStep('5')">
                             Avançar →
                         </button>
 
-                        <button type="button" class="btn-pular" onclick="goToStep(5)">
+                        <button type="button" class="btn-pular" onclick="goToStep('5')">
                             Pular esta pergunta
                         </button>
 
@@ -1578,14 +1695,14 @@
 
 
                 <!-- =================================================
-                     TELA 5
-                ================================================== -->
+                     TELA 5 — SUGESTÃO FINAL
+                ================================================= -->
 
                 <div class="step-screen" id="step-5">
 
                     <div class="step-header">
 
-                        <button type="button" class="btn-voltar" onclick="goToStep(4)">
+                        <button type="button" class="btn-voltar" onclick="goToStep('4')">
                             ← Voltar
                         </button>
 
@@ -1606,6 +1723,7 @@
                     <h2 class="question-title">
                         O que faz falta na Polo Fit?
                     </h2>
+
 
                     <p class="question-sub">
                         Toque nas sugestões rápidas ou digite o que quiser:
@@ -1644,24 +1762,31 @@
 
                     <!-- ELOGIO -->
 
-                    <div style="margin-top: 16px;">
+                    <div style="margin-top: 1rem;">
 
-                        <button type="button" class="elogio-toggle" onclick="toggleElogio()">
+                        <button type="button"
+                            class="text-xs font-bold text-lime-700 hover:text-lime-800 hover:underline flex items-center gap-1"
+                            onclick="toggleElogio()">
                             <span>💬</span>
-                            Quer deixar um elogio para a equipe? (Opcional)
+
+                            Quer deixar um elogio para a equipe?
+                            (Opcional)
+
                         </button>
 
 
-                        <div id="bloco-elogio" class="elogio-box hidden">
+                        <div id="bloco-elogio" class="hidden mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
 
-                            <textarea name="elogio_colaborador" rows="3"
+                            <textarea name="elogio_colaborador" rows="2"
                                 placeholder="Elogie um professor, recepcionista ou equipe..."
-                                class="enquete-textarea"></textarea>
+                                class="enquete-textarea text-xs"></textarea>
 
                         </div>
 
                     </div>
 
+
+                    <!-- BOTÕES -->
 
                     <div class="step-footer">
 
@@ -1669,7 +1794,7 @@
                             Enviar respostas ✅
                         </button>
 
-                        <button type="button" class="btn-pular" onclick="enviarSemComentarios()">
+                        <button type="button" class="btn-pular" onclick="enviarSemComentario()">
                             Enviar sem comentários adicionais
                         </button>
 
@@ -1684,23 +1809,31 @@
     </main>
 
 
+    <!-- =========================================================
+         RODAPÉ
+    ========================================================= -->
+
     {% include "feedback/rodape.html" %}
+
+
+    <!-- PWA -->
 
     {% include "feedback/pwa_install.html" %}
 
 
     <!-- =========================================================
          JAVASCRIPT
-    ========================================================== -->
+    ========================================================= -->
 
     <script>
 
-        let currentStep = 0;
+        /* =========================================================
+           ESTADO DA PESQUISA
+        ========================================================= */
+
+        let currentStep = '0';
 
         let participatesInClasses = true;
-
-        let formEnviado = false;
-
 
         const tileSelections = {
 
@@ -1714,60 +1847,79 @@
 
 
         /* =========================================================
-           TROCAR TELA
-        ========================================================== */
+           IR PARA UMA ETAPA
+        ========================================================= */
 
         function goToStep(step) {
 
-            document
-                .querySelectorAll('.step-screen')
-                .forEach(screen => {
-
-                    screen.classList.remove('active');
-
-                    screen.setAttribute('aria-hidden', 'true');
-
-                });
-
+            const stepId = String(step);
 
             const target = document.getElementById(
-                'step-' + step
+                'step-' + stepId
             );
 
-
             if (!target) {
+                console.warn(
+                    'Etapa não encontrada:',
+                    'step-' + stepId
+                );
+
                 return;
             }
 
 
+            document
+                .querySelectorAll('.step-screen')
+                .forEach(function (screen) {
+
+                    screen.classList.remove('active');
+
+                });
+
+
             target.classList.add('active');
 
-            target.setAttribute('aria-hidden', 'false');
+            currentStep = stepId;
 
 
-            currentStep = step;
+            /*
+             * Volta para o topo da pesquisa.
+             * O pequeno atraso evita conflito
+             * com a troca de display.
+             */
 
+            setTimeout(function () {
 
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+            }, 20);
 
         }
 
 
         /* =========================================================
-           RADIO
-        ========================================================== */
+           SELEÇÃO DA PRIMEIRA PERGUNTA
+        ========================================================= */
 
-        function selectRadio(element, inputName, value) {
+        function selectRadio(
+            element,
+            inputName,
+            value
+        ) {
 
             const parent = element.parentElement;
+
+            if (!parent) {
+                return;
+            }
 
 
             parent
                 .querySelectorAll('.radio-option')
-                .forEach(option => {
+                .forEach(function (option) {
 
                     option.classList.remove('selected');
 
@@ -1783,7 +1935,9 @@
 
 
             if (input) {
+
                 input.value = value;
+
             }
 
 
@@ -1799,25 +1953,39 @@
 
 
         /* =========================================================
-           PERGUNTA 1
-        ========================================================== */
+           AVANÇAR DA PERGUNTA 1
+        ========================================================= */
 
         function handleStep1Next() {
 
             const input =
-                document.getElementById('input_participa_aulas');
+                document.getElementById(
+                    'input_participa_aulas'
+                );
 
 
-            const value = input ? input.value : '';
+            const value =
+                input ? input.value : '';
 
+
+            /*
+             * Se o usuário não escolher nenhuma opção,
+             * seleciona a primeira automaticamente.
+             */
 
             if (!value) {
 
-                alert(
-                    'Escolha uma opção para continuar.'
-                );
+                const first =
+                    document.querySelector(
+                        '#step-1 .radio-option'
+                    );
 
-                return;
+
+                if (first) {
+
+                    first.click();
+
+                }
 
             }
 
@@ -1837,7 +2005,7 @@
 
         /* =========================================================
            VOLTAR DA PERGUNTA 4
-        ========================================================== */
+        ========================================================= */
 
         function handleStep4Back() {
 
@@ -1855,19 +2023,23 @@
 
 
         /* =========================================================
-           SELEÇÃO MÚLTIPLA
-        ========================================================== */
+           SELEÇÃO DE TILES
+        ========================================================= */
 
-        function toggleTile(element, group, value) {
-
-            element.classList.toggle('selected');
-
+        function toggleTile(
+            element,
+            group,
+            value
+        ) {
 
             if (!tileSelections[group]) {
 
                 tileSelections[group] = new Set();
 
             }
+
+
+            element.classList.toggle('selected');
 
 
             if (
@@ -1883,23 +2055,51 @@
             }
 
 
+            /*
+             * Para opções que utilizam o estilo
+             * radio-option, também atualizamos
+             * a classe visual.
+             */
+
+            if (
+                element.classList.contains(
+                    'radio-option'
+                )
+            ) {
+
+                /*
+                 * Aqui mantemos seleção múltipla,
+                 * porque a pergunta permite marcar
+                 * mais de uma opção.
+                 */
+
+            }
+
+
             updateHiddenInputs(group);
 
         }
 
 
         /* =========================================================
-           NENHUMA
-        ========================================================== */
+           NENHUMA AULA PRECISA MELHORAR
+        ========================================================= */
 
         function toggleNenhuma(element) {
 
-            const isSelected =
-                element.classList.toggle('selected');
-
-
             const step =
                 document.getElementById('step-3a');
+
+
+            if (!step) {
+                return;
+            }
+
+
+            const isSelected =
+                element.classList.toggle(
+                    'selected'
+                );
 
 
             const otherTiles =
@@ -1910,11 +2110,15 @@
 
             if (isSelected) {
 
-                otherTiles.forEach(tile => {
+                otherTiles.forEach(
+                    function (tile) {
 
-                    tile.classList.remove('selected');
+                        tile.classList.remove(
+                            'selected'
+                        );
 
-                });
+                    }
+                );
 
 
                 tileSelections.aula_melhoria.clear();
@@ -1940,13 +2144,21 @@
 
 
         /* =========================================================
-           MELHORIA
-        ========================================================== */
+           SELEÇÃO DE MELHORIAS
+        ========================================================= */
 
-        function toggleMelhoria(element, value) {
+        function toggleMelhoria(
+            element,
+            value
+        ) {
 
             const step =
                 document.getElementById('step-3a');
+
+
+            if (!step) {
+                return;
+            }
 
 
             const nenhuma =
@@ -1955,7 +2167,13 @@
                 );
 
 
-            nenhuma.classList.remove('selected');
+            if (nenhuma) {
+
+                nenhuma.classList.remove(
+                    'selected'
+                );
+
+            }
 
 
             tileSelections.aula_melhoria.delete(
@@ -1963,18 +2181,24 @@
             );
 
 
-            element.classList.toggle('selected');
+            element.classList.toggle(
+                'selected'
+            );
 
 
             if (
                 tileSelections.aula_melhoria.has(value)
             ) {
 
-                tileSelections.aula_melhoria.delete(value);
+                tileSelections.aula_melhoria.delete(
+                    value
+                );
 
             } else {
 
-                tileSelections.aula_melhoria.add(value);
+                tileSelections.aula_melhoria.add(
+                    value
+                );
 
             }
 
@@ -1987,8 +2211,8 @@
 
 
         /* =========================================================
-           INPUTS ESCONDIDOS
-        ========================================================== */
+           INPUTS OCULTOS
+        ========================================================= */
 
         function updateHiddenInputs(group) {
 
@@ -2020,29 +2244,35 @@
             container.innerHTML = '';
 
 
-            tileSelections[group].forEach(value => {
+            tileSelections[group].forEach(
+                function (value) {
 
-                const input =
-                    document.createElement('input');
-
-
-                input.type = 'hidden';
-
-                input.name = group;
-
-                input.value = value;
+                    const input =
+                        document.createElement(
+                            'input'
+                        );
 
 
-                container.appendChild(input);
+                    input.type = 'hidden';
 
-            });
+                    input.name = group;
+
+                    input.value = value;
+
+
+                    container.appendChild(
+                        input
+                    );
+
+                }
+            );
 
         }
 
 
         /* =========================================================
-           TAGS
-        ========================================================== */
+           ADICIONAR TAG À SUGESTÃO
+        ========================================================= */
 
         function addTagChip(text) {
 
@@ -2063,7 +2293,8 @@
 
             } else {
 
-                textarea.value += ' ' + text;
+                textarea.value +=
+                    ' ' + text;
 
             }
 
@@ -2074,8 +2305,8 @@
 
 
         /* =========================================================
-           ELOGIO
-        ========================================================== */
+           ABRIR/FECHAR ELOGIO
+        ========================================================= */
 
         function toggleElogio() {
 
@@ -2090,36 +2321,42 @@
             }
 
 
-            bloco.classList.toggle('hidden');
+            bloco.classList.toggle(
+                'hidden'
+            );
 
         }
 
 
         /* =========================================================
-           ENVIAR SEM COMENTÁRIOS
-        ========================================================== */
+           ENVIAR SEM COMENTÁRIO
+        ========================================================= */
 
-        function enviarSemComentarios() {
+        function enviarSemComentario() {
 
-            const sugestao =
+            const textarea =
                 document.getElementById(
                     'sugestao_valor'
                 );
 
 
-            const elogio =
-                document.querySelector(
-                    '[name="elogio_colaborador"]'
-                );
+            if (textarea) {
 
+                textarea.value = '';
 
-            if (sugestao) {
-                sugestao.value = '';
             }
 
 
+            const elogio =
+                document.querySelector(
+                    'textarea[name="elogio_colaborador"]'
+                );
+
+
             if (elogio) {
+
                 elogio.value = '';
+
             }
 
 
@@ -2129,9 +2366,7 @@
                 );
 
 
-            if (form && !formEnviado) {
-
-                formEnviado = true;
+            if (form) {
 
                 form.submit();
 
@@ -2141,65 +2376,51 @@
 
 
         /* =========================================================
-           EVITAR DUPLO ENVIO
-        ========================================================== */
-
-        document
-            .getElementById('form-enquete')
-            .addEventListener('submit', function () {
-
-                if (formEnviado) {
-                    return;
-                }
-
-
-                formEnviado = true;
-
-
-                const button =
-                    document.getElementById(
-                        'btn-submit-enquete'
-                    );
-
-
-                if (button) {
-
-                    button.disabled = true;
-
-                    button.innerHTML =
-                        'Enviando...';
-
-                    button.style.opacity =
-                        '0.7';
-
-                    button.style.cursor =
-                        'wait';
-
-                }
-
-            });
-
-
-        /* =========================================================
-           INICIALIZAÇÃO
-        ========================================================== */
+           PROTEÇÃO CONTRA DUPLO ENVIO
+        ========================================================= */
 
         document.addEventListener(
             'DOMContentLoaded',
             function () {
 
-                document
-                    .querySelectorAll('.step-screen')
-                    .forEach(screen => {
+                const form =
+                    document.getElementById(
+                        'form-enquete'
+                    );
 
-                        screen.setAttribute(
-                            'aria-hidden',
-                            screen.classList.contains('active')
-                                ? 'false'
-                                : 'true'
-                        );
 
-                    });
+                if (!form) {
+                    return;
+                }
+
+
+                form.addEventListener(
+                    'submit',
+                    function () {
+
+                        const submitButton =
+                            document.getElementById(
+                                'btn-submit-enquete'
+                            );
+
+
+                        if (submitButton) {
+
+                            submitButton.disabled = true;
+
+                            submitButton.innerHTML =
+                                'Enviando... ⏳';
+
+                            submitButton.style.opacity =
+                                '0.7';
+
+                            submitButton.style.cursor =
+                                'wait';
+
+                        }
+
+                    }
+                );
 
             }
         );
