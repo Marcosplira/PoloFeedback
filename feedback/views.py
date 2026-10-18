@@ -816,6 +816,8 @@ def dashboard(request):
             "principal_oportunidade": melhorias_ranking[0] if melhorias_ranking else None,
             "espaco_mais_desejado": espacos_ranking[0] if espacos_ranking else None,
             "gemini_configured": bool(getattr(settings, "GEMINI_API_KEY", "")),
+            "total_funcionarios": todos_funcionarios.count(),
+            "total_equipamentos": Equipamento.objects.count(),
         },
     )
 

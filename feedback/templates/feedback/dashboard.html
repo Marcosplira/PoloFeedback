@@ -473,6 +473,57 @@
         }
 
         /* ────────────────────────────────────
+           SEÇÃO DE IA
+        ──────────────────────────────────── */
+        .resumo-ia-box {
+            background: rgba(163,230,53,0.05);
+            border: 1px solid rgba(163,230,53,0.15);
+            border-radius: 0.875rem;
+            padding: 1.25rem;
+            min-height: 120px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .resumo-ia-placeholder {
+            color: var(--texto-suave);
+            font-size: 0.875rem;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .resumo-ia-conteudo {
+            color: var(--texto);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .resumo-ia-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--verde);
+            font-size: 0.875rem;
+            padding: 2rem 0;
+        }
+
+        .resumo-ia-loading::after {
+            content: "";
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--verde);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ────────────────────────────────────
            LISTA DE AVALIAÇÕES
         ──────────────────────────────────── */
         .av-lista {
@@ -1019,6 +1070,26 @@
                 </div>
             </section>
 
+            <!-- SEÇÃO DE IA - RESUMO DE AVALIAÇÕES -->
+            {% if gemini_configured %}
+            <section class="painel" aria-labelledby="ia-titulo" id="resumo-ia">
+                <div class="painel-header">
+                    <div>
+                        <h2 class="painel-titulo" id="ia-titulo">🤖 Resumo com IA</h2>
+                        <p class="painel-sub">Análise inteligente das avaliações</p>
+                    </div>
+                    <button type="button" id="btn-gerar-resumo" class="btn-primario">
+                        Gerar resumo
+                    </button>
+                </div>
+                <div id="resumo-ia-conteudo" class="resumo-ia-box">
+                    <p class="resumo-ia-placeholder">
+                        Clique em "Gerar resumo" para obter uma análise inteligente das avaliações atuais.
+                    </p>
+                </div>
+            </section>
+            {% endif %}
+
             <!-- LINHA: AVALIAÇÕES PENDENTES + AÇÕES RÁPIDAS -->
             <div class="grid-3">
 
@@ -1329,6 +1400,52 @@
                 link.classList.remove('ativo');
             }
         });
+
+        // Função para gerar resumo com IA
+        const btnGerarResumo = document.getElementById('btn-gerar-resumo');
+        const resumoIaConteudo = document.getElementById('resumo-ia-conteudo');
+
+        if (btnGerarResumo && resumoIaConteudo) {
+            btnGerarResumo.addEventListener('click', async function() {
+                // Mostrar loading
+                resumoIaConteudo.innerHTML = '<div class="resumo-ia-loading">Gerando resumo...</div>';
+                btnGerarResumo.disabled = true;
+                btnGerarResumo.textContent = 'Gerando...';
+
+                try {
+                    const response = await fetch('/ia/analisar/', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        let conteudoHtml = `<div class="resumo-ia-conteudo">${data.analise}</div>`;
+                        
+                        if (data.aviso) {
+                            conteudoHtml += `<p style="margin-top: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.5);">⚠️ ${data.aviso}</p>`;
+                        }
+                        
+                        if (data.modo) {
+                            conteudoHtml += `<p style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--verde);">Modo: ${data.modo}</p>`;
+                        }
+                        
+                        resumoIaConteudo.innerHTML = conteudoHtml;
+                    } else {
+                        resumoIaConteudo.innerHTML = '<p style="color: #ef4444;">Erro ao gerar resumo. Tente novamente.</p>';
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    resumoIaConteudo.innerHTML = '<p style="color: #ef4444;">Erro de conexão. Verifique sua internet.</p>';
+                } finally {
+                    btnGerarResumo.disabled = false;
+                    btnGerarResumo.textContent = 'Gerar resumo';
+                }
+            });
+        }
     </script>
 </body>
 </html>

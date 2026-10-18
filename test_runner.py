@@ -1,6 +1,6 @@
 import os
 
-ROOT = r"C:\Users\ACER\Downloads\PoloFeedback-main\PoloFeedback-main"
+ROOT = r"C:\Users\Marcos Paulo\Desktop\PoloFeedback"
 os.chdir(ROOT)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "polofeedback.settings")
 

@@ -28,20 +28,18 @@
         :root {
             color-scheme: dark;
 
-            --verde: #65a30d;
-            --verde-btn: #84cc16;
-            --verde-soft: #f7fee7;
-            --verde-border: #bef264;
+            --verde: #a3e635;
+            --verde-escuro: #65a30d;
+            --verde-soft: rgba(163,230,53,0.12);
+            --verde-border: rgba(163,230,53,0.2);
 
-            --bg: #090909;
-            --card-bg: #ffffff;
-            --linha: #27272a;
+            --preto: #0a0a0a;
+            --bg: #0a0a0a;
+            --card-bg: #161616;
+            --linha: rgba(255,255,255,0.08);
 
-            --texto: #f8fafc;
-            --texto-suave: #a1a1aa;
-
-            --texto-card: #0f172a;
-            --texto-card-suave: #64748b;
+            --texto: #f0f0f0;
+            --texto-suave: #a0a0a0;
         }
 
         html {
@@ -54,19 +52,14 @@
 
             font-family: 'Inter', sans-serif;
 
-            background:
-                radial-gradient(circle at top center,
-                    rgba(101, 163, 13, 0.08),
-                    transparent 35%),
-                var(--bg);
-
+            background: var(--preto);
             color: var(--texto);
 
             display: flex;
             flex-direction: column;
             align-items: center;
 
-            padding: 5rem 1rem 2rem;
+            padding: 4rem 1rem 2rem;
 
             position: relative;
             overflow-x: hidden;
@@ -90,11 +83,11 @@
 
             padding: 0 1.25rem;
 
-            background: rgba(9, 9, 9, 0.96);
-            border-bottom: 1px solid #1f1f1f;
+            background: rgba(10, 10, 10, 0.95);
+            border-bottom: 1px solid rgba(163,230,53,0.12);
 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
 
             z-index: 1000;
         }
@@ -170,22 +163,19 @@
             width: 100%;
 
             background: var(--card-bg);
-
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(163,230,53,0.15);
             border-radius: 1.75rem;
 
             padding: 1.75rem 1.5rem;
 
-            box-shadow:
-                0 10px 30px rgba(0, 0, 0, 0.25),
-                0 30px 70px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
 
             display: flex;
             flex-direction: column;
 
             min-height: 540px;
 
-            color: var(--texto-card);
+            color: var(--texto);
         }
 
         /* =========================================================
