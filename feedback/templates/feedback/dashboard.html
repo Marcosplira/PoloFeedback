@@ -460,6 +460,31 @@
             border: 1px solid rgba(239,68,68,0.2);
         }
 
+        .btn-primario {
+            background: var(--verde);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 0.625rem;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(163, 230, 53, 0.3);
+        }
+
+        .btn-primario:hover {
+            background: #b8f048;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(163, 230, 53, 0.4);
+        }
+
+        .btn-primario:disabled {
+            background: rgba(163, 230, 53, 0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .badge-verde {
             background: var(--verde-soft);
             color: var(--verde);
