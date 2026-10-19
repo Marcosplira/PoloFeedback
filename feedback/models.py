@@ -87,12 +87,15 @@ class Funcionario(models.Model):
 
 class Avaliacao(models.Model):
     CATEGORIA_CHOICES = [
-        ("atendimento", "Atendimento"),
-        ("limpeza", "Limpeza"),
         ("equipamentos", "Equipamentos"),
-        ("professores", "Professores"),
         ("estrutura", "Estrutura"),
-        ("geral", "Geral"),
+        ("limpeza", "Limpeza"),
+        ("professores", "Profissionais"),
+        ("aulas_coletivas", "Aulas coletivas"),
+        ("treino", "Treino"),
+        ("avaliacao_fisica", "Avaliação física"),
+        ("geral", "Sugestão geral"),
+        ("atendimento", "Atendimento"),
     ]
     TIPO_CHOICES = [
         ("elogio", "Elogio"),

@@ -501,13 +501,12 @@
            SEÇÃO DE IA
         ──────────────────────────────────── */
         .resumo-ia-box {
-            background: rgba(163,230,53,0.05);
+            background: rgba(163,230,53,0.03);
             border: 1px solid rgba(163,230,53,0.15);
             border-radius: 0.875rem;
             padding: 1.25rem;
             min-height: 120px;
-            max-height: 300px;
-            overflow-y: auto;
+            transition: all 0.3s ease;
         }
 
         .resumo-ia-placeholder {
@@ -1100,11 +1099,16 @@
                 <div class="painel-header">
                     <div>
                         <h2 class="painel-titulo" id="ia-titulo">🤖 Resumo com IA</h2>
-                        <p class="painel-sub">Análise inteligente das avaliações</p>
+                        <p class="painel-sub">Análise inteligente e gráficos das avaliações</p>
                     </div>
-                    <button type="button" id="btn-gerar-resumo" class="btn-primario">
-                        Gerar resumo
-                    </button>
+                    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                        <a href="{% url 'ia_chat' %}" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:0.625rem 1rem;border-radius:0.625rem;border:1px solid rgba(163,230,53,0.3);background:rgba(163,230,53,0.08);color:var(--verde);font-weight:700;font-size:0.875rem;transition:all 0.2s;">
+                            💬 Chat com IA
+                        </a>
+                        <button type="button" id="btn-gerar-resumo" class="btn-primario">
+                            Gerar resumo
+                        </button>
+                    </div>
                 </div>
                 <div id="resumo-ia-conteudo" class="resumo-ia-box">
                     <p class="resumo-ia-placeholder">
@@ -1444,14 +1448,40 @@
                     if (response.ok) {
                         const data = await response.json();
                         
-                        let conteudoHtml = `<div class="resumo-ia-conteudo">${data.analise}</div>`;
+                        let conteudoHtml = '';
+                        if (data.graficos_html) {
+                            conteudoHtml += data.graficos_html;
+                        }
+
+                        if (data.analise) {
+                            let analiseFormatada = data.analise
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #f1f5f9;">$1</strong>')
+                                .replace(/\n\n/g, '<div style="height: 10px;"></div>')
+                                .replace(/\n/g, '<br>')
+                                .replace(/• (.*?)(<br>|$)/g, '<span style="display:block;margin-left:10px;margin-bottom:4px;">• $1</span>');
+
+                            conteudoHtml += `
+                                <div style="margin-top: 14px; padding: 14px 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                        <span style="font-size: 1.1rem;">📋</span>
+                                        <strong style="color: var(--verde); font-size: 0.95rem;">Análise Executiva da Polo Fit</strong>
+                                    </div>
+                                    <div style="color: #e2e8f0; font-size: 0.85rem; line-height: 1.6;">
+                                        ${analiseFormatada}
+                                    </div>
+                                </div>
+                            `;
+                        }
                         
                         if (data.aviso) {
-                            conteudoHtml += `<p style="margin-top: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.5);">⚠️ ${data.aviso}</p>`;
+                            conteudoHtml += `<p style="margin-top: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.5);">💡 ${data.aviso}</p>`;
                         }
                         
                         if (data.modo) {
-                            conteudoHtml += `<p style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--verde);">Modo: ${data.modo}</p>`;
+                            conteudoHtml += `<p style="margin-top: 0.4rem; font-size: 0.7rem; color: var(--verde);">Motor de IA: ${data.modo === 'gemini' ? 'Google Gemini' : 'Inteligência dos Dados Polo Fit'}</p>`;
                         }
                         
                         resumoIaConteudo.innerHTML = conteudoHtml;

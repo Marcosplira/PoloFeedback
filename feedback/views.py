@@ -22,6 +22,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.staticfiles import finders
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
@@ -145,11 +146,35 @@ def avaliar(request):
 
     if request.method == "POST":
         categorias = request.POST.getlist("categorias")
+        if not categorias and request.POST.get("categoria"):
+            categorias = [request.POST.get("categoria").strip()]
+
         nota = request.POST.get("nota")
+
         tipos_feedback = request.POST.getlist("tipos_feedback")
+        if not tipos_feedback and request.POST.get("tipo_feedback"):
+            tipos_feedback = [request.POST.get("tipo_feedback").strip()]
+
+        # Se o usuário não selecionou o tipo de feedback, deduz pela nota de estrelas
+        if not tipos_feedback and nota:
+            try:
+                n = int(nota)
+                if n >= 4:
+                    tipos_feedback = ["elogio"]
+                elif n == 3:
+                    tipos_feedback = ["sugestao"]
+                else:
+                    tipos_feedback = ["reclamacao"]
+            except ValueError:
+                tipos_feedback = ["elogio"]
+
         comentario = request.POST.get("comentario", "").strip()
         localizacao = request.POST.get("localizacao", "").strip()
+
         funcionario_ids = request.POST.getlist("funcionarios_ids")
+        if not funcionario_ids and request.POST.get("funcionario_id"):
+            funcionario_ids = [request.POST.get("funcionario_id").strip()]
+
         funcionarios_selecionados, selecao_valida = _selecionar_funcionarios(
             funcionario_ids
         )
@@ -158,17 +183,14 @@ def avaliar(request):
 
         if not categorias:
             erros.append(
-                "Selecione pelo menos um aspecto para avaliar "
-                "(Atendimento, Limpeza, etc.)."
+                "Selecione sobre o que você quer opinar."
             )
 
         if not nota:
             erros.append("Avalie atribuindo uma nota de 1 a 5 estrelas.")
 
         if not tipos_feedback:
-            erros.append(
-                "Selecione o tipo de feedback " "(Elogio, Sugestão ou Reclamação)."
-            )
+            tipos_feedback = ["elogio"]
 
         if not selecao_valida:
             erros.append(
@@ -1288,13 +1310,31 @@ def _coletar_dados_gerenciais_ia():
         if avaliacoes
         else None
     )
+    total_av = len(avaliacoes)
+    pct_elogios = round((tipos["elogio"] / total_av) * 100) if total_av else 0
+    pct_reclamacoes = round((tipos["reclamacao"] / total_av) * 100) if total_av else 0
+    pct_sugestoes = round((tipos["sugestao"] / total_av) * 100) if total_av else 0
+
     return {
-        "total": len(avaliacoes),
+        "total": total_av,
         "media": media,
         "media_texto": f"{media:.1f}/5" if media is not None else "sem avaliações",
         "elogios": tipos["elogio"],
         "reclamacoes": tipos["reclamacao"],
         "sugestoes": tipos["sugestao"],
+        "percentual_elogios": pct_elogios,
+        "percentual_reclamacoes": pct_reclamacoes,
+        "percentual_sugestoes": pct_sugestoes,
+        "notas_dict": {nota: notas[nota] for nota in range(1, 6)},
+        "categorias_lista": [
+            {
+                "chave": chave,
+                "nome": categoria_labels.get(chave, chave),
+                "total": quantidade,
+                "percentual": round((quantidade / total_av) * 100) if total_av else 0,
+            }
+            for chave, quantidade in categorias.most_common()
+        ],
         "status": status,
         "status_texto": (
             f"pendentes: {status['pendente']}, em análise: {status['em_analise']}, "
@@ -1329,6 +1369,179 @@ def _coletar_dados_gerenciais_ia():
         "elogios_colaboradores": elogios_colaboradores[:6],
         "elogios_colaboradores_nomes": formatar_contagem(elogios_colaboradores_nomes),
     }
+
+
+def _gerar_html_graficos_ia(dados):
+    total = dados.get("total", 0)
+    media = dados.get("media") or 0.0
+    elogios = dados.get("elogios", 0)
+    reclamacoes = dados.get("reclamacoes", 0)
+    sugestoes = dados.get("sugestoes", 0)
+
+    pct_elogios = dados.get("percentual_elogios", 0)
+    pct_reclamacoes = dados.get("percentual_reclamacoes", 0)
+    pct_sugestoes = dados.get("percentual_sugestoes", 0)
+
+    notas_raw = dados.get("notas_dict", {})
+    if not notas_raw:
+        notas_raw = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        import re
+        texto_notas = dados.get("notas", "")
+        for n in range(1, 6):
+            m = re.search(rf"{n}\s*estrela\(s\):\s*(\d+)", texto_notas)
+            if m:
+                notas_raw[n] = int(m.group(1))
+
+    categorias_lista = dados.get("categorias_lista", [])
+    if not categorias_lista:
+        cat_texto = dados.get("categorias", "")
+        categorias_lista = []
+        if cat_texto and cat_texto != "sem avaliações por categoria":
+            for parte in cat_texto.split(","):
+                if ":" in parte:
+                    nome, qtd = parte.split(":", 1)
+                    try:
+                        categorias_lista.append({"nome": nome.strip(), "total": int(qtd.strip())})
+                    except ValueError:
+                        pass
+
+    status_raw = dados.get("status", {})
+    pendentes = status_raw.get("pendente", 0)
+    em_analise = status_raw.get("em_analise", 0)
+    resolvidas = status_raw.get("resolvida", 0)
+
+    linhas_estrelas = []
+    cores_estrelas = {
+        5: "#22c55e",
+        4: "#a3e635",
+        3: "#eab308",
+        2: "#f97316",
+        1: "#ef4444",
+    }
+    for n in (5, 4, 3, 2, 1):
+        qtd = notas_raw.get(n, 0)
+        pct = round((qtd / total) * 100) if total else 0
+        cor = cores_estrelas.get(n, "#a3e635")
+        linhas_estrelas.append(f"""
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.8rem;">
+                <span style="width:32px;color:#cbd5e1;font-weight:700;">{n} ★</span>
+                <div style="flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden;">
+                    <div style="width:{pct}%;height:100%;background:{cor};border-radius:999px;"></div>
+                </div>
+                <span style="width:68px;text-align:right;color:#94a3b8;font-size:0.75rem;">{qtd} ({pct}%)</span>
+            </div>
+        """)
+    html_estrelas = "".join(linhas_estrelas)
+
+    linhas_cat = []
+    max_cat = max([c["total"] for c in categorias_lista], default=1)
+    icones_cat = {
+        "equipamentos": "🏋️",
+        "estrutura": "🏢",
+        "limpeza": "🧹",
+        "professores": "👨‍🏫",
+        "profissionais": "👥",
+        "atendimento": "🧑‍💼",
+        "aulas": "🥊",
+        "treino": "💪",
+        "avaliacao": "📋",
+        "geral": "💡",
+    }
+    for item in categorias_lista[:5]:
+        nome = item["nome"]
+        qtd = item["total"]
+        pct_bar = round((qtd / max_cat) * 100) if max_cat else 0
+        pct_total = round((qtd / total) * 100) if total else 0
+        icone = "📌"
+        for k, ic in icones_cat.items():
+            if k in nome.lower():
+                icone = ic
+                break
+        linhas_cat.append(f"""
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.8rem;">
+                <span style="width:115px;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{nome}">{icone} {nome}</span>
+                <div style="flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden;">
+                    <div style="width:{pct_bar}%;height:100%;background:linear-gradient(90deg, #a3e635, #4ade80);border-radius:999px;"></div>
+                </div>
+                <span style="width:68px;text-align:right;color:#94a3b8;font-size:0.75rem;">{qtd} ({pct_total}%)</span>
+            </div>
+        """)
+    html_categorias = "".join(linhas_cat) if linhas_cat else '<p style="font-size:0.8rem;color:#94a3b8;">Sem dados de categorias.</p>'
+
+    html = f"""
+    <div class="ia-graficos-wrapper" style="background:rgba(15,15,15,0.85);border:1px solid rgba(163,230,53,0.25);border-radius:12px;padding:16px;margin:10px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1.15rem;">📊</span>
+                <strong style="color:#a3e635;font-size:0.95rem;letter-spacing:-0.01em;">Métricas e Gráficos das Avaliações</strong>
+            </div>
+            <span style="font-size:0.75rem;padding:3px 8px;border-radius:999px;background:rgba(163,230,53,0.15);color:#a3e635;font-weight:700;">
+                {total} avaliações
+            </span>
+        </div>
+
+        <!-- 4 CARDS RESUMO -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:8px;margin-bottom:16px;">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:900;color:#a3e635;">{media:.1f} ★</div>
+                <div style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-top:2px;">Nota Média</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:900;color:#22c55e;">{pct_elogios}%</div>
+                <div style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-top:2px;">Elogios ({elogios})</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:900;color:{'#ef4444' if reclamacoes > 0 else '#94a3b8'};">{reclamacoes}</div>
+                <div style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-top:2px;">Reclamações</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:900;color:#eab308;">{sugestoes}</div>
+                <div style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-top:2px;">Sugestões</div>
+            </div>
+        </div>
+
+        <!-- GRÁFICO 1: BARRA DE SENTIMENTO -->
+        <div style="margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-size:0.78rem;font-weight:700;color:#e2e8f0;">Distribuição de Sentimento</span>
+                <span style="font-size:0.72rem;color:#94a3b8;">{pct_elogios}% Positivo</span>
+            </div>
+            <div style="height:12px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden;display:flex;">
+                <div style="width:{pct_elogios}%;background:#22c55e;" title="Elogios: {elogios} ({pct_elogios}%)"></div>
+                <div style="width:{pct_sugestoes}%;background:#eab308;" title="Sugestões: {sugestoes} ({pct_sugestoes}%)"></div>
+                <div style="width:{pct_reclamacoes}%;background:#ef4444;" title="Reclamações: {reclamacoes} ({pct_reclamacoes}%)"></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:6px;font-size:0.72rem;color:#94a3b8;flex-wrap:wrap;">
+                <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></span> Elogios ({elogios})</span>
+                <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#eab308;"></span> Sugestões ({sugestoes})</span>
+                <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#ef4444;"></span> Reclamações ({reclamacoes})</span>
+            </div>
+        </div>
+
+        <!-- GRÁFICO 2 & 3: GRID DE 2 COLUNAS (NOTAS + CATEGORIAS) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:14px;margin-bottom:14px;">
+            <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px;">
+                <div style="font-size:0.8rem;font-weight:700;color:#e2e8f0;margin-bottom:10px;">⭐ Distribuição por Estrelas</div>
+                {html_estrelas}
+            </div>
+            <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px;">
+                <div style="font-size:0.8rem;font-weight:700;color:#e2e8f0;margin-bottom:10px;">📍 Setores Mais Avaliados</div>
+                {html_categorias}
+            </div>
+        </div>
+
+        <!-- STATUS DE RESOLUÇÃO -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 12px;font-size:0.75rem;">
+            <span style="color:#94a3b8;font-weight:600;">Status das Ações:</span>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <span style="color:#fbbf24;">⏳ Pendentes: <strong>{pendentes}</strong></span>
+                <span style="color:#60a5fa;">🔍 Em análise: <strong>{em_analise}</strong></span>
+                <span style="color:#4ade80;">✅ Resolvidas: <strong>{resolvidas}</strong></span>
+            </div>
+        </div>
+    </div>
+    """
+    return html
 
 
 def _gerar_resumo_executivo_local(dados):
@@ -1444,6 +1657,7 @@ def _solicitar_resposta_gemini(system_instruction, contents):
     return None
 
 
+@csrf_exempt
 @staff_required(permission="feedback.view_avaliacao")
 def ia_analisar(request):
     dados = _coletar_dados_gerenciais_ia()
@@ -1457,8 +1671,13 @@ def ia_analisar(request):
         and not dados["planos_ativos"]
     ):
         return JsonResponse(
-            {"analise": "Ainda não há avaliações nem respostas de enquete para resumir."}
+            {
+                "analise": "Ainda não há avaliações nem respostas de enquete para resumir.",
+                "graficos_html": None,
+            }
         )
+
+    graficos_html = _gerar_html_graficos_ia(dados)
 
     system_instruction = (
         "Você é o assistente executivo da Academia Polo Fit. Gere em português "
@@ -1476,11 +1695,16 @@ def ia_analisar(request):
         [{"role": "user", "parts": [{"text": prompt}]}],
     )
     if resposta:
-        return JsonResponse({"analise": resposta, "modo": "gemini"})
+        return JsonResponse({
+            "analise": resposta,
+            "graficos_html": graficos_html,
+            "modo": "gemini"
+        })
 
     return JsonResponse(
         {
             "analise": _gerar_resumo_executivo_local(dados),
+            "graficos_html": graficos_html,
             "modo": "local",
             "aviso": (
                 "O Gemini não está disponível agora; este resumo foi montado "
@@ -1515,11 +1739,21 @@ def _gerar_resposta_conversacional_local(pergunta, dados):
     if p in {"", "tudo bem", "como vai", "tudo bem voce"}:
         return (
             f"{abertura}Tudo bem, obrigado por perguntar! Como posso ajudar? "
-            "Posso consultar avaliações, equipe, reclamações ou resultados da enquete."
+            "Posso mostrar os gráficos de avaliações, consultar equipe, analisar reclamações ou gerar um resumo completo."
         )
 
     if p in {"obrigado", "obrigada", "muito obrigado", "muito obrigada", "valeu"}:
         return "Por nada! Se quiser, posso consultar outro indicador ou fazer um resumo geral."
+
+    if any(termo in p for termo in ("grafico", "graficos")):
+        return (
+            f"Aqui estão os gráficos detalhados das avaliações da Polo Fit! 📊\n\n"
+            f"• Total de {dados['total']} avaliações registradas com nota média de {dados['media_texto']}.\n"
+            f"• Elogios: {dados['elogios']} ({dados.get('percentual_elogios', 0)}%) | "
+            f"Reclamações: {dados['reclamacoes']} ({dados.get('percentual_reclamacoes', 0)}%) | "
+            f"Sugestões: {dados['sugestoes']} ({dados.get('percentual_sugestoes', 0)}%).\n\n"
+            "Confira os gráficos visuais de sentimento, notas e áreas avaliadas logo acima."
+        )
 
     if any(
         termo in p
@@ -1531,9 +1765,9 @@ def _gerar_resposta_conversacional_local(pergunta, dados):
         )
     ):
         return (
-            "Posso ajudar você a analisar satisfação e notas, tópicos avaliados, reclamações, "
-            "sugestões, desempenho dos funcionários, aulas e espaços pedidos na enquete. "
-            "Também posso montar um resumo geral dos registros disponíveis."
+            "Posso ajudar você a analisar satisfação e notas, exibir gráficos das avaliações, "
+            "tópicos avaliados, reclamações, sugestões, desempenho dos funcionários e enquete. "
+            "Também posso montar um resumo geral de todos os dados disponíveis."
         )
 
     if any(
@@ -1592,7 +1826,7 @@ Priorize os temas que aparecem repetidamente e valide as ações com a equipe.""
         return f"""**Panorama das avaliações**
 
 • {dados['total']} avaliação(ões); nota média {dados['media_texto']}.
-• Elogios: {dados['elogios']}; reclamações: {dados['reclamacoes']}; sugestões: {dados['sugestoes']}.
+• Elogios: {dados['elogios']} ({dados.get('percentual_elogios', 0)}%); reclamações: {dados['reclamacoes']} ({dados.get('percentual_reclamacoes', 0)}%); sugestões: {dados['sugestoes']} ({dados.get('percentual_sugestoes', 0)}%).
 • Status: {dados['status_texto']}.
 • Categorias: {dados['categorias']}.
 • Notas: {dados['notas']}.
@@ -1601,11 +1835,13 @@ Priorize os temas que aparecem repetidamente e valide as ações com a equipe.""
 Se quiser, também posso detalhar os resultados da enquete ou da equipe."""
 
     return (
-        f"{abertura}Entendi. Posso consultar números das avaliações, categorias e notas, "
+        f"{abertura}Entendi. Posso consultar gráficos das avaliações, categorias e notas, "
         "funcionários, reclamações, sugestões e enquete. Qual desses pontos você quer ver?"
     )
 
 
+@csrf_exempt
+@ensure_csrf_cookie
 @staff_required(permission="feedback.view_avaliacao")
 def ia_chat(request):
     if request.method == "GET":
@@ -1653,6 +1889,19 @@ def ia_chat(request):
                 )
 
     dados = _coletar_dados_gerenciais_ia()
+    
+    # Verificar se a mensagem pede gráficos, avaliações, satisfação ou métricas
+    texto_norm = unicodedata.normalize("NFKD", mensagem_usuario.lower())
+    texto_norm = "".join(c for c in texto_norm if not unicodedata.combining(c))
+    deve_incluir_graficos = any(
+        termo in texto_norm
+        for termo in (
+            "grafico", "graficos", "avaliacao", "avaliacoes", "nota", "notas",
+            "satisfacao", "desempenho", "panorama", "resumo", "metricas", "indicador"
+        )
+    )
+    graficos_html = _gerar_html_graficos_ia(dados) if deve_incluir_graficos else None
+
     system_instruction = (
         "Você é a assistente executiva da Academia Polo Fit, conversando com o "
         "gerente. Responda como em um chat natural: entenda a mensagem atual no "
@@ -1669,7 +1918,11 @@ def ia_chat(request):
     ]
     resposta = _solicitar_resposta_gemini(system_instruction, contents)
     if resposta:
-        return JsonResponse({"resposta": resposta, "modo": "gemini"})
+        return JsonResponse({
+            "resposta": resposta,
+            "graficos_html": graficos_html,
+            "modo": "gemini"
+        })
 
     resposta_local = _gerar_resposta_conversacional_local(mensagem_usuario, dados)
     aviso = (
@@ -1677,7 +1930,12 @@ def ia_chat(request):
         "Para respostas generativas em conversa, configure uma chave Gemini válida."
     )
     return JsonResponse(
-        {"resposta": resposta_local, "modo": "local", "aviso": aviso}
+        {
+            "resposta": resposta_local,
+            "graficos_html": graficos_html,
+            "modo": "local",
+            "aviso": aviso
+        }
     )
 
 

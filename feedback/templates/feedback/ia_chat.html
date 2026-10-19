@@ -152,12 +152,13 @@
 </head>
 <body>
     <div class="chat-container">
+        {% csrf_token %}
         <a href="{% url 'dashboard' %}" class="back-link">← Voltar ao painel</a>
         
         <div class="chat-header">
             <div>
                 <h1 class="chat-title">🤖 Assistente Polo Fit</h1>
-                <p class="chat-subtitle">Perguntas sobre avaliações, equipe e dados</p>
+                <p class="chat-subtitle">Perguntas sobre avaliações, gráficos, equipe e dados</p>
             </div>
             <button type="button" id="btn-gerar-resumo" class="btn-generate">
                 Gerar resumo
@@ -166,32 +167,52 @@
 
         <div class="chat-box" id="chat-messages">
             <div class="message message-ai">
-                <strong>Olá! Sou o assistente da Polo Fit. 😊</strong><br><br>
-                Posso ajudar você a:<br>
-                • Consultar avaliações e métricas<br>
-                • Ver desempenho da equipe<br>
-                • Analisar reclamações e sugestões<br>
-                • Resumir resultados da enquete<br><br>
-                Como posso ajudar hoje?
+                <strong style="color:var(--verde);font-size:1.05rem;">Olá, {{ request.user.first_name|default:request.user.username }}! Sou o assistente com IA da Polo Fit. 😊</strong><br><br>
+                Posso analisar em tempo real todos os dados da academia para você:<br>
+                • <strong>📊 Gráficos de Avaliação:</strong> distribuição por estrelas e áreas mais avaliadas<br>
+                • <strong>⭐ Satisfação & Sentimento:</strong> índice de elogios, sugestões e nota média<br>
+                • <strong>⚠️ Reclamações & Acompanhamento:</strong> pendências e status de resolução<br>
+                • <strong>👥 Desempenho da Equipe:</strong> ranking individual e avaliações dos colaboradores<br>
+                • <strong>📋 Enquete & Modalidades:</strong> aulas favoritas e novos espaços pedidos<br><br>
+                <em>Clique em uma das opções rápidas abaixo ou escreva sua pergunta:</em>
             </div>
         </div>
 
         <div class="quick-questions">
-            <button class="quick-btn" onclick="enviarPergunta('Bom dia!')">Bom dia!</button>
-            <button class="quick-btn" onclick="enviarPergunta('Como acessar as avaliações?')">Como acessar as avaliações?</button>
-            <button class="quick-btn" onclick="enviarPergunta('Como está a satisfação dos alunos?')">Satisfação dos alunos</button>
-            <button class="quick-btn" onclick="enviarPergunta('Quais são as reclamações?')">Reclamações</button>
-            <button class="quick-btn" onclick="enviarPergunta('Como está a equipe?')">Equipe</button>
+            <button class="quick-btn" onclick="enviarPergunta('Bom dia!')">👋 Bom dia!</button>
+            <button class="quick-btn" onclick="enviarPergunta('Mostrar gráficos das avaliações')">📊 Ver Gráficos</button>
+            <button class="quick-btn" onclick="enviarPergunta('Como está a satisfação dos alunos?')">⭐ Satisfação dos alunos</button>
+            <button class="quick-btn" onclick="enviarPergunta('Quais são as reclamações registradas?')">⚠️ Reclamações</button>
+            <button class="quick-btn" onclick="enviarPergunta('Como está o desempenho da equipe?')">👥 Equipe</button>
+            <button class="quick-btn" onclick="gerarResumo()">📋 Resumo Completo</button>
         </div>
 
         <div class="input-area" style="margin-top: 1.5rem;">
-            <input type="text" id="chat-input" class="chat-input" placeholder="Escreva sua pergunta..." onkeypress="if(event.key === 'Enter') enviarMensagem()">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Escreva sua pergunta ou peça os gráficos..." onkeypress="if(event.key === 'Enter') enviarMensagem()">
             <button type="button" class="btn-send" onclick="enviarMensagem()">Enviar</button>
         </div>
     </div>
 
     <script>
         const historico = [];
+
+        function formatarTextoIa(texto) {
+            if (!texto) return '';
+            let formatado = texto
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            // Negrito markdown **texto**
+            formatado = formatado.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Quebras de linha
+            formatado = formatado.replace(/\n/g, '<br>');
+            
+            // Bullets
+            formatado = formatado.replace(/• (.*?)(<br>|$)/g, '<span style="display:block;margin-left:8px;margin-bottom:4px;">• $1</span>');
+            return formatado;
+        }
 
         function adicionarMensagem(texto, isUser) {
             const chatBox = document.getElementById('chat-messages');
@@ -211,11 +232,15 @@
             historico.push({role: 'user', content: texto});
             input.value = '';
 
+            adicionarMensagem('<em>Processando resposta...</em>', false);
+
             try {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken') || '';
                 const response = await fetch('/ia/chat/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
                     },
                     body: JSON.stringify({
                         mensagem: texto,
@@ -223,19 +248,65 @@
                     })
                 });
 
+                // Remover mensagem de processamento
+                const chatBox = document.getElementById('chat-messages');
+                if (chatBox.lastChild) {
+                    chatBox.lastChild.remove();
+                }
+
+                if (!response.ok) {
+                    let msgErro = 'Falha ao processar a pergunta.';
+                    try {
+                        const errData = await response.json();
+                        if (errData && errData.erro) msgErro = errData.erro;
+                    } catch (_) {
+                        msgErro = `Erro ${response.status}: Não foi possível obter resposta do servidor.`;
+                    }
+                    adicionarMensagem(`<span style="color: #ef4444;">${msgErro}</span>`, false);
+                    return;
+                }
+
                 const data = await response.json();
                 
+                if (data.graficos_html) {
+                    adicionarMensagem(data.graficos_html, false);
+                }
+
                 if (data.resposta) {
-                    adicionarMensagem(data.resposta.replace(/\n/g, '<br>'), false);
+                    adicionarMensagem(formatarTextoIa(data.resposta), false);
                     historico.push({role: 'assistant', content: data.resposta});
                 }
                 
+                if (data.erro) {
+                    adicionarMensagem(`<span style="color: #ef4444;">${data.erro}</span>`, false);
+                }
+                
                 if (data.aviso) {
-                    adicionarMensagem(`<small style="color: rgba(255,255,255,0.5);">⚠️ ${data.aviso}</small>`, false);
+                    adicionarMensagem(`<small style="color: rgba(255,255,255,0.5);">💡 ${data.aviso}</small>`, false);
                 }
             } catch (error) {
-                adicionarMensagem('Erro ao conectar. Tente novamente.', false);
+                const chatBox = document.getElementById('chat-messages');
+                if (chatBox.lastChild) {
+                    chatBox.lastChild.remove();
+                }
+                adicionarMensagem('<span style="color: #ef4444;">Erro de conexão. Verifique sua internet ou tente novamente.</span>', false);
+                console.error('Erro:', error);
             }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
 
         function enviarPergunta(pergunta) {
@@ -245,8 +316,12 @@
 
         async function gerarResumo() {
             const btn = document.getElementById('btn-gerar-resumo');
-            btn.disabled = true;
-            btn.textContent = 'Gerando...';
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Gerando...';
+            }
+
+            adicionarMensagem('<em>Gerando resumo analítico e gráficos com IA...</em>', false);
 
             try {
                 const response = await fetch('/ia/analisar/', {
@@ -256,17 +331,47 @@
                     }
                 });
 
+                const chatBox = document.getElementById('chat-messages');
+                if (chatBox.lastChild) {
+                    chatBox.lastChild.remove();
+                }
+
+                if (!response.ok) {
+                    adicionarMensagem('<span style="color: #ef4444;">Erro ao gerar o resumo gerencial.</span>', false);
+                    return;
+                }
+
                 const data = await response.json();
-                adicionarMensagem(`<strong>📊 Resumo do Sistema:</strong><br><br>${data.analise.replace(/\n/g, '<br>')}`, false);
+
+                if (data.graficos_html) {
+                    adicionarMensagem(data.graficos_html, false);
+                }
+
+                if (data.analise) {
+                    const blocoAnalise = `
+                        <div style="margin-top: 6px;">
+                            <strong style="color: var(--verde); font-size: 1rem;">📋 Análise Executiva da Polo Fit</strong>
+                            <div style="margin-top: 8px; line-height: 1.6;">${formatarTextoIa(data.analise)}</div>
+                        </div>
+                    `;
+                    adicionarMensagem(blocoAnalise, false);
+                    historico.push({role: 'assistant', content: data.analise});
+                }
                 
                 if (data.aviso) {
-                    adicionarMensagem(`<small style="color: rgba(255,255,255,0.5);">⚠️ ${data.aviso}</small>`, false);
+                    adicionarMensagem(`<small style="color: rgba(255,255,255,0.5);">💡 ${data.aviso}</small>`, false);
                 }
             } catch (error) {
-                adicionarMensagem('Erro ao gerar resumo.', false);
+                const chatBox = document.getElementById('chat-messages');
+                if (chatBox.lastChild) {
+                    chatBox.lastChild.remove();
+                }
+                adicionarMensagem('<span style="color: #ef4444;">Erro ao conectar com o serviço de análise.</span>', false);
             } finally {
-                btn.disabled = false;
-                btn.textContent = 'Gerar resumo';
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Gerar resumo';
+                }
             }
         }
 
