@@ -1278,6 +1278,10 @@ def _coletar_dados_gerenciais_ia():
         for avaliacao in avaliacoes
         if avaliacao.comentario.strip()
     ][:8]
+    
+    # Remover tags HTML dos comentários
+    import re
+    comentarios_limpos = [re.sub(r'<[^>]+>', '', c) for c in comentarios]
     tipos_labels = dict(Avaliacao.TIPO_CHOICES)
     media = (
         sum(avaliacao.nota for avaliacao in avaliacoes) / len(avaliacoes)
@@ -1306,7 +1310,7 @@ def _coletar_dados_gerenciais_ia():
         "ranking": ranking_texto,
         "ranking_funcionarios": ranking,
         "elogios_por_funcionario": elogios_por_funcionario,
-        "comentarios": comentarios,
+        "comentarios": comentarios_limpos,
         "total_enquetes": len(respostas_enquete),
         "alunos_total": usuario_model.objects.filter(is_staff=False).count(),
         "alunos_ativos": usuario_model.objects.filter(
@@ -1328,7 +1332,10 @@ def _coletar_dados_gerenciais_ia():
 
 
 def _gerar_resumo_executivo_local(dados):
-    comentarios = "\n".join(f'• "{comentario}"' for comentario in dados["comentarios"])
+    # Remover tags HTML dos comentários
+    import re
+    comentarios_limpos = [re.sub(r'<[^>]+>', '', c) for c in dados["comentarios"]]
+    comentarios = "\n".join(f'• "{comentario}"' for comentario in comentarios_limpos)
     sugestoes_valor = "\n".join(
         f"• {sugestao}" for sugestao in dados["sugestoes_valor"]
     )
@@ -1367,7 +1374,10 @@ def _gerar_resumo_executivo_local(dados):
 
 
 def _contexto_dados_gerenciais(dados):
-    comentarios = "\n".join(f'- "{texto}"' for texto in dados["comentarios"])
+    # Remover tags HTML dos comentários
+    import re
+    comentarios_limpos = [re.sub(r'<[^>]+>', '', c) for c in dados["comentarios"]]
+    comentarios = "\n".join(f'- "{texto}"' for texto in comentarios_limpos)
     sugestoes = "\n".join(f"- {texto}" for texto in dados["sugestoes_valor"])
     elogios = "\n".join(f"- {texto}" for texto in dados["elogios_colaboradores"])
     return f"""Dados atualizados do Polo Fit:
