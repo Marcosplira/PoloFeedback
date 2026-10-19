@@ -1608,6 +1608,9 @@ Se quiser, também posso detalhar os resultados da enquete ou da equipe."""
 
 @staff_required(permission="feedback.view_avaliacao")
 def ia_chat(request):
+    if request.method == "GET":
+        return render(request, "feedback/ia_chat.html")
+    
     if request.method != "POST":
         return JsonResponse({"erro": "Método não permitido"}, status=405)
 

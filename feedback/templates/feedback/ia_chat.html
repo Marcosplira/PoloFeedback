@@ -1,0 +1,276 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "feedback/pwa_meta.html" %}
+    <title>Chat com IA — Polo Fit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            --verde: #a3e635;
+            --preto: #0a0a0a;
+            --card: #161616;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--preto);
+            color: #f0f0f0;
+            min-height: 100vh;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(163,230,53,0.15);
+        }
+        .chat-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--verde);
+        }
+        .chat-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 0.25rem;
+        }
+        .chat-box {
+            background: var(--card);
+            border: 1px solid rgba(163,230,53,0.15);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+        .message {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.75rem;
+            line-height: 1.6;
+        }
+        .message-user {
+            background: rgba(163,230,53,0.1);
+            border: 1px solid rgba(163,230,53,0.2);
+            margin-left: 2rem;
+        }
+        .message-ai {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-right: 2rem;
+        }
+        .input-area {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .chat-input {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: #f0f0f0;
+            font-size: 0.95rem;
+        }
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--verde);
+        }
+        .btn-send {
+            background: var(--verde);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-send:hover {
+            background: #b8f048;
+        }
+        .btn-generate {
+            background: rgba(163,230,53,0.1);
+            color: var(--verde);
+            border: 1px solid rgba(163,230,53,0.3);
+            border-radius: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-generate:hover {
+            background: rgba(163,230,53,0.2);
+        }
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .quick-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.875rem;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-btn:hover {
+            background: rgba(163,230,53,0.1);
+            border-color: rgba(163,230,53,0.3);
+            color: var(--verde);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: var(--verde);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <a href="{% url 'dashboard' %}" class="back-link">← Voltar ao painel</a>
+        
+        <div class="chat-header">
+            <div>
+                <h1 class="chat-title">🤖 Assistente Polo Fit</h1>
+                <p class="chat-subtitle">Perguntas sobre avaliações, equipe e dados</p>
+            </div>
+            <button type="button" id="btn-gerar-resumo" class="btn-generate">
+                Gerar resumo
+            </button>
+        </div>
+
+        <div class="chat-box" id="chat-messages">
+            <div class="message message-ai">
+                <strong>Olá! Sou o assistente da Polo Fit. 😊</strong><br><br>
+                Posso ajudar você a:<br>
+                • Consultar avaliações e métricas<br>
+                • Ver desempenho da equipe<br>
+                • Analisar reclamações e sugestões<br>
+                • Resumir resultados da enquete<br><br>
+                Como posso ajudar hoje?
+            </div>
+        </div>
+
+        <div class="quick-questions">
+            <button class="quick-btn" onclick="enviarPergunta('Bom dia!')">Bom dia!</button>
+            <button class="quick-btn" onclick="enviarPergunta('Como acessar as avaliações?')">Como acessar as avaliações?</button>
+            <button class="quick-btn" onclick="enviarPergunta('Como está a satisfação dos alunos?')">Satisfação dos alunos</button>
+            <button class="quick-btn" onclick="enviarPergunta('Quais são as reclamações?')">Reclamações</button>
+            <button class="quick-btn" onclick="enviarPergunta('Como está a equipe?')">Equipe</button>
+        </div>
+
+        <div class="input-area" style="margin-top: 1.5rem;">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Escreva sua pergunta..." onkeypress="if(event.key === 'Enter') enviarMensagem()">
+            <button type="button" class="btn-send" onclick="enviarMensagem()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const historico = [];
+
+        function adicionarMensagem(texto, isUser) {
+            const chatBox = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'message-user' : 'message-ai'}`;
+            msgDiv.innerHTML = texto;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function enviarMensagem() {
+            const input = document.getElementById('chat-input');
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            adicionarMensagem(texto, true);
+            historico.push({role: 'user', content: texto});
+            input.value = '';
+
+            try {
+                const response = await fetch('/ia/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        mensagem: texto,
+                        historico: historico
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.resposta) {
+                    adicionarMensagem(data.resposta.replace(/\n/g, '<br>'), false);
+                    historico.push({role: 'assistant', content: data.resposta});
+                }
+                
+                if (data.aviso) {
+                    adicionarMensagem(`<small style="color: rgba(255,255,255,0.5);">⚠️ ${data.aviso}</small>`, false);
+                }
+            } catch (error) {
+                adicionarMensagem('Erro ao conectar. Tente novamente.', false);
+            }
+        }
+
+        function enviarPergunta(pergunta) {
+            document.getElementById('chat-input').value = pergunta;
+            enviarMensagem();
+        }
+
+        async function gerarResumo() {
+            const btn = document.getElementById('btn-gerar-resumo');
+            btn.disabled = true;
+            btn.textContent = 'Gerando...';
+
+            try {
+                const response = await fetch('/ia/analisar/', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+                adicionarMensagem(`<strong>📊 Resumo do Sistema:</strong><br><br>${data.analise.replace(/\n/g, '<br>')}`, false);
+                
+                if (data.aviso) {
+                    adicionarMensagem(`<small style="color: rgba(255,255,255,0.5);">⚠️ ${data.aviso}</small>`, false);
+                }
+            } catch (error) {
+                adicionarMensagem('Erro ao gerar resumo.', false);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Gerar resumo';
+            }
+        }
+
+        document.getElementById('btn-gerar-resumo').addEventListener('click', gerarResumo);
+    </script>
+</body>
+</html>
