@@ -2,9 +2,6 @@
 
 Sistema moderno de coleta, análise e gestão de avaliações e satisfação dos alunos da Academia Polo Fit.
 
-🌐 **Site oficial:** [https://polofeedback.onrender.com/](https://polofeedback.onrender.com/)
-
----
 
 ## 📌 Visão Geral
 
