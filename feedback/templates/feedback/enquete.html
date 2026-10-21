@@ -295,7 +295,7 @@
             letter-spacing: -0.02em;
             line-height: 1.25;
 
-            color: var(--texto-card);
+            color: var(--texto);
         }
 
         .question-sub {
@@ -304,11 +304,11 @@
             font-size: 0.825rem;
             line-height: 1.4;
 
-            color: var(--texto-card-suave);
+            color: var(--texto-suave);
         }
 
         /* =========================================================
-           OPÇÕES DE RÁDIO
+           OPÇÕES DE SELEÇÃO (CORRIGIDO)
         ========================================================= */
 
         .radio-options-list {
@@ -345,591 +345,33 @@
             user-select: none;
         }
 
+        /* Garante que o texto fique legível (escuro) no botão comum */
+        .radio-option,
+        .radio-option span,
+        .radio-option p,
+        .radio-option i {
+            color: #1e293b !important;
+        }
+
         .radio-option:hover {
-            border-color: var(--verde-btn);
-            background: var(--verde-soft);
-
-            transform: translateY(-1px);
-        }
-
-        .radio-option.selected {
-            border-color: var(--verde);
-
-            background: var(--verde-soft);
-
-            box-shadow:
-                0 0 0 1px var(--verde),
-                0 5px 15px rgba(101, 163, 13, 0.08);
-        }
-
-        .radio-option.selected .radio-option-text {
-            color: var(--verde);
-            font-weight: 700;
-        }
-
-        .radio-option-text {
-            display: flex;
-            align-items: center;
-
-            gap: 0.75rem;
-
-            font-size: 0.9rem;
-            font-weight: 600;
-
-            color: #1e293b;
-
-            line-height: 1.35;
-        }
-
-        .radio-circle {
-            width: 20px;
-            height: 20px;
-
-            flex: 0 0 20px;
-
-            border-radius: 50%;
-
-            border: 2px solid #cbd5e1;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #ffffff;
-
-            transition: all 0.2s ease;
-        }
-
-        .radio-option.selected .radio-circle {
-            border-color: var(--verde);
-
-            background: var(--verde);
-        }
-
-        .radio-circle::after {
-            content: '';
-
-            width: 8px;
-            height: 8px;
-
-            border-radius: 50%;
-
-            background: #ffffff;
-
-            display: none;
-        }
-
-        .radio-option.selected .radio-circle::after {
-            display: block;
-        }
-
-        /* =========================================================
-           GRID DE OPÇÕES
-        ========================================================= */
-
-        .tiles-grid {
-            display: grid;
-
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-
-            gap: 0.6rem;
-
-            margin-bottom: 1rem;
-        }
-
-        .tile-option {
-            min-height: 58px;
-
-            background: #f8fafc;
-
-            border: 1.5px solid #e2e8f0;
-            border-radius: 0.875rem;
-
-            padding: 0.75rem 0.85rem;
-
-            display: flex;
-            align-items: center;
-
-            gap: 0.6rem;
-
-            cursor: pointer;
-
-            transition:
-                border-color 0.2s ease,
-                background 0.2s ease,
-                box-shadow 0.2s ease,
-                transform 0.2s ease;
-
-            user-select: none;
-
-            font-size: 0.85rem;
-            font-weight: 600;
-
-            color: #1e293b;
-
-            line-height: 1.25;
-        }
-
-        .tile-option:hover {
-            border-color: var(--verde-btn);
-            background: var(--verde-soft);
-
-            transform: translateY(-1px);
-        }
-
-        .tile-option.selected {
-            border-color: var(--verde);
-
-            background: var(--verde-soft);
-
-            color: #0f172a;
-
-            font-weight: 700;
-
-            box-shadow:
-                0 0 0 1px var(--verde),
-                0 4px 12px rgba(101, 163, 13, 0.08);
-        }
-
-        .tile-icon {
-            font-size: 1.15rem;
-
-            line-height: 1;
-
-            flex: 0 0 auto;
-        }
-
-        .col-span-2 {
-            grid-column: span 2;
-        }
-
-        /* =========================================================
-           TAGS
-        ========================================================= */
-
-        .tag-chips {
-            display: flex;
-
-            flex-wrap: wrap;
-
-            gap: 0.45rem;
-
-            margin-bottom: 1rem;
-        }
-
-        .tag-chip {
+            border-color: var(--verde-escuro);
             background: #f1f5f9;
-
-            border: 1px solid #e2e8f0;
-
-            color: #334155;
-
-            font-size: 0.75rem;
-            font-weight: 600;
-
-            padding: 0.35rem 0.75rem;
-
-            border-radius: 999px;
-
-            cursor: pointer;
-
-            transition: all 0.2s ease;
-
-            user-select: none;
-        }
-
-        .tag-chip:hover {
-            border-color: var(--verde-btn);
-
-            color: #365314;
-
-            background: #ecfccb;
-
             transform: translateY(-1px);
         }
 
-        /* =========================================================
-           INPUTS
-        ========================================================= */
-
-        .enquete-input {
-            width: 100%;
-
-            background: #f8fafc;
-
-            border: 1.5px solid #cbd5e1;
-
-            border-radius: 0.875rem;
-
-            padding: 0.75rem 1rem;
-
-            color: #0f172a;
-
-            font-family: inherit;
-
-            font-size: 0.85rem;
-
-            outline: none;
-
-            transition:
-                border-color 0.2s ease,
-                background 0.2s ease,
-                box-shadow 0.2s ease;
-
-            margin-top: 0.5rem;
-        }
-
-        .enquete-input::placeholder,
-        .enquete-textarea::placeholder {
-            color: #94a3b8;
-        }
-
-        .enquete-input:focus,
-        .enquete-textarea:focus {
-            border-color: var(--verde);
-
-            background: #ffffff;
-
-            box-shadow:
-                0 0 0 3px rgba(101, 163, 13, 0.15);
-        }
-
-        .enquete-textarea {
-            width: 100%;
-
-            background: #f8fafc;
-
-            border: 1.5px solid #cbd5e1;
-
-            border-radius: 0.875rem;
-
-            padding: 0.85rem 1rem;
-
-            color: #0f172a;
-
-            font-family: inherit;
-
-            font-size: 0.85rem;
-
-            line-height: 1.5;
-
-            outline: none;
-
-            resize: vertical;
-
-            min-height: 110px;
-
-            transition:
-                border-color 0.2s ease,
-                background 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        /* =========================================================
-           BOTÕES
-        ========================================================= */
-
-        .step-footer {
-            margin-top: auto;
-
-            padding-top: 1.25rem;
-
-            display: flex;
-            flex-direction: column;
-
-            gap: 0.6rem;
-        }
-
-        .btn-avancar {
-            width: 100%;
-
-            background: var(--verde);
-
-            color: #0a0a0a;
-
-            border: none;
-
-            border-radius: 0.875rem;
-
-            padding: 0.95rem;
-
-            font-family: inherit;
-
-            font-size: 0.95rem;
-            font-weight: 800;
-
-            cursor: pointer;
-
-            transition: all 0.2s ease;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            gap: 0.5rem;
-
-            box-shadow:
-                0 4px 14px rgba(163, 230, 53, 0.4);
-        }
-
-        .btn-avancar:hover {
-            background: #b8f048;
-
-            color: #0a0a0a;
-
-            transform: translateY(-1px);
-
-            box-shadow:
-                0 6px 18px rgba(163, 230, 53, 0.5);
-        }
-
-        .btn-avancar:active {
+        /* Estado Selecionado: Aplica fundo verde escuro firme */
+        .radio-option.selected {
+            background-color: #2c421b !important;
+            border-color: var(--verde) !important;
             transform: translateY(0);
         }
 
-        .btn-avancar:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-pular {
-            width: 100%;
-
-            text-align: center;
-
-            font-family: inherit;
-
-            font-size: 0.775rem;
-
-            color: #64748b;
-
-            background: transparent;
-
-            border: none;
-
-            cursor: pointer;
-
-            padding: 0.4rem;
-
-            transition: color 0.2s ease;
-        }
-
-        .btn-pular:hover {
-            color: #0f172a;
-
-            text-decoration: underline;
-        }
-
-        /* =========================================================
-           TELAS
-        ========================================================= */
-
-        .step-screen {
-            display: none;
-
-            flex-direction: column;
-
-            flex: 1;
-
-            width: 100%;
-        }
-
-        .step-screen.active {
-            display: flex;
-        }
-
-        /* =========================================================
-           SPLASH
-        ========================================================= */
-
-        .splash-badge {
-            display: inline-flex;
-            align-items: center;
-
-            gap: 0.35rem;
-
-            width: fit-content;
-
-            background: #ecfccb;
-
-            border: 1px solid #bef264;
-
-            color: #365314;
-
-            font-size: 0.725rem;
-            font-weight: 700;
-
-            padding: 0.35rem 0.75rem;
-
-            border-radius: 999px;
-
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-
-            margin-bottom: 1.25rem;
-        }
-
-        .meta-pills {
-            display: flex;
-
-            flex-wrap: wrap;
-
-            gap: 0.65rem;
-
-            margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .meta-pill {
-            display: inline-flex;
-            align-items: center;
-
-            gap: 0.4rem;
-
-            background: #f1f5f9;
-
-            border: 1px solid #e2e8f0;
-
-            border-radius: 0.625rem;
-
-            padding: 0.4rem 0.75rem;
-
-            font-size: 0.75rem;
-            font-weight: 600;
-
-            color: #475569;
-        }
-
-        /* =========================================================
-           SUCESSO
-        ========================================================= */
-
-        .success-icon {
-            width: 72px;
-            height: 72px;
-
-            background: #ecfccb;
-
-            border: 2px solid #84cc16;
-
-            border-radius: 50%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            color: #365314;
-
-            font-size: 2.2rem;
-
-            margin: 1.5rem auto;
-
-            box-shadow:
-                0 4px 15px rgba(132, 204, 22, 0.25);
-        }
-
-        /* =========================================================
-           FOOTER
-        ========================================================= */
-
-        .enquete-wrapper+footer {
-            width: 100%;
-        }
-
-        /* =========================================================
-           MOBILE
-        ========================================================= */
-
-        @media (max-width: 480px) {
-
-            body {
-                padding:
-                    4.5rem 0.5rem 1rem;
-            }
-
-            .navbar {
-                padding: 0 0.9rem;
-            }
-
-            .navbar-logo img {
-                height: 28px;
-            }
-
-            .navbar-logo span {
-                font-size: 0.95rem;
-            }
-
-            .nav-back {
-                font-size: 0.72rem;
-            }
-
-            .enquete-card {
-                padding: 1.5rem 1.25rem;
-
-                border-radius: 1.5rem;
-
-                min-height:
-                    calc(100vh - 5.5rem);
-            }
-
-            .question-title {
-                font-size: 1.25rem;
-            }
-
-            .question-sub {
-                font-size: 0.8rem;
-            }
-
-            .tiles-grid {
-                gap: 0.5rem;
-            }
-
-            .tile-option {
-                min-height: 54px;
-
-                padding:
-                    0.7rem 0.65rem;
-
-                font-size: 0.78rem;
-            }
-
-            .tile-icon {
-                font-size: 1rem;
-            }
-
-            .radio-option {
-                padding:
-                    0.85rem 0.85rem;
-            }
-
-            .radio-option-text {
-                font-size: 0.82rem;
-            }
-        }
-
-        @media (max-width: 350px) {
-
-            .navbar-logo span {
-                display: none;
-            }
-
-            .nav-back {
-                font-size: 0.68rem;
-            }
-
-            .enquete-card {
-                padding:
-                    1.25rem 1rem;
-            }
-
-            .tiles-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .col-span-2 {
-                grid-column: span 1;
-            }
+        /* Força todo o conteúdo de texto e ícone a ficar branco puro quando marcado */
+        .radio-option.selected,
+        .radio-option.selected span,
+        .radio-option.selected p,
+        .radio-option.selected i {
+            color: #ffffff !important;
         }
     </style>
 </head>
@@ -1383,16 +825,6 @@
                             <span>GAP</span>
                         </div>
 
-
-                        <div class="tile-option" onclick="toggleMelhoria(
-                                this,
-                                'Hidroginástica'
-                            )">
-                            <span class="tile-icon">🏊</span>
-                            <span>Hidroginástica</span>
-                        </div>
-
-
                         <div class="tile-option" onclick="toggleMelhoria(
                                 this,
                                 'Spinning'
@@ -1580,7 +1012,7 @@
 
 
                     <h2 class="question-title">
-                        Que espaço novo faria diferença?
+                        Quais espaços novos faria diferença?
                     </h2>
 
 
@@ -1697,7 +1129,7 @@
 
 
                     <p class="question-sub">
-                        Toque nas sugestões rápidas ou digite o que quiser:
+                        Toque nas sugestões que gostaria de ter e digite uma proposta:
                     </p>
 
 
