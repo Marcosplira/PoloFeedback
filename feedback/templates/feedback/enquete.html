@@ -471,10 +471,13 @@
         }
 
         .tile-option:hover {
-            border-color: var(--verde-btn);
+            border-color: var(--verde);
             background: var(--verde-soft);
-
             transform: translateY(-1px);
+
+            .tile-option-text {
+                color: var(--verde);
+            }
         }
 
         .tile-option.selected {
@@ -482,7 +485,7 @@
 
             background: var(--verde-soft);
 
-            color: #0f172a;
+            color: var(--verde);
 
             font-weight: 700;
 
