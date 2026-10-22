@@ -323,4 +323,10 @@ O projeto contém avaliação por QR Code, painel administrativo, pesquisa de sa
 
 ---
 
+## 👨‍💻 Desenvolvedor
+
+**Marcos Paulo Santos Lira**
+
+Projeto desenvolvido para contribuir com a divulgação e organização da Academia Polo Fit de **Picuí-PB** através da tecnologia.
+
 *© 2026 Polo Fit — Sua opinião faz a diferença.*
