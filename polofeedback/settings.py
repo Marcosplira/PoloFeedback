@@ -21,7 +21,9 @@ DEBUG = os.environ.get("DEBUG", "True") == "True"
 if not _secret_key:
     if DEBUG:
         # Somente aceitável em desenvolvimento local
-        _secret_key = "django-insecure-dev-only-nao-use-em-producao-troque-pela-env-SECRET_KEY"
+        _secret_key = (
+            "django-insecure-dev-only-nao-use-em-producao-troque-pela-env-SECRET_KEY"
+        )
     else:
         raise RuntimeError(
             "Variável de ambiente SECRET_KEY não definida. "
@@ -29,7 +31,6 @@ if not _secret_key:
         )
 
 SECRET_KEY = _secret_key
-
 
 
 ALLOWED_HOSTS = (
@@ -43,6 +44,7 @@ ALLOWED_HOSTS = (
         ".render.com",
         "192.168.102.114",
         "192.168.3.17",
+        "polofeedback.pythonanywhere.com",
     ]
     + [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
 )
