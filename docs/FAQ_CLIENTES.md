@@ -25,7 +25,7 @@ Não! O FeedbackPro é 100% online, acessível via navegador de qualquer disposi
 - Suporte por email
 
 ### O plano Profissional inclui análise com IA?
-Sim! O plano Professional inclui análise automatizada com inteligência artificial para resumir feedbacks, identificar padrões e gerar insights.
+Sim! O plano Profissional inclui análise automatizada com inteligência artificial para resumir feedbacks, identificar padrões e gerar insights.
 
 ### Posso ter múltiplas unidades?
 Multi-unidades está disponível apenas no plano Enterprise. Nos planos Starter e Professional, cada contrato é para uma única unidade.
