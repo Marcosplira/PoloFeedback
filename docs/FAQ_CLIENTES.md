@@ -24,11 +24,11 @@ Não! O FeedbackPro é 100% online, acessível via navegador de qualquer disposi
 - Relatórios básicos
 - Suporte por email
 
-### O plano Professional inclui análise com IA?
-Sim! O plano Professional inclui análise automatizada com inteligência artificial para resumir feedbacks, identificar padrões e gerar insights.
+### O plano Profissional inclui análise com IA?
+Sim! O plano Profissional inclui análise automatizada com inteligência artificial para resumir feedbacks, identificar padrões e gerar insights.
 
 ### Posso ter múltiplas unidades?
-Multi-unidades está disponível apenas no plano Enterprise. Nos planos Starter e Professional, cada contrato é para uma única unidade.
+Multi-unidades está disponível apenas no plano Enterprise. Nos planos Starter e Profissional, cada contrato é para uma única unidade.
 
 ### O sistema funciona offline?
 O FeedbackPro requer conexão com internet para funcionar. No entanto, a interface é otimizada para conexões móveis e funciona bem em redes Wi-Fi de academias.
@@ -37,7 +37,7 @@ O FeedbackPro requer conexão com internet para funcionar. No entanto, a interfa
 
 ### Quais são os planos disponíveis?
 - **Starter:** R$ 149/mês (até 200 alunos)
-- **Professional:** R$ 299/mês (até 500 alunos)
+- **Profissional:** R$ 299/mês (até 500 alunos)
 - **Enterprise:** R$ 599/mês (alunos ilimitados, multi-unidades)
 
 ### Existe fidelidade?
@@ -117,7 +117,7 @@ Oferecemos reembolso integral nos primeiros 14 dias se você não estiver satisf
 Sim! Você pode fazer upgrade ou downgrade de plano a qualquer momento. A mudança entra em vigor no próximo ciclo de faturamento.
 
 ### Existe período de teste?
-Sim! Oferecemos teste gratuito de 14 dias no plano Professional para que você conheça todas as funcionalidades antes de decidir.
+Sim! Oferecemos teste gratuito de 14 dias no plano Profissional para que você conheça todas as funcionalidades antes de decidir.
 
 ### Como ficam minhas avaliações antigas se eu mudar de plano?
 Todas as suas avaliações e configurações são mantidas independentemente do plano. Nada é perdido ao mudar de plano.
