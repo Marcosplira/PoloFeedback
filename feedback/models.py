@@ -187,6 +187,132 @@ class Avaliacao(models.Model):
         return funcionarios
 
 
+class AuditoriaAcesso(models.Model):
+    """
+    Registro de auditoria para acessos e ações sensíveis no sistema.
+    Permite rastrear quem fez o quê e quando.
+    """
+    ACAO_CHOICES = [
+        ("login", "Login"),
+        ("logout", "Logout"),
+        ("criar_avaliacao", "Criar avaliação"),
+        ("alterar_status", "Alterar status de avaliação"),
+        ("acessar_dashboard", "Acessar dashboard"),
+        ("acessar_ia", "Acessar análise IA"),
+        ("exportar_dados", "Exportar dados"),
+        ("criar_usuario", "Criar usuário"),
+        ("alterar_usuario", "Alterar usuário"),
+        ("acessar_admin", "Acessar admin"),
+    ]
+
+    usuario = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="auditorias",
+        verbose_name="Usuário"
+    )
+    acao = models.CharField(
+        max_length=50,
+        choices=ACAO_CHOICES,
+        verbose_name="Ação"
+    )
+    ip_address = models.GenericIPAddressField(
+        null=True,
+        blank=True,
+        verbose_name="Endereço IP"
+    )
+    user_agent = models.TextField(
+        blank=True,
+        verbose_name="User Agent"
+    )
+    detalhes = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name="Detalhes adicionais"
+    )
+    sucesso = models.BooleanField(
+        default=True,
+        verbose_name="Sucesso"
+    )
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Data/hora"
+    )
+
+    class Meta:
+        verbose_name = "Registro de auditoria"
+        verbose_name_plural = "Registros de auditoria"
+        ordering = ["-timestamp"]
+        indexes = [
+            models.Index(fields=["usuario", "timestamp"]),
+            models.Index(fields=["acao", "timestamp"]),
+            models.Index(fields=["ip_address"]),
+        ]
+
+    def __str__(self):
+        usuario_str = self.usuario.username if self.usuario else "Anônimo"
+        return f"{self.acao} - {usuario_str} - {self.timestamp.strftime('%d/%m/%Y %H:%M')}"
+
+
+class ConfiguracaoAcademia(models.Model):
+    """
+    Configurações white-label para personalização da academia.
+    Permite que cada academia tenha logo, cores e nome personalizados.
+    """
+    nome_academia = models.CharField(
+        max_length=200,
+        default="Academia",
+        verbose_name="Nome da academia"
+    )
+    logo = models.ImageField(
+        upload_to='academia/logo/',
+        null=True,
+        blank=True,
+        verbose_name="Logo da academia"
+    )
+    cor_primaria = models.CharField(
+        max_length=7,
+        default="#a3e635",
+        verbose_name="Cor primária (hex)",
+        help_text="Ex: #a3e635"
+    )
+    cor_secundaria = models.CharField(
+        max_length=7,
+        default="#0a0a0a",
+        verbose_name="Cor secundária (hex)",
+        help_text="Ex: #0a0a0a"
+    )
+    telefone = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="Telefone de contato"
+    )
+    whatsapp = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="WhatsApp"
+    )
+    endereco = models.TextField(
+        blank=True,
+        verbose_name="Endereço"
+    )
+    ativo = models.BooleanField(
+        default=True,
+        verbose_name="Configuração ativa"
+    )
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Configuração da academia"
+        verbose_name_plural = "Configurações da academia"
+
+    def __str__(self):
+        return f"Configuração - {self.nome_academia}"
+
+
 class RespostaEnquete(models.Model):
     # 1. Sobre as aulas coletivas - Participação
     participa_aulas = models.CharField(

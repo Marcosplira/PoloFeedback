@@ -266,6 +266,14 @@ def inicio(request):
     )
 
 
+def landing_comercial(request):
+    """
+    Landing page comercial para o produto SaaS FeedbackPro.
+    Página genérica focada em vender o sistema para outras academias.
+    """
+    return render(request, "feedback/landing_comercial.html")
+
+
 def baixar_video(request):
     """
     Redireciona diretamente para o download do vídeo da Polo Fit no Google Drive,

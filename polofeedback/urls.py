@@ -30,6 +30,7 @@ from feedback.views import (
     service_worker,
     treino_equipamento,
     logout_view,
+    landing_comercial,
 )
 
 
@@ -54,6 +55,7 @@ urlpatterns = [
     path("service-worker.js", service_worker, name="service_worker"),
     path("admin/", admin.site.urls),
     path("", inicio, name="inicio"),
+    path("landing/", landing_comercial, name="landing_comercial"),
     path("avaliar/", avaliar, name="avaliar"),
     path("enquete/", enquete, name="enquete"),
     path("baixar-video/", baixar_video, name="baixar_video"),

@@ -85,7 +85,12 @@ MIDDLEWARE += [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "feedback.middleware.DatabaseErrorPageMiddleware",
+    "feedback.middleware_security.SecurityMiddleware",
+    "feedback.middleware_security.AuditoriaLoginMiddleware",
 ]
+# Rate limiting apenas em produção
+if not DEBUG:
+    MIDDLEWARE += ["feedback.middleware_security.RateLimitMiddleware"]
 
 ROOT_URLCONF = "polofeedback.urls"
 

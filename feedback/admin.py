@@ -3,7 +3,9 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.utils.html import format_html
 from .models import (
+    AuditoriaAcesso,
     Avaliacao,
+    ConfiguracaoAcademia,
     Equipamento,
     Exercicio,
     Funcao,
@@ -236,3 +238,42 @@ class PlanoTreinoAdmin(admin.ModelAdmin):
         if db_field.name == "aluno":
             kwargs["queryset"] = User.objects.filter(is_staff=False).order_by("first_name", "username")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+@admin.register(ConfiguracaoAcademia)
+class ConfiguracaoAcademiaAdmin(admin.ModelAdmin):
+    list_display = ("nome_academia", "ativo", "atualizado_em")
+    list_editable = ("ativo",)
+    readonly_fields = ("criado_em", "atualizado_em")
+    fieldsets = (
+        ("Identidade", {
+            "fields": ("nome_academia", "logo", "ativo")
+        }),
+        ("Cores", {
+            "fields": ("cor_primaria", "cor_secundaria")
+        }),
+        ("Contato", {
+            "fields": ("telefone", "whatsapp", "endereco")
+        }),
+        ("Metadados", {
+            "fields": ("criado_em", "atualizado_em"),
+            "classes": ("collapse",)
+        }),
+    )
+
+
+@admin.register(AuditoriaAcesso)
+class AuditoriaAcessoAdmin(admin.ModelAdmin):
+    list_display = ("timestamp", "usuario", "acao", "ip_address", "sucesso")
+    list_filter = ("acao", "sucesso", "timestamp")
+    search_fields = ("usuario__username", "ip_address", "acao")
+    readonly_fields = ("timestamp",)
+    ordering = ("-timestamp",)
+
+    def has_add_permission(self, request):
+        # Apenas o sistema pode criar registros de auditoria
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        # Registros de auditoria não devem ser alterados
+        return False
