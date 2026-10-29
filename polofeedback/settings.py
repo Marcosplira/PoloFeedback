@@ -44,12 +44,12 @@ ALLOWED_HOSTS = (
         ".render.com",
         "192.168.102.114",
         "192.168.3.17",
-        "polofeedback.pythonanywhere.com",
+        ".pythonanywhere.com",
     ]
     + [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "").split(",") if h.strip()]
 )
 
-# Origens confiáveis para CSRF em produção (Render / Docker / proxy reverso)
+# Origens confiáveis para CSRF em produção (Render / Docker / proxy reverso / PythonAnywhere)
 _csrf_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
 if _csrf_origins:
     CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_origins.split(",") if o.strip()]
@@ -57,6 +57,7 @@ else:
     CSRF_TRUSTED_ORIGINS = [
         "https://*.onrender.com",
         "https://*.render.com",
+        "https://*.pythonanywhere.com",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
     ]
@@ -104,6 +105,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "feedback.context_processors.configuracao_academia",
             ],
         },
     },

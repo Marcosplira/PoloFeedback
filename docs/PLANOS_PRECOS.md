@@ -2,7 +2,7 @@
 
 ## Resumo dos Planos
 
-| Funcionalidade | Starter | Professional | Enterprise |
+| Funcionalidade | Starter | Profissional | Enterprise |
 |--------------|---------|--------------|------------|
 | **Alunos Ativos** | Até 200 | Até 500 | Ilimitado |
 | **Unidades** | 1 | 1 | Multi-unidades |
@@ -61,7 +61,7 @@ Academias pequenas com até 200 alunos ativos que desejam profissionalizar a col
 
 ---
 
-## Plano Professional — R$ 299/mês
+## Plano Profissional — R$ 299/mês
 
 ### Público-Alvo
 Academias em crescimento com até 500 alunos que buscam insights mais profundos e automação.
@@ -104,7 +104,7 @@ Academias em crescimento com até 500 alunos que buscam insights mais profundos 
 ### Público-Alvo
 Redes de academias e grandes operações com múltiplas unidades e necessidades complexas.
 
-### Inclui (Tudo do Professional +)
+### Inclui (Tudo do Profissional +)
 - ✅ Alunos ilimitados
 - ✅ Multi-unidades
   - Dashboard consolidado
@@ -141,7 +141,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 ## Comparativo Detalhado
 
 ### Gestão de Alunos
-| Funcionalidade | Starter | Professional | Enterprise |
+| Funcionalidade | Starter | Profissional | Enterprise |
 |--------------|---------|--------------|------------|
 | Limite de alunos | 200 | 500 | Ilimitado |
 | Multi-unidades | ❌ | ❌ | ✅ |
@@ -149,7 +149,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 | Comparação entre unidades | ❌ | ❌ | ✅ |
 
 ### Coleta de Feedback
-| Funcionalidade | Starter | Professional | Enterprise |
+| Funcionalidade | Starter | Profissional | Enterprise |
 |--------------|---------|--------------|------------|
 | QR Codes ilimitados | ✅ | ✅ | ✅ |
 | Avaliação por setor | ✅ | ✅ | ✅ |
@@ -157,7 +157,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 | Campos customizáveis | ❌ | ❌ | ✅ |
 
 ### Análise e Relatórios
-| Funcionalidade | Starter | Professional | Enterprise |
+| Funcionalidade | Starter | Profissional | Enterprise |
 |--------------|---------|--------------|------------|
 | Dashboard básico | ✅ | ✅ | ✅ |
 | Filtros dinâmicos | ✅ | ✅ | ✅ |
@@ -170,7 +170,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 | Análise de sentimento | ❌ | ✅ | ✅ |
 
 ### Automação
-| Funcionalidade | Starter | Professional | Enterprise |
+| Funcionalidade | Starter | Profissional | Enterprise |
 |--------------|---------|--------------|------------|
 | Notificações automáticas | ❌ | ✅ | ✅ |
 | Webhooks básicos | ❌ | ✅ | ✅ |
@@ -178,7 +178,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 | Integrações customizadas | ❌ | ❌ | ✅ |
 
 ### Suporte e SLA
-| Funcionalidade | Starter | Professional | Enterprise |
+| Funcionalidade | Starter | Profissional | Enterprise |
 |--------------|---------|--------------|------------|
 | Suporte email | ✅ | ✅ | ✅ |
 | Suporte prioritário | ❌ | ✅ | ✅ |
@@ -190,7 +190,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 | Retenção backup | 7 dias | 30 dias | 12 meses |
 
 ### Segurança e Compliance
-| Funcionalidade | Starter | Professional | Enterprise |
+| Funcionalidade | Starter | Profissional | Enterprise |
 |--------------|---------|--------------|------------|
 | Criptografia SSL/TLS | ✅ | ✅ | ✅ |
 | Conformidade LGPD | ✅ | ✅ | ✅ |
@@ -255,7 +255,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 ## Ofertas Especiais
 
 ### Trial Gratuito
-- 14 dias grátis no plano Professional
+- 14 dias grátis no plano Profissional
 - Sem necessidade de cartão de crédito
 - Acesso completo a todas as funcionalidades
 - Cancelamento a qualquer momento
@@ -283,7 +283,7 @@ Redes de academias e grandes operações com múltiplas unidades e necessidades 
 - Quer testar antes de investir mais
 - Prefere começar simples e evoluir depois
 
-### Escolha o Professional se:
+### Escolha o Profissional se:
 - Sua academia tem 200-500 alunos
 - Quer análise com IA para insights mais profundos
 - Precisa de notificações automáticas

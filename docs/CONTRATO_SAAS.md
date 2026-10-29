@@ -37,7 +37,7 @@ O presente contrato terá vigência de [12] meses, contados a partir da data de 
 ### 5.1. Pelos serviços prestados, a CONTRATANTE pagará à CONTRATADA o valor mensal de:
 
 - **Plano Starter:** R$ 149,00 (cento e quarenta e nove reais)
-- **Plano Professional:** R$ 299,00 (duzentos e noventa e nove reais)
+- **Plano Profissional:** R$ 299,00 (duzentos e noventa e nove reais)
 - **Plano Enterprise:** R$ 599,00 (quinhentos e noventa e nove reais)
 
 [INFORMAR PLANO CONTRATADO]
