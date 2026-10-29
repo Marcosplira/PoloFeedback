@@ -35,6 +35,7 @@ from django.urls import reverse
 
 from .models import (
     Avaliacao,
+    ConfiguracaoAcademia,
     Equipamento,
     Exercicio,
     Funcao,
@@ -44,6 +45,7 @@ from .models import (
     RespostaEnquete,
 )
 from .forms import CadastroAlunoForm, ItemPlanoTreinoFormSet, PlanoTreinoForm
+from .auditoria import registrar_acesso
 
 logger = logging.getLogger(__name__)
 
@@ -272,6 +274,55 @@ def landing_comercial(request):
     Página genérica focada em vender o sistema para outras academias.
     """
     return render(request, "feedback/landing_comercial.html")
+
+
+@login_required
+def setup_wizard(request):
+    """
+    Setup wizard para configuração inicial da academia.
+    Permite personalizar nome, logo, cores e informações de contato.
+    """
+    # Verificar se já existe configuração
+    configuracao_existente = ConfiguracaoAcademia.objects.filter(ativo=True).first()
+
+    if configuracao_existente and request.method == "GET":
+        # Se já existe configuração, redirecionar para edição
+        return redirect("configuracao_sistema")
+
+    if request.method == "POST":
+        nome_academia = request.POST.get("nome_academia")
+        cor_primaria = request.POST.get("cor_primaria", "#a3e635")
+        cor_secundaria = request.POST.get("cor_secundaria", "#0a0a0a")
+        telefone = request.POST.get("telefone", "")
+        whatsapp = request.POST.get("whatsapp", "")
+        endereco = request.POST.get("endereco", "")
+        logo = request.FILES.get("logo")
+
+        # Desativar configurações anteriores
+        ConfiguracaoAcademia.objects.all().update(ativo=False)
+
+        # Criar nova configuração
+        configuracao = ConfiguracaoAcademia.objects.create(
+            nome_academia=nome_academia,
+            cor_primaria=cor_primaria,
+            cor_secundaria=cor_secundaria,
+            telefone=telefone,
+            whatsapp=whatsapp,
+            endereco=endereco,
+            logo=logo if logo else None,
+            ativo=True,
+        )
+
+        # Registrar auditoria
+        registrar_acesso(
+            request,
+            acao="criar_usuario",
+            detalhes={"configuracao_id": configuracao.id, "nome_academia": nome_academia},
+        )
+
+        return render(request, "feedback/setup_wizard.html", {"success": True})
+
+    return render(request, "feedback/setup_wizard.html")
 
 
 def baixar_video(request):
