@@ -227,6 +227,7 @@
         .topbar-greeting {
             display: flex;
             flex-direction: column;
+            min-width: 0;
         }
 
         .topbar-greeting .hora {
@@ -244,6 +245,7 @@
             display: flex;
             align-items: center;
             gap: 0.875rem;
+            min-width: 0;
         }
 
         .btn-topbar-voltar {
@@ -939,7 +941,51 @@
 
         @media (max-width: 640px) {
             .content { padding: 1rem; }
-            .topbar { padding: 0 1rem; }
+            .topbar {
+                height: auto;
+                min-height: var(--topbar-h);
+                padding: 0.75rem 1rem 0.875rem 4rem;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+            .topbar-greeting { min-height: 40px; justify-content: center; }
+            .topbar-greeting .saudacao { font-size: 0.9rem; }
+            .topbar-right {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.625rem;
+            }
+            .btn-topbar-voltar { display: none; }
+            .filtros-form {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                width: 100%;
+                gap: 0.5rem;
+            }
+            .select-filtro {
+                width: 100%;
+                min-width: 0;
+                height: 42px;
+                padding: 0 0.625rem;
+                font-size: 0.72rem;
+            }
+            .select-filtro:first-child { grid-column: 1 / -1; }
+            .btn-filtro {
+                height: 42px;
+                justify-content: center;
+            }
+            #resumo-ia .painel-header {
+                align-items: stretch;
+                flex-direction: column;
+            }
+            #resumo-ia .painel-header > div:last-child { width: 100%; }
+            #resumo-ia .painel-header > div:last-child > a,
+            #resumo-ia .painel-header > div:last-child > button {
+                flex: 1;
+                justify-content: center;
+            }
         }
 
         /* ────────────────────────────────────

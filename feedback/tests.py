@@ -9,6 +9,7 @@ from django.core.management import call_command
 import json
 import os
 from io import StringIO
+from urllib.parse import urlsplit
 from unittest.mock import MagicMock, patch
 from feedback.models import (
     Avaliacao,
@@ -861,6 +862,57 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Unidade / Ponto: <span class=\"font-bold text-black\">polo_norte</span>")
         self.assertNotContains(response, "{{")
         self.assertIsNotNone(response.context["qrcode_base64"])
+
+    @patch("feedback.views._obter_ip_local", return_value="127.0.0.1")
+    def test_fluxo_ficticio_com_quatro_qrcodes_e_avaliacoes(self, _obter_ip_local):
+        self.client.force_login(self.user)
+        pessoas_ficticias = [
+            ("Pessoa Teste 1", 5, "Atendimento cordial."),
+            ("Pessoa Teste 2", 4, "Equipamentos em boas condições."),
+            ("Pessoa Teste 3", 3, "Sugestão de ampliar os horários."),
+            ("Pessoa Teste 4", 2, "A limpeza precisa de atenção."),
+        ]
+        qrcodes_gerados = []
+
+        for nome, nota, comentario in pessoas_ficticias:
+            localizacao = f"TESTE FICTICIO - {nome}"
+            with self.subTest(pessoa=nome):
+                qr_response = self.client.get(
+                    reverse("gerar_qrcode"),
+                    {"localizacao": localizacao},
+                )
+                self.assertEqual(qr_response.status_code, 200)
+                self.assertTrue(qr_response.context["qrcode_base64"])
+                qrcodes_gerados.append(qr_response.context["qrcode_base64"])
+
+                destino_qr = urlsplit(qr_response.context["url_gerada"])
+                avaliar_url = f"{destino_qr.path}?{destino_qr.query}"
+                avaliacao_page = self.client.get(avaliar_url)
+                self.assertEqual(avaliacao_page.status_code, 200)
+                self.assertEqual(
+                    avaliacao_page.context["localizacao"],
+                    localizacao,
+                )
+
+                response = self.client.post(
+                    avaliar_url,
+                    {
+                        "categorias": ["estrutura"],
+                        "nota": str(nota),
+                        "comentario": f"[TESTE FICTICIO] {comentario}",
+                    },
+                )
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, "Muito Obrigado")
+
+        self.assertEqual(len(set(qrcodes_gerados)), 4)
+        self.assertEqual(Avaliacao.objects.count(), 4)
+        self.assertEqual(
+            Avaliacao.objects.filter(
+                comentario__startswith="[TESTE FICTICIO]"
+            ).count(),
+            4,
+        )
 
     def test_treino_por_qr_exige_login_e_preserva_destino(self):
         equipamento = Equipamento.objects.create(
