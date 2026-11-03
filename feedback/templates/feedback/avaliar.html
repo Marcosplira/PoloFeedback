@@ -106,6 +106,20 @@
 
             <form id="form-avaliacao" method="POST" action="{% url 'avaliar' %}">
                 {% csrf_token %}
+                {% if erros %}
+                <div
+                    class="mb-5 rounded-xl border border-red-400/40 bg-red-500/10 p-4 text-left"
+                    role="alert"
+                    aria-live="assertive"
+                >
+                    <p class="text-sm font-bold text-red-200">Não foi possível enviar sua avaliação:</p>
+                    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-red-100">
+                        {% for erro in erros %}
+                        <li>{{ erro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
                 <input type="hidden" name="categoria" id="input-categoria" value="">
                 <input type="hidden" name="funcionario_id" id="input-funcionario-id" value="">
                 <input type="hidden" name="nota" id="input-nota" value="">
@@ -409,7 +423,6 @@
             setorNome = nome;
             setorIcone = icone;
             document.getElementById('input-categoria').value = codigo;
-            document.getElementById('input-localizacao').value = nome;
 
             if (isProfissionais) {
                 selecionouProfissional = true;
@@ -427,7 +440,6 @@
             profSelecionadoNome = nome;
             document.getElementById('input-funcionario-id').value = id;
             document.getElementById('input-categoria').value = 'professores';
-            document.getElementById('input-localizacao').value = 'Profissionais';
 
             configurarTelaAvaliacao(nome, '👤', true, cargo, fotoUrl);
             mostrarTela(3);

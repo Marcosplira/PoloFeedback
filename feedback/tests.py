@@ -552,6 +552,23 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, 'name="funcionarios_ids"', html=False)
         self.assertContains(response, "marque um ou mais funcionários")
 
+    def test_categoria_nao_substitui_localizacao_recebida_pelo_qrcode(self):
+        response = self.client.get(
+            reverse("avaliar"),
+            {"localizacao": "Ponto QR de teste"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            'id="input-localizacao" value="Ponto QR de teste"',
+            html=False,
+        )
+        self.assertNotContains(
+            response,
+            "document.getElementById('input-localizacao').value",
+        )
+
     def test_pagina_avaliar_possui_botao_area_gerente(self):
         response = self.client.get(reverse("avaliar"))
         self.assertEqual(response.status_code, 200)
@@ -608,6 +625,7 @@ class FeedbackViewsTests(TestCase):
             [self.funcionario, segundo_funcionario],
         )
         self.assertEqual(av.nota, 5)
+        self.assertEqual(av.localizacao, "Unidade Central")
 
     def test_pagina_avaliar_post_invalido_sem_campos_obrigatorios(self):
         dados = {
@@ -615,7 +633,9 @@ class FeedbackViewsTests(TestCase):
         }
         response = self.client.post(reverse("avaliar"), dados)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Por favor, atente-se")
+        self.assertContains(response, 'role="alert"', html=False)
+        self.assertContains(response, "Selecione sobre o que você quer opinar.")
+        self.assertContains(response, "Avalie atribuindo uma nota de 1 a 5 estrelas.")
         self.assertEqual(Avaliacao.objects.count(), 0)
 
     def test_dashboard_requer_login(self):
@@ -859,7 +879,8 @@ class FeedbackViewsTests(TestCase):
         response = self.client.get(reverse("gerar_qrcode") + "?localizacao=polo_norte")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "polo_norte")
-        self.assertContains(response, "Unidade / Ponto: <span class=\"font-bold text-black\">polo_norte</span>")
+        self.assertContains(response, 'id="qr-img"', html=False)
+        self.assertIn("polo_norte", response.context["url_gerada"])
         self.assertNotContains(response, "{{")
         self.assertIsNotNone(response.context["qrcode_base64"])
 

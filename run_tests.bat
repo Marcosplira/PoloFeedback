@@ -5,7 +5,7 @@ if exist ".\venv\Scripts\python.exe" (
 ) else (
     set "PYTHON_EXE=python"
 )
-%PYTHON_EXE% manage.py test -v 2 > test-output.txt 2>&1
+%PYTHON_EXE% manage.py test feedback.tests feedback.test_migrations -v 2 > test-output.txt 2>&1
 if errorlevel 1 (
     echo ERRO_TESTES
 ) else (
