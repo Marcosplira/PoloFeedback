@@ -43,6 +43,8 @@
 
 Endereço oficial da aplicação: <https://polofeedback.pythonanywhere.com/>.
 
+O projeto exige `DEBUG=False`, uma `SECRET_KEY` privada e um banco PostgreSQL persistente quando executado em produção. Antes de iniciar, configure um PostgreSQL acessível a partir da conta PythonAnywhere e confirme que o plano/provedor permite essa conexão. Não tente usar o SQLite local como banco de produção.
+
 Siga estes passos no Bash Console do PythonAnywhere:
 
 ```bash
@@ -55,13 +57,7 @@ python3.12 -m venv ~/.virtualenvs/feedback-env
 source ~/.virtualenvs/feedback-env/bin/activate
 pip install -r requirements.txt
 
-# 3. Rodar migrações
-python manage.py migrate
-
-# 4. Coletar arquivos estáticos
-python manage.py collectstatic --noinput
-
-# 5. Criar superusuário
+# 3. Criar superusuário (opcional; as contas gerenciais não precisam ser superusuárias)
 python manage.py createsuperuser
 ```
 
@@ -70,6 +66,7 @@ Na aba **Web** do PythonAnywhere:
 - Virtualenv: `/home/SEU_USUARIO/.virtualenvs/feedback-env`
 - Static files: `/static/` → `/home/SEU_USUARIO/PoloFeedback/staticfiles`
 - Media files: `/media/` → `/home/SEU_USUARIO/PoloFeedback/media`
+- Crie o diretório `media` se necessário, confirme que o usuário da aplicação pode gravar nele e inclua-o na rotina de backup. As fotos e logos são armazenadas nesse diretório.
 - WSGI config (substituir tudo):
 
 ```python
@@ -85,12 +82,53 @@ os.environ['DEBUG'] = 'False'
 os.environ['SECRET_KEY'] = 'SUBSTITUA_POR_UMA_CHAVE_FORTE_E_PRIVADA'
 os.environ['ALLOWED_HOSTS'] = 'polofeedback.pythonanywhere.com'
 os.environ['CSRF_TRUSTED_ORIGINS'] = 'https://polofeedback.pythonanywhere.com'
+os.environ['DATABASE_URL'] = 'postgresql://USUARIO:SENHA@HOST:5432/NOME_DO_BANCO?sslmode=require'
+os.environ['DASHBOARD_MANAGER_USERNAME'] = 'SEU_USUARIO_GERENTE'
+os.environ['DASHBOARD_MANAGER_PASSWORD'] = 'SENHA_FORTE_PRIVADA'
+os.environ['DASHBOARD_OWNER_USERNAME'] = 'SEU_USUARIO_RESPONSAVEL'
+os.environ['DASHBOARD_OWNER_PASSWORD'] = 'OUTRA_SENHA_FORTE_PRIVADA'
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 ```
 
-Gere uma chave secreta com `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`. Guarde-a somente na configuração WSGI privada do PythonAnywhere; não a publique no GitHub. Se estiver atualizando uma instalação existente, faça backup do banco antes de aplicar migrações.
+Substitua todos os valores de exemplo pelos dados privados do provedor. Nunca salve esse conteúdo no repositório, tire capturas de tela com segredos ou compartilhe a URL PostgreSQL. Gere a chave Django com `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` e guarde-a somente na configuração WSGI privada do PythonAnywhere. Se estiver atualizando uma instalação existente, faça backup do banco e da pasta `media` antes de aplicar migrações.
+
+Para executar migrações e coletar estáticos no Bash Console, carregue a mesma `DATABASE_URL` de forma interativa (sem incluí-la no comando salvo no histórico):
+
+```bash
+read -s -p "DATABASE_URL: " DATABASE_URL; echo
+export DATABASE_URL
+source ~/.virtualenvs/feedback-env/bin/activate
+cd ~/PoloFeedback
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
+
+Para criar/atualizar as contas gerenciais, informe os dados de forma interativa no Bash Console e execute o comando na mesma sessão:
+
+```bash
+read -r -p "Usuário gerente: " DASHBOARD_MANAGER_USERNAME
+read -s -p "Senha gerente: " DASHBOARD_MANAGER_PASSWORD; echo
+read -r -p "Usuário responsável: " DASHBOARD_OWNER_USERNAME
+read -s -p "Senha responsável: " DASHBOARD_OWNER_PASSWORD; echo
+export DASHBOARD_MANAGER_USERNAME DASHBOARD_MANAGER_PASSWORD
+export DASHBOARD_OWNER_USERNAME DASHBOARD_OWNER_PASSWORD
+python manage.py setup_dashboard_users
+unset DASHBOARD_MANAGER_USERNAME DASHBOARD_MANAGER_PASSWORD
+unset DASHBOARD_OWNER_USERNAME DASHBOARD_OWNER_PASSWORD
+```
+
+Esse comando concede permissões específicas de equipe, incluindo a configuração da academia; não compartilhe nem reutilize senhas de exemplo.
+
+Na página **Web** do PythonAnywhere, ative **Force HTTPS** e clique em **Reload**. O host `pythonanywhere.com` fornece HTTPS para subdomínios próprios; consulte a [documentação de HTTPS](https://help.pythonanywhere.com/pages/HTTPSSetup/) e a [orientação para forçar HTTPS](https://help.pythonanywhere.com/pages/ForcingHTTPS/). Depois, valide externamente:
+
+```bash
+curl -I http://polofeedback.pythonanywhere.com/login/
+curl -sS -D - -o /dev/null https://polofeedback.pythonanywhere.com/login/
+```
+
+A primeira chamada deve redirecionar para HTTPS. Na segunda, confira `Strict-Transport-Security` e, quando a resposta definir cookies, o atributo `Secure`. Não considere a implantação segura enquanto HTTP servir a página sem redirecionar ou os cookies seguros não estiverem presentes.
 
 Clique em **Reload** no topo da página.
 
@@ -186,7 +224,7 @@ Posso criar seu acesso de teste hoje?"
 
 ### Semanal
 - Verificar logs de erro
-- Fazer backup manual (extra do SQLite)
+- Verificar os backups do PostgreSQL e da pasta `media`
 - Responder suporte
 
 ### Mensal

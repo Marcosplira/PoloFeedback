@@ -3,6 +3,7 @@ from urllib.parse import parse_qs, urlparse
 
 from django.db import models
 from django.contrib.auth.models import User
+from .validators import validate_image_size
 from django.templatetags.static import static
 from django.utils import timezone
 
@@ -53,7 +54,12 @@ class Funcao(models.Model):
 class Funcionario(models.Model):
     nome = models.CharField(max_length=100)
     cargo = models.CharField(max_length=100, blank=True)
-    foto = models.ImageField(upload_to='funcionarios/', null=True, blank=True)
+    foto = models.ImageField(
+        upload_to="funcionarios/",
+        null=True,
+        blank=True,
+        validators=[validate_image_size],
+    )
     ativo = models.BooleanField(default=True)
     funcoes = models.ManyToManyField(
         Funcao,
@@ -267,10 +273,11 @@ class ConfiguracaoAcademia(models.Model):
         verbose_name="Nome da academia"
     )
     logo = models.ImageField(
-        upload_to='academia/logo/',
+        upload_to="academia/logo/",
         null=True,
         blank=True,
-        verbose_name="Logo da academia"
+        verbose_name="Logo da academia",
+        validators=[validate_image_size],
     )
     cor_primaria = models.CharField(
         max_length=7,

@@ -25,6 +25,7 @@ class Command(BaseCommand):
         "add_funcao",
         "change_funcao",
         "view_respostaenquete",
+        "add_configuracaoacademia",
         "view_equipamento",
         "add_equipamento",
         "change_equipamento",

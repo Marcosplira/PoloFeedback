@@ -4,11 +4,14 @@ from django.test import RequestFactory
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import OperationalError
 from django.core.management import call_command
 import json
 import os
 from io import StringIO
+from types import SimpleNamespace
 from urllib.parse import urlsplit
 from unittest.mock import MagicMock, patch
 from feedback.models import (
@@ -20,8 +23,10 @@ from feedback.models import (
     ItemPlanoTreino,
     PlanoTreino,
     RespostaEnquete,
+    ConfiguracaoAcademia,
 )
 from feedback.middleware import DatabaseErrorPageMiddleware
+from feedback.validators import MAX_IMAGE_UPLOAD_SIZE, validate_image_size
 
 
 class FeedbackModelTests(TestCase):
@@ -83,6 +88,23 @@ class FeedbackModelTests(TestCase):
             status="resolvida"
         )
         self.assertIsNotNone(av.data_resolucao)
+
+    def test_upload_de_imagem_tem_limite_de_cinco_mb(self):
+        self.assertIn(
+            validate_image_size,
+            Funcionario._meta.get_field("foto").validators,
+        )
+        self.assertIn(
+            validate_image_size,
+            ConfiguracaoAcademia._meta.get_field("logo").validators,
+        )
+
+        imagem_pequena = SimpleNamespace(size=MAX_IMAGE_UPLOAD_SIZE)
+        validate_image_size(imagem_pequena)
+
+        imagem_grande = SimpleNamespace(size=MAX_IMAGE_UPLOAD_SIZE + 1)
+        with self.assertRaises(ValidationError):
+            validate_image_size(imagem_grande)
 
 
 class FeedbackViewsTests(TestCase):
@@ -327,6 +349,7 @@ class FeedbackViewsTests(TestCase):
         self.assertFalse(gerente.is_superuser)
         self.assertTrue(gerente.has_perm("feedback.view_avaliacao"))
         self.assertTrue(gerente.has_perm("feedback.change_funcionario"))
+        self.assertTrue(gerente.has_perm("feedback.add_configuracaoacademia"))
         self.assertTrue(gerente.has_perm("feedback.change_avaliacao"))
         self.assertTrue(gerente.has_perm("feedback.add_equipamento"))
         self.assertTrue(gerente.has_perm("feedback.change_exercicio"))
@@ -358,6 +381,26 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(
             self.client.get(reverse("admin:feedback_exercicio_add")).status_code,
             200,
+        )
+        self.assertEqual(
+            self.client.get(reverse("setup_wizard")).status_code,
+            200,
+        )
+        setup_response = self.client.post(
+            reverse("setup_wizard"),
+            {"nome_academia": "Academia de teste"},
+        )
+        self.assertEqual(setup_response.status_code, 200)
+        self.assertContains(
+            setup_response,
+            'class="step-content active" id="step-success"',
+        )
+        self.assertEqual(
+            ConfiguracaoAcademia.objects.filter(
+                nome_academia="Academia de teste",
+                ativo=True,
+            ).count(),
+            1,
         )
         self.assertEqual(
             self.client.get(reverse("admin:feedback_planotreino_changelist")).status_code,
@@ -416,6 +459,67 @@ class FeedbackViewsTests(TestCase):
         conta_legada.refresh_from_db()
         self.assertFalse(conta_legada.is_active)
         self.assertFalse(conta_legada.has_usable_password())
+
+    def test_aluno_nao_pode_alterar_configuracao_ou_enviar_logo(self):
+        aluno = User.objects.create_user(username="aluno_setup_teste")
+        self.client.force_login(aluno)
+
+        response = self.client.post(
+            reverse("setup_wizard"),
+            {"nome_academia": "Configuração não autorizada"},
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(
+            ConfiguracaoAcademia.objects.filter(
+                nome_academia="Configuração não autorizada"
+            ).exists()
+        )
+
+        equipe_sem_permissao = User.objects.create_user(
+            username="equipe_sem_permissao",
+            is_staff=True,
+        )
+        self.client.force_login(equipe_sem_permissao)
+        response = self.client.post(
+            reverse("setup_wizard"),
+            {"nome_academia": "Configuração sem permissão"},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(
+            ConfiguracaoAcademia.objects.filter(
+                nome_academia="Configuração sem permissão"
+            ).exists()
+        )
+
+    def test_setup_wizard_rejeita_imagem_invalida_sem_desativar_configuracao(self):
+        configuracao = ConfiguracaoAcademia.objects.create(
+            nome_academia="Configuração existente"
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("setup_wizard"),
+            {
+                "nome_academia": "Configuração inválida",
+                "cor_primaria": "#a3e635",
+                "cor_secundaria": "#0a0a0a",
+                "logo": SimpleUploadedFile(
+                    "logo.png",
+                    b"conteudo que nao e uma imagem",
+                    content_type="image/png",
+                ),
+            },
+        )
+
+        self.assertEqual(response.status_code, 400)
+        configuracao.refresh_from_db()
+        self.assertTrue(configuracao.ativo)
+        self.assertFalse(
+            ConfiguracaoAcademia.objects.filter(
+                nome_academia="Configuração inválida"
+            ).exists()
+        )
 
     def test_rodape_exibe_contato_e_creditos(self):
         response = self.client.get(reverse("inicio"))

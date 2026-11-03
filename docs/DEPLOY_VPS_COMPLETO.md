@@ -38,9 +38,8 @@
 
 #### 1. Locaweb (Brasil)
 - **Vantagens**: Servidor no Brasil, suporte em português
-- **Plano recomendado**: Cloud Server Flex 2GB RAM / 1 vCPU
-- **Custo**: ~R$ 50-100/mês
-- **Link**: https://www.locaweb.com.br/
+- **Planos e valores**: consultar a [página oficial de VPS](https://www.locaweb.com.br/servidor-vps/) antes da contratação; preços e condições promocionais podem mudar.
+- **Atenção**: a página consultada em 3 de novembro de 2026 anunciava o plano de entrada com 2 vCPUs e 40 GB SSD, mas não informava a memória RAM na descrição disponível. Confirme RAM, valor total do período, renovação e compatibilidade com Django/PostgreSQL antes de contratar. Não use a estimativa antiga de 2 GB como requisito confirmado.
 
 #### 2. DigitalOcean
 - **Vantagens**: Fácil configuração, bom preço

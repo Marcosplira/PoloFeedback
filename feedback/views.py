@@ -44,7 +44,12 @@ from .models import (
     PlanoTreino,
     RespostaEnquete,
 )
-from .forms import CadastroAlunoForm, ItemPlanoTreinoFormSet, PlanoTreinoForm
+from .forms import (
+    CadastroAlunoForm,
+    ConfiguracaoAcademiaForm,
+    ItemPlanoTreinoFormSet,
+    PlanoTreinoForm,
+)
 from .auditoria import registrar_acesso
 
 logger = logging.getLogger(__name__)
@@ -276,7 +281,7 @@ def landing_comercial(request):
     return render(request, "feedback/landing_comercial.html")
 
 
-@login_required
+@staff_required(permission="feedback.add_configuracaoacademia")
 def setup_wizard(request):
     """
     Setup wizard para configuração inicial da academia.
@@ -289,40 +294,40 @@ def setup_wizard(request):
         # Se já existe configuração, redirecionar para edição
         return redirect("configuracao_sistema")
 
+    form = ConfiguracaoAcademiaForm(
+        request.POST or None,
+        request.FILES or None,
+    )
     if request.method == "POST":
-        nome_academia = request.POST.get("nome_academia")
-        cor_primaria = request.POST.get("cor_primaria", "#a3e635")
-        cor_secundaria = request.POST.get("cor_secundaria", "#0a0a0a")
-        telefone = request.POST.get("telefone", "")
-        whatsapp = request.POST.get("whatsapp", "")
-        endereco = request.POST.get("endereco", "")
-        logo = request.FILES.get("logo")
+        if form.is_valid():
+            with transaction.atomic():
+                ConfiguracaoAcademia.objects.all().update(ativo=False)
+                configuracao = form.save(commit=False)
+                configuracao.ativo = True
+                configuracao.save()
 
-        # Desativar configurações anteriores
-        ConfiguracaoAcademia.objects.all().update(ativo=False)
+            registrar_acesso(
+                request,
+                acao="criar_usuario",
+                detalhes={
+                    "configuracao_id": configuracao.id,
+                    "nome_academia": configuracao.nome_academia,
+                },
+            )
+            return render(
+                request,
+                "feedback/setup_wizard.html",
+                {"success": True},
+            )
 
-        # Criar nova configuração
-        configuracao = ConfiguracaoAcademia.objects.create(
-            nome_academia=nome_academia,
-            cor_primaria=cor_primaria,
-            cor_secundaria=cor_secundaria,
-            telefone=telefone,
-            whatsapp=whatsapp,
-            endereco=endereco,
-            logo=logo if logo else None,
-            ativo=True,
-        )
-
-        # Registrar auditoria
-        registrar_acesso(
+        return render(
             request,
-            acao="criar_usuario",
-            detalhes={"configuracao_id": configuracao.id, "nome_academia": nome_academia},
+            "feedback/setup_wizard.html",
+            {"form": form},
+            status=400,
         )
 
-        return render(request, "feedback/setup_wizard.html", {"success": True})
-
-    return render(request, "feedback/setup_wizard.html")
+    return render(request, "feedback/setup_wizard.html", {"form": form})
 
 
 def baixar_video(request):
@@ -2002,4 +2007,3 @@ def logout_view(request):
     from django.contrib.auth import logout
     logout(request)
     return redirect("login")
-

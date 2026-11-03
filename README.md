@@ -50,6 +50,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 
 6. **🛡️ Painel Administrativo Completo (`/admin/`):**
    - Gestão de colaboradores com fotos e status ativo.
+   - Fotos e logos passam por validação de imagem e limite de 5 MB.
    - Gestão e auditoria de avaliações.
    - Lista e cadastro de usuários/alunos, ativação/inativação e redefinição de senha; senhas não são exibidas e contas gerenciais não podem conceder privilégios administrativos por essa tela.
 
@@ -67,7 +68,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 | :--- | :--- |
 | **Backend** | Python 3.12, Django 6.1.1 |
 | **Frontend** | HTML5, Tailwind CSS (CDN), JavaScript, Chart.js |
-| **Banco de Dados** | SQLite (Desenvolvimento local / PythonAnywhere) / PostgreSQL (Docker / Render alternativo) |
+| **Banco de Dados** | SQLite (desenvolvimento local) / PostgreSQL (produção, Docker e Render alternativo) |
 | **Inteligência Artificial** | Google Gemini API (`gemini-2.5-flash`) |
 | **Infraestrutura** | Gunicorn, Whitenoise, Docker, Docker Compose |
 | **Hospedagem** | PythonAnywhere (produção) |
@@ -134,7 +135,7 @@ Para configurar as duas contas privadas do dashboard, defina estas variáveis no
 - `DASHBOARD_OWNER_USERNAME` (usuário inicial sugerido: `marcos`)
 - `DASHBOARD_OWNER_PASSWORD` (outra senha privada e forte)
 
-O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard, à gestão de funcionários, ao cadastro/edição de aparelhos e exercícios e à consulta/cadastro/edição básica de usuários, sem torná-las superusuárias nem permitir exclusões pelo Admin. A tela de usuários oculta campos de privilégios; senhas existentes nunca são exibidas. No Render alternativo, o `startCommand` executa as migrações e esse comando antes de iniciar o servidor. No PythonAnywhere, configure as variáveis no WSGI e execute o comando pelo Bash Console se precisar criar ou atualizar essas contas. Se as variáveis não estiverem preenchidas, as contas gerenciais não são criadas. Não há credenciais padrão no código nem na tela de login.
+O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard, à gestão de funcionários, à configuração da academia, ao cadastro/edição de aparelhos e exercícios e à consulta/cadastro/edição básica de usuários, sem torná-las superusuárias nem permitir exclusões pelo Admin. A tela de usuários oculta campos de privilégios; senhas existentes nunca são exibidas. No Render alternativo, o `startCommand` executa as migrações e esse comando antes de iniciar o servidor. No PythonAnywhere, configure as variáveis no WSGI e execute o comando pelo Bash Console se precisar criar ou atualizar essas contas. Se as variáveis não estiverem preenchidas, as contas gerenciais não são criadas. Não há credenciais padrão no código nem na tela de login.
 
 ### 7. Cadastrar o MVP de treinos por QR Code
 
@@ -190,7 +191,7 @@ Preencha `SECRET_KEY` com uma chave Django exclusiva e `DB_PASSWORD` com uma sen
 docker compose up --build -d
 ```
 
-O sistema estará disponível em [http://localhost:8000](http://localhost:8000).
+Com os containers em execução, abra `http://localhost:8000` no navegador do mesmo computador onde o Docker está rodando. Esse endereço local não é um link público e não funciona em outro aparelho. Para acessar o sistema publicado, use <https://polofeedback.pythonanywhere.com/>.
 
 Crie uma conta administrativa individual na primeira execução:
 ```bash
@@ -260,6 +261,8 @@ Se utilizar a IA com Google Gemini, configure `GEMINI_API_KEY` em **Environment*
 | `DEBUG` | `True` | Modo de depuração (`True` ou `False`) |
 | `ALLOWED_HOSTS` | `*` em debug | Hosts permitidos separados por vírgula |
 | `DATABASE_URL` | *(SQLite local)* | URL do banco PostgreSQL em produção |
+| `DASHBOARD_MANAGER_USERNAME` / `DASHBOARD_MANAGER_PASSWORD` | *(não configurados)* | Credenciais privadas da primeira conta gerencial |
+| `DASHBOARD_OWNER_USERNAME` / `DASHBOARD_OWNER_PASSWORD` | *(não configurados)* | Credenciais privadas da segunda conta gerencial |
 | `GEMINI_API_KEY` | *(vazio — usa fallback local)* | Chave da API Gemini para IA |
 | `GEMINI_MODEL` | `gemini-2.5-flash` | Modelo Gemini utilizado |
 

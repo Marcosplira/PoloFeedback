@@ -244,17 +244,27 @@
             <p class="setup-desc">Personalize sua academia em 3 passos simples</p>
         </div>
 
-        <div class="progress-bar">
-            <div class="progress-step active" id="step-1-bar"></div>
-            <div class="progress-step" id="step-2-bar"></div>
-            <div class="progress-step" id="step-3-bar"></div>
-        </div>
+        {% if not success %}
+            <div class="progress-bar">
+                <div class="progress-step active" id="step-1-bar"></div>
+                <div class="progress-step" id="step-2-bar"></div>
+                <div class="progress-step" id="step-3-bar"></div>
+            </div>
+        {% endif %}
 
-        <form id="setup-form" method="POST" action="{% url 'setup_wizard_submit' %}" enctype="multipart/form-data">
+        <form id="setup-form" method="POST" action="{% url 'setup_wizard' %}" enctype="multipart/form-data">
             {% csrf_token %}
+            {% if form.errors %}
+                <div role="alert" class="form-help" style="color: #fca5a5; margin-bottom: 1rem;">
+                    {% for field in form %}
+                        {% for error in field.errors %}{{ error }}{% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
 
             <!-- PASSO 1: Identidade -->
-            <div class="step-content active" id="step-1">
+            <div class="step-content{% if not success %} active{% endif %}" id="step-1">
                 <div class="form-group">
                     <label class="form-label">Nome da academia *</label>
                     <input type="text" name="nome_academia" class="form-input" placeholder="Ex: Academia Fit Center" required>
@@ -321,7 +331,7 @@
             </div>
 
             <!-- SUCESSO -->
-            <div class="step-content" id="step-success">
+            <div class="step-content{% if success %} active{% endif %}" id="step-success">
                 <div class="success-message">
                     <div class="success-icon">✅</div>
                     <h2 class="success-title">Configuração Concluída!</h2>

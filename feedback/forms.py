@@ -4,7 +4,12 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms import inlineformset_factory
 
-from .models import Exercicio, ItemPlanoTreino, PlanoTreino
+from .models import (
+    ConfiguracaoAcademia,
+    Exercicio,
+    ItemPlanoTreino,
+    PlanoTreino,
+)
 
 
 class CadastroAlunoForm(UserCreationForm):
@@ -23,6 +28,31 @@ class CadastroAlunoForm(UserCreationForm):
         self.fields["last_name"].required = True
         self.fields["password1"].label = "Senha"
         self.fields["password2"].label = "Confirme a senha"
+
+
+class ConfiguracaoAcademiaForm(forms.ModelForm):
+    class Meta:
+        model = ConfiguracaoAcademia
+        fields = (
+            "nome_academia",
+            "logo",
+            "cor_primaria",
+            "cor_secundaria",
+            "telefone",
+            "whatsapp",
+            "endereco",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["cor_primaria"].required = False
+        self.fields["cor_secundaria"].required = False
+
+    def clean_cor_primaria(self):
+        return self.cleaned_data.get("cor_primaria") or "#a3e635"
+
+    def clean_cor_secundaria(self):
+        return self.cleaned_data.get("cor_secundaria") or "#0a0a0a"
 
 
 class AlunoModelChoiceField(forms.ModelChoiceField):
