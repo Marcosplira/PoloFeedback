@@ -1036,11 +1036,14 @@
                         </span>
 
                         <span class="meta-pill">
-                            🔒 100% Anônimo
+                            🔒 Nome opcional
                         </span>
 
                     </div>
 
+                    <p class="question-sub" style="font-size: 0.8rem; margin-top: 0.75rem;">
+                        Se informar seu nome no final, somente a equipe autorizada poderá vê-lo. Sem nome, sua resposta fica sem identificação.
+                    </p>
 
                     <div class="step-footer" style="margin-top: auto;">
 
@@ -1747,6 +1750,35 @@
 
                         </div>
 
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <label for="nome-respondente" class="question-sub" style="display: block; margin-bottom: 0.4rem;">
+                            Seu nome (opcional)
+                        </label>
+                        <input
+                            id="nome-respondente"
+                            name="nome_respondente"
+                            type="text"
+                            maxlength="150"
+                            value="{{ nome_respondente|default:'' }}"
+                            autocomplete="name"
+                            placeholder="Informe seu nome se quiser se identificar"
+                            class="enquete-input"
+                        >
+                        <p class="question-sub" style="font-size: 0.75rem; margin-top: 0.35rem;">
+                            O nome informado será visto somente pela equipe autorizada. Você pode deixar em branco.
+                        </p>
+                        {% if erro_nome_respondente %}
+                        <p role="alert" class="question-sub" style="color: #b91c1c; margin-top: 0.35rem;">
+                            {{ erro_nome_respondente|join:", " }}
+                        </p>
+                        {% endif %}
+                        {% if erro_funcionarios %}
+                        <p role="alert" class="question-sub" style="color: #b91c1c; margin-top: 0.35rem;">
+                            {{ erro_funcionarios }}
+                        </p>
+                        {% endif %}
                     </div>
 
 

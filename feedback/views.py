@@ -48,6 +48,7 @@ from .forms import (
     CadastroAlunoForm,
     ConfiguracaoAcademiaForm,
     ItemPlanoTreinoFormSet,
+    NomeRespondenteForm,
     PlanoTreinoForm,
 )
 from .auditoria import registrar_acesso
@@ -152,6 +153,11 @@ def avaliar(request):
     funcionarios = Funcionario.objects.filter(ativo=True).prefetch_related("funcoes")
 
     if request.method == "POST":
+        nome_form = NomeRespondenteForm(request.POST)
+        nome_valido = nome_form.is_valid()
+        nome_respondente = (
+            nome_form.cleaned_data["nome_respondente"] if nome_valido else ""
+        )
         categorias = request.POST.getlist("categorias")
         if not categorias and request.POST.get("categoria"):
             categorias = [request.POST.get("categoria").strip()]
@@ -187,6 +193,8 @@ def avaliar(request):
         )
 
         erros = []
+        if not nome_valido:
+            erros.extend(nome_form.errors["nome_respondente"])
 
         if not categorias:
             erros.append(
@@ -218,6 +226,10 @@ def avaliar(request):
                     "categorias_selecionadas": categorias,
                     "tipos_selecionados": tipos_feedback,
                     "funcionarios_ids_selecionados": funcionario_ids,
+                    "nome_respondente": request.POST.get(
+                        "nome_respondente",
+                        "",
+                    ),
                 },
             )
 
@@ -228,6 +240,7 @@ def avaliar(request):
             tipo_feedback=tipos_feedback[0],
             tipos_feedback=tipos_feedback,
             comentario=comentario,
+            nome_respondente=nome_respondente,
             localizacao=localizacao,
             funcionario=funcionarios_selecionados[0]
             if funcionarios_selecionados
@@ -387,6 +400,11 @@ def enquete(request):
         )
 
     if request.method == "POST":
+        nome_form = NomeRespondenteForm(request.POST)
+        nome_valido = nome_form.is_valid()
+        nome_respondente = (
+            nome_form.cleaned_data["nome_respondente"] if nome_valido else ""
+        )
 
         aulas_favoritas = request.POST.getlist("aulas_favoritas")
         aulas_favoritas_outra = request.POST.get(
@@ -431,7 +449,7 @@ def enquete(request):
         funcionarios_selecionados, selecao_valida = _selecionar_funcionarios(
             funcionario_ids
         )
-        if not selecao_valida:
+        if not selecao_valida or not nome_valido:
             return render(
                 request,
                 "feedback/enquete.html",
@@ -439,15 +457,25 @@ def enquete(request):
                     "funcionarios": funcionarios,
                     "funcionarios_por_grupo": funcionarios_por_grupo,
                     "funcionarios_ids_selecionados": funcionario_ids,
+                    "nome_respondente": request.POST.get(
+                        "nome_respondente",
+                        "",
+                    ),
+                    "erro_nome_respondente": (
+                        nome_form.errors["nome_respondente"]
+                        if not nome_valido
+                        else None
+                    ),
                     "erro_funcionarios": (
                         "Um ou mais funcionários selecionados não estão disponíveis. "
                         "Revise a seleção e tente novamente."
-                    ),
+                    ) if not selecao_valida else None,
                 },
                 status=400,
             )
 
         resposta = RespostaEnquete.objects.create(
+            nome_respondente=nome_respondente,
             participa_aulas=participa_aulas,
             aulas_favoritas=aulas_favoritas,
             aulas_favoritas_outra=aulas_favoritas_outra,
@@ -468,6 +496,7 @@ def enquete(request):
                 tipo_feedback="elogio",
                 tipos_feedback=["elogio"],
                 comentario=f"[Enquete] {elogio_colaborador}",
+                nome_respondente=nome_respondente,
                 funcionario=funcionarios_selecionados[0],
                 origem="aluno",
             )
@@ -860,6 +889,7 @@ def dashboard(request):
             models.Q(sugestao_valor__gt="")
             | models.Q(elogio_colaborador__gt="")
             | models.Q(aula_falta__gt="")
+            | models.Q(nome_respondente__gt="")
         )
         .order_by("-data_criacao")[:6]
     )

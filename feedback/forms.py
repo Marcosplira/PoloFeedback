@@ -55,6 +55,15 @@ class ConfiguracaoAcademiaForm(forms.ModelForm):
         return self.cleaned_data.get("cor_secundaria") or "#0a0a0a"
 
 
+class NomeRespondenteForm(forms.Form):
+    nome_respondente = forms.CharField(
+        label="Nome do aluno (opcional)",
+        max_length=150,
+        required=False,
+        strip=True,
+    )
+
+
 class AlunoModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, aluno):
         nome = aluno.get_full_name() or aluno.username

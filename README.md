@@ -19,8 +19,10 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 
 1. **📱 Formulário de Avaliação Mobile-First (`/avaliar/`):**
    - Rápido, intuitivo e responsivo.
+   - Nome do aluno opcional; quando informado, aparece apenas para a equipe autorizada. Sem nome, a avaliação fica sem identificação.
    - Avaliação por estrelas (1 a 5).
    - Múltiplas categorias (Atendimento, Limpeza, Equipamentos, Professores, Estrutura, Geral).
+   - A enquete também permite informar o nome opcionalmente, visível apenas para a equipe autorizada.
    - Tipos de feedback (Elogio 👍, Sugestão 💡, Reclamação ⚠️).
    - Opção de selecionar o colaborador/instrutor avaliado.
    - Retenção inteligente de dados em caso de avisos de validação.

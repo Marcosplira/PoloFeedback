@@ -1186,6 +1186,13 @@
                             <div class="av-item">
                                 <div class="av-nota nota-{{ av.nota }}">{{ av.nota }}★</div>
                                 <div class="av-corpo">
+                                    <div class="av-info">
+                                        {% if av.nome_respondente %}
+                                        <strong>Aluno: {{ av.nome_respondente }}</strong>
+                                        {% else %}
+                                        Aluno sem nome informado
+                                        {% endif %}
+                                    </div>
                                     <div class="av-tags">
                                         {% with tipos=av.tipos_feedback|default_if_none:'' %}
                                         {% if 'elogio' in tipos or av.tipo_feedback == 'elogio' %}
@@ -1399,6 +1406,13 @@
                     <div class="av-lista">
                         {% for resposta in ultimas_enquetes %}
                         <div class="av-item" style="grid-template-columns: 1fr;">
+                            <p class="av-info">
+                                {% if resposta.nome_respondente %}
+                                <strong>Aluno: {{ resposta.nome_respondente }}</strong>
+                                {% else %}
+                                Aluno sem nome informado
+                                {% endif %}
+                            </p>
                             {% if resposta.sugestao_valor %}
                             <p class="av-comentario" style="white-space: normal;">
                                 <strong>Sugestão de melhoria:</strong> {{ resposta.sugestao_valor }}

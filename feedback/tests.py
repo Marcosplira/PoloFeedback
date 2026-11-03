@@ -651,6 +651,8 @@ class FeedbackViewsTests(TestCase):
         response = self.client.get(reverse("avaliar"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Polo Feedback")
+        self.assertContains(response, 'name="nome_respondente"', html=False)
+        self.assertContains(response, "Seu nome (opcional)")
         self.assertContains(response, "Mariana Instrutora")
         self.assertContains(response, "feedback/funcionarios/alan-araujo.png")
         self.assertContains(response, 'name="funcionarios_ids"', html=False)
@@ -718,6 +720,7 @@ class FeedbackViewsTests(TestCase):
             "nota": "5",
             "tipos_feedback": ["elogio"],
             "comentario": "Ótima aula com a professora Mariana!",
+            "nome_respondente": "Aluno identificado",
             "localizacao": "Unidade Central",
         }
         segundo_funcionario = Funcionario.objects.create(
@@ -738,6 +741,14 @@ class FeedbackViewsTests(TestCase):
         )
         self.assertEqual(av.nota, 5)
         self.assertEqual(av.localizacao, "Unidade Central")
+        self.assertEqual(av.nome_respondente, "Aluno identificado")
+        self.client.force_login(self.user)
+        dashboard_response = self.client.get(reverse("dashboard"))
+        self.assertContains(dashboard_response, "Aluno: Aluno identificado")
+        admin_response = self.client.get(
+            reverse("admin:feedback_avaliacao_changelist")
+        )
+        self.assertContains(admin_response, "Aluno identificado")
 
     def test_pagina_avaliar_post_invalido_sem_campos_obrigatorios(self):
         dados = {
@@ -1257,10 +1268,24 @@ class FeedbackViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_formularios_exibem_nome_opcional_e_aviso_de_visibilidade(self):
+        for rota in ("avaliar", "enquete"):
+            with self.subTest(rota=rota):
+                response = self.client.get(reverse(rota))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(
+                    response,
+                    'name="nome_respondente"',
+                    html=False,
+                )
+                self.assertContains(response, "equipe autorizada")
+
     def test_enquete_get(self):
         response = self.client.get(reverse("enquete"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Enquete de Satisfação")
+        self.assertContains(response, "Pesquisa Polo Fit")
+        self.assertContains(response, 'name="nome_respondente"', html=False)
+        self.assertContains(response, "Nome opcional")
         self.assertContains(response, "Quais aulas você MAIS gosta ou participa?")
         self.assertContains(response, "Você participa das aulas coletivas da academia?")
         self.assertContains(response, "Sobre novos espaços na academia")
@@ -1302,6 +1327,7 @@ class FeedbackViewsTests(TestCase):
             ativo=True,
         )
         dados = {
+            "nome_respondente": "Aluno da Enquete",
             "aulas_favoritas": ["Funcional", "Dança"],
             "aulas_favoritas_outra": "Zumba",
             "participa_aulas": "Sim, com frequência",
@@ -1328,6 +1354,7 @@ class FeedbackViewsTests(TestCase):
         )
         self.assertEqual(r.aula_melhoria, ["Jump", "Dança"])
         self.assertEqual(r.aula_falta, "Boxe")
+        self.assertEqual(r.nome_respondente, "Aluno da Enquete")
         self.assertCountEqual(
             list(r.funcionarios_elogiados.all()),
             [self.funcionario, segundo_funcionario],
@@ -1336,3 +1363,60 @@ class FeedbackViewsTests(TestCase):
             Avaliacao.objects.get(comentario__startswith="[Enquete]").funcionarios.all(),
             [self.funcionario, segundo_funcionario],
         )
+        avaliacao_elogio = Avaliacao.objects.get(comentario__startswith="[Enquete]")
+        self.assertEqual(
+            avaliacao_elogio.nome_respondente,
+            "Aluno da Enquete",
+        )
+        self.client.force_login(self.user)
+        dashboard_response = self.client.get(reverse("dashboard"))
+        self.assertContains(dashboard_response, "Aluno: Aluno da Enquete")
+        admin_response = self.client.get(
+            reverse("admin:feedback_respostaenquete_changelist")
+        )
+        self.assertContains(admin_response, "Aluno da Enquete")
+
+    def test_avaliacao_e_enquete_aceitam_nome_em_branco(self):
+        avaliacao_response = self.client.post(
+            reverse("avaliar"),
+            {
+                "categorias": ["limpeza"],
+                "nota": "4",
+                "tipos_feedback": ["elogio"],
+            },
+        )
+        self.assertEqual(avaliacao_response.status_code, 200)
+        self.assertEqual(Avaliacao.objects.get().nome_respondente, "")
+
+        enquete_response = self.client.post(
+            reverse("enquete"),
+            {"nome_respondente": ""},
+        )
+        self.assertEqual(enquete_response.status_code, 200)
+        self.assertEqual(RespostaEnquete.objects.get().nome_respondente, "")
+
+    def test_nome_respondente_acima_do_limite_e_rejeitado(self):
+        avaliacao_response = self.client.post(
+            reverse("avaliar"),
+            {
+                "categorias": ["limpeza"],
+                "nota": "4",
+                "tipos_feedback": ["elogio"],
+                "nome_respondente": "A" * 151,
+            },
+        )
+        self.assertEqual(avaliacao_response.status_code, 200)
+        self.assertContains(avaliacao_response, "no máximo 150 caracteres")
+        self.assertFalse(Avaliacao.objects.exists())
+
+        enquete_response = self.client.post(
+            reverse("enquete"),
+            {"nome_respondente": "A" * 151},
+        )
+        self.assertEqual(enquete_response.status_code, 400)
+        self.assertContains(
+            enquete_response,
+            "no máximo 150 caracteres",
+            status_code=400,
+        )
+        self.assertFalse(RespostaEnquete.objects.exists())

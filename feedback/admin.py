@@ -109,6 +109,7 @@ class FuncaoAdmin(admin.ModelAdmin):
 class AvaliacaoAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "nome_respondente",
         "get_categorias",
         "nota",
         "get_tipos",
@@ -121,7 +122,13 @@ class AvaliacaoAdmin(admin.ModelAdmin):
         "data_criacao",
     )
     list_filter = ("nota", "status", "origem", "funcionarios", "localizacao", "data_criacao")
-    search_fields = ("comentario", "localizacao", "funcionario__nome", "funcionarios__nome")
+    search_fields = (
+        "nome_respondente",
+        "comentario",
+        "localizacao",
+        "funcionario__nome",
+        "funcionarios__nome",
+    )
     list_editable = ("status",)
     ordering = ("-data_criacao",)
     exclude = ("funcionario",)
@@ -165,6 +172,7 @@ class AvaliacaoAdmin(admin.ModelAdmin):
 class RespostaEnqueteAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "nome_respondente",
         "participa_aulas",
         "get_favoritas",
         "get_funcionarios",
@@ -173,7 +181,13 @@ class RespostaEnqueteAdmin(admin.ModelAdmin):
         "data_criacao",
     )
     list_filter = ("participa_aulas", "data_criacao")
-    search_fields = ("aula_falta", "sugestao_valor", "elogio_colaborador", "aulas_favoritas_outra")
+    search_fields = (
+        "nome_respondente",
+        "aula_falta",
+        "sugestao_valor",
+        "elogio_colaborador",
+        "aulas_favoritas_outra",
+    )
     ordering = ("-data_criacao",)
 
     @admin.display(description="Aulas Favoritas")

@@ -37,7 +37,8 @@ Além disso, ela funciona como um **PWA (Progressive Web App)**: ao acessar o si
 2. Escolha sua nota de **1 a 5 estrelas**.
 3. Selecione a categoria da sua opinião (ex: *Equipamentos, Climatização, Limpeza, Atendimento*).
 4. *(Opcional)* Escreva um comentário sincero ou deixe um elogio nominal a um colaborador.
-5. Clique em **Enviar Avaliação**. O processo leva menos de 1 minuto e é totalmente anônimo.
+5. Se quiser, informe seu nome. Ele será visto apenas pela equipe autorizada; deixe o campo em branco para não se identificar.
+6. Clique em **Enviar Avaliação**. O processo leva menos de 1 minuto.
 
 ### 2.3. Como Participar da Enquete de Novas Aulas
 1. Acesse o menu **Enquete** na página inicial ou pelo QR Code da pesquisa.

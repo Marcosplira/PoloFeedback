@@ -165,7 +165,7 @@ A enquete da Polo Fit serve para:
 ### Importante
 
 - ⏱️ A enquete leva 1-2 minutos
-- 🔒 100% anônima
+- ✍️ Nome opcional; se informado, fica visível apenas para a equipe autorizada
 - 📊 Suas respostas ajudam a decidir o futuro da academia
 
 ---
@@ -372,7 +372,7 @@ PWA (Progressive Web App) é um site que funciona como aplicativo:
 ### Avaliação
 
 **P: Posso avaliar anonimamente?**
-R: Sim, as avaliações podem ser feitas sem login. Sua privacidade é respeitada.
+R: Sim, você pode responder sem login e deixar o campo de nome em branco. Se informar um nome, a equipe autorizada poderá vê-lo junto à avaliação. O nome digitado não é verificado pelo sistema.
 
 **P: Minha avaliação será vista por outros?**
 R: Não, as avaliações são visíveis apenas pela equipe gerencial.
@@ -394,8 +394,8 @@ R: Aproximadamente 1-2 minutos.
 **P: Posso responder mais de uma vez?**
 R: Sim, mas considere que as respostas mais recentes têm mais peso.
 
-**P: Minhas respostas são anônimas?**
-R: Sim, 100% anônimas.
+**P: Preciso informar meu nome na enquete?**
+R: Não. O campo é opcional. Se você informar seu nome, a equipe autorizada poderá vê-lo junto à resposta; sem nome, a resposta fica sem identificação. O nome digitado não é verificado pelo sistema.
 
 ### Treinos por QR
 

@@ -344,6 +344,25 @@
                         ></textarea>
                     </div>
 
+                    <div class="my-4">
+                        <label for="nome-respondente" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                            Seu nome (opcional):
+                        </label>
+                        <input
+                            id="nome-respondente"
+                            name="nome_respondente"
+                            type="text"
+                            maxlength="150"
+                            value="{{ nome_respondente|default:'' }}"
+                            autocomplete="name"
+                            placeholder="Informe seu nome se quiser se identificar"
+                            class="w-full bg-slate-950/80 border border-white/15 rounded-2xl p-3.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20 transition"
+                        >
+                        <p class="text-[11px] text-slate-500 mt-1">
+                            Se informar seu nome, ele ficará visível somente para a equipe autorizada. Deixe em branco para responder sem identificação.
+                        </p>
+                    </div>
+
                     <!-- BOTÃO ENVIAR AVALIAÇÃO -->
                     <div class="mt-6">
                         <button type="submit" id="btn-enviar" disabled

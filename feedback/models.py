@@ -133,6 +133,11 @@ class Avaliacao(models.Model):
 
     localizacao = models.CharField(max_length=100, blank=True)
     comentario = models.TextField(blank=True)
+    nome_respondente = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Nome informado pelo aluno",
+    )
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pendente")
     origem = models.CharField(max_length=10, choices=ORIGEM_CHOICES, default="aluno")
@@ -321,6 +326,11 @@ class ConfiguracaoAcademia(models.Model):
 
 
 class RespostaEnquete(models.Model):
+    nome_respondente = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Nome informado pelo aluno",
+    )
     # 1. Sobre as aulas coletivas - Participação
     participa_aulas = models.CharField(
         max_length=60,
@@ -385,6 +395,8 @@ class RespostaEnquete(models.Model):
         ordering = ["-data_criacao"]
 
     def __str__(self):
+        if self.nome_respondente:
+            return f"{self.nome_respondente} — Enquete #{self.id}"
         return f"Enquete #{self.id} - {self.data_criacao.strftime('%d/%m/%Y %H:%M')}"
 
 
