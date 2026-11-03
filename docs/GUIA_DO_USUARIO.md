@@ -9,10 +9,11 @@
 A plataforma **Polo Feedback & Treinos** pode ser acessada de qualquer smartphone, tablet ou computador pelo navegador web.
 Além disso, ela funciona como um **PWA (Progressive Web App)**: ao acessar o site pelo celular, basta tocar em *"Instalar no celular"* para adicionar o ícone da Polo Fit diretamente na tela inicial, funcionando como um aplicativo nativo.
 
-* **Endereço Oficial em Produção**: `https://polofeedback.onrender.com/`
-* **Área da Equipe**: `https://polofeedback.onrender.com/dashboard/`
-* **Área do Aluno**: `https://polofeedback.onrender.com/aluno/`
-* **Painel Administrativo**: `https://polofeedback.onrender.com/admin/`
+* **Endereço Oficial em Produção**: `https://polofeedback.pythonanywhere.com/`
+* **Formulário de Avaliação**: `https://polofeedback.pythonanywhere.com/avaliar/`
+* **Área da Equipe**: `https://polofeedback.pythonanywhere.com/dashboard/`
+* **Treinos do Aluno**: `https://polofeedback.pythonanywhere.com/treinos/meus/`
+* **Painel Administrativo**: `https://polofeedback.pythonanywhere.com/admin/`
 
 ---
 

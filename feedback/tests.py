@@ -600,6 +600,14 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(worker["Service-Worker-Allowed"], "/")
         self.assertContains(worker, 'request.method !== "GET"')
 
+        offline_path = finders.find("feedback/offline.html")
+        self.assertIsNotNone(offline_path)
+        with open(offline_path, encoding="utf-8") as offline_file:
+            self.assertIn(
+                "https://polofeedback.pythonanywhere.com/",
+                offline_file.read(),
+            )
+
     def test_pagina_avaliar_post_valido(self):
         dados = {
             "categorias": ["atendimento", "professores"],

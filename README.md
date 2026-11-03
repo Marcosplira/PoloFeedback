@@ -67,10 +67,10 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 | :--- | :--- |
 | **Backend** | Python 3.12, Django 6.1.1 |
 | **Frontend** | HTML5, Tailwind CSS (CDN), JavaScript, Chart.js |
-| **Banco de Dados** | SQLite (Desenvolvimento local) / PostgreSQL (Produção / Docker) |
+| **Banco de Dados** | SQLite (Desenvolvimento local / PythonAnywhere) / PostgreSQL (Docker / Render alternativo) |
 | **Inteligência Artificial** | Google Gemini API (`gemini-2.5-flash`) |
 | **Infraestrutura** | Gunicorn, Whitenoise, Docker, Docker Compose |
-| **Hospedagem** | Render.com (configuração pronta) |
+| **Hospedagem** | PythonAnywhere (produção) |
 
 ---
 
@@ -128,13 +128,13 @@ Se o servidor já estiver usando um banco, a tela de erro mostra instruções em
 python manage.py createsuperuser
 ```
 
-Para configurar as duas contas privadas do dashboard no Render, defina no painel **Environment**:
+Para configurar as duas contas privadas do dashboard, defina estas variáveis no ambiente de hospedagem:
 - `DASHBOARD_MANAGER_USERNAME` (usuário inicial sugerido: `gerente`)
 - `DASHBOARD_MANAGER_PASSWORD` (senha privada, forte e não compartilhada)
 - `DASHBOARD_OWNER_USERNAME` (usuário inicial sugerido: `marcos`)
 - `DASHBOARD_OWNER_PASSWORD` (outra senha privada e forte)
 
-O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard, à gestão de funcionários, ao cadastro/edição de aparelhos e exercícios e à consulta/cadastro/edição básica de usuários, sem torná-las superusuárias nem permitir exclusões pelo Admin. A tela de usuários oculta campos de privilégios; senhas existentes nunca são exibidas. O `startCommand` do Render executa as migrações e esse comando antes de iniciar o servidor. Se as variáveis ainda não estiverem preenchidas, o serviço continua no ar e registra um aviso; as contas só são criadas depois de configurar as senhas e reiniciar o serviço. Não há credenciais padrão no código nem na tela de login.
+O comando `python manage.py setup_dashboard_users` cria/atualiza as contas com acesso ao dashboard, à gestão de funcionários, ao cadastro/edição de aparelhos e exercícios e à consulta/cadastro/edição básica de usuários, sem torná-las superusuárias nem permitir exclusões pelo Admin. A tela de usuários oculta campos de privilégios; senhas existentes nunca são exibidas. No Render alternativo, o `startCommand` executa as migrações e esse comando antes de iniciar o servidor. No PythonAnywhere, configure as variáveis no WSGI e execute o comando pelo Bash Console se precisar criar ou atualizar essas contas. Se as variáveis não estiverem preenchidas, as contas gerenciais não são criadas. Não há credenciais padrão no código nem na tela de login.
 
 ### 7. Cadastrar o MVP de treinos por QR Code
 
@@ -150,7 +150,7 @@ O QR Code identifica apenas o equipamento. O aluno entra com sua conta para ver 
 
 A apresentação com o problema, solução, fluxo e etapas sugeridas do piloto também está acessível no Dashboard pelo botão **Projeto da Academia PoloFit**.
 
-O link do QR é montado usando o host acessado pelo membro da equipe. O domínio escolhido para a implantação é `https://app.polofitacademias.com.br`; ele já está incluído nos hosts e origens CSRF permitidos do Render. Para que funcione, configure esse domínio personalizado no serviço do Render e cadastre no provedor DNS os registros que o Render indicar. Depois do deploy, confirme que o domínio abre com HTTPS, cadastre os equipamentos e gere os códigos acessando `/treinos/qrs/` por esse domínio. Não imprima QRs gerados por `localhost` para uso pelos alunos. Vídeos externos precisam ser próprios ou licenciados. Carga, séries e repetições são configuradas pelo professor; o sistema não calcula nem prescreve treino.
+O link do QR é montado usando o host acessado pelo membro da equipe. Em produção, use `https://polofeedback.pythonanywhere.com/`, confirme que abre com HTTPS e gere os códigos nesse endereço. Não imprima QRs gerados por `localhost` para uso pelos alunos. Vídeos externos precisam ser próprios ou licenciados. Carga, séries e repetições são configuradas pelo professor; o sistema não calcula nem prescreve treino.
 
 ### 8. Iniciar o Servidor de Desenvolvimento
 
@@ -163,12 +163,14 @@ Para liberar o acesso a smartphones na mesma rede Wi-Fi:
 python manage.py runserver 0.0.0.0:8000
 ```
 
-Acesse no navegador:
-- **Avaliação do Aluno:** [http://localhost:8000/](http://localhost:8000/)
-- **Dashboard Gerencial:** [http://localhost:8000/dashboard/](http://localhost:8000/dashboard/)
-- **Gerador de QR Code:** [http://localhost:8000/qrcode/](http://localhost:8000/qrcode/)
-- **QR Codes dos aparelhos:** [http://localhost:8000/treinos/qrs/](http://localhost:8000/treinos/qrs/) (equipe)
-- **Administração Django:** [http://localhost:8000/admin/](http://localhost:8000/admin/)
+Acesse a versão publicada no PythonAnywhere:
+- **Avaliação do Aluno:** [https://polofeedback.pythonanywhere.com/avaliar/](https://polofeedback.pythonanywhere.com/avaliar/)
+- **Dashboard Gerencial:** [https://polofeedback.pythonanywhere.com/dashboard/](https://polofeedback.pythonanywhere.com/dashboard/) (requer login autorizado)
+- **Gerador de QR Code:** [https://polofeedback.pythonanywhere.com/qrcode/](https://polofeedback.pythonanywhere.com/qrcode/) (requer permissão gerencial)
+- **QR Codes dos aparelhos:** [https://polofeedback.pythonanywhere.com/treinos/qrs/](https://polofeedback.pythonanywhere.com/treinos/qrs/) (requer login da equipe)
+- **Administração Django:** [https://polofeedback.pythonanywhere.com/admin/](https://polofeedback.pythonanywhere.com/admin/) (requer login autorizado)
+
+Os endereços `localhost:8000` são somente para desenvolvimento e funcionam apenas enquanto o servidor local estiver aberto. Se o computador ou celular não estiver executando o projeto, o navegador pode mostrar a página **“Sem conexão com a internet”**; isso não significa que o endereço publicado esteja fora do ar. Use os links PythonAnywhere acima para acessar a produção.
 
 ---
 
@@ -214,7 +216,9 @@ Os testes devem ser executados no ambiente Python configurado para o projeto. Co
 
 ---
 
-## ☁️ Deploy no Render.com
+## ☁️ Deploy alternativo no Render.com
+
+O ambiente de produção documentado acima é o PythonAnywhere. O arquivo `render.yaml` é uma opção alternativa de hospedagem; não é necessário para acessar o sistema publicado no PythonAnywhere.
 
 O arquivo `render.yaml` configura somente o serviço Web do Django. O banco PostgreSQL deve ser criado separadamente na Neon para não consumir o limite de bancos do Workspace do Render nem compartilhar dados com outros projetos.
 
@@ -273,7 +277,7 @@ PoloFeedback/
 │   │   └── registration/       # Template de login
 │   ├── admin.py                # Configuração do painel admin
 │   ├── models.py               # Modelos: Funcionario, Avaliacao
-│   ├── tests.py                # Testes automatizados (13 testes)
+│   ├── tests.py                # Testes automatizados
 │   └── views.py                # Views: avaliar, dashboard, qrcode, ia
 ├── polofeedback/               # Configuração do projeto Django
 │   ├── settings.py

@@ -64,14 +64,16 @@
         <header class="no-print topbar">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-6">
-                    <a href="{% url 'dashboard' %}" class="flex items-center gap-2">
+                    <a href="{% if perms.feedback.view_avaliacao %}{% url 'dashboard' %}{% else %}{% url 'inicio' %}{% endif %}" class="flex items-center gap-2">
                         <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-8 w-auto">
                         <span class="font-black text-sm tracking-tight text-white hidden sm:inline">Polo Fit</span>
                     </a>
                     <nav class="flex items-center gap-1 overflow-x-auto py-1">
+                        {% if perms.feedback.view_avaliacao %}
                         <a href="{% url 'dashboard' %}" class="nav-link">Visão geral</a>
                         <a href="{% url 'dashboard' %}#para-resolver" class="nav-link">Avaliações</a>
                         <a href="{% url 'gerar_qrcode' %}" class="nav-link">QR Codes</a>
+                        {% endif %}
                         <a href="{% url 'gestao_treinos' %}" class="nav-link active">Treinos</a>
                         <a href="{% url 'divulgacao' %}" class="nav-link">Divulgar</a>
                     </nav>

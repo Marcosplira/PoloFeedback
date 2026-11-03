@@ -10,13 +10,15 @@
     main { width: min(100%, 420px); }
     h1 { margin: 0 0 12px; color: #bef264; font-size: 1.6rem; }
     p { color: #cbd5e1; }
-    button { margin-top: 12px; border: 0; border-radius: 10px; padding: 12px 16px; background: #bef264; color: #0b0f12; font: inherit; font-weight: 700; }
+    a, button { display: inline-flex; align-items: center; margin: 12px 8px 0 0; border: 0; border-radius: 10px; padding: 12px 16px; background: #bef264; color: #0b0f12; font: inherit; font-weight: 700; text-decoration: none; }
+    button { cursor: pointer; }
   </style>
 </head>
 <body>
   <main>
     <h1>Sem conexão com a internet</h1>
     <p>Conecte-se à internet para acessar o Polo Feedback. Nenhuma avaliação foi salva offline.</p>
+    <p>Se você abriu um endereço local, a versão publicada está disponível em <a href="https://polofeedback.pythonanywhere.com/">PythonAnywhere</a>.</p>
     <button type="button" onclick="location.reload()">Tentar novamente</button>
   </main>
 </body>

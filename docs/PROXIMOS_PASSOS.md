@@ -39,7 +39,9 @@
 
 ## 🚀 Próximos Passos Imediatos
 
-### 1. Deploy no PythonAnywhere
+### 1. Publicar ou atualizar no PythonAnywhere
+
+Endereço oficial da aplicação: <https://polofeedback.pythonanywhere.com/>.
 
 Siga estes passos no Bash Console do PythonAnywhere:
 
@@ -49,7 +51,8 @@ git clone https://github.com/Marcosplira/PoloFeedback.git
 cd PoloFeedback
 
 # 2. Criar ambiente virtual
-mkvirtualenv --python=/usr/bin/python3.10 feedback-env
+python3.12 -m venv ~/.virtualenvs/feedback-env
+source ~/.virtualenvs/feedback-env/bin/activate
 pip install -r requirements.txt
 
 # 3. Rodar migrações
@@ -63,7 +66,7 @@ python manage.py createsuperuser
 ```
 
 Na aba **Web** do PythonAnywhere:
-- Adicionar novo app: Manual Configuration → Python 3.10
+- Adicionar novo app: Manual Configuration → Python 3.12 (o Django deste projeto requer Python 3.12 ou superior)
 - Virtualenv: `/home/SEU_USUARIO/.virtualenvs/feedback-env`
 - Static files: `/static/` → `/home/SEU_USUARIO/PoloFeedback/staticfiles`
 - Media files: `/media/` → `/home/SEU_USUARIO/PoloFeedback/media`
@@ -78,10 +81,16 @@ if path not in sys.path:
     sys.path.append(path)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'polofeedback.settings'
+os.environ['DEBUG'] = 'False'
+os.environ['SECRET_KEY'] = 'SUBSTITUA_POR_UMA_CHAVE_FORTE_E_PRIVADA'
+os.environ['ALLOWED_HOSTS'] = 'polofeedback.pythonanywhere.com'
+os.environ['CSRF_TRUSTED_ORIGINS'] = 'https://polofeedback.pythonanywhere.com'
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 ```
+
+Gere uma chave secreta com `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`. Guarde-a somente na configuração WSGI privada do PythonAnywhere; não a publique no GitHub. Se estiver atualizando uma instalação existente, faça backup do banco antes de aplicar migrações.
 
 Clique em **Reload** no topo da página.
 
@@ -93,10 +102,10 @@ Clique em **Reload** no topo da página.
 
 ### 3. Testar o Sistema
 
-1. Acessar: `https://seunome.pythonanywhere.com/setup/`
-2. Configurar a academia (use Polo Fit como teste)
-3. Acessar o dashboard e testar todas as funcionalidades
-4. Gerar QR Codes e testar com seu celular
+1. Abrir a avaliação em `https://polofeedback.pythonanywhere.com/avaliar/`.
+2. Entrar no dashboard em `https://polofeedback.pythonanywhere.com/dashboard/` com uma conta autorizada.
+3. Testar o fluxo de feedback pelo celular e confirmar o recebimento no painel.
+4. Gerar QR Codes somente pelo domínio HTTPS publicado e testá-los com um celular conectado à internet.
 
 ### 4. Primeiras Vendas
 

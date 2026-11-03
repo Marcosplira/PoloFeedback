@@ -1346,6 +1346,80 @@
                 </section>
             </div>
 
+            <!-- RESULTADOS DA ENQUETE -->
+            <div class="grid-2">
+                <section class="painel" aria-labelledby="enquete-resultados-titulo" id="resultados-enquete">
+                    <div class="painel-header">
+                        <div>
+                            <h2 class="painel-titulo" id="enquete-resultados-titulo">Resultados da enquete</h2>
+                            <p class="painel-sub">Preferências e participação dos alunos</p>
+                        </div>
+                        <span class="painel-badge badge-verde">{{ total_enquetes }} respostas coletadas</span>
+                    </div>
+                    <div class="locais-lista">
+                        <h3 class="metric-label" style="padding: 1rem 1.25rem 0;">Aulas favoritas</h3>
+                        {% for nome, quantidade in favoritas_ranking %}
+                        <div class="local-item">
+                            <span class="local-nome">{{ nome }}</span>
+                            <span class="local-stat">{{ quantidade }} votos</span>
+                        </div>
+                        {% empty %}
+                        <p class="empty-text" style="padding: 0.75rem 1.25rem;">Nenhum voto registrado ainda.</p>
+                        {% endfor %}
+
+                        <h3 class="metric-label" style="padding: 1rem 1.25rem 0;">Espaços mais desejados</h3>
+                        {% for nome, quantidade in espacos_ranking %}
+                        <div class="local-item">
+                            <span class="local-nome">{{ nome }}</span>
+                            <span class="local-stat">{{ quantidade }} menções</span>
+                        </div>
+                        {% empty %}
+                        <p class="empty-text" style="padding: 0.75rem 1.25rem;">Nenhum espaço indicado ainda.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section class="painel" aria-labelledby="enquete-atencao-titulo">
+                    <div class="painel-header">
+                        <div>
+                            <h2 class="painel-titulo" id="enquete-atencao-titulo">Sinal de atenção</h2>
+                            <p class="painel-sub">Aulas e sugestões para a gerência avaliar</p>
+                        </div>
+                    </div>
+                    <div class="locais-lista">
+                        {% for nome, quantidade in melhorias_ranking %}
+                        <div class="local-item">
+                            <span class="local-nome">{{ nome }}</span>
+                            <span class="local-stat">{{ quantidade }} menções</span>
+                        </div>
+                        {% empty %}
+                        <p class="empty-text" style="padding: 1rem 1.25rem;">Nenhuma melhoria apontada ainda.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="av-lista">
+                        {% for resposta in ultimas_enquetes %}
+                        <div class="av-item" style="grid-template-columns: 1fr;">
+                            {% if resposta.sugestao_valor %}
+                            <p class="av-comentario" style="white-space: normal;">
+                                <strong>Sugestão de melhoria:</strong> {{ resposta.sugestao_valor }}
+                            </p>
+                            {% endif %}
+                            {% if resposta.aula_falta %}
+                            <p class="av-comentario" style="white-space: normal;">
+                                <strong>Aula que sentem falta:</strong> {{ resposta.aula_falta }}
+                            </p>
+                            {% endif %}
+                            {% if resposta.elogio_colaborador %}
+                            <p class="av-comentario" style="white-space: normal;">
+                                <strong>Elogio à equipe:</strong> {{ resposta.elogio_colaborador }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+
             <!-- LINHA: EQUIPE + LOCAIS -->
             <div class="grid-2">
 
