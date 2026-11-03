@@ -914,6 +914,89 @@ class FeedbackViewsTests(TestCase):
             4,
         )
 
+    @patch("feedback.views._obter_ip_local", return_value="127.0.0.1")
+    def test_dashboard_com_cem_feedbacks_ficticios(self, _obter_ip_local):
+        self.client.force_login(self.user)
+        locais = [
+            f"TESTE FICTICIO - Ponto {numero}"
+            for numero in range(1, 5)
+        ]
+        urls_avaliacao = []
+        imagens_qr = []
+
+        for localizacao in locais:
+            qr_response = self.client.get(
+                reverse("gerar_qrcode"),
+                {"localizacao": localizacao},
+            )
+            self.assertEqual(qr_response.status_code, 200)
+            self.assertTrue(qr_response.context["qrcode_base64"])
+            imagens_qr.append(qr_response.context["qrcode_base64"])
+
+            destino_qr = urlsplit(qr_response.context["url_gerada"])
+            urls_avaliacao.append(f"{destino_qr.path}?{destino_qr.query}")
+
+        self.assertEqual(len(set(imagens_qr)), 4)
+
+        for numero_cliente in range(100):
+            if numero_cliente < 50:
+                nota = 5
+                categoria = "atendimento"
+            elif numero_cliente < 75:
+                nota = 3
+                categoria = "aulas_coletivas"
+            else:
+                nota = 2
+                categoria = "limpeza"
+
+            local_index = numero_cliente % len(urls_avaliacao)
+            response = self.client.post(
+                urls_avaliacao[local_index],
+                {
+                    "categorias": [categoria],
+                    "nota": str(nota),
+                    "comentario": (
+                        f"[TESTE FICTICIO #{numero_cliente + 1:03}] "
+                        "Resposta automatizada para validar o painel."
+                    ),
+                },
+            )
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "Muito Obrigado")
+
+        self.assertEqual(Avaliacao.objects.count(), 100)
+        self.assertEqual(
+            Avaliacao.objects.filter(tipo_feedback="elogio").count(),
+            50,
+        )
+        self.assertEqual(
+            Avaliacao.objects.filter(tipo_feedback="sugestao").count(),
+            25,
+        )
+        self.assertEqual(
+            Avaliacao.objects.filter(tipo_feedback="reclamacao").count(),
+            25,
+        )
+        self.assertEqual(
+            Avaliacao.objects.filter(comentario__startswith="[TESTE FICTICIO").count(),
+            100,
+        )
+
+        dashboard = self.client.get(reverse("dashboard"))
+        self.assertEqual(dashboard.status_code, 200)
+        self.assertEqual(dashboard.context["total_avaliacoes"], 100)
+        self.assertEqual(dashboard.context["media_notas"], 3.8)
+        self.assertEqual(dashboard.context["total_elogios"], 50)
+        self.assertEqual(dashboard.context["total_reclamacoes"], 25)
+
+        reclamacoes = self.client.get(
+            reverse("dashboard"),
+            {"tipo": "reclamacao"},
+        )
+        self.assertEqual(reclamacoes.status_code, 200)
+        self.assertEqual(reclamacoes.context["total_avaliacoes"], 25)
+        self.assertEqual(reclamacoes.context["media_notas"], 2.0)
+
     def test_treino_por_qr_exige_login_e_preserva_destino(self):
         equipamento = Equipamento.objects.create(
             nome="Leg press",
