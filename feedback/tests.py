@@ -740,6 +740,10 @@ class FeedbackViewsTests(TestCase):
         response = self.client.get(reverse("avaliar"))
         self.assertContains(response, 'rel="manifest"', html=False)
         self.assertContains(response, "pwa-install-button")
+        self.assertContains(response, "pwa-install-content")
+        self.assertContains(response, "#pwa-install-help")
+        self.assertContains(response, 'id="pwa-install-area" hidden', html=False)
+        self.assertContains(response, "pwa-install.js?v=2")
 
         manifest_path = finders.find("feedback/manifest.webmanifest")
         self.assertIsNotNone(manifest_path)
@@ -751,6 +755,7 @@ class FeedbackViewsTests(TestCase):
         worker = self.client.get(reverse("service_worker"))
         self.assertEqual(worker.status_code, 200)
         self.assertEqual(worker["Service-Worker-Allowed"], "/")
+        self.assertContains(worker, 'const CACHE_NAME = "polo-feedback-shell-v2"')
         self.assertContains(worker, 'request.method !== "GET"')
 
         offline_path = finders.find("feedback/offline.html")

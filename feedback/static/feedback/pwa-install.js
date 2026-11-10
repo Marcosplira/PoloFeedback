@@ -22,7 +22,7 @@
     instructions.textContent = isIOS
         ? "No Safari, toque em Compartilhar e escolha Adicionar à Tela de Início."
         : "No menu do navegador, escolha Instalar app ou Adicionar à tela inicial.";
-    installArea.classList.remove("hidden");
+    installArea.hidden = false;
 
     window.addEventListener("beforeinstallprompt", (event) => {
         event.preventDefault();
@@ -38,7 +38,7 @@
         deferredPrompt.prompt();
         await deferredPrompt.userChoice;
         deferredPrompt = null;
-        installArea.classList.add("hidden");
+        installArea.hidden = true;
     });
 
     closeButton.addEventListener("click", () => helpDialog.close());
@@ -48,5 +48,7 @@
         }
     });
 
-    window.addEventListener("appinstalled", () => installArea.classList.add("hidden"));
+    window.addEventListener("appinstalled", () => {
+        installArea.hidden = true;
+    });
 })();

@@ -1,4 +1,4 @@
-const CACHE_NAME = "polo-feedback-shell-v1";
+const CACHE_NAME = "polo-feedback-shell-v2";
 const OFFLINE_URL = "/static/feedback/offline.html";
 
 self.addEventListener("install", (event) => {
