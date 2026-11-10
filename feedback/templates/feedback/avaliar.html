@@ -73,13 +73,16 @@
 
     <!-- CABEÇALHO -->
     <header class="border-b border-white/10 bg-black/40 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div class="max-w-2xl mx-auto px-4 min-h-16 py-2 flex flex-wrap items-center justify-between gap-2">
             <a href="{% url 'inicio' %}" class="flex items-center gap-2.5">
                 <img src="{% static 'feedback/LOGO.png' %}" alt="Polo Fit" class="h-8 w-auto">
                 <span class="font-black text-sm tracking-tight text-white">POLO FIT</span>
             </a>
             <div class="flex items-center gap-2">
-                <span class="text-xs font-bold bg-lime-400/10 text-lime-300 border border-lime-400/25 px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                <a href="{% url 'inicio' %}" class="inline-flex min-h-10 items-center rounded-xl border border-lime-400/40 bg-lime-400/10 px-3 text-xs font-bold text-lime-200 transition hover:bg-lime-400/20 focus:outline-none focus:ring-2 focus:ring-lime-300" aria-label="Voltar ao início da Polo Fit">
+                    ← Voltar ao Início
+                </a>
+                <span class="hidden sm:flex text-xs font-bold bg-lime-400/10 text-lime-300 border border-lime-400/25 px-2.5 py-1 rounded-full uppercase tracking-wider items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse"></span>
                     Avaliação Rápida
                 </span>
@@ -124,12 +127,13 @@
                 <input type="hidden" name="funcionario_id" id="input-funcionario-id" value="">
                 <input type="hidden" name="nota" id="input-nota" value="">
                 <input type="hidden" name="tipo_feedback" id="input-tipo-feedback" value="">
+                <input type="hidden" name="aula_coletiva" id="input-aula-coletiva" value="">
                 <input type="hidden" name="localizacao" id="input-localizacao" value="{{ localizacao|default:'Geral' }}">
 
                 <!-- ═══════════════════════════════════════════════════════════════ -->
                 <!-- TELA 1: SOBRE O QUE VOCÊ QUER OPINAR?                           -->
                 <!-- ═══════════════════════════════════════════════════════════════ -->
-                <div class="tela-flow ativa" id="tela-1">
+                <div class="tela-flow{% if not erro_aula_coletiva %} ativa{% endif %}" id="tela-1">
                     <div class="mb-5 text-center sm:text-left">
                         <span class="text-xs font-extrabold text-lime-400 uppercase tracking-widest block mb-1">
                             💬 Canal de Opinião
@@ -215,7 +219,7 @@
                 <!-- ═══════════════════════════════════════════════════════════════ -->
                 <!-- TELA 2: ESCOLHER O PROFISSIONAL (QUANDO CLICA EM PROFISSIONAIS)  -->
                 <!-- ═══════════════════════════════════════════════════════════════ -->
-                <div class="tela-flow" id="tela-2">
+                <div class="tela-flow{% if erro_aula_coletiva %} ativa{% endif %}" id="tela-2">
                     <div class="flex items-center justify-between mb-4">
                         <button type="button" onclick="voltarParaTela1()" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1 transition">
                             ← Voltar aos setores
@@ -224,23 +228,27 @@
                     </div>
 
                     <div class="mb-4">
-                        <h2 class="text-xl sm:text-2xl font-black text-white">
+                        <h2 class="text-xl sm:text-2xl font-black text-white" id="titulo-lista-especifica">
+                            {% if erro_aula_coletiva %}Qual aula coletiva você quer avaliar?{% else %}
                             Sobre qual profissional você quer opinar?
+                            {% endif %}
                         </h2>
-                        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                        <p class="text-xs sm:text-sm text-slate-400 mt-1" id="descricao-lista-especifica">
+                            {% if erro_aula_coletiva %}Escolha uma aula para avaliar somente essa modalidade:{% else %}
                             Selecione a pessoa da equipe que te atendeu:
+                            {% endif %}
                         </p>
                     </div>
 
                     <!-- BUSCA RÁPIDA -->
-                    <div class="mb-4">
+                    <div class="mb-4{% if erro_aula_coletiva %} hidden{% endif %}" id="busca-profissionais">
                         <input type="text" id="filtro-profissionais" oninput="filtrarProfissionais()"
                                placeholder="🔍 Buscar pelo nome..."
                                class="w-full bg-slate-950/80 border border-white/15 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-lime-400">
                     </div>
 
                     <!-- LISTA DE PROFISSIONAIS -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto pr-1 custom-scroll" id="lista-profissionais">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto pr-1 custom-scroll{% if erro_aula_coletiva %} hidden{% endif %}" id="lista-profissionais">
                         {% for f in funcionarios %}
                         <button type="button"
                                 data-nome="{{ f.nome|lower }}"
@@ -265,6 +273,34 @@
                         </div>
                         {% endfor %}
                     </div>
+
+                    <div class="{% if not erro_aula_coletiva %}hidden {% endif %}grid grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto pr-1 custom-scroll" id="lista-aulas-coletivas">
+                        {% for codigo, nome in aulas_coletivas %}
+                        <button type="button"
+                                class="flex min-h-20 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 text-left transition hover:border-lime-400/60 hover:bg-lime-400/10 focus:outline-none focus:ring-2 focus:ring-lime-300"
+                                onclick="escolherAulaColetiva('{{ codigo }}', '{{ nome|escapejs }}')">
+                            <span class="text-2xl" aria-hidden="true">
+                                {% if codigo == "gluteo" %}🍑
+                                {% elif codigo == "step" %}👟
+                                {% elif codigo == "hiit" %}🔥
+                                {% elif codigo == "abdominais" %}💪
+                                {% elif codigo == "danca" %}💃
+                                {% elif codigo == "jump" %}🤸
+                                {% elif codigo == "pump" %}🏋️
+                                {% elif codigo == "spinning" %}🚴
+                                {% elif codigo == "funcional" %}⚡
+                                {% endif %}
+                            </span>
+                            <span class="font-bold text-sm text-white">{{ nome }}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    {% if erro_aula_coletiva %}
+                    <p class="mt-3 rounded-xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-100" role="alert">
+                        {{ erro_aula_coletiva }}
+                    </p>
+                    {% endif %}
                 </div>
 
                 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -390,11 +426,12 @@
     <script>
         // ── ESTADO DO FLUXO ──
         let telaAtual = 1;
-        let selecionouProfissional = false;
+        let precisaEscolherItem = false;
         let setorSelecionado = '';
         let setorNome = '';
         let setorIcone = '';
         let profSelecionadoNome = '';
+        let aulaColetivaSelecionadaNome = '';
         let notaAtual = 0;
         let tipoFeedbackAtual = '';
 
@@ -420,15 +457,17 @@
             const barra = document.getElementById('barra-progresso');
 
             if (numero === 1) {
-                labelPasso.textContent = 'Passo 1 de 2';
+                labelPasso.textContent = precisaEscolherItem ? 'Passo 1 de 3' : 'Passo 1 de 2';
                 subPasso.textContent = 'Escolha o assunto';
                 barra.style.width = '33%';
             } else if (numero === 2) {
                 labelPasso.textContent = 'Passo 2 de 3';
-                subPasso.textContent = 'Escolha o profissional';
+                subPasso.textContent = setorSelecionado === 'aulas_coletivas'
+                    ? 'Escolha a aula'
+                    : 'Escolha o profissional';
                 barra.style.width = '66%';
             } else if (numero === 3) {
-                const total = selecionouProfissional ? 'Passo 3 de 3' : 'Passo 2 de 2';
+                const total = precisaEscolherItem ? 'Passo 3 de 3' : 'Passo 2 de 2';
                 labelPasso.textContent = total;
                 subPasso.textContent = 'Avalie e comente';
                 barra.style.width = '100%';
@@ -442,12 +481,19 @@
             setorNome = nome;
             setorIcone = icone;
             document.getElementById('input-categoria').value = codigo;
+            document.getElementById('input-aula-coletiva').value = '';
+            aulaColetivaSelecionadaNome = '';
 
             if (isProfissionais) {
-                selecionouProfissional = true;
+                precisaEscolherItem = true;
+                configurarListaEspecifica('profissionais');
+                mostrarTela(2);
+            } else if (codigo === 'aulas_coletivas') {
+                precisaEscolherItem = true;
+                configurarListaEspecifica('aulas');
                 mostrarTela(2);
             } else {
-                selecionouProfissional = false;
+                precisaEscolherItem = false;
                 document.getElementById('input-funcionario-id').value = '';
                 configurarTelaAvaliacao(nome, icone, false);
                 mostrarTela(3);
@@ -457,10 +503,45 @@
         // ── 2. ESCOLHA DE PROFISSIONAL ──
         function escolherProfissional(id, nome, cargo, fotoUrl) {
             profSelecionadoNome = nome;
+            document.getElementById('input-aula-coletiva').value = '';
             document.getElementById('input-funcionario-id').value = id;
             document.getElementById('input-categoria').value = 'professores';
 
             configurarTelaAvaliacao(nome, '👤', true, cargo, fotoUrl);
+            mostrarTela(3);
+        }
+
+        function configurarListaEspecifica(tipo) {
+            const escolhendoAula = tipo === 'aulas';
+            document.getElementById('titulo-lista-especifica').textContent = escolhendoAula
+                ? 'Qual aula coletiva você quer avaliar?'
+                : 'Sobre qual profissional você quer opinar?';
+            document.getElementById('descricao-lista-especifica').textContent = escolhendoAula
+                ? 'Escolha uma aula para avaliar somente essa modalidade:'
+                : 'Selecione a pessoa da equipe que te atendeu:';
+            document.getElementById('busca-profissionais').classList.toggle('hidden', escolhendoAula);
+            document.getElementById('lista-profissionais').classList.toggle('hidden', escolhendoAula);
+            document.getElementById('lista-aulas-coletivas').classList.toggle('hidden', !escolhendoAula);
+        }
+
+        function escolherAulaColetiva(codigo, nome) {
+            aulaColetivaSelecionadaNome = nome;
+            precisaEscolherItem = true;
+            document.getElementById('input-aula-coletiva').value = codigo;
+            document.getElementById('input-categoria').value = 'aulas_coletivas';
+            document.getElementById('input-funcionario-id').value = '';
+            const icones = {
+                gluteo: '🍑',
+                step: '👟',
+                hiit: '🔥',
+                abdominais: '💪',
+                danca: '💃',
+                jump: '🤸',
+                spinning: '🚴',
+                funcional: '⚡',
+                pump: '🏋️'
+            };
+            configurarTelaAvaliacao(nome, icones[codigo] || '🏋️', false);
             mostrarTela(3);
         }
 
@@ -469,7 +550,7 @@
         }
 
         function voltarParaAnterior() {
-            if (selecionouProfissional) {
+            if (precisaEscolherItem) {
                 mostrarTela(2);
             } else {
                 mostrarTela(1);
@@ -499,7 +580,8 @@
                 } else if (setorSelecionado === 'estrutura') {
                     tituloPergunta.innerHTML = `Como você avalia a <span class="text-lime-400">Estrutura</span> da Polo Fit?`;
                 } else if (setorSelecionado === 'aulas_coletivas') {
-                    tituloPergunta.innerHTML = `Como você avalia as <span class="text-lime-400">Aulas Coletivas</span>?`;
+                    tituloPergunta.textContent = `Como você avalia a aula de ${aulaColetivaSelecionadaNome}?`;
+                    subtituloContexto.textContent = 'Aula coletiva';
                 } else if (setorSelecionado === 'treino') {
                     tituloPergunta.innerHTML = `Como foi seu <span class="text-lime-400">Treino</span> hoje?`;
                 } else if (setorSelecionado === 'avaliacao_fisica') {

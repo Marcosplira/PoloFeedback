@@ -36,6 +36,7 @@ Além disso, ela funciona como um **PWA (Progressive Web App)**: ao acessar o si
 1. Aponte a câmera para os cartazes espalhados pela academia (Recepção, Salão de Musculação, Vestiários).
 2. Escolha sua nota de **1 a 5 estrelas**.
 3. Selecione a categoria da sua opinião (ex: *Equipamentos, Climatização, Limpeza, Atendimento*).
+   - Para avaliar uma aula coletiva, escolha **Aulas Coletivas** e depois selecione a modalidade, como *Spinning* ou *Dança*.
 4. *(Opcional)* Escreva um comentário sincero ou deixe um elogio nominal a um colaborador.
 5. Se quiser, informe seu nome. Ele será visto apenas pela equipe autorizada; deixe o campo em branco para não se identificar.
 6. Clique em **Enviar Avaliação**. O processo leva menos de 1 minuto.

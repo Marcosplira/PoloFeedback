@@ -22,6 +22,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
    - Nome do aluno opcional; quando informado, aparece apenas para a equipe autorizada. Sem nome, a avaliação fica sem identificação.
    - Avaliação por estrelas (1 a 5).
    - Múltiplas categorias (Atendimento, Limpeza, Equipamentos, Professores, Estrutura, Geral).
+   - Ao escolher **Aulas Coletivas**, o aluno seleciona a modalidade específica (Glúteo, Step, HIIT, Abdominais, Dança, Jump, Funcional, Spinning ou Pump) antes de dar a nota.
    - A enquete também permite informar o nome opcionalmente, visível apenas para a equipe autorizada.
    - Tipos de feedback (Elogio 👍, Sugestão 💡, Reclamação ⚠️).
    - Opção de selecionar o colaborador/instrutor avaliado.

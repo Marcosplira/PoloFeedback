@@ -182,6 +182,7 @@ def avaliar(request):
                 tipos_feedback = ["elogio"]
 
         comentario = request.POST.get("comentario", "").strip()
+        aula_coletiva = request.POST.get("aula_coletiva", "").strip()
         localizacao = request.POST.get("localizacao", "").strip()
 
         funcionario_ids = request.POST.getlist("funcionarios_ids")
@@ -213,6 +214,13 @@ def avaliar(request):
                 "Revise a seleção e tente novamente."
             )
 
+        aulas_coletivas_validas = dict(Avaliacao.AULA_COLETIVA_CHOICES)
+        if categorias and categorias[0] == "aulas_coletivas":
+            if aula_coletiva not in aulas_coletivas_validas:
+                erros.append("Selecione qual aula coletiva você quer avaliar.")
+        else:
+            aula_coletiva = ""
+
         if erros:
             return render(
                 request,
@@ -221,6 +229,7 @@ def avaliar(request):
                     "localizacao": localizacao,
                     "erros": erros,
                     "funcionarios": funcionarios,
+                    "aulas_coletivas": Avaliacao.AULA_COLETIVA_CHOICES,
                     "comentario": comentario,
                     "nota_selecionada": nota,
                     "categorias_selecionadas": categorias,
@@ -230,12 +239,20 @@ def avaliar(request):
                         "nome_respondente",
                         "",
                     ),
+                    "erro_aula_coletiva": (
+                        "Selecione uma aula para avaliar."
+                        if categorias
+                        and categorias[0] == "aulas_coletivas"
+                        and aula_coletiva not in aulas_coletivas_validas
+                        else ""
+                    ),
                 },
             )
 
         avaliacao = Avaliacao.objects.create(
             categoria=categorias[0],
             categorias=categorias,
+            aula_coletiva=aula_coletiva,
             nota=int(nota),
             tipo_feedback=tipos_feedback[0],
             tipos_feedback=tipos_feedback,
@@ -265,6 +282,7 @@ def avaliar(request):
         {
             "localizacao": localizacao_get,
             "funcionarios": funcionarios,
+            "aulas_coletivas": Avaliacao.AULA_COLETIVA_CHOICES,
         },
     )
 

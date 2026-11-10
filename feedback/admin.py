@@ -113,6 +113,7 @@ class AvaliacaoAdmin(admin.ModelAdmin):
         "get_categorias",
         "nota",
         "get_tipos",
+        "get_aula_coletiva",
         "get_funcionarios",
         "localizacao",
         "status",
@@ -121,12 +122,21 @@ class AvaliacaoAdmin(admin.ModelAdmin):
         "resolvido_por",
         "data_criacao",
     )
-    list_filter = ("nota", "status", "origem", "funcionarios", "localizacao", "data_criacao")
+    list_filter = (
+        "nota",
+        "status",
+        "origem",
+        "aula_coletiva",
+        "funcionarios",
+        "localizacao",
+        "data_criacao",
+    )
     search_fields = (
         "nome_respondente",
         "comentario",
         "localizacao",
         "funcionario__nome",
+        "aula_coletiva",
         "funcionarios__nome",
     )
     list_editable = ("status",)
@@ -150,6 +160,10 @@ class AvaliacaoAdmin(admin.ModelAdmin):
         if obj.tipos_feedback:
             return ", ".join(obj.tipos_feedback)
         return obj.tipo_feedback
+
+    @admin.display(description="Aula coletiva")
+    def get_aula_coletiva(self, obj):
+        return obj.get_aula_coletiva_display() or "—"
 
     # AQUI FICA AUTOMÁTICO
     def save_model(self, request, obj, form, change):

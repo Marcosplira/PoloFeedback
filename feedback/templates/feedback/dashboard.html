@@ -1219,6 +1219,7 @@
                                     <div class="av-info">
                                         {{ av.data_criacao|date:"d/m/Y H:i" }}
                                         {% if av.localizacao %} · {{ av.localizacao }}{% endif %}
+                                        {% if av.aula_coletiva %} · Aula: {{ av.get_aula_coletiva_display }}{% endif %}
                                         {% if av.funcionarios_avaliados %}
                                         · {% for f in av.funcionarios_avaliados %}{{ f.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}
                                         {% endif %}

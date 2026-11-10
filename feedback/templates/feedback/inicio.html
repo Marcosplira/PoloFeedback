@@ -123,7 +123,8 @@
 
         /* ── HERO ── */
         .hero {
-            min-height: 100vh;
+            min-height: 78vh;
+            min-height: min(78svh, 720px);
             display: flex;
             align-items: center;
             position: relative;
@@ -160,24 +161,10 @@
         .hero-content {
             position: relative;
             z-index: 1;
-            max-width: 1100px;
+            max-width: 780px;
             margin: 0 auto;
-            padding: 4rem 1.5rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        @media (max-width: 768px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .hero-cta {
-                justify-content: center;
-            }
+            padding: 3rem 1.5rem;
+            text-align: center;
         }
 
         .hero-badge {
@@ -216,12 +203,13 @@
             color: rgba(255, 255, 255, 0.7);
             line-height: 1.7;
             max-width: 480px;
-            margin-bottom: 2rem;
+            margin: 0 auto 2rem;
         }
 
         .hero-cta {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
             gap: 0.875rem;
         }
 
@@ -264,99 +252,6 @@
             border-color: var(--verde);
             color: var(--verde);
             background: rgba(163, 230, 53, 0.05);
-        }
-
-        /* ── HERO CARD ── */
-        .hero-card {
-            background: rgba(22, 22, 22, 0.85);
-            border: 1px solid rgba(163, 230, 53, 0.2);
-            border-radius: 1.5rem;
-            backdrop-filter: blur(12px);
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-        }
-
-        .hero-card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .hero-card-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .hero-card-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
-            margin-left: auto;
-        }
-
-        .hero-card-body {
-            padding: 1.5rem;
-        }
-
-        .stat-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 1rem;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 900;
-            color: var(--verde);
-            letter-spacing: -0.04em;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 0.35rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .mini-avaliacao {
-            background: rgba(163, 230, 53, 0.06);
-            border: 1px solid rgba(163, 230, 53, 0.2);
-            border-radius: 1rem;
-            padding: 1rem 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .mini-av-emoji {
-            font-size: 2rem;
-            flex-shrink: 0;
-        }
-
-        .mini-av-stars {
-            color: var(--verde);
-            font-size: 0.9rem;
-            letter-spacing: 0.05em;
-        }
-
-        .mini-av-texto {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 0.15rem;
         }
 
         /* ── SECTION: COMO FUNCIONA ── */
@@ -588,6 +483,10 @@
             align-items: center;
         }
 
+        .video-section .section-desc {
+            margin-bottom: 1rem;
+        }
+
         @media (max-width: 860px) {
             .video-grid {
                 grid-template-columns: 1fr;
@@ -599,22 +498,14 @@
         .video-player-card {
             position: relative;
             width: 100%;
-            max-width: 320px;
-            aspect-ratio: 9/16;
+            max-width: 440px;
+            aspect-ratio: 16/9;
             margin: 0 auto;
             border-radius: 1.5rem;
             overflow: hidden;
             background: #000;
             border: 2px solid rgba(163, 230, 53, 0.35);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(163, 230, 53, 0.15);
-        }
-
-        .video-player-card iframe {
-            display: block;
-            width: 100%;
-            height: 100%;
-            aspect-ratio: 9/16;
-            border: none;
         }
 
         .video-poster {
@@ -627,14 +518,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 1.5rem 1rem;
-            cursor: pointer;
+            color: #fff;
+            text-decoration: none;
             z-index: 2;
-            transition: opacity 0.35s ease;
-        }
-
-        .video-poster.escondido {
-            opacity: 0;
-            pointer-events: none;
         }
 
         .video-play-btn {
@@ -656,6 +542,11 @@
         .video-player-card:hover .video-play-btn {
             transform: scale(1.1);
             box-shadow: 0 0 45px rgba(163, 230, 53, 0.9);
+        }
+
+        .video-poster:focus-visible {
+            outline: 3px solid var(--verde);
+            outline-offset: 4px;
         }
 
         .video-badge-tour {
@@ -733,16 +624,12 @@
             border-bottom: 1px solid rgba(163, 230, 53, 0.15);
             padding: 5.5rem 1.5rem;
             position: relative;
+            scroll-margin-top: 5rem;
         }
 
         .planos-container {
             max-width: 1180px;
             margin: 0 auto;
-        }
-
-        .planos-header {
-            text-align: center;
-            margin-bottom: 3.5rem;
         }
 
         .planos-pill {
@@ -765,7 +652,7 @@
             font-size: clamp(1.85rem, 4vw, 2.85rem);
             font-weight: 900;
             letter-spacing: -0.03em;
-            text-transform: uppercase;
+            text-transform: none;
             line-height: 1.15;
             color: #fff;
         }
@@ -779,9 +666,102 @@
             font-size: 0.95rem;
             color: rgba(255, 255, 255, 0.6);
             margin-top: 0.75rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            letter-spacing: 0.01em;
             font-weight: 700;
+        }
+
+        .planos-outras-opcoes {
+            margin: 0 0 2rem;
+            border: 1px solid rgba(163, 230, 53, 0.25);
+            border-radius: 1rem;
+            background: rgba(163, 230, 53, 0.04);
+        }
+
+        .planos-outras-opcoes summary {
+            display: flex;
+            min-height: 3.5rem;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1rem;
+            color: var(--verde);
+            font-weight: 800;
+            text-align: center;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .planos-outras-opcoes summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .planos-outras-opcoes summary::after {
+            content: "+";
+            font-size: 1.25rem;
+        }
+
+        .planos-outras-opcoes[open] summary::after {
+            content: "−";
+        }
+
+        .planos-outras-opcoes-content {
+            padding: 0 1rem 1rem;
+        }
+
+        .planos-resumo {
+            margin-bottom: 2rem;
+            border: 1px solid rgba(163, 230, 53, 0.25);
+            border-radius: 1rem;
+            background: rgba(163, 230, 53, 0.04);
+        }
+
+        .planos-resumo > summary {
+            position: relative;
+            padding: 1.25rem 3rem;
+            text-align: center;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .planos-resumo .planos-title,
+        .planos-resumo .planos-sub {
+            display: block;
+        }
+
+        .planos-resumo > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .planos-resumo > summary:focus-visible {
+            outline: 3px solid var(--verde);
+            outline-offset: 3px;
+        }
+
+        .planos-resumo > summary::after {
+            content: "+";
+            position: absolute;
+            top: 50%;
+            right: 1.25rem;
+            transform: translateY(-50%);
+            color: var(--verde);
+            font-size: 1.75rem;
+            line-height: 1;
+        }
+
+        .planos-resumo[open] > summary::after {
+            content: "−";
+        }
+
+        .planos-resumo-cta {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--verde);
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        .planos-conteudo {
+            padding: 0 1.25rem 1.25rem;
         }
 
         .planos-grid-principais {
@@ -800,6 +780,58 @@
         @media (max-width: 620px) {
             .planos-grid-principais {
                 grid-template-columns: 1fr;
+            }
+
+            .hero {
+                min-height: auto;
+            }
+
+            .hero-content {
+                padding: 2.5rem 1rem 1.75rem;
+            }
+
+            .hero-badge {
+                margin-bottom: 1rem;
+            }
+
+            .hero-title {
+                font-size: clamp(2rem, 9vw, 2.65rem);
+                margin-bottom: 0.85rem;
+            }
+
+            .hero-desc {
+                margin: 0 auto 1.25rem;
+                font-size: 0.95rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .hero-cta a {
+                justify-content: center;
+                min-height: 48px;
+                width: 100%;
+            }
+
+            .qr-section,
+            .section,
+            .video-section,
+            .planos-section {
+                padding-top: 2.5rem;
+                padding-bottom: 2.5rem;
+            }
+
+            .planos-resumo > summary {
+                padding: 1rem 2.75rem 1rem 1rem;
+            }
+
+            .planos-title {
+                font-size: 1.6rem;
+            }
+
+            .planos-conteudo {
+                padding: 0 0.75rem 0.75rem;
             }
         }
 
@@ -1119,8 +1151,7 @@
                     <span class="destaque">treino hoje?</span>
                 </h1>
                 <p class="hero-desc">
-                    Sua avaliação leva menos de 1 minuto e ajuda a equipe a
-                    oferecer cada vez mais qualidade. Conta pra gente.
+                    Sua experiência ajuda a gente a evoluir. Avalie em menos de 1 minuto, sem cadastro.
                 </p>
                 <div class="hero-cta">
                     <a href="{% url 'avaliar' %}" class="btn-primary" id="btn-avaliar-hero">
@@ -1132,35 +1163,34 @@
                 </div>
             </div>
 
-            <div class="hero-card" aria-hidden="true">
-                <div class="hero-card-header">
-                    <div class="hero-card-dot" style="background:#ff5f57"></div>
-                    <div class="hero-card-dot" style="background:#ffbd2e"></div>
-                    <div class="hero-card-dot" style="background:#28c840"></div>
-                    <span class="hero-card-title">Painel Polo Fit</span>
+        </div>
+    </section>
+
+    <!-- QR CODES -->
+    <section class="qr-section" aria-labelledby="qrcodes-titulo">
+        <div class="qr-grid">
+            <div>
+                <div class="section-label">Acesso rápido</div>
+                <h2 class="section-title" id="qrcodes-titulo">Acesse pelo QR Code</h2>
+                <p class="section-desc">Escaneie com a câmera do celular para abrir direto o formulário ou a pesquisa.
+                </p>
+                {% if not link_funciona_publicamente %}
+                <div class="aviso-local" role="status">
+                    ⚠️ Estes QR Codes usam o endereço local. Publique o site em HTTPS para compartilhá-los com os
+                    alunos.
                 </div>
-                <div class="hero-card-body">
-                    <div class="stat-row">
-                        <div class="stat-item">
-                            <div class="stat-value">4.6</div>
-                            <div class="stat-label">Nota média</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">5</div>
-                            <div class="stat-label">Avaliações</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">Pendentes</div>
-                        </div>
-                    </div>
-                    <div class="mini-avaliacao">
-                        <div class="mini-av-emoji">😊</div>
-                        <div>
-                            <div class="mini-av-stars">★★★★★</div>
-                            <div class="mini-av-texto">"Treino ótimo, professor atencioso!"</div>
-                        </div>
-                    </div>
+                {% endif %}
+            </div>
+            <div class="qr-cards">
+                <div class="qr-card">
+                    <h3>Avaliar experiência</h3>
+                    <img src="data:image/png;base64,{{ avaliar_qr }}" alt="QR Code para avaliação Polo Fit">
+                    <a href="{{ avaliar_url }}">Abrir avaliação</a>
+                </div>
+                <div class="qr-card">
+                    <h3>Enquete de satisfação</h3>
+                    <img src="data:image/png;base64,{{ enquete_qr }}" alt="QR Code para pesquisa Polo Fit">
+                    <a href="{{ enquete_url }}">Abrir pesquisa</a>
                 </div>
             </div>
         </div>
@@ -1200,27 +1230,38 @@
         </div>
     </section>
 
-    <!-- VÍDEO DA ACADEMIA (VERTICAL - TOUR POLO FIT) -->
+    <!-- VÍDEO DA ACADEMIA: ABRE FORA DO PLAYER INCORPORADO -->
     <section class="video-section" aria-labelledby="video-titulo">
         <div class="video-grid">
             <div class="video-player-card">
-                <iframe id="iframe-tour" src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
-                    title="Vídeo de apresentação da Academia Polo Fit"
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy">
-                </iframe>
-                <div class="video-poster" id="video-poster" onclick="iniciarVideoTour()">
+                <a class="video-poster"
+                    href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
+                    target="_blank" rel="noopener noreferrer"
+                    aria-label="Vídeo de apresentação da Academia Polo Fit — abrir no Google Drive">
                     <span class="video-badge-tour">Polo Fit</span>
-                    <div class="video-play-btn" aria-label="Assistir tour da academia">▶</div>
+                    <span class="video-play-btn" aria-hidden="true">▶</span>
                     <span class="video-badge-tour">Tour pela Polo Fit</span>
-                </div>
+                </a>
             </div>
             <div>
                 <div class="section-label">Conheça a Polo Fit</div>
                 <h2 class="section-title" id="video-titulo">Um tour pela academia</h2>
                 <p class="section-desc">
-                    Musculação, funcional, ginástica, aulas coletivas e muito mais aqui na Polo Academia.
-                    Conheça nossa estrutura moderna e veja de perto a energia de treinar com a gente.
+                    O vídeo abre no Google Drive, fora do player incorporado que pode falhar no navegador do Instagram.
                 </p>
+                <p class="section-desc">
+                    Se estiver no Instagram e o vídeo não abrir, use o menu do navegador e escolha “Abrir no navegador”.
+                </p>
+                <div class="video-links">
+                    <a class="video-link-primary"
+                        href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
+                        target="_blank" rel="noopener noreferrer">
+                        ▶ Abrir no Google Drive
+                    </a>
+                    <a class="video-link-sec" href="{% url 'baixar_video' %}">
+                        ↓ Baixar vídeo
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -1228,16 +1269,19 @@
     <!-- SEÇÃO DE PLANOS POLOFIT ACADEMIAS -->
     <section class="planos-section" id="planos" aria-labelledby="planos-titulo">
         <div class="planos-container">
-            <div class="planos-header">
-                <div class="planos-pill">
+            <details class="planos-resumo">
+                <summary>
+                    <span class="planos-pill">
                     ⚡ Mais saúde, mais possibilidades
-                </div>
-                <h2 class="planos-title" id="planos-titulo">
+                    </span>
+                    <span class="planos-title" id="planos-titulo" role="heading" aria-level="2">
                     Planos que se encaixam
                     <span class="destaque-plano">no seu estilo de vida</span>
-                </h2>
-                <p class="planos-sub">Treino hoje, conquistas sempre</p>
-            </div>
+                    </span>
+                    <span class="planos-sub">Treine hoje. Conquiste sempre.</span>
+                    <span class="planos-resumo-cta">Toque para ver os planos e valores</span>
+                </summary>
+                <div class="planos-conteudo">
 
             <!-- GRID 1: PLANOS PRINCIPAIS -->
             <div class="planos-grid-principais">
@@ -1334,6 +1378,9 @@
                 </div>
             </div>
 
+            <details class="planos-outras-opcoes">
+                <summary>Ver outras opções de planos</summary>
+                <div class="planos-outras-opcoes-content">
             <!-- GRID 2: PLANOS SECUNDÁRIOS / ESPECIAIS -->
             <div class="planos-grid-secundarios">
                 <!-- PLANO ANUAL RECORRENTE -->
@@ -1437,6 +1484,8 @@
                     </div>
                 </div>
             </div>
+                </div>
+            </details>
 
             <!-- DIFERENCIAIS BAR -->
             <div class="planos-diferenciais-bar">
@@ -1465,36 +1514,8 @@
                     🖼️ Ver tabela oficial completa
                 </a>
             </div>
-        </div>
-    </section>
-
-    <!-- QR CODES -->
-    <section class="qr-section" aria-labelledby="qrcodes-titulo">
-        <div class="qr-grid">
-            <div>
-                <div class="section-label">Acesso rápido</div>
-                <h2 class="section-title" id="qrcodes-titulo">Acesse pelo QR Code</h2>
-                <p class="section-desc">Escaneie com a câmera do celular para abrir direto o formulário ou a pesquisa.
-                </p>
-                {% if not link_funciona_publicamente %}
-                <div class="aviso-local" role="status">
-                    ⚠️ Estes QR Codes usam o endereço local. Publique o site em HTTPS para compartilhá-los com os
-                    alunos.
                 </div>
-                {% endif %}
-            </div>
-            <div class="qr-cards">
-                <div class="qr-card">
-                    <h3>Avaliar experiência</h3>
-                    <img src="data:image/png;base64,{{ avaliar_qr }}" alt="QR Code para avaliação Polo Fit">
-                    <a href="{{ avaliar_url }}">Abrir avaliação</a>
-                </div>
-                <div class="qr-card">
-                    <h3>Enquete de satisfação</h3>
-                    <img src="data:image/png;base64,{{ enquete_qr }}" alt="QR Code para pesquisa Polo Fit">
-                    <a href="{{ enquete_url }}">Abrir pesquisa</a>
-                </div>
-            </div>
+            </details>
         </div>
     </section>
 
@@ -1559,14 +1580,6 @@
 
     {% include "feedback/pwa_install.html" %}
 
-    <script>
-        function iniciarVideoTour() {
-            const poster = document.getElementById('video-poster');
-            if (poster) {
-                poster.classList.add('escondido');
-            }
-        }
-    </script>
 </body>
 
 </html>

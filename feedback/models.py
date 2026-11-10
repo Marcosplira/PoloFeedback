@@ -109,6 +109,17 @@ class Avaliacao(models.Model):
         ("sugestao", "Sugestão"),
     ]
     TIPO_FEEDBACK_CHOICES = TIPO_CHOICES  # alias para compatibilidade
+    AULA_COLETIVA_CHOICES = [
+        ("gluteo", "Glúteo"),
+        ("step", "Step"),
+        ("hiit", "HIIT"),
+        ("abdominais", "Abdominais"),
+        ("danca", "Dança"),
+        ("jump", "Jump"),
+        ("funcional", "Funcional"),
+        ("spinning", "Spinning"),
+        ("pump", "Pump"),
+    ]
     STATUS_CHOICES = [
         ("pendente", "Pendente"),
         ("em_analise", "Em Análise"),
@@ -123,6 +134,12 @@ class Avaliacao(models.Model):
         max_length=20, choices=CATEGORIA_CHOICES, default="geral"
     )
     categorias = models.JSONField(null=True, blank=True)
+    aula_coletiva = models.CharField(
+        max_length=20,
+        choices=AULA_COLETIVA_CHOICES,
+        blank=True,
+        verbose_name="Aula coletiva avaliada",
+    )
 
     nota = models.IntegerField(default=5)
 

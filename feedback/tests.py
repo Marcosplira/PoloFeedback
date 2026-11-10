@@ -291,39 +291,53 @@ class FeedbackViewsTests(TestCase):
         inicio_response = self.client.get(reverse("inicio"))
         self.assertEqual(inicio_response.status_code, 200)
         self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
+        self.assertContains(inicio_response, "Planos que se encaixam")
+        self.assertContains(inicio_response, "Treine hoje. Conquiste sempre.")
+        self.assertContains(
+            inicio_response,
+            '<details class="planos-outras-opcoes">',
+            html=False,
+        )
+        self.assertNotContains(
+            inicio_response,
+            '<details class="planos-outras-opcoes" open>',
+            html=False,
+        )
         self.assertContains(inicio_response, reverse("avaliar"))
-        self.assertContains(inicio_response, "from-lime-500/10")
         self.assertContains(inicio_response, "QR Code para avaliação Polo Fit")
         self.assertContains(inicio_response, "QR Code para pesquisa Polo Fit")
         self.assertTrue(inicio_response.context["avaliar_qr"])
         self.assertTrue(inicio_response.context["enquete_qr"])
         self.assertContains(
             inicio_response,
-            "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview",
-        )
-        self.assertContains(
-            inicio_response,
             "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view",
         )
-        self.assertContains(
-            inicio_response,
-            "https://drive.google.com/uc?export=download&amp;id=1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX",
-        )
-        self.assertContains(inicio_response, "academia2.png")
+        self.assertContains(inicio_response, reverse("baixar_video"))
         self.assertContains(inicio_response, "feedback/academia1.png")
-        self.assertContains(inicio_response, "class=\"fundo-academia min-h-screen bg-slate-950 text-white\"")
-        self.assertContains(
-            inicio_response,
-            "class=\"mx-auto mb-3 aspect-[9/16] w-full max-w-xs rounded-2xl bg-black sm:aspect-video sm:max-w-none\"",
-        )
-        self.assertContains(inicio_response, "formato vertical do vídeo")
+        self.assertContains(inicio_response, "Se estiver no Instagram")
         self.assertContains(inicio_response, "Baixar vídeo")
         self.assertContains(inicio_response, "Abrir no Google Drive")
         self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
+        self.assertNotContains(inicio_response, "/preview")
+        self.assertNotContains(inicio_response, "<iframe")
+        self.assertContains(inicio_response, '<details class="planos-resumo">', html=False)
+        self.assertNotContains(
+            inicio_response,
+            '<details class="planos-resumo" open>',
+            html=False,
+        )
+        self.assertLess(
+            inicio_response.content.find(b'id="qrcodes-titulo"'),
+            inicio_response.content.find(b'id="como-funciona-titulo"'),
+        )
         avaliacao_response = self.client.get(reverse("avaliar"))
         self.assertEqual(avaliacao_response.status_code, 200)
         self.assertContains(avaliacao_response, f'href="{reverse("inicio")}"')
-        self.assertContains(avaliacao_response, 'aria-current="page"')
+        self.assertContains(avaliacao_response, "← Voltar ao Início")
+        self.assertContains(
+            avaliacao_response,
+            'aria-label="Voltar ao início da Polo Fit"',
+        )
 
     def test_login_explica_que_nao_existe_credencial_padrao(self):
         response = self.client.get(reverse("login"))
@@ -655,8 +669,38 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(response, "Seu nome (opcional)")
         self.assertContains(response, "Mariana Instrutora")
         self.assertContains(response, "feedback/funcionarios/alan-araujo.png")
-        self.assertContains(response, 'name="funcionarios_ids"', html=False)
-        self.assertContains(response, "marque um ou mais funcionários")
+        self.assertContains(response, 'name="funcionario_id"', html=False)
+        self.assertContains(response, "Sobre qual profissional você quer opinar?")
+        self.assertContains(response, "Voltar ao Início")
+        self.assertContains(response, "id=\"lista-aulas-coletivas\"", html=False)
+        self.assertContains(response, "Qual aula coletiva você quer avaliar?")
+        self.assertEqual(
+            Avaliacao.AULA_COLETIVA_CHOICES,
+            [
+                ("gluteo", "Glúteo"),
+                ("step", "Step"),
+                ("hiit", "HIIT"),
+                ("abdominais", "Abdominais"),
+                ("danca", "Dança"),
+                ("jump", "Jump"),
+                ("funcional", "Funcional"),
+                ("spinning", "Spinning"),
+                ("pump", "Pump"),
+            ],
+        )
+        for modalidade in (
+            "Glúteo",
+            "Step",
+            "HIIT",
+            "Abdominais",
+            "Dança",
+            "Jump",
+            "Funcional",
+            "Spinning",
+            "Pump",
+        ):
+            with self.subTest(modalidade=modalidade):
+                self.assertContains(response, modalidade)
 
     def test_categoria_nao_substitui_localizacao_recebida_pelo_qrcode(self):
         response = self.client.get(
@@ -749,6 +793,49 @@ class FeedbackViewsTests(TestCase):
             reverse("admin:feedback_avaliacao_changelist")
         )
         self.assertContains(admin_response, "Aluno identificado")
+
+    def test_avaliacao_registra_aula_coletiva_especifica(self):
+        response = self.client.post(
+            reverse("avaliar"),
+            {
+                "categoria": "aulas_coletivas",
+                "aula_coletiva": "spinning",
+                "nota": "4",
+                "tipo_feedback": "elogio",
+                "comentario": "A aula foi ótima.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        avaliacao = Avaliacao.objects.get()
+        self.assertEqual(avaliacao.categoria, "aulas_coletivas")
+        self.assertEqual(avaliacao.aula_coletiva, "spinning")
+
+        self.client.force_login(self.user)
+        dashboard_response = self.client.get(reverse("dashboard"))
+        self.assertContains(dashboard_response, "Aula: Spinning")
+        admin_response = self.client.get(
+            reverse("admin:feedback_avaliacao_changelist")
+        )
+        self.assertContains(admin_response, "Spinning")
+
+    def test_avaliacao_de_aula_coletiva_exige_modalidade_valida(self):
+        response = self.client.post(
+            reverse("avaliar"),
+            {
+                "categoria": "aulas_coletivas",
+                "nota": "4",
+                "tipo_feedback": "elogio",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "Selecione qual aula coletiva você quer avaliar.",
+        )
+        self.assertContains(response, "id=\"lista-aulas-coletivas\"", html=False)
+        self.assertFalse(Avaliacao.objects.exists())
 
     def test_pagina_avaliar_post_invalido_sem_campos_obrigatorios(self):
         dados = {
@@ -1098,6 +1185,9 @@ class FeedbackViewsTests(TestCase):
                 urls_avaliacao[local_index],
                 {
                     "categorias": [categoria],
+                    "aula_coletiva": (
+                        "spinning" if categoria == "aulas_coletivas" else ""
+                    ),
                     "nota": str(nota),
                     "comentario": (
                         f"[TESTE FICTICIO #{numero_cliente + 1:03}] "
