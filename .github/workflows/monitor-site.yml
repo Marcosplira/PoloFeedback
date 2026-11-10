@@ -1,0 +1,25 @@
+name: Monitoramento público do Polo Feedback
+
+on:
+  schedule:
+    - cron: "15 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SITE_URL: https://polofeedback.pythonanywhere.com
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verificar páginas públicas sem enviar dados
+        run: python scripts/monitor_public_site.py

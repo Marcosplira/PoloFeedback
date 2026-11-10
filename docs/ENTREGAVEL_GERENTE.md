@@ -50,6 +50,10 @@ O sistema gera um resumo executivo para apoiar a gestão. Também existe um chat
 - quem está sendo melhor avaliado?
 - o que a equipe deve melhorar?
 
+Esse recurso de IA é diferente do robô de testes: o gerente solicita o resumo ou faz uma pergunta, e a ferramenta responde com base nos dados disponíveis. Ela não acompanha o site continuamente, não detecta sozinha que uma página caiu e não executa correções. Sem uma chave Gemini válida, o sistema pode apresentar um resumo local baseado nos registros, identificado como tal.
+
+Quando a integração Gemini está habilitada, o contexto inclui indicadores agregados, nomes e funções dos funcionários e textos livres recentes de avaliações/enquetes. Um comentário pode conter informação pessoal mesmo sem um campo de nome; por isso, a academia deve revisar a política de privacidade e orientar a equipe a não encaminhar dados identificáveis desnecessários.
+
 ### 5. O QR Code automatiza a coleta
 A academia pode imprimir QR Codes em pontos estratégicos. Quando o aluno escaneia, o sistema já direciona para a avaliação correta e registra a localização automaticamente.
 
@@ -233,6 +237,24 @@ O MVP já permite que o aluno escaneie o QR Code de um aparelho, entre na própr
 
 O botão de contato do sistema abre uma conversa iniciada pela pessoa com a academia. Ele não envia notificações automáticas. Para avisos automáticos, será necessária integração futura com a WhatsApp Business API, aprovação da academia, análise de custos e definição de preferências de comunicação e privacidade.
 
+### Robô de testes com apoio de IA — proposta segura
+
+**O que está ativo:** o robô técnico faz verificações HTTPS de leitura nas páginas públicas e o GitHub Actions executa testes automatizados para a seleção e o registro de aulas coletivas. Uma execução pode ser iniciada manualmente; o monitor público também está agendado. Os resultados ficam nas execuções do GitHub Actions. Esse robô não faz login, não envia avaliações e não altera dados.
+
+**O que ainda não está integrado:** a IA do Gemini não recebe os alertas do monitor e não analisa automaticamente o código, os logs ou as falhas dos testes. A IA atual é um recurso separado, iniciado pelo gerente.
+
+Uma próxima etapa pode fazer o robô, quando falhar, produzir um resumo técnico com a página verificada, horário, resposta HTTP e duração; a IA poderia então sugerir causas e passos de investigação. A recomendação seria apenas uma hipótese para a equipe revisar — não uma confirmação de bug nem uma ordem para alterar o sistema.
+
+**Salvaguardas recomendadas antes de conectar IA ao robô:**
+
+- enviar somente metadados técnicos necessários; remover cookies, tokens, senhas, endereço IP, conteúdo de formulários e dados pessoais;
+- usar uma chave de API armazenada como segredo no provedor, nunca no código, nos logs ou em mensagens;
+- limitar o uso a falhas de teste/monitoramento e identificar claramente a resposta como produzida por IA;
+- exigir aprovação humana antes de abrir ou alterar dados operacionais, corrigir código, publicar uma versão ou avisar alunos;
+- registrar a falha e a decisão da equipe, sem armazenar dados sensíveis no relatório.
+
+**Evolução sugerida:** primeiro ampliar os testes automatizados da avaliação por modalidade e das telas móveis; depois avaliar um alerta técnico; somente após revisão de privacidade e custos, considerar resumo assistido por IA. Não recomendamos um robô que faça login como gerente, altere avaliações, mude senhas, edite treinos ou publique código sem supervisão.
+
 ---
 
 ## Módulo Polo Fit Treinos por QR Code
@@ -301,5 +323,3 @@ Com dashboard, QR Code, IA e chatbot, o sistema deixa claro que a academia tem u
 - Horários: segunda a sexta, 05h às 22h; sábado, 11h às 19h.
 
 **Software e proposta:** Marcos Paulo Santos Lira
-
-

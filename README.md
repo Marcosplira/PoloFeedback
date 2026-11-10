@@ -39,6 +39,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
    - Integração com a API Google Gemini (`gemini-2.5-flash`) com histórico curto para conversas de múltiplos turnos.
    - Resumo gerencial inclui avaliações, categorias e notas, funcionários, locais e todos os tópicos da enquete.
    - **Fallback local identificado:** sem uma chave Gemini válida, o painel sinaliza o modo local e responde com regras e dados registrados; isso não equivale a um modelo generativo.
+   - Quando Gemini está configurado, o contexto enviado inclui dados agregados, nomes/funções de funcionários e textos livres recentes de avaliações e enquetes. Esses textos podem conter dados pessoais; avalie a política de privacidade e evite inserir informações identificáveis nos comentários.
 
 4. **🖨️ Gerador de QR Code com Impressão de Cartaz (`/qrcode/`):**
    - Permite criar QR Codes para qualquer setor ou unidade (ex: *Musculação*, *Recepção*, *Polo Centro*).
@@ -76,6 +77,33 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 | **Inteligência Artificial** | Google Gemini API (`gemini-2.5-flash`) |
 | **Infraestrutura** | Gunicorn, Whitenoise, Docker, Docker Compose |
 | **Hospedagem** | PythonAnywhere (produção) |
+
+---
+
+## 🤖 Verificações automatizadas
+
+O GitHub Actions executa os testes da seleção e gravação de aulas coletivas quando há atualizações no código e também pode ser iniciado manualmente. Um monitor separado verifica diariamente se a página inicial, avaliação, enquete, login, manifest PWA e Service Worker continuam respondendo no endereço público.
+
+O monitor faz apenas requisições HTTPS de leitura: não entra em contas, não envia avaliações, não altera dados e não rastreia visitantes. Falhas aparecem como execução malsucedida na aba **Actions** do GitHub; o monitor não corrige erros automaticamente nem garante a disponibilidade do provedor. Para executar localmente:
+
+```powershell
+python scripts/monitor_public_site.py
+```
+
+Opcionalmente, defina `SITE_URL` para apontar o monitor a outro domínio HTTPS.
+
+### Robô e IA: o que existe e o que pode evoluir
+
+Hoje há duas funções separadas: os testes e o monitor automático verificam comportamento técnico; o resumo/chat com Gemini é uma ferramenta gerencial acionada pelo usuário. **A IA ainda não recebe alertas do monitor, não vigia o código continuamente e não corrige bugs.**
+
+Uma evolução segura pode ser feita por etapas:
+
+1. **Mais testes automáticos:** validar as telas públicas, a escolha de cada aula coletiva e as páginas principais em diferentes tamanhos de tela, sem enviar respostas reais.
+2. **Alerta técnico:** quando uma verificação falhar, guardar apenas endereço testado, horário, código HTTP e duração, e avisar a equipe. Não registrar senha, cookie, comentário de aluno ou conteúdo privado.
+3. **Resumo assistido por IA:** se a equipe configurar uma chave e aprovar o uso, enviar à IA somente o relatório técnico sanitizado para explicar causas prováveis e sugerir verificações. A IA deve apresentar hipótese, não diagnóstico garantido.
+4. **Revisão humana:** um responsável confere a recomendação e decide se abre uma tarefa ou altera o sistema.
+
+**Limites:** nenhuma alteração automática de código ou banco, login automatizado em contas reais, publicação, envio de WhatsApp ou exclusão de registros. Antes de usar um provedor de IA com dados de avaliações, revisar privacidade e minimizar/anônimizar textos livres e identificadores; textos de alunos podem conter informações pessoais mesmo quando o nome não é incluído deliberadamente.
 
 ---
 
