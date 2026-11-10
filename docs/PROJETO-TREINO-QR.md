@@ -31,6 +31,14 @@
 - Instruções gerais do aparelho, observações de segurança, orientações por exercício e link de vídeo externo.
 - Contas sem permissão de gerência não acessam Dashboard, análise/chat de IA ou gerador de QR de avaliação.
 
+### Explicação direta do fluxo atual
+
+O QR Code funciona como uma etiqueta do aparelho: identifica qual equipamento foi escaneado, mas não identifica o aluno e não carrega o treino pessoal. A rota exige login. Depois de autenticar, o Django verifica os planos ativos pertencentes à conta e filtra os exercícios pelo aparelho do QR. Assim, dois alunos podem escanear o mesmo código e receber resultados diferentes, conforme seus próprios planos.
+
+O professor ou a equipe prepara o conteúdo no sistema: cadastra aparelhos e exercícios, depois cria/atualiza o plano do aluno com séries, repetições, intervalo, carga e orientações. O sistema exibe essa prescrição; não calcula o treino nem registra séries concluídas ou histórico de execução. A tela do aluno também não substitui o acompanhamento profissional. O QR impresso pode continuar o mesmo quando o plano for atualizado, pois os dados são consultados no sistema após o login.
+
+Exemplo: ao escanear o QR do Leg Press, o aluno entra na própria conta. Se houver exercício ativo de Leg Press em um plano ativo dele, a página mostra esse item; não mostra planos de outras contas. Se não houver item atribuído, a página informa que nenhum exercício ativo foi associado àquele aparelho e orienta o aluno a confirmar com a equipe.
+
 Para iniciar a demonstração local, aplique `python manage.py migrate`, crie um administrador com `python manage.py createsuperuser` e siga o roteiro **Cadastrar o MVP de treinos por QR Code** no README. O aluno pode criar uma conta pela página `/cadastro/aluno/`; a equipe cria e revisa os planos. As contas privadas de gerente recebem permissões para cadastrar e editar aparelhos e exercícios, mas não para excluí-los pelo Admin. O domínio escolhido para produção é `https://app.polofitacademias.com.br`, mas ele ainda precisa ser conectado ao serviço de hospedagem e configurado no DNS. Gere os QRs somente depois de confirmar que o domínio abre com HTTPS, acessando a página `/treinos/qrs/` por esse endereço.
 
 ## 1. Problema a resolver

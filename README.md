@@ -59,6 +59,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 
 7. **📲 Acesso rápido, QR Codes e ajuda no painel:**
    - A página inicial oferece QR Codes para avaliação e pesquisa; cada código aponta para o host HTTPS/local usado para abrir o site.
+   - A pedido do proprietário, a página inicial prioriza avaliação e satisfação no celular; os detalhes e valores dos planos ficam recolhidos até o visitante tocar para consultá-los. Nesse painel, é possível marcar um ou mais planos e enviar a seleção à recepção pelo WhatsApp para tirar dúvidas; isso não confirma matrícula.
    - A página inicial também exibe a foto da academia e o vídeo de apresentação incorporado do Google Drive. Para os visitantes assistirem, o arquivo precisa permitir acesso a qualquer pessoa com o link.
    - O Dashboard oferece atalhos de diagnóstico de migrações (`/dashboard/configuracao/`), material para compartilhar (`/dashboard/divulgacao/`) e apresentação do projeto de treinos (`/dashboard/projeto-treino/`).
    - A tela de instalação adiciona o PWA à tela inicial do dispositivo. O aplicativo ainda não está publicado na Google Play Store; não compartilhe links como se houvesse um app listado na loja.

@@ -23,14 +23,15 @@ Além disso, ela funciona como um **PWA (Progressive Web App)**: ao acessar o si
 1. No salão de musculação, vá até o equipamento que deseja utilizar (ex: *Leg Press 45°*).
 2. Abra a câmera do celular e aponte para o **QR Code** colado no aparelho.
 3. Toque no link que surge na tela.
-4. Caso ainda não esteja conectado, faça login com seu **usuário** e **senha** fornecidos pela academia.
-5. O sistema identifica instantaneamente o aparelho e exibe na sua tela:
-   - Nome do exercício recomendado para seu nível.
-   - Quantidade de séries e repetições (ex: `3 x 12`).
-   - Carga prescrita pelo professor responsável.
-   - Tempo de descanso recomendado com contagem.
-   - Dica de postura e execução correta gravada pelo seu professor.
-6. Ao terminar cada série, clique em **✓ Série Feita** para registrar seu progresso.
+4. Entre com sua conta de aluno. O QR identifica o aparelho, não identifica você nem contém seu plano.
+5. O sistema procura os exercícios daquele aparelho nos seus planos ativos e mostra somente os que o professor atribuiu à sua conta:
+   - Nome do exercício e do aparelho.
+   - Séries, repetições e intervalo de descanso prescritos.
+   - Carga orientada, quando cadastrada pelo professor.
+   - Instruções, observações e vídeo demonstrativo, quando disponíveis.
+6. Siga a orientação profissional. Em caso de dúvida, desconforto ou diferença entre a tela e a orientação presencial, peça ajuda ao professor.
+
+**Importante:** nesta versão, o sistema exibe a prescrição, mas não marca séries como concluídas nem guarda um histórico de execução. Ele não calcula carga ou treino automaticamente.
 
 ### 2.2. Como Fazer uma Avaliação de Atendimento
 1. Aponte a câmera para os cartazes espalhados pela academia (Recepção, Salão de Musculação, Vestiários).
@@ -46,6 +47,13 @@ Além disso, ela funciona como um **PWA (Progressive Web App)**: ao acessar o si
 2. Responda às 5 perguntas rápidas sobre preferências de aulas coletivas (Cross, Pilates, Spinning, Dança).
 3. Indique os melhores horários para sua rotina.
 4. Envie suas respostas para a gerência planejar as próximas grades horárias.
+
+### 2.4. Como consultar opções de planos
+1. Na página inicial, abra **Planos que se encaixam no seu estilo de vida**.
+2. Marque **Adicionar à seleção** em um ou mais planos que deseja consultar. As opções adicionais ficam dentro de **Ver outras opções de planos**.
+3. Use o botão para enviar à recepção, pelo WhatsApp, a lista dos planos selecionados e tirar dúvidas.
+
+Essa seleção serve apenas para iniciar uma conversa. Ela não faz matrícula, não reserva vaga e não confirma a contratação de nenhum plano.
 
 ---
 
@@ -73,6 +81,14 @@ Além disso, ela funciona como um **PWA (Progressive Web App)**: ao acessar o si
 2. Clique no botão **Editar plano**.
 3. Altere as cargas, repetições ou substitua exercícios conforme a evolução do aluno.
 4. Clique em **Salvar plano de treino**.
+
+### 3.3. Como entender a demonstração de treinos por QR Code
+
+O QR Code funciona como uma etiqueta digital do equipamento. Por exemplo, o código do Leg Press identifica essa máquina. Depois que o aluno entra com a própria conta, o sistema verifica os planos ativos atribuídos a ele e apresenta os exercícios vinculados àquele aparelho. Outro aluno que escaneie o mesmo código só verá os itens do próprio plano.
+
+A equipe cadastra aparelhos e exercícios, e o professor monta o plano individual com séries, repetições, descanso, carga e observações. A página **Projeto da Academia PoloFit**, no painel da equipe, explica esse fluxo e apresenta o roteiro para um piloto.
+
+O módulo atual é um MVP para demonstração: não calcula cargas, não registra séries concluídas e não substitui a orientação do professor. Antes de usar oficialmente, a academia deve cadastrar conteúdo real, revisar as instruções e vídeos com os profissionais e testar o fluxo com um grupo pequeno.
 
 ---
 

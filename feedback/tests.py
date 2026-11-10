@@ -293,6 +293,10 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
         self.assertContains(inicio_response, "Planos que se encaixam")
         self.assertContains(inicio_response, "Treine hoje. Conquiste sempre.")
+        self.assertContains(inicio_response, "Marque um ou mais planos")
+        self.assertContains(inicio_response, 'id="btn-contato-planos"', html=False)
+        self.assertEqual(inicio_response.content.count(b'class="plano-selecao-input"'), 11)
+        self.assertContains(inicio_response, "não confirma matrícula")
         self.assertContains(
             inicio_response,
             '<details class="planos-outras-opcoes">',
@@ -564,10 +568,12 @@ class FeedbackViewsTests(TestCase):
         response = self.client.get(reverse("projeto_treino"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Treinos orientados por QR Code")
+        self.assertContains(response, "O aluno escaneia o aparelho e consulta seu treino")
         self.assertContains(response, reverse("qrcodes_treinos"))
         self.assertContains(response, reverse("gestao_treinos"))
         self.assertContains(response, "Etapas para iniciar o piloto")
+        self.assertContains(response, "O QR Code não contém o treino do aluno")
+        self.assertContains(response, "Não registra séries concluídas")
 
     def test_diagnostico_mostra_status_das_migracoes(self):
         self.client.force_login(self.user)
