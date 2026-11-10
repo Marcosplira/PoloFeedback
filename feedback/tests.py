@@ -310,16 +310,13 @@ class FeedbackViewsTests(TestCase):
         self.assertTrue(inicio_response.context["enquete_qr"])
         self.assertContains(
             inicio_response,
-            "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view",
+            "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview",
         )
-        self.assertContains(inicio_response, reverse("baixar_video"))
         self.assertContains(inicio_response, "feedback/academia1.png")
-        self.assertContains(inicio_response, "Se estiver no Instagram")
-        self.assertContains(inicio_response, "Baixar vídeo")
-        self.assertContains(inicio_response, "Abrir no Google Drive")
         self.assertContains(inicio_response, "Vídeo de apresentação da Academia Polo Fit")
-        self.assertNotContains(inicio_response, "/preview")
-        self.assertNotContains(inicio_response, "<iframe")
+        self.assertContains(inicio_response, "iniciarVideoTour()")
+        self.assertNotContains(inicio_response, "Abrir no Google Drive")
+        self.assertNotContains(inicio_response, "Baixar vídeo")
         self.assertContains(inicio_response, '<details class="planos-resumo">', html=False)
         self.assertNotContains(
             inicio_response,

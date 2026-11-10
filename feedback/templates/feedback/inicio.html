@@ -498,14 +498,22 @@
         .video-player-card {
             position: relative;
             width: 100%;
-            max-width: 440px;
-            aspect-ratio: 16/9;
+            max-width: 320px;
+            aspect-ratio: 9/16;
             margin: 0 auto;
             border-radius: 1.5rem;
             overflow: hidden;
             background: #000;
             border: 2px solid rgba(163, 230, 53, 0.35);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(163, 230, 53, 0.15);
+        }
+
+        .video-player-card iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 9/16;
+            border: none;
         }
 
         .video-poster {
@@ -518,9 +526,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 1.5rem 1rem;
-            color: #fff;
-            text-decoration: none;
+            cursor: pointer;
             z-index: 2;
+            transition: opacity 0.35s ease;
+        }
+
+        .video-poster.escondido {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .video-play-btn {
@@ -544,11 +557,6 @@
             box-shadow: 0 0 45px rgba(163, 230, 53, 0.9);
         }
 
-        .video-poster:focus-visible {
-            outline: 3px solid var(--verde);
-            outline-offset: 4px;
-        }
-
         .video-badge-tour {
             font-size: 0.85rem;
             font-weight: 700;
@@ -560,61 +568,6 @@
             border-radius: 9999px;
             border: 1px solid rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(8px);
-        }
-
-        .video-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.85rem;
-            margin-top: 1.5rem;
-        }
-
-        @media (max-width: 860px) {
-            .video-links {
-                justify-content: center;
-            }
-        }
-
-        .video-link-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 700;
-            background: var(--verde);
-            color: #0a0a0a;
-            text-decoration: none;
-            padding: 0.75rem 1.35rem;
-            border-radius: 0.75rem;
-            transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
-            box-shadow: 0 4px 20px rgba(163, 230, 53, 0.25);
-        }
-
-        .video-link-primary:hover {
-            transform: translateY(-2px);
-            background: #bbf451;
-            box-shadow: 0 6px 25px rgba(163, 230, 53, 0.4);
-        }
-
-        .video-link-sec {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.06);
-            color: #fff;
-            text-decoration: none;
-            padding: 0.75rem 1.35rem;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            transition: background 0.2s, border-color 0.2s, color 0.2s;
-        }
-
-        .video-link-sec:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: var(--verde);
-            color: var(--verde);
         }
 
         /* ── SEÇÃO DE PLANOS POLO FIT ── */
@@ -1230,38 +1183,27 @@
         </div>
     </section>
 
-    <!-- VÍDEO DA ACADEMIA: ABRE FORA DO PLAYER INCORPORADO -->
+    <!-- VÍDEO DA ACADEMIA (VERTICAL - TOUR POLO FIT) -->
     <section class="video-section" aria-labelledby="video-titulo">
         <div class="video-grid">
             <div class="video-player-card">
-                <a class="video-poster"
-                    href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
-                    target="_blank" rel="noopener noreferrer"
-                    aria-label="Vídeo de apresentação da Academia Polo Fit — abrir no Google Drive">
+                <iframe id="iframe-tour" src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
+                    title="Vídeo de apresentação da Academia Polo Fit"
+                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy">
+                </iframe>
+                <div class="video-poster" id="video-poster" onclick="iniciarVideoTour()">
                     <span class="video-badge-tour">Polo Fit</span>
-                    <span class="video-play-btn" aria-hidden="true">▶</span>
+                    <div class="video-play-btn" aria-label="Assistir tour da academia">▶</div>
                     <span class="video-badge-tour">Tour pela Polo Fit</span>
-                </a>
+                </div>
             </div>
             <div>
                 <div class="section-label">Conheça a Polo Fit</div>
                 <h2 class="section-title" id="video-titulo">Um tour pela academia</h2>
                 <p class="section-desc">
-                    O vídeo abre no Google Drive, fora do player incorporado que pode falhar no navegador do Instagram.
+                    Musculação, funcional, ginástica, aulas coletivas e muito mais aqui na Polo Academia.
+                    Conheça nossa estrutura moderna e veja de perto a energia de treinar com a gente.
                 </p>
-                <p class="section-desc">
-                    Se estiver no Instagram e o vídeo não abrir, use o menu do navegador e escolha “Abrir no navegador”.
-                </p>
-                <div class="video-links">
-                    <a class="video-link-primary"
-                        href="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/view"
-                        target="_blank" rel="noopener noreferrer">
-                        ▶ Abrir no Google Drive
-                    </a>
-                    <a class="video-link-sec" href="{% url 'baixar_video' %}">
-                        ↓ Baixar vídeo
-                    </a>
-                </div>
             </div>
         </div>
     </section>
@@ -1580,6 +1522,14 @@
 
     {% include "feedback/pwa_install.html" %}
 
+    <script>
+        function iniciarVideoTour() {
+            const poster = document.getElementById('video-poster');
+            if (poster) {
+                poster.classList.add('escondido');
+            }
+        }
+    </script>
 </body>
 
 </html>
