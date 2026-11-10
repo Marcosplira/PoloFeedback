@@ -159,6 +159,59 @@ Durante a apresentação, o gerente pode ver:
 
 Essa sequência transmite muito bem o valor do produto e facilita a compreensão do software como uma solução de gestão, e não apenas um formulário.
 
+### Como explicar as quatro telas do painel
+
+#### 1. Treinos por QR Code — tela “Treinos”
+
+Esta área organiza o piloto dos treinos digitais. A equipe pode abrir **Aparelhos e QR** para conferir os códigos dos equipamentos e **Novo plano** para cadastrar um treino individual.
+
+Explique o fluxo mostrado na tela:
+
+1. **O aluno escaneia:** o QR identifica o aparelho, não a pessoa nem o plano.
+2. **O aluno entra na própria conta:** a autenticação protege os dados do treino.
+3. **O aluno consulta a orientação:** vê os exercícios daquele aparelho que o professor incluiu em seus planos ativos, com séries, repetições, descanso e instruções cadastradas.
+
+O checklist orienta a preparação do piloto: escolher a área e os aparelhos, pedir aos professores que revisem o conteúdo, cadastrar alunos de teste e avaliar os resultados. **Os quadrinhos desse checklist são apenas visuais e não salvam o progresso.** O desenho de celular também é uma ilustração: marcar séries como concluídas e guardar um histórico de execução ainda não faz parte deste MVP. O QR não substitui a orientação do professor, e o sistema não prescreve exercícios nem calcula cargas.
+
+**Como dizer ao gerente:** “Podemos começar em uma área pequena. A equipe revisa os aparelhos e as orientações, alguns alunos testam o acesso pelo celular e, com o retorno deles e dos professores, decidimos se vale ampliar.”
+
+#### 2. Compartilhar o Polo Feedback — tela “Divulgação”
+
+O campo **Link atual** mostra o endereço da página inicial no domínio que está servindo o painel. **Compartilhar pelo WhatsApp** abre uma mensagem com esse endereço. O texto sugerido pode ser editado, copiado e compartilhado; as instruções ao lado dão ideias para uma publicação no Instagram.
+
+Essa tela ajuda a divulgar o produto, mas **não publica conteúdo automaticamente no Instagram nem envia mensagens em massa**. Antes de compartilhar, confirme que o link abre para pessoas fora da rede da academia e que usa o endereço público HTTPS correto. Não divulgue endereços `localhost`, telas de erro, dados pessoais ou informações de alunos.
+
+**Como dizer ao gerente:** “Esta área facilita copiar o link e apresentar o sistema. A mensagem é revisável antes do envio; a divulgação em redes sociais continua sendo feita pela equipe.”
+
+#### 3. QR Codes para avaliação — tela “QR Codes”
+
+Esta página cria cartazes para receber avaliações, não os QR Codes dos aparelhos do módulo de treinos. A equipe escolhe um dos locais disponíveis — como musculação, academia principal, treinamento funcional, Pilates, vestiários, recepção ou enquete — e confere a prévia do cartaz. Também pode informar um local personalizado.
+
+Nos locais de avaliação, o QR abre o formulário com o local já indicado. A opção **Enquete de aulas** abre a enquete. O aluno pode apontar a câmera do celular e responder no navegador, sem baixar um aplicativo.
+
+**Como dizer ao gerente:** “Podemos colocar um cartaz em cada ponto da academia. Assim, a resposta já indica o local escolhido no QR e fica mais fácil comparar as opiniões por ambiente.”
+
+#### 4. Imprimir, salvar e distribuir os cartazes
+
+Na prévia do QR de avaliação, os botões permitem:
+
+- **Imprimir cartaz:** abrir a impressão do navegador, adequada para papel A4.
+- **Salvar imagem:** baixar o arquivo PNG do QR para uso digital ou impressão.
+- **Copiar link:** copiar o endereço de destino para compartilhar ou testar.
+
+Depois de imprimir, coloque o cartaz em um ponto visível e seguro, próximo ao local correspondente. Faça um teste com um celular antes de fixá-lo. Os QRs são gerados com o domínio atualmente aberto no painel; para uso fora da rede, confirme que o endereço é público e HTTPS. O desempenho dos cartazes pode ser acompanhado pelo painel, filtrando as avaliações pelo local.
+
+#### Diferença entre os dois tipos de QR
+
+| QR Code | Para que serve | O que acontece ao ler |
+| --- | --- | --- |
+| QR de avaliação | Ouvir a opinião sobre um local ou abrir a enquete | Abre o formulário ou a enquete no navegador |
+| QR de treino | Identificar um aparelho de musculação | Solicita o acesso à conta e mostra somente os exercícios daquele aparelho que estão nos planos ativos do aluno |
+
+#### Fala curta para apresentar as telas
+
+> “O painel tem três usos principais: acompanhar e preparar o piloto de treinos por aparelho, gerar cartazes de avaliação para os diferentes locais e compartilhar o endereço público do sistema. O QR de avaliação abre um formulário rápido; o QR de treino identifica um equipamento e exige que o aluno entre na própria conta. Vamos validar os cartazes e o conteúdo dos treinos com a equipe antes de ampliar o uso.”
+
 ---
 
 ## Próximos passos de evolução
@@ -172,9 +225,9 @@ A solução já está funcional e pronta para apresentação, e pode evoluir par
 - integração com CRM ou painel interno
 - app mobile mais completo
 
-### Próximo projeto: treinos por QR Code
+### Módulo de treinos por QR Code
 
-O aluno poderá escanear o QR Code de uma máquina, autenticar-se e consultar apenas o próprio treino e as instruções aprovadas pelo professor. A carga, as séries e as repetições serão definidas pelo profissional; o sistema não deve prescrever exercícios automaticamente. É necessário validar requisitos, segurança, conteúdo autorizado, custos e piloto antes de iniciar a programação. Consulte [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md).
+O MVP já permite que o aluno escaneie o QR Code de um aparelho, entre na própria conta e consulte os exercícios correspondentes aos seus planos ativos. O professor define séries, repetições e carga; o sistema não prescreve exercícios automaticamente. Antes do uso oficial, ainda é necessário revisar o conteúdo, as permissões e os procedimentos do piloto. Consulte [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md).
 
 ### WhatsApp
 

@@ -23,7 +23,8 @@ services:
       SECRET_KEY: ${SECRET_KEY:?Defina SECRET_KEY no arquivo .env}
       DEBUG: ${DEBUG:-False}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
-      DATABASE_URL: postgres://${POSTGRES_USER:-polo}:${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}@db:5432/${POSTGRES_DB:-polofeedback}
+      DATABASE_URL: postgres://${POSTGRES_USER:-polo}:${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}@db:5432/${POSTGRES_DB:-polofeedback}?sslmode=disable
+      PGSSLMODE: disable
       DASHBOARD_MANAGER_USERNAME: ${DASHBOARD_MANAGER_USERNAME:-gerente}
       DASHBOARD_MANAGER_PASSWORD: ${DASHBOARD_MANAGER_PASSWORD:?Defina DASHBOARD_MANAGER_PASSWORD no arquivo .env}
       DASHBOARD_OWNER_USERNAME: ${DASHBOARD_OWNER_USERNAME:-marcos}

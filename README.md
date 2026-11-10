@@ -331,6 +331,7 @@ O projeto contém avaliação por QR Code, painel administrativo, pesquisa de sa
 - [docs/SLIDES-APRESENTACAO.md](docs/SLIDES-APRESENTACAO.md)
 - [docs/SLIDE_APRESENTACAO.html](docs/SLIDE_APRESENTACAO.html)
 - [docs/PROJETO-TREINO-QR.md](docs/PROJETO-TREINO-QR.md)
+- [docs/ENTREGAVEL_GERENTE.md](docs/ENTREGAVEL_GERENTE.md) — roteiro para explicar as telas de treinos, divulgação e QR Codes ao gerente
 
 ---
 
