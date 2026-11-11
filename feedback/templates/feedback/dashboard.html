@@ -353,6 +353,65 @@
 
         .metric-card:hover { border-color: rgba(255,255,255,0.12); }
 
+        .whatsapp-status {
+            border: 1px solid rgba(251,191,36,0.3);
+            border-radius: 1rem;
+            background: linear-gradient(120deg, rgba(251,191,36,0.08), rgba(20,20,20,0.96) 58%);
+            padding: 1rem 1.25rem;
+        }
+
+        .whatsapp-status.configurada {
+            border-color: rgba(163,230,53,0.3);
+            background: linear-gradient(120deg, rgba(163,230,53,0.08), rgba(20,20,20,0.96) 58%);
+        }
+
+        .whatsapp-status-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .whatsapp-status-title {
+            font-size: 0.875rem;
+            font-weight: 800;
+        }
+
+        .whatsapp-status-badge {
+            border: 1px solid rgba(251,191,36,0.35);
+            border-radius: 999px;
+            color: #fbbf24;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 0.3rem 0.65rem;
+        }
+
+        .whatsapp-status.configurada .whatsapp-status-badge {
+            border-color: rgba(163,230,53,0.35);
+            color: var(--verde);
+        }
+
+        .whatsapp-status-detail {
+            color: rgba(255,255,255,0.68);
+            font-size: 0.75rem;
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+
+        .whatsapp-status-counts {
+            color: var(--texto-suave);
+            font-size: 0.7rem;
+            margin-top: 0.65rem;
+        }
+
+        .whatsapp-status-note {
+            color: rgba(255,255,255,0.38);
+            font-size: 0.65rem;
+            line-height: 1.5;
+            margin-top: 0.4rem;
+        }
+
         .metric-card::before {
             content: '';
             position: absolute;
@@ -1138,6 +1197,28 @@
                         <div class="metric-sub">requerem atenção</div>
                     </div>
                 </div>
+            </section>
+
+            <section
+                class="whatsapp-status{% if whatsapp_alerts_status == 'Credenciais configuradas' %} configurada{% endif %}"
+                aria-labelledby="whatsapp-status-title"
+                role="status"
+            >
+                <div class="whatsapp-status-top">
+                    <h2 class="whatsapp-status-title" id="whatsapp-status-title">
+                        🤖 Robô de alertas pelo WhatsApp
+                    </h2>
+                    <span class="whatsapp-status-badge">{{ whatsapp_alerts_status }}</span>
+                </div>
+                <p class="whatsapp-status-detail">{{ whatsapp_alerts_detail }}</p>
+                {% if whatsapp_alerts_enabled %}
+                <p class="whatsapp-status-counts">
+                    Na fila: {{ whatsapp_pending_count }} · Falhas: {{ whatsapp_failed_count }}
+                </p>
+                {% endif %}
+                <p class="whatsapp-status-note">
+                    Este quadro mostra o estado da configuração; ele não ativa nem envia mensagens pelo painel.
+                </p>
             </section>
 
             <!-- SEÇÃO DE IA - RESUMO DE AVALIAÇÕES -->

@@ -103,6 +103,8 @@ Os testes e o monitor automático verificam comportamento técnico; o resumo/cha
 
 Também existe um processador opcional de alertas de avaliações para a WhatsApp Business Cloud API. Ele fica **desligado por padrão** e não envia nada enquanto não for configurado e executado pela equipe. Quando habilitado, coloca cada nova avaliação pública em uma fila no banco, sem esperar por uma chamada externa durante o envio do formulário. Um comando Django separado processa a fila; o agendamento periódico desse comando precisa ser configurado no provedor de hospedagem. A integração não recebe mensagens nem responde a alunos.
 
+O painel gerencial exibe o quadro **Robô de alertas pelo WhatsApp**, que informa se a função está desativada, se faltam variáveis de configuração ou se as credenciais foram preenchidas. Mesmo com credenciais presentes, a equipe deve confirmar a aprovação do modelo na Meta e agendar o comando de envio.
+
 Para ativar, a equipe deve configurar as variáveis `WHATSAPP_*` e `SITE_PUBLIC_URL` como segredos/configurações do ambiente, informar o identificador do número remetente e um destinatário diferente, e criar/aprovar na Meta o modelo `polo_feedback_nova_avaliacao` em português. O corpo do modelo deve usar os parâmetros nesta ordem:
 
 ```text

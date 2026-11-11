@@ -240,6 +240,8 @@ O MVP já permite que o aluno escaneie o QR Code de um aparelho, entre na própr
 
 O botão de contato continua abrindo uma conversa manual. Separadamente, foi preparado um processador de alertas que pode encaminhar cada nova avaliação pública ao número da gerência usando a WhatsApp Business Cloud API oficial. O recurso fica **desligado por padrão** e não está publicado/ativado automaticamente.
 
+No dashboard há um quadro **Robô de alertas pelo WhatsApp** que mostra se os alertas estão desativados, se faltam variáveis de configuração ou se as credenciais foram preenchidas. Esse quadro é apenas informativo e não ativa o envio.
+
 Quando ativo, o aviso inclui nota, categoria, aula coletiva (quando houver), nome (se informado), comentário e link do painel. O formulário avisa o aluno sobre esse encaminhamento antes do envio. O processamento ocorre em segundo plano por comando agendado, para que uma indisponibilidade da Meta não impeça o registro da avaliação. A base local guarda o estado e o identificador técnico do envio, não uma cópia extra do comentário.
 
 **O que falta antes de usar em produção:**
