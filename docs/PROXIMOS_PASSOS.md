@@ -94,6 +94,48 @@ application = get_wsgi_application()
 
 Substitua todos os valores de exemplo pelos dados privados do provedor. Nunca salve esse conteúdo no repositório, tire capturas de tela com segredos ou compartilhe a URL PostgreSQL. Gere a chave Django com `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` e guarde-a somente na configuração WSGI privada do PythonAnywhere. Se estiver atualizando uma instalação existente, faça backup do banco e da pasta `media` antes de aplicar migrações.
 
+#### Configurar alertas WhatsApp (opcional)
+
+O modelo da Meta precisa estar aprovado antes de ativar esta etapa. No **PythonAnywhere → Files**, crie/edite `~/PoloFeedback/.env`. O Django carrega este arquivo tanto na aplicação quanto no comando de alertas. O `.env` está no `.gitignore`; mantenha a permissão privada:
+
+```bash
+chmod 600 ~/PoloFeedback/.env
+```
+
+O arquivo precisa conter os parâmetros privados de produção para o comando usar o mesmo banco que o site (`DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` e `DATABASE_URL`) e os parâmetros abaixo:
+
+```dotenv
+WHATSAPP_ALERTS_ENABLED=True
+WHATSAPP_CLOUD_API_VERSION=vXX.X
+WHATSAPP_PHONE_NUMBER_ID=ID_DO_NUMERO_NA_META
+WHATSAPP_ACCESS_TOKEN=TOKEN_PRIVADO_DA_META
+WHATSAPP_BUSINESS_NUMBER=55DDDNUMERODOREMETENTE
+WHATSAPP_ALERT_RECIPIENT=55DDDNUMERODAGESTAO
+WHATSAPP_ALERT_TEMPLATE_NAME=polo_feedback_nova_avaliacao
+WHATSAPP_ALERT_TEMPLATE_LANGUAGE=pt_BR
+SITE_PUBLIC_URL=https://polofeedback.pythonanywhere.com
+```
+
+Troque os exemplos pelos valores reais, sem colchetes ou aspas: use uma versão Graph API suportada, o nome/idioma exatamente como aparecem no modelo aprovado e telefones internacionais distintos. Não compartilhe o `.env`, o token nem capturas mostrando esses valores. Não deixe variáveis WhatsApp antigas/vazias no WSGI sobrescreverem o arquivo.
+
+No Bash Console, atualize as dependências no mesmo virtualenv configurado na aba Web:
+
+```bash
+source ~/.virtualenvs/feedback-env/bin/activate
+cd ~/PoloFeedback
+pip install -r requirements.txt
+```
+
+Na aba **Web**, clique em **Reload**. Entre no dashboard e confira o quadro **Robô de alertas pelo WhatsApp**; **Credenciais configuradas** confirma que o arquivo foi lido, mas não consulta a aprovação na Meta nem confirma que a tarefa está agendada.
+
+Para processar a fila, configure em **Tasks** uma tarefa agendada que carregue o mesmo `.env`, banco e virtualenv, usando os caminhos reais da sua conta:
+
+```bash
+source /home/SEU_USUARIO/.virtualenvs/feedback-env/bin/activate && cd /home/SEU_USUARIO/PoloFeedback && set -a && source .env && set +a && python manage.py enviar_alertas_whatsapp --limit 25
+```
+
+Escolha a frequência disponível no seu plano. Antes de deixar a tarefa recorrente, confira o nome do modelo e faça um processamento controlado: o comando pode enviar mensagens reais que estiverem pendentes. Se o processo não conseguir ler as configurações ou conectar ao banco de produção, não agende/reexecute até corrigir a configuração. Não é necessário rodar migrações novamente para esta etapa.
+
 Para executar migrações e coletar estáticos no Bash Console, carregue a mesma `DATABASE_URL` de forma interativa (sem incluí-la no comando salvo no histórico):
 
 ```bash
