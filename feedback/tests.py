@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management.base import CommandError
 from django.db import OperationalError
 from django.core.management import call_command
 import json
@@ -13,6 +14,7 @@ import os
 from io import StringIO
 from types import SimpleNamespace
 from urllib.parse import urlsplit
+from urllib.error import HTTPError
 from unittest.mock import MagicMock, patch
 from feedback.models import (
     Avaliacao,
@@ -24,6 +26,7 @@ from feedback.models import (
     PlanoTreino,
     RespostaEnquete,
     ConfiguracaoAcademia,
+    WhatsAppAviso,
 )
 from feedback.middleware import DatabaseErrorPageMiddleware
 from feedback.validators import MAX_IMAGE_UPLOAD_SIZE, validate_image_size
@@ -794,6 +797,7 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(av.nota, 5)
         self.assertEqual(av.localizacao, "Unidade Central")
         self.assertEqual(av.nome_respondente, "Aluno identificado")
+        self.assertEqual(WhatsAppAviso.objects.count(), 0)
         self.client.force_login(self.user)
         dashboard_response = self.client.get(reverse("dashboard"))
         self.assertContains(dashboard_response, "Aluno: Aluno identificado")
@@ -801,6 +805,132 @@ class FeedbackViewsTests(TestCase):
             reverse("admin:feedback_avaliacao_changelist")
         )
         self.assertContains(admin_response, "Aluno identificado")
+
+    @override_settings(WHATSAPP_ALERTS_ENABLED=True)
+    def test_avaliacao_publica_enfileira_aviso_sem_enviar_na_requisicao(self):
+        response = self.client.post(
+            reverse("avaliar"),
+            {
+                "categoria": "geral",
+                "nota": "4",
+                "tipo_feedback": "elogio",
+                "comentario": "Bom atendimento.",
+                "nome_respondente": "Ana",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        aviso = WhatsAppAviso.objects.get()
+        self.assertEqual(aviso.status, WhatsAppAviso.STATUS_PENDENTE)
+        self.assertEqual(aviso.avaliacao.comentario, "Bom atendimento.")
+
+    @override_settings(WHATSAPP_ALERTS_ENABLED=True)
+    def test_formulario_informa_encaminhamento_ao_whatsapp_quando_ativo(self):
+        response = self.client.get(reverse("avaliar"))
+
+        self.assertContains(response, "WhatsApp Business da Meta")
+
+    @override_settings(
+        WHATSAPP_ALERTS_ENABLED=True,
+        WHATSAPP_CLOUD_API_VERSION="v23.0",
+        WHATSAPP_PHONE_NUMBER_ID="123456789",
+        WHATSAPP_ACCESS_TOKEN="token-de-teste",
+        WHATSAPP_BUSINESS_NUMBER="5511999999999",
+        WHATSAPP_ALERT_RECIPIENT="5511888888888",
+        WHATSAPP_ALERT_TEMPLATE_NAME="polo_feedback_nova_avaliacao",
+        WHATSAPP_ALERT_TEMPLATE_LANGUAGE="pt_BR",
+        SITE_PUBLIC_URL="https://polofeedback.pythonanywhere.com",
+    )
+    @patch("feedback.whatsapp.urlopen")
+    def test_comando_envia_template_e_atualiza_outbox(self, mock_urlopen):
+        self.client.post(
+            reverse("avaliar"),
+            {
+                "categoria": "aulas_coletivas",
+                "aula_coletiva": "spinning",
+                "nota": "5",
+                "tipo_feedback": "elogio",
+                "comentario": "Aula excelente!",
+                "nome_respondente": "Ana",
+            },
+        )
+        response = MagicMock()
+        response.__enter__.return_value = response
+        response.read.return_value = b'{"messages":[{"id":"wamid.test"}]}'
+        mock_urlopen.return_value = response
+        output = StringIO()
+
+        call_command("enviar_alertas_whatsapp", stdout=output)
+
+        aviso = WhatsAppAviso.objects.get()
+        self.assertEqual(aviso.status, WhatsAppAviso.STATUS_ENVIADO)
+        self.assertEqual(aviso.identificador_api, "wamid.test")
+        self.assertIn("1 aceito(s) pela API", output.getvalue())
+
+        request = mock_urlopen.call_args.args[0]
+        payload = json.loads(request.data)
+        parameters = payload["template"]["components"][0]["parameters"]
+        self.assertEqual(payload["to"], "5511888888888")
+        self.assertEqual(request.get_header("Authorization"), "Bearer token-de-teste")
+        self.assertEqual(parameters[3]["text"], "Spinning")
+        self.assertEqual(parameters[4]["text"], "Ana")
+        self.assertEqual(parameters[5]["text"], "Aula excelente!")
+
+    @override_settings(WHATSAPP_ALERTS_ENABLED=False)
+    def test_comando_desligado_preserva_fila_sem_enviar(self):
+        avaliacao = Avaliacao.objects.create(
+            categoria="geral",
+            nota=4,
+            comentario="Comentário privado",
+        )
+        aviso = WhatsAppAviso.objects.create(avaliacao=avaliacao)
+
+        with self.assertRaises(CommandError):
+            call_command("enviar_alertas_whatsapp")
+
+        aviso.refresh_from_db()
+        self.assertEqual(aviso.status, WhatsAppAviso.STATUS_PENDENTE)
+        self.assertEqual(aviso.tentativas, 0)
+
+    @override_settings(
+        WHATSAPP_ALERTS_ENABLED=True,
+        WHATSAPP_CLOUD_API_VERSION="v23.0",
+        WHATSAPP_PHONE_NUMBER_ID="123456789",
+        WHATSAPP_ACCESS_TOKEN="token-de-teste",
+        WHATSAPP_BUSINESS_NUMBER="5511999999999",
+        WHATSAPP_ALERT_RECIPIENT="5511888888888",
+        WHATSAPP_ALERT_TEMPLATE_NAME="polo_feedback_nova_avaliacao",
+        WHATSAPP_ALERT_TEMPLATE_LANGUAGE="pt_BR",
+        SITE_PUBLIC_URL="https://polofeedback.pythonanywhere.com",
+    )
+    @patch("feedback.whatsapp.urlopen")
+    def test_comando_nao_registra_comentario_quando_api_rejeita(
+        self,
+        mock_urlopen,
+    ):
+        self.client.post(
+            reverse("avaliar"),
+            {
+                "categoria": "geral",
+                "nota": "2",
+                "tipo_feedback": "reclamacao",
+                "comentario": "Comentário privado",
+            },
+        )
+        mock_urlopen.side_effect = HTTPError(
+            "https://graph.facebook.com",
+            400,
+            "Bad Request",
+            {},
+            None,
+        )
+
+        call_command("enviar_alertas_whatsapp", stderr=StringIO())
+
+        aviso = WhatsAppAviso.objects.get()
+        self.assertEqual(aviso.status, WhatsAppAviso.STATUS_FALHOU)
+        self.assertNotIn("Comentário privado", aviso.ultimo_erro)
+        self.assertEqual(aviso.tentativas, 1)
 
     def test_avaliacao_registra_aula_coletiva_especifica(self):
         response = self.client.post(

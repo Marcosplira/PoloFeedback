@@ -10,7 +10,7 @@ O repositório contém um produto web Django para coletar feedback, exibir avali
 - Inclusão de endereço, telefone, conversa manual por WhatsApp e autoria/créditos no rodapé.
 - Remoção da criação/rotação de usuário com senha padrão durante o build. O gerente deve criar uma conta individual.
 - Imagem Docker executada como usuário sem privilégios de root; Compose exige segredo e senha de banco definidos e usa volume persistente para mídia, sem mascarar os estáticos coletados.
-- Documentação e slides agora distinguem o sistema existente das propostas de treino por QR Code e notificações automáticas.
+- Documentação distingue o MVP de treinos por QR Code dos alertas WhatsApp de avaliações, preparados separadamente e desligados por padrão.
 
 ## Limitação de validação do ambiente
 
@@ -36,9 +36,9 @@ Os testes Django devem ser executados no ambiente Python do projeto. Docker/Comp
 
 Treinos por aparelho ainda não existem no sistema atual. Validar fluxos, papéis, conteúdo e um piloto antes de programar. Proteger planos individuais por autenticação/autorização, manter QR Codes sem dados pessoais, usar vídeos próprios ou autorizados e deixar séries/carga sob responsabilidade profissional. Detalhes: [PROJETO-TREINO-QR.md](./PROJETO-TREINO-QR.md).
 
-### 4. Planejar WhatsApp automático de forma segura
+### 4. Alertas WhatsApp preparados, ainda desligados
 
-O link existente abre conversa manual. Notificações futuras dependem de WhatsApp Business API oficial, aprovação, custos, credenciais, consentimento/preferências, minimização de conteúdo e auditoria. Não enviar mensagens a alunos sem uma base apropriada e fluxo de opt-out.
+O link existente abre conversa manual. Também foi implementada uma fila opcional e um comando de envio pela WhatsApp Business Cloud API para avaliações públicas; a função permanece desligada por padrão e não está ativada/publicada automaticamente. Antes de habilitar, revisar a política de privacidade para o encaminhamento de nome/comentário à Meta, configurar segredos no provedor, aprovar o modelo da mensagem, confirmar custos e agendar o comando. A fila não armazena cópia dos comentários e os testes não enviam mensagens reais. Não enviar mensagens a alunos sem uma base apropriada e fluxo de opt-out.
 
 ### 5. Melhorias técnicas adicionais
 

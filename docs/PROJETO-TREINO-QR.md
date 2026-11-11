@@ -183,11 +183,11 @@ Entidades candidatas: `Aluno`, `Professor`, `Equipamento`, `Exercicio`, `PlanoTr
 - A carga e o plano são definidos por profissional responsável. O sistema não deve sugerir cargas automaticamente no MVP.
 - Remover ou substituir rapidamente conteúdo incorreto, equipamento interditado ou vídeo sem autorização.
 
-## 9. WhatsApp — etapa futura, não incluída no MVP
+## 9. WhatsApp — integração de alertas separada do MVP de treinos
 
-O botão de contato atual abre uma conversa iniciada pela pessoa com a academia; ele não envia alertas automáticos ao gerente, professores ou alunos.
+O botão de contato atual abre uma conversa iniciada pela pessoa com a academia. Separadamente, o repositório agora contém uma fila opcional e um comando de alertas para encaminhar avaliações públicas ao número da gerência usando a WhatsApp Business Cloud API. Esse recurso não faz parte do módulo de treinos e permanece desligado por padrão; não envia alertas a professores nem alunos.
 
-Para notificações automáticas, planejar uma integração com a WhatsApp Business Platform/API oficial, sujeita a cadastro, credenciais, regras e custos vigentes. O primeiro caso de uso recomendado é alertar o gerente sobre uma avaliação crítica com o mínimo de dados necessários. Antes de enviar mensagens a alunos ou funcionários, definir finalidade, consentimento/base legal, preferências de comunicação, modelos aprovados, opt-out, controle de acesso e trilha de auditoria. Não enviar automaticamente comentários pessoais ou dados do treino.
+Quando a equipe configurar e ativar a integração, o alerta inclui nota, categoria, aula, nome (se informado) e comentário da avaliação. A tela do aluno informa esse encaminhamento quando os alertas estão ativos. Antes de habilitar em produção, revisar a política de privacidade e o compartilhamento com a Meta, proteger as credenciais, aprovar o modelo da mensagem e confirmar as regras e custos vigentes. A configuração, o agendamento e os limites operacionais estão descritos no README e em [ENTREGAVEL_GERENTE.md](./ENTREGAVEL_GERENTE.md). Nenhum alerta foi enviado pelos testes.
 
 ## 10. Indicadores para avaliar o piloto
 

@@ -16,6 +16,7 @@ A solução reúne:
 - geração automática de QR Code
 - organização por status e filtros
 - chatbot para suporte à decisão do gerente
+- fila opcional de alertas de novas avaliações pelo WhatsApp Business
 
 ---
 
@@ -32,6 +33,7 @@ O aluno entra na página de avaliação, escolhe a categoria e envia sua opiniã
 
 ### 2. Os dados entram no sistema
 As respostas são armazenadas com organização automática e ficam disponíveis para análise pela gestão.
+Com os alertas WhatsApp habilitados, a avaliação também entra em uma fila para envio separado pelo processador; o formulário não espera a API externa.
 
 ### 3. O gerente acompanha o desempenho
 No painel administrativo, o gerente consegue visualizar:
@@ -127,6 +129,7 @@ A academia pode imprimir QR Codes em pontos estratégicos. Quando o aluno escane
 - uso de variáveis de ambiente
 - proteção de dados e cookies
 - estrutura mais adequada para deploy profissional
+- código de alertas WhatsApp preparado, mas desligado por padrão e ainda dependente da configuração do ambiente
 
 ---
 
@@ -222,7 +225,7 @@ Depois de imprimir, coloque o cartaz em um ponto visível e seguro, próximo ao 
 
 A solução já está funcional e pronta para apresentação, e pode evoluir para:
 - evolução do MVP de treinos por QR Code, com piloto supervisionado
-- notificações automáticas por WhatsApp Business API oficial, após aprovação
+- configuração e teste controlado dos alertas WhatsApp já preparados antes de ativá-los
 - alertas para pendências críticas
 - relatórios por unidade
 - exportação de dados para PDF
@@ -235,7 +238,19 @@ O MVP já permite que o aluno escaneie o QR Code de um aparelho, entre na própr
 
 ### WhatsApp
 
-O botão de contato do sistema abre uma conversa iniciada pela pessoa com a academia. Ele não envia notificações automáticas. Para avisos automáticos, será necessária integração futura com a WhatsApp Business API, aprovação da academia, análise de custos e definição de preferências de comunicação e privacidade.
+O botão de contato continua abrindo uma conversa manual. Separadamente, foi preparado um processador de alertas que pode encaminhar cada nova avaliação pública ao número da gerência usando a WhatsApp Business Cloud API oficial. O recurso fica **desligado por padrão** e não está publicado/ativado automaticamente.
+
+Quando ativo, o aviso inclui nota, categoria, aula coletiva (quando houver), nome (se informado), comentário e link do painel. O formulário avisa o aluno sobre esse encaminhamento antes do envio. O processamento ocorre em segundo plano por comando agendado, para que uma indisponibilidade da Meta não impeça o registro da avaliação. A base local guarda o estado e o identificador técnico do envio, não uma cópia extra do comentário.
+
+**O que falta antes de usar em produção:**
+
+1. A academia deve revisar a política de privacidade, porque nome e comentário passam pelo serviço da Meta e são compartilhados no aparelho/número de gestão configurado.
+2. Na Meta, confirmar o número remetente, credenciais e versão suportada da API; o destinatário deve ser diferente do remetente.
+3. Criar e aprovar o modelo `polo_feedback_nova_avaliacao` em português, com sete parâmetros no corpo, na ordem documentada no README.
+4. Cadastrar os segredos e `SITE_PUBLIC_URL` nas variáveis do ambiente de hospedagem, aplicar as migrações e agendar o comando `python manage.py enviar_alertas_whatsapp --limit 25`.
+5. Testar primeiro em ambiente controlado. O status de sucesso indica que a API aceitou a mensagem, não que ela foi entregue; a confirmação final exigiria webhook, ainda não incluído.
+
+O comando não é executado pelo HTML e os testes usam apenas chamadas simuladas; nenhuma mensagem real foi enviada. A opção `--retry-failed` pode duplicar um alerta em caso de resultado ambíguo e deve ser usada apenas após conferência manual.
 
 ### Robô de testes com apoio de IA — proposta segura
 

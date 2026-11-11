@@ -103,10 +103,10 @@
 ### **Evolução proposta**
 - ✅ **Base existente:** avaliação por QR Code, painel, pesquisa e suporte de IA; validar o ambiente de produção e as credenciais antes do uso oficial.
 - 🏋️ **Próximo projeto:** validar requisitos para treinos individualizados e instruções de aparelhos por QR Code.
-- 🔔 **Planejamento futuro:** alertas via WhatsApp Business API oficial, após aprovação, configuração e definição de consentimento e custos.
+- 🔔 **Preparado, ainda desligado:** alertas de avaliações para a gerência pela WhatsApp Business Cloud API; ativação depende de aprovação do modelo, configuração segura e revisão de privacidade/custos.
 - 📊 **Etapas posteriores:** relatórios exportáveis e suporte a múltiplas unidades, conforme prioridade e orçamento aprovados.
 - **Notas do Apresentador:**  
-  *"O sistema atual oferece uma base de coleta e acompanhamento. As próximas etapas serão priorizadas junto com a gerência, com escopo e investimento definidos antes de iniciar."*
+  *"O sistema atual oferece uma base de coleta e acompanhamento. Os alertas WhatsApp já estão preparados no código, mas não foram publicados ou ativados; a gerência ainda precisa aprovar a configuração e revisar privacidade e custos."*
 
 ---
 

@@ -212,4 +212,21 @@ if not DEBUG:
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 # Gemini 1.5 não está mais entre os modelos atuais da API.
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+
+WHATSAPP_ALERTS_ENABLED = os.environ.get(
+    "WHATSAPP_ALERTS_ENABLED", "False"
+).strip().lower() in {"1", "true", "yes", "on"}
+WHATSAPP_CLOUD_API_VERSION = os.environ.get("WHATSAPP_CLOUD_API_VERSION", "").strip()
+WHATSAPP_PHONE_NUMBER_ID = os.environ.get("WHATSAPP_PHONE_NUMBER_ID", "").strip()
+WHATSAPP_ACCESS_TOKEN = os.environ.get("WHATSAPP_ACCESS_TOKEN", "").strip()
+WHATSAPP_BUSINESS_NUMBER = os.environ.get("WHATSAPP_BUSINESS_NUMBER", "").strip()
+WHATSAPP_ALERT_RECIPIENT = os.environ.get("WHATSAPP_ALERT_RECIPIENT", "").strip()
+WHATSAPP_ALERT_TEMPLATE_NAME = os.environ.get(
+    "WHATSAPP_ALERT_TEMPLATE_NAME", ""
+).strip()
+WHATSAPP_ALERT_TEMPLATE_LANGUAGE = os.environ.get(
+    "WHATSAPP_ALERT_TEMPLATE_LANGUAGE", "pt_BR"
+).strip()
+SITE_PUBLIC_URL = os.environ.get("SITE_PUBLIC_URL", "").strip()
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

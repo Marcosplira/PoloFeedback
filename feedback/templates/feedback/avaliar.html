@@ -395,7 +395,11 @@
                             class="w-full bg-slate-950/80 border border-white/15 rounded-2xl p-3.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20 transition"
                         >
                         <p class="text-[11px] text-slate-500 mt-1">
+                            {% if whatsapp_alerts_enabled %}
+                            Sua avaliação, incluindo comentário e nome se informado, será encaminhada pelo WhatsApp Business da Meta à equipe autorizada da academia. Evite incluir dados pessoais sensíveis.
+                            {% else %}
                             Se informar seu nome, ele ficará visível somente para a equipe autorizada. Deixe em branco para responder sem identificação.
+                            {% endif %}
                         </p>
                     </div>
 

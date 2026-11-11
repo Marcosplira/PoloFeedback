@@ -19,7 +19,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 
 1. **📱 Formulário de Avaliação Mobile-First (`/avaliar/`):**
    - Rápido, intuitivo e responsivo.
-   - Nome do aluno opcional; quando informado, aparece apenas para a equipe autorizada. Sem nome, a avaliação fica sem identificação.
+   - Nome do aluno opcional. Com os alertas WhatsApp desligados, nome e comentário ficam no sistema para acesso da equipe autorizada; quando os alertas são ligados, a tela informa que também serão encaminhados pelo WhatsApp Business da Meta.
    - Avaliação por estrelas (1 a 5).
    - Múltiplas categorias (Atendimento, Limpeza, Equipamentos, Professores, Estrutura, Geral).
    - Ao escolher **Aulas Coletivas**, o aluno seleciona a modalidade específica (Glúteo, Step, HIIT, Abdominais, Dança, Jump, Funcional, Spinning ou Pump) antes de dar a nota.
@@ -65,6 +65,11 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
    - O Dashboard oferece atalhos de diagnóstico de migrações (`/dashboard/configuracao/`), material para compartilhar (`/dashboard/divulgacao/`) e apresentação do projeto de treinos (`/dashboard/projeto-treino/`).
    - A tela de instalação adiciona o PWA à tela inicial do dispositivo. O aplicativo ainda não está publicado na Google Play Store; não compartilhe links como se houvesse um app listado na loja.
 
+8. **📨 Alertas de avaliação pelo WhatsApp (opcional e desligado por padrão):**
+   - Processador no backend para encaminhar avaliações públicas ao número configurado da gerência usando modelo aprovado da WhatsApp Business Cloud API.
+   - A fila evita que uma falha externa interrompa o envio do formulário; o comando de processamento precisa ser agendado pela equipe.
+   - Não recebe mensagens nem responde aos alunos; exige revisão de privacidade, segredos no provedor e aprovação do modelo antes da ativação.
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
@@ -82,7 +87,7 @@ O **Polo Feedback** foi desenvolvido para aproximar os alunos da gestão da acad
 
 ## 🤖 Verificações automatizadas
 
-O GitHub Actions executa os testes da seleção e gravação de aulas coletivas quando há atualizações no código e também pode ser iniciado manualmente. Um monitor separado verifica diariamente se a página inicial, avaliação, enquete, login, manifest PWA e Service Worker continuam respondendo no endereço público.
+O GitHub Actions executa testes da seleção e gravação de aulas coletivas e do processador WhatsApp (com chamadas externas simuladas) quando há atualizações no código; também pode ser iniciado manualmente. Um monitor separado verifica diariamente se a página inicial, avaliação, enquete, login, manifest PWA e Service Worker continuam respondendo no endereço público.
 
 O monitor faz apenas requisições HTTPS de leitura: não entra em contas, não envia avaliações, não altera dados e não rastreia visitantes. Falhas aparecem como execução malsucedida na aba **Actions** do GitHub; o monitor não corrige erros automaticamente nem garante a disponibilidade do provedor. Para executar localmente:
 
@@ -94,16 +99,30 @@ Opcionalmente, defina `SITE_URL` para apontar o monitor a outro domínio HTTPS.
 
 ### Robô e IA: o que existe e o que pode evoluir
 
-Hoje há duas funções separadas: os testes e o monitor automático verificam comportamento técnico; o resumo/chat com Gemini é uma ferramenta gerencial acionada pelo usuário. **A IA ainda não recebe alertas do monitor, não vigia o código continuamente e não corrige bugs.**
+Os testes e o monitor automático verificam comportamento técnico; o resumo/chat com Gemini é uma ferramenta gerencial acionada pelo usuário. **A IA não recebe alertas do monitor, não vigia o código continuamente e não corrige bugs.**
 
-Uma evolução segura pode ser feita por etapas:
+Também existe um processador opcional de alertas de avaliações para a WhatsApp Business Cloud API. Ele fica **desligado por padrão** e não envia nada enquanto não for configurado e executado pela equipe. Quando habilitado, coloca cada nova avaliação pública em uma fila no banco, sem esperar por uma chamada externa durante o envio do formulário. Um comando Django separado processa a fila; o agendamento periódico desse comando precisa ser configurado no provedor de hospedagem. A integração não recebe mensagens nem responde a alunos.
 
-1. **Mais testes automáticos:** validar as telas públicas, a escolha de cada aula coletiva e as páginas principais em diferentes tamanhos de tela, sem enviar respostas reais.
-2. **Alerta técnico:** quando uma verificação falhar, guardar apenas endereço testado, horário, código HTTP e duração, e avisar a equipe. Não registrar senha, cookie, comentário de aluno ou conteúdo privado.
-3. **Resumo assistido por IA:** se a equipe configurar uma chave e aprovar o uso, enviar à IA somente o relatório técnico sanitizado para explicar causas prováveis e sugerir verificações. A IA deve apresentar hipótese, não diagnóstico garantido.
-4. **Revisão humana:** um responsável confere a recomendação e decide se abre uma tarefa ou altera o sistema.
+Para ativar, a equipe deve configurar as variáveis `WHATSAPP_*` e `SITE_PUBLIC_URL` como segredos/configurações do ambiente, informar o identificador do número remetente e um destinatário diferente, e criar/aprovar na Meta o modelo `polo_feedback_nova_avaliacao` em português. O corpo do modelo deve usar os parâmetros nesta ordem:
 
-**Limites:** nenhuma alteração automática de código ou banco, login automatizado em contas reais, publicação, envio de WhatsApp ou exclusão de registros. Antes de usar um provedor de IA com dados de avaliações, revisar privacidade e minimizar/anônimizar textos livres e identificadores; textos de alunos podem conter informações pessoais mesmo quando o nome não é incluído deliberadamente.
+```text
+Nova avaliação {{1}}. Nota {{2}}/5; categoria {{3}}; aula {{4}};
+nome {{5}}; comentário {{6}}. Painel: {{7}}
+```
+
+1. identificador da avaliação;
+2. nota;
+3. categoria(s);
+4. aula coletiva ou “Não se aplica”;
+5. nome ou “Anônimo”;
+6. comentário (limitado a 900 caracteres);
+7. link HTTPS do painel.
+
+A tela do aluno informa esse encaminhamento quando a função está ativa. O modelo não armazena cópia do comentário, e os logs não incluem nome nem comentário.
+
+Após configurar, executar `python manage.py migrate` e agendar `python manage.py enviar_alertas_whatsapp --limit 25` no provedor. Falhas temporárias são tentadas novamente até cinco vezes; uma interrupção ou timeout pode deixar dúvida sobre a aceitação pela API e resultar em duplicidade. A opção `--retry-failed` também pode duplicar mensagens; use-a somente depois de conferir o histórico no WhatsApp. O status **Aceito pela API** não comprova entrega ao aparelho; confirmação de entrega exigiria um webhook de status, que não faz parte desta implementação. Nenhuma mensagem real é enviada pelos testes automatizados.
+
+**Limites:** o recurso encaminha dados pessoais à Meta e ao número oficial configurado; antes de habilitá-lo em produção, a academia deve validar a política de privacidade, a necessidade do conteúdo, os acessos ao aparelho e os requisitos aplicáveis. A integração não altera código ou banco automaticamente, não entra em contas e não publica atualizações. Para conectar IA ao robô técnico no futuro, enviar somente metadados sanitizados e exigir revisão humana.
 
 ---
 
@@ -297,6 +316,14 @@ Se utilizar a IA com Google Gemini, configure `GEMINI_API_KEY` em **Environment*
 | `DASHBOARD_OWNER_USERNAME` / `DASHBOARD_OWNER_PASSWORD` | *(não configurados)* | Credenciais privadas da segunda conta gerencial |
 | `GEMINI_API_KEY` | *(vazio — usa fallback local)* | Chave da API Gemini para IA |
 | `GEMINI_MODEL` | `gemini-2.5-flash` | Modelo Gemini utilizado |
+| `WHATSAPP_ALERTS_ENABLED` | `False` | Habilita a criação de alertas para avaliações públicas |
+| `WHATSAPP_CLOUD_API_VERSION` | *(vazio)* | Versão da Graph API suportada pela aplicação Meta |
+| `WHATSAPP_PHONE_NUMBER_ID` | *(vazio)* | ID do número conectado à WhatsApp Business Cloud API |
+| `WHATSAPP_ACCESS_TOKEN` | *(vazio)* | Token de acesso protegido; nunca versionar ou registrar em logs |
+| `WHATSAPP_BUSINESS_NUMBER` | *(vazio)* | Número remetente em formato internacional |
+| `WHATSAPP_ALERT_RECIPIENT` | *(vazio)* | Número da gerência que receberá os avisos, diferente do remetente |
+| `WHATSAPP_ALERT_TEMPLATE_NAME` / `WHATSAPP_ALERT_TEMPLATE_LANGUAGE` | `polo_feedback_nova_avaliacao` / `pt_BR` | Nome e idioma do modelo aprovado na Meta |
+| `SITE_PUBLIC_URL` | *(vazio)* | Origem HTTPS usada no link do painel enviado no modelo |
 
 ---
 
@@ -305,14 +332,16 @@ Se utilizar a IA com Google Gemini, configure `GEMINI_API_KEY` em **Environment*
 ```
 PoloFeedback/
 ├── feedback/                   # App principal
+│   ├── management/commands/     # Comando do processador de alertas WhatsApp
 │   ├── migrations/             # Migrações do banco
 │   ├── static/feedback/        # Imagens, ícones e arquivos da PWA
 │   ├── templates/
 │   │   ├── feedback/           # Templates: avaliar, dashboard, qrcode, sucesso
 │   │   └── registration/       # Template de login
 │   ├── admin.py                # Configuração do painel admin
-│   ├── models.py               # Modelos: Funcionario, Avaliacao
+│   ├── models.py               # Modelos: Funcionario, Avaliacao, WhatsAppAviso
 │   ├── tests.py                # Testes automatizados
+│   ├── whatsapp.py             # Integração de saída com WhatsApp Cloud API
 │   └── views.py                # Views: avaliar, dashboard, qrcode, ia
 ├── polofeedback/               # Configuração do projeto Django
 │   ├── settings.py
@@ -350,7 +379,7 @@ O projeto contém avaliação por QR Code, painel administrativo, pesquisa de sa
 6. Dashboard executivo com relatórios e alertas
 7. Separação de regras de negócio em services e módulos
 8. Treinos por QR Code — MVP inicial implementado; avaliar piloto e melhorias (histórico de conclusão, cronômetro, favoritos e acessibilidade)
-9. Notificações automáticas WhatsApp — planejar com API oficial, custos, consentimento e auditoria
+9. Alertas WhatsApp já preparados, mas desligados — configurar Meta, privacidade e agendamento antes de ativar
 
 ### Documentação complementar
 - [docs/ANALISE_AUDITORIA.md](docs/ANALISE_AUDITORIA.md)

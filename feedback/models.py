@@ -215,6 +215,45 @@ class Avaliacao(models.Model):
         return funcionarios
 
 
+class WhatsAppAviso(models.Model):
+    STATUS_PENDENTE = "pendente"
+    STATUS_ENVIANDO = "enviando"
+    STATUS_ENVIADO = "enviado"
+    STATUS_FALHOU = "falhou"
+    STATUS_CHOICES = [
+        (STATUS_PENDENTE, "Pendente"),
+        (STATUS_ENVIANDO, "Enviando"),
+        (STATUS_ENVIADO, "Aceito pela API"),
+        (STATUS_FALHOU, "Falhou"),
+    ]
+
+    avaliacao = models.OneToOneField(
+        Avaliacao,
+        on_delete=models.CASCADE,
+        related_name="whatsapp_aviso",
+    )
+    status = models.CharField(
+        max_length=12,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDENTE,
+    )
+    tentativas = models.PositiveSmallIntegerField(default=0)
+    identificador_api = models.CharField(max_length=200, blank=True)
+    ultimo_erro = models.CharField(max_length=250, blank=True)
+    iniciado_em = models.DateTimeField(null=True, blank=True)
+    enviado_em = models.DateTimeField(null=True, blank=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Aviso WhatsApp"
+        verbose_name_plural = "Avisos WhatsApp"
+        ordering = ["criado_em"]
+
+    def __str__(self):
+        return f"Aviso da avaliação {self.avaliacao_id} — {self.get_status_display()}"
+
+
 class AuditoriaAcesso(models.Model):
     """
     Registro de auditoria para acessos e ações sensíveis no sistema.

@@ -43,6 +43,7 @@ from .models import (
     ItemPlanoTreino,
     PlanoTreino,
     RespostaEnquete,
+    WhatsAppAviso,
 )
 from .forms import (
     CadastroAlunoForm,
@@ -239,6 +240,7 @@ def avaliar(request):
                         "nome_respondente",
                         "",
                     ),
+                    "whatsapp_alerts_enabled": settings.WHATSAPP_ALERTS_ENABLED,
                     "erro_aula_coletiva": (
                         "Selecione uma aula para avaliar."
                         if categorias
@@ -249,21 +251,24 @@ def avaliar(request):
                 },
             )
 
-        avaliacao = Avaliacao.objects.create(
-            categoria=categorias[0],
-            categorias=categorias,
-            aula_coletiva=aula_coletiva,
-            nota=int(nota),
-            tipo_feedback=tipos_feedback[0],
-            tipos_feedback=tipos_feedback,
-            comentario=comentario,
-            nome_respondente=nome_respondente,
-            localizacao=localizacao,
-            funcionario=funcionarios_selecionados[0]
-            if funcionarios_selecionados
-            else None,
-        )
-        avaliacao.funcionarios.set(funcionarios_selecionados)
+        with transaction.atomic():
+            avaliacao = Avaliacao.objects.create(
+                categoria=categorias[0],
+                categorias=categorias,
+                aula_coletiva=aula_coletiva,
+                nota=int(nota),
+                tipo_feedback=tipos_feedback[0],
+                tipos_feedback=tipos_feedback,
+                comentario=comentario,
+                nome_respondente=nome_respondente,
+                localizacao=localizacao,
+                funcionario=funcionarios_selecionados[0]
+                if funcionarios_selecionados
+                else None,
+            )
+            avaliacao.funcionarios.set(funcionarios_selecionados)
+            if settings.WHATSAPP_ALERTS_ENABLED:
+                WhatsAppAviso.objects.create(avaliacao=avaliacao)
 
         return render(
             request,
@@ -283,6 +288,7 @@ def avaliar(request):
             "localizacao": localizacao_get,
             "funcionarios": funcionarios,
             "aulas_coletivas": Avaliacao.AULA_COLETIVA_CHOICES,
+            "whatsapp_alerts_enabled": settings.WHATSAPP_ALERTS_ENABLED,
         },
     )
 
