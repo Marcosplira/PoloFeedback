@@ -294,20 +294,7 @@ def avaliar(request):
 
 
 def inicio(request):
-    avaliar_url = request.build_absolute_uri(reverse("avaliar"))
-    enquete_url = request.build_absolute_uri(reverse("enquete"))
-    return render(
-        request,
-        "feedback/inicio.html",
-        {
-            "avaliar_url": avaliar_url,
-            "avaliar_qr": _gerar_qrcode_base64(avaliar_url),
-            "enquete_url": enquete_url,
-            "enquete_qr": _gerar_qrcode_base64(enquete_url),
-            "link_funciona_publicamente": request.get_host().split(":", 1)[0].lower()
-            not in {"localhost", "127.0.0.1"},
-        },
-    )
+    return render(request, "feedback/inicio.html")
 
 
 def landing_comercial(request):

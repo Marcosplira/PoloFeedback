@@ -349,79 +349,6 @@
             line-height: 1.6;
         }
 
-        /* ── QR CODES ── */
-        .qr-section {
-            background: var(--cinza-escuro);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 4rem 1.5rem;
-        }
-
-        .qr-grid {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        @media (max-width: 768px) {
-            .qr-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .qr-cards {
-                flex-direction: column;
-            }
-        }
-
-        .qr-cards {
-            display: flex;
-            gap: 1.25rem;
-            flex-wrap: wrap;
-        }
-
-        .qr-card {
-            background: var(--cinza-card);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            text-align: center;
-            flex: 1;
-            min-width: 180px;
-            transition: border-color 0.3s;
-        }
-
-        .qr-card:hover {
-            border-color: rgba(163, 230, 53, 0.3);
-        }
-
-        .qr-card h3 {
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: var(--verde);
-            margin-bottom: 1rem;
-        }
-
-        .qr-card img {
-            width: 140px;
-            height: 140px;
-            border-radius: 0.75rem;
-            background: white;
-            padding: 6px;
-        }
-
-        .qr-card a {
-            display: block;
-            margin-top: 0.75rem;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            word-break: break-all;
-        }
-
         /* ── INFO CARDS ── */
         .info-grid {
             display: grid;
@@ -459,6 +386,26 @@
             font-size: 0.875rem;
             color: rgba(255, 255, 255, 0.5);
             line-height: 1.6;
+        }
+
+        .video-como-chegar {
+            display: grid;
+            place-items: center;
+            gap: 0.5rem;
+            min-height: 150px;
+            margin-top: 1.25rem;
+            padding: 1.25rem;
+            border: 1px dashed rgba(163, 230, 53, 0.45);
+            border-radius: 0.9rem;
+            background: rgba(163, 230, 53, 0.04);
+            color: rgba(255, 255, 255, 0.65);
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .video-como-chegar strong {
+            color: var(--verde);
+            font-size: 0.95rem;
         }
 
         .info-card a {
@@ -792,7 +739,6 @@
                 width: 100%;
             }
 
-            .qr-section,
             .section,
             .video-section,
             .planos-section {
@@ -1172,36 +1118,6 @@
         </div>
     </section>
 
-    <!-- QR CODES -->
-    <section class="qr-section" aria-labelledby="qrcodes-titulo">
-        <div class="qr-grid">
-            <div>
-                <div class="section-label">Acesso rápido</div>
-                <h2 class="section-title" id="qrcodes-titulo">Acesse pelo QR Code</h2>
-                <p class="section-desc">Escaneie com a câmera do celular para abrir direto o formulário ou a pesquisa.
-                </p>
-                {% if not link_funciona_publicamente %}
-                <div class="aviso-local" role="status">
-                    ⚠️ Estes QR Codes usam o endereço local. Publique o site em HTTPS para compartilhá-los com os
-                    alunos.
-                </div>
-                {% endif %}
-            </div>
-            <div class="qr-cards">
-                <div class="qr-card">
-                    <h3>Avaliar experiência</h3>
-                    <img src="data:image/png;base64,{{ avaliar_qr }}" alt="QR Code para avaliação Polo Fit">
-                    <a href="{{ avaliar_url }}">Abrir avaliação</a>
-                </div>
-                <div class="qr-card">
-                    <h3>Enquete de satisfação</h3>
-                    <img src="data:image/png;base64,{{ enquete_qr }}" alt="QR Code para pesquisa Polo Fit">
-                    <a href="{{ enquete_url }}">Abrir pesquisa</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- COMO FUNCIONA -->
     <section class="section" aria-labelledby="como-funciona-titulo">
         <div class="section-label">Passo a passo</div>
@@ -1278,7 +1194,7 @@
                 </summary>
                 <div class="planos-conteudo">
             <p class="planos-selecao-ajuda">
-                Marque um ou mais planos para perguntar sobre eles à recepção. A seleção não confirma matrícula.
+                Escolha um plano para perguntar à recepção. A seleção não confirma matrícula.
             </p>
 
             <!-- GRID 1: PLANOS PRINCIPAIS -->
@@ -1300,8 +1216,8 @@
                         </ul>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Anual">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Anual">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1322,8 +1238,8 @@
                         </ul>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Semestral">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Semestral">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1344,8 +1260,8 @@
                         </ul>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Trimestral">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Trimestral">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1366,8 +1282,8 @@
                         </ul>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Mensal">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Mensal">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
             </div>
@@ -1389,8 +1305,8 @@
                         <div class="plano-mini-desc">Mais economia, mesmo benefício</div>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Anual Recorrente">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Anual Recorrente">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1408,8 +1324,8 @@
                         <div class="plano-mini-desc">Saúde em família, é ainda melhor</div>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Familiar">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Familiar">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1424,8 +1340,8 @@
                         <div class="plano-mini-desc">Uma semana para sentir a diferença</div>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Semanal">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Semanal">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1443,8 +1359,8 @@
                         <div class="plano-mini-desc">Para usar no mês, com total flexibilidade</div>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Quinzenal">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Quinzenal">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
             </div>
@@ -1462,8 +1378,8 @@
                         <div class="plano-mini-desc">Treine quando quiser sem mensalidade</div>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Diária Avulsa">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Diária Avulsa">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1481,8 +1397,8 @@
                         <div class="plano-mini-desc">Para usar como quiser no prazo de 90 dias</div>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Pacote de Voucher">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Pacote de Voucher">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
 
@@ -1501,8 +1417,8 @@
                         <div class="plano-mini-desc">Entrada na academia das 09h30 às 13h30</div>
                     </div>
                     <label class="plano-selecao">
-                        <input class="plano-selecao-input" type="checkbox" value="Plano Horário Especial">
-                        <span>Adicionar à seleção</span>
+                        <input class="plano-selecao-input" type="radio" name="plano" value="Plano Horário Especial">
+                        <span>Escolher este plano</span>
                     </label>
                 </div>
             </div>
@@ -1531,7 +1447,7 @@
                         Nenhum plano selecionado.
                     </p>
                     <button type="button" class="btn-primary planos-contato-selecao" id="btn-contato-planos" disabled>
-                        Selecione um ou mais planos
+                        Escolha um plano
                     </button>
                 </div>
                 <a href="{% static 'feedback/planos-polofit.jpg' %}" target="_blank" rel="noopener noreferrer"
@@ -1556,6 +1472,11 @@
                 <strong>Seg–Sex:</strong> 05h às 22h<br>
                 <strong>Sábado:</strong> 11h às 19h
             </p>
+            <div class="video-como-chegar" role="note" aria-label="Espaço reservado para o vídeo de como chegar">
+                <span aria-hidden="true" style="font-size: 1.6rem;">▶</span>
+                <strong>Como chegar à Polo Fit</strong>
+                <span>Vídeo em breve</span>
+            </div>
         </article>
         <article class="info-card">
             <div class="info-card-icon">💬</div>
@@ -1618,40 +1539,37 @@
         const botaoContatoPlanos = document.getElementById('btn-contato-planos');
 
         function atualizarSelecaoPlanos() {
-            const selecionados = Array.from(opcoesDePlanos)
-                .filter((opcao) => opcao.checked)
-                .map((opcao) => opcao.value);
-            const quantidade = selecionados.length;
+            const planoSelecionado = Array.from(opcoesDePlanos).find((opcao) => opcao.checked);
 
-            statusSelecaoPlanos.textContent = quantidade === 0
+            statusSelecaoPlanos.textContent = !planoSelecionado
                 ? 'Nenhum plano selecionado.'
-                : `${quantidade} ${quantidade === 1 ? 'plano selecionado' : 'planos selecionados'}.`;
-            botaoContatoPlanos.disabled = quantidade === 0;
-            botaoContatoPlanos.textContent = quantidade === 0
-                ? 'Selecione um ou mais planos'
-                : `💬 Falar sobre ${quantidade} ${quantidade === 1 ? 'plano' : 'planos'} no WhatsApp`;
+                : `${planoSelecionado.value} selecionado.`;
+            botaoContatoPlanos.disabled = !planoSelecionado;
+            botaoContatoPlanos.textContent = planoSelecionado
+                ? '💬 Falar sobre este plano no WhatsApp'
+                : 'Escolha um plano';
         }
 
         opcoesDePlanos.forEach((opcao) => {
             opcao.addEventListener('change', () => {
+                document.querySelectorAll('.plano-card.selecionado, .plano-mini-card.selecionado')
+                    .forEach((cartao) => cartao.classList.remove('selecionado'));
                 const cartao = opcao.closest('.plano-card, .plano-mini-card');
                 if (cartao) {
-                    cartao.classList.toggle('selecionado', opcao.checked);
+                    cartao.classList.add('selecionado');
                 }
                 atualizarSelecaoPlanos();
             });
         });
 
         botaoContatoPlanos.addEventListener('click', () => {
-            const selecionados = Array.from(opcoesDePlanos)
-                .filter((opcao) => opcao.checked)
-                .map((opcao) => opcao.value);
+            const planoSelecionado = Array.from(opcoesDePlanos).find((opcao) => opcao.checked);
 
-            if (selecionados.length === 0) {
+            if (!planoSelecionado) {
                 return;
             }
 
-            const mensagem = `Olá, gostaria de saber mais sobre: ${selecionados.join(', ')}.`;
+            const mensagem = `Olá, gostaria de saber mais sobre: ${planoSelecionado.value}.`;
             const url = `https://wa.me/5583986719438?text=${encodeURIComponent(mensagem)}`;
             window.location.assign(url);
         });

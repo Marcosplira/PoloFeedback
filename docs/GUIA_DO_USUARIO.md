@@ -50,8 +50,8 @@ Além disso, ela funciona como um **PWA (Progressive Web App)**: ao acessar o si
 
 ### 2.4. Como consultar opções de planos
 1. Na página inicial, abra **Planos que se encaixam no seu estilo de vida**.
-2. Marque **Adicionar à seleção** em um ou mais planos que deseja consultar. As opções adicionais ficam dentro de **Ver outras opções de planos**.
-3. Use o botão para enviar à recepção, pelo WhatsApp, a lista dos planos selecionados e tirar dúvidas.
+2. Escolha um único plano para consultar. As opções adicionais ficam dentro de **Ver outras opções de planos**.
+3. Use o botão para perguntar sobre esse plano à recepção pelo WhatsApp.
 
 Essa seleção serve apenas para iniciar uma conversa. Ela não faz matrícula, não reserva vaga e não confirma a contratação de nenhum plano.
 

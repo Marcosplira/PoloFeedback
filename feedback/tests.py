@@ -296,10 +296,16 @@ class FeedbackViewsTests(TestCase):
         self.assertContains(inicio_response, "Sua experiência ajuda a gente a evoluir")
         self.assertContains(inicio_response, "Planos que se encaixam")
         self.assertContains(inicio_response, "Treine hoje. Conquiste sempre.")
-        self.assertContains(inicio_response, "Marque um ou mais planos")
+        self.assertContains(inicio_response, "Escolha um plano")
         self.assertContains(inicio_response, 'id="btn-contato-planos"', html=False)
         self.assertEqual(inicio_response.content.count(b'class="plano-selecao-input"'), 11)
+        self.assertEqual(inicio_response.content.count(b'type="radio" name="plano"'), 11)
         self.assertContains(inicio_response, "não confirma matrícula")
+        self.assertNotContains(inicio_response, "Acesse pelo QR Code")
+        self.assertNotContains(inicio_response, "QR Code para avaliação Polo Fit")
+        self.assertNotContains(inicio_response, "QR Code para pesquisa Polo Fit")
+        self.assertContains(inicio_response, "Como chegar à Polo Fit")
+        self.assertContains(inicio_response, "Vídeo em breve")
         self.assertContains(
             inicio_response,
             '<details class="planos-outras-opcoes">',
@@ -311,10 +317,6 @@ class FeedbackViewsTests(TestCase):
             html=False,
         )
         self.assertContains(inicio_response, reverse("avaliar"))
-        self.assertContains(inicio_response, "QR Code para avaliação Polo Fit")
-        self.assertContains(inicio_response, "QR Code para pesquisa Polo Fit")
-        self.assertTrue(inicio_response.context["avaliar_qr"])
-        self.assertTrue(inicio_response.context["enquete_qr"])
         self.assertContains(
             inicio_response,
             "https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview",
