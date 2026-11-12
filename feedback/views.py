@@ -45,7 +45,6 @@ from .models import (
     RespostaEnquete,
     WhatsAppAviso,
 )
-from .whatsapp import WhatsAppConfigurationError, validate_whatsapp_settings
 from .forms import (
     CadastroAlunoForm,
     ConfiguracaoAcademiaForm,
@@ -919,32 +918,6 @@ def dashboard(request):
         .order_by("-data_criacao")[:6]
     )
 
-    whatsapp_alerts_status = "Desativado"
-    whatsapp_alerts_detail = (
-        "Nenhum alerta será enviado. Para ativar, aprove o modelo na Meta, "
-        "configure as credenciais no PythonAnywhere e agende o comando de envio."
-    )
-    whatsapp_pending_count = 0
-    whatsapp_failed_count = 0
-    if settings.WHATSAPP_ALERTS_ENABLED:
-        try:
-            validate_whatsapp_settings()
-        except WhatsAppConfigurationError as error:
-            whatsapp_alerts_status = "Configuração incompleta"
-            whatsapp_alerts_detail = str(error)
-        else:
-            whatsapp_alerts_status = "Credenciais configuradas"
-            whatsapp_alerts_detail = (
-                "Confirme a aprovação do modelo na Meta e o agendamento do "
-                "comando de envio no PythonAnywhere."
-            )
-        whatsapp_pending_count = WhatsAppAviso.objects.filter(
-            status=WhatsAppAviso.STATUS_PENDENTE
-        ).count()
-        whatsapp_failed_count = WhatsAppAviso.objects.filter(
-            status=WhatsAppAviso.STATUS_FALHOU
-        ).count()
-
     # ==========================================================
     # DASHBOARD
     # ==========================================================
@@ -972,11 +945,6 @@ def dashboard(request):
             "tipos_feedback": Avaliacao.TIPO_FEEDBACK_CHOICES,
             "status_choices": Avaliacao.STATUS_CHOICES,
             "funcionarios": todos_funcionarios,
-            "whatsapp_alerts_enabled": settings.WHATSAPP_ALERTS_ENABLED,
-            "whatsapp_alerts_status": whatsapp_alerts_status,
-            "whatsapp_alerts_detail": whatsapp_alerts_detail,
-            "whatsapp_pending_count": whatsapp_pending_count,
-            "whatsapp_failed_count": whatsapp_failed_count,
             "ranking_funcionarios": ranking_funcionarios,
             "locais_ranking": locais_ranking,
             "total_enquetes": total_enquetes,

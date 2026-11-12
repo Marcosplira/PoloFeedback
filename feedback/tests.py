@@ -1005,19 +1005,7 @@ class FeedbackViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Dashboard")
         self.assertContains(response, "Ambiente climatizado")
-        self.assertContains(response, "Robô de alertas pelo WhatsApp")
-        self.assertContains(response, "Desativado")
-
-    @override_settings(WHATSAPP_ALERTS_ENABLED=True)
-    def test_dashboard_exibe_configuracao_ausente_do_robo_whatsapp(self):
-        self.client.force_login(self.user)
-
-        response = self.client.get(reverse("dashboard"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Robô de alertas pelo WhatsApp")
-        self.assertContains(response, "Configuração incompleta")
-        self.assertContains(response, "WHATSAPP_CLOUD_API_VERSION")
+        self.assertNotContains(response, "Robô de alertas pelo WhatsApp")
 
     def test_dashboard_filtra_e_ranqueia_funcionario_em_avaliacoes_multiplas(self):
         segundo_funcionario = Funcionario.objects.create(
