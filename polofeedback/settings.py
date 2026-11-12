@@ -18,6 +18,9 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# PythonAnywhere commonly keeps a private .env in the account home directory,
+# one level above the checked-out project; also support a project-local .env.
+load_dotenv(BASE_DIR.parent / ".env")
 load_dotenv(BASE_DIR / ".env")
 
 _secret_key = os.environ.get("SECRET_KEY") or os.environ.get("DJANGO_SECRET_KEY")

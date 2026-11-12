@@ -105,7 +105,7 @@ Também existe um processador opcional de alertas de avaliações para a WhatsAp
 
 O painel gerencial exibe o quadro **Robô de alertas pelo WhatsApp**, que informa se a função está desativada, se faltam variáveis de configuração ou se as credenciais foram preenchidas. Mesmo com credenciais presentes, a equipe deve confirmar a aprovação do modelo na Meta e agendar o comando de envio.
 
-No PythonAnywhere, as configurações podem ficar no arquivo `.env` privado na raiz do projeto. O Django carrega esse arquivo tanto no site quanto no comando agendado, sem colocar credenciais na linha do comando. O `.env` já está excluído do Git; restrinja sua leitura ao usuário da conta (`chmod 600 ~/PoloFeedback/.env`) e nunca envie seu conteúdo em capturas de tela ou mensagens. Para a tarefa agendada conectar ao mesmo banco de produção, o `.env` também precisa conter a configuração Django/produção necessária, especialmente `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` e `DATABASE_URL`. As variáveis já configuradas no WSGI têm precedência no site; não deixe ali valores WhatsApp antigos ou vazios sobrescrevendo o `.env`.
+No PythonAnywhere, as configurações podem ficar no arquivo `.env` privado na pasta pessoal (`~/PoloFeedback/.env`) ou na raiz do projeto (`~/PoloFeedback/PoloFeedback/.env`). O Django carrega ambos os locais tanto no site quanto no comando agendado, sem colocar credenciais na linha do comando. O `.env` já está excluído do Git; restrinja sua leitura ao usuário da conta (`chmod 600 ~/PoloFeedback/.env`) e nunca envie seu conteúdo em capturas de tela ou mensagens. Para a tarefa agendada conectar ao mesmo banco de produção, o `.env` também precisa conter a configuração Django/produção necessária, especialmente `DEBUG=False`, `SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` e `DATABASE_URL`. Variáveis de ambiente já definidas no WSGI têm precedência sobre os valores do `.env`; remova de lá variáveis WhatsApp antigas/vazias ou outros valores que deveriam vir do `.env`.
 
 Configure `WHATSAPP_ALERTS_ENABLED=True`, `WHATSAPP_CLOUD_API_VERSION`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_BUSINESS_NUMBER`, `WHATSAPP_ALERT_RECIPIENT`, `WHATSAPP_ALERT_TEMPLATE_NAME`, `WHATSAPP_ALERT_TEMPLATE_LANGUAGE` e `SITE_PUBLIC_URL`. Use o nome/idioma exatos do modelo aprovado na Meta, o ID do número conectado à Cloud API e números internacionais distintos para remetente e destinatário. A versão da API deve ser uma versão ainda suportada pela Meta. O corpo aprovado do modelo deve usar os parâmetros nesta ordem:
 
@@ -124,7 +124,13 @@ nome {{5}}; comentário {{6}}. Painel: {{7}}
 
 A tela do aluno informa esse encaminhamento quando a função está ativa. O modelo não armazena cópia do comentário, e os logs não incluem nome nem comentário.
 
-Após configurar, atualize as dependências no ambiente virtual do PythonAnywhere (`pip install -r requirements.txt`), reinicie a aplicação na aba **Web** e confira se o painel mostra **Credenciais configuradas**. O arquivo `.env` não precisa de migrações novas. Configure uma tarefa agendada com o mesmo Python virtualenv e projeto, carregando o `.env` e executando `python manage.py enviar_alertas_whatsapp --limit 25`. Antes de deixar a tarefa recorrente, faça um primeiro processamento controlado: o comando pode enviar mensagens reais da fila.
+Após configurar, atualize as dependências no ambiente virtual do PythonAnywhere (`pip install -r requirements.txt`), reinicie a aplicação na aba **Web** e confira se o painel mostra **Credenciais configuradas**. O arquivo `.env` não precisa de migrações novas. Configure uma tarefa agendada com o Python 3.12 virtualenv e a raiz do projeto. As configurações do `.env` são carregadas pelo próprio Django, inclusive fora do WSGI:
+
+```bash
+/home/SEU_USUARIO/.virtualenvs/feedback-env312/bin/python /home/SEU_USUARIO/PoloFeedback/PoloFeedback/manage.py enviar_alertas_whatsapp --limit 25
+```
+
+Substitua `SEU_USUARIO` e `feedback-env312` pelos caminhos exibidos na sua aba **Web**; o `.env` pode ficar em `/home/SEU_USUARIO/PoloFeedback/.env` ou dentro da raiz do projeto. Antes de deixar a tarefa recorrente, faça um primeiro processamento controlado: o comando pode enviar mensagens reais da fila.
 
 Falhas temporárias são tentadas novamente até cinco vezes; uma interrupção ou timeout pode deixar dúvida sobre a aceitação pela API e resultar em duplicidade. A opção `--retry-failed` também pode duplicar mensagens; use-a somente depois de conferir o histórico no WhatsApp. O status **Aceito pela API** não comprova entrega ao aparelho; confirmação de entrega exigiria um webhook de status, que não faz parte desta implementação. Nenhuma mensagem real é enviada pelos testes automatizados.
 
@@ -164,7 +170,7 @@ Para usar Docker Compose, copie o arquivo de exemplo e preencha os valores:
 copy .env.example .env
 ```
 
-O `runserver` local não carrega `.env` automaticamente: sem variáveis de ambiente, usa SQLite local e fallback da IA. Para entrar no dashboard local, crie uma conta com `python manage.py createsuperuser`.
+O Django carrega automaticamente um `.env` local na raiz do projeto; sem esse arquivo ou variáveis de ambiente, usa SQLite local e fallback da IA. Para entrar no dashboard local, crie uma conta com `python manage.py createsuperuser`.
 
 ### 5. Executar Migrações do Banco
 

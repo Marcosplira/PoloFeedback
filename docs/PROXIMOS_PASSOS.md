@@ -96,7 +96,7 @@ Substitua todos os valores de exemplo pelos dados privados do provedor. Nunca sa
 
 #### Configurar alertas WhatsApp (opcional)
 
-O modelo da Meta precisa estar aprovado antes de ativar esta etapa. No **PythonAnywhere → Files**, crie/edite `~/PoloFeedback/.env`. O Django carrega este arquivo tanto na aplicação quanto no comando de alertas. O `.env` está no `.gitignore`; mantenha a permissão privada:
+O modelo da Meta precisa estar aprovado antes de ativar esta etapa. No **PythonAnywhere → Files**, crie/edite `~/PoloFeedback/.env` (a pasta pessoal da conta) ou `~/PoloFeedback/PoloFeedback/.env` (a raiz do projeto). O Django carrega os dois locais tanto na aplicação quanto no comando de alertas. O `.env` está no `.gitignore`; mantenha a permissão privada:
 
 ```bash
 chmod 600 ~/PoloFeedback/.env
@@ -118,23 +118,21 @@ SITE_PUBLIC_URL=https://polofeedback.pythonanywhere.com
 
 Troque os exemplos pelos valores reais, sem colchetes ou aspas: use uma versão Graph API suportada, o nome/idioma exatamente como aparecem no modelo aprovado e telefones internacionais distintos. Não compartilhe o `.env`, o token nem capturas mostrando esses valores. Não deixe variáveis WhatsApp antigas/vazias no WSGI sobrescreverem o arquivo.
 
-No Bash Console, atualize as dependências no mesmo virtualenv configurado na aba Web:
+No Bash Console, atualize as dependências no mesmo virtualenv configurado na aba Web. No caso desta instalação, as capturas indicam Python 3.12 e o ambiente `feedback-env312`; confirme o caminho na aba **Web → Virtualenv**:
 
 ```bash
-source ~/.virtualenvs/feedback-env/bin/activate
-cd ~/PoloFeedback
-pip install -r requirements.txt
+/home/PoloFeedback/.virtualenvs/feedback-env312/bin/python -m pip install -r /home/PoloFeedback/PoloFeedback/requirements.txt
 ```
 
 Na aba **Web**, clique em **Reload**. Entre no dashboard e confira o quadro **Robô de alertas pelo WhatsApp**; **Credenciais configuradas** confirma que o arquivo foi lido, mas não consulta a aprovação na Meta nem confirma que a tarefa está agendada.
 
-Para processar a fila, configure em **Tasks** uma tarefa agendada que carregue o mesmo `.env`, banco e virtualenv, usando os caminhos reais da sua conta:
+Para processar a fila, configure em **Tasks** uma tarefa agendada com o mesmo Python 3.12 virtualenv e projeto, usando os caminhos reais da sua conta. O Django carrega o `.env` automaticamente; não use `source .env` (a URL do banco contém caracteres que o shell pode interpretar):
 
 ```bash
-source /home/SEU_USUARIO/.virtualenvs/feedback-env/bin/activate && cd /home/SEU_USUARIO/PoloFeedback && set -a && source .env && set +a && python manage.py enviar_alertas_whatsapp --limit 25
+/home/PoloFeedback/.virtualenvs/feedback-env312/bin/python /home/PoloFeedback/PoloFeedback/manage.py enviar_alertas_whatsapp --limit 25
 ```
 
-Escolha a frequência disponível no seu plano. Antes de deixar a tarefa recorrente, confira o nome do modelo e faça um processamento controlado: o comando pode enviar mensagens reais que estiverem pendentes. Se o processo não conseguir ler as configurações ou conectar ao banco de produção, não agende/reexecute até corrigir a configuração. Não é necessário rodar migrações novamente para esta etapa.
+Se seu usuário, virtualenv ou pastas tiverem outros nomes, substitua os caminhos pelos valores da aba **Web** e de `echo $VIRTUAL_ENV` no console. Escolha a frequência disponível no seu plano. Antes de deixar a tarefa recorrente, confira o nome do modelo e faça um processamento controlado: o comando pode enviar mensagens reais que estiverem pendentes. Se o processo não conseguir ler as configurações ou conectar ao banco de produção, não agende/reexecute até corrigir a configuração. Não é necessário rodar migrações novamente para esta etapa.
 
 Para executar migrações e coletar estáticos no Bash Console, carregue a mesma `DATABASE_URL` de forma interativa (sem incluí-la no comando salvo no histórico):
 
