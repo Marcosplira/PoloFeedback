@@ -297,7 +297,7 @@ Para formalizar a contratação:
 **Desenvolvedor:**
 - Nome: Marcos Paulo Santos Lira
 - WhatsApp: (83) 98671-9438
-- Email: [seu email]
+- Email: marcosplira12@gmail.com
 - GitHub: https://github.com/Marcosplira/PoloFeedback
 
 ---
