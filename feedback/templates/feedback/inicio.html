@@ -389,23 +389,29 @@
         }
 
         .video-como-chegar {
-            display: grid;
-            place-items: center;
-            gap: 0.5rem;
-            min-height: 150px;
             margin-top: 1.25rem;
-            padding: 1.25rem;
-            border: 1px dashed rgba(163, 230, 53, 0.45);
-            border-radius: 0.9rem;
-            background: rgba(163, 230, 53, 0.04);
-            color: rgba(255, 255, 255, 0.65);
-            text-align: center;
-            font-size: 0.85rem;
         }
 
-        .video-como-chegar strong {
-            color: var(--verde);
-            font-size: 0.95rem;
+        .video-como-chegar .video-player-card {
+            max-width: 220px;
+        }
+
+        .video-como-chegar video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .video-como-chegar video[hidden] {
+            display: none;
+        }
+
+        .video-como-chegar .video-poster {
+            width: 100%;
+            border: 0;
+            font: inherit;
         }
 
         .info-card a {
@@ -1472,21 +1478,21 @@
                 <strong>Seg–Sex:</strong> 05h às 22h<br>
                 <strong>Sábado:</strong> 11h às 19h
             </p>
-            <div class="video-como-chegar" role="note" aria-label="Vídeo de como chegar à Polo Fit">
-                <div id="video-placeholder" onclick="carregarVideoComoChegar()"
-                     style="cursor: pointer; position: relative; width: 100%; max-width: 300px; aspect-ratio: 9/16; background: rgba(0,0,0,0.6); border-radius: 12px; margin-top: 1rem; overflow: hidden; border: 2px solid rgba(163, 230, 53, 0.3);">
-                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);">
-                        <div style="width: 60px; height: 60px; background: rgba(163, 230, 53, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(163, 230, 53, 0.5); margin-bottom: 1rem;">
-                            <span style="font-size: 1.5rem; color: #0a0a0a; margin-left: 3px;">▶</span>
-                        </div>
-                        <strong style="color: white; font-size: 0.9rem; text-align: center; padding: 0 1rem;">Como chegar à Polo Fit</strong>
-                        <span style="display: block; font-size: 0.75rem; margin-top: 0.5rem; color: var(--verde);">Clique para assistir</span>
-                    </div>
+            <div class="video-como-chegar" aria-label="Vídeo de como chegar à Polo Fit">
+                <div class="video-player-card">
+                    <video id="video-como-chegar" controls hidden
+                        poster="{% static 'feedback/academia1.png' %}">
+                        <source src="{% static 'feedback/como-chegar.mp4' %}" type="video/mp4">
+                        Seu navegador não suporta reprodução de vídeo.
+                    </video>
+                    <button class="video-poster" id="video-placeholder" type="button"
+                        onclick="carregarVideoComoChegar()"
+                        aria-label="Assistir ao vídeo de como chegar à Polo Fit">
+                        <span class="video-badge-tour">Polo Fit</span>
+                        <span class="video-play-btn" aria-hidden="true">▶</span>
+                        <span class="video-badge-tour">Como chegar à Polo Fit</span>
+                    </button>
                 </div>
-                <video id="video-como-chegar" controls style="width: 100%; max-width: 300px; border-radius: 12px; margin-top: 1rem; display: none; border: 2px solid rgba(163, 230, 53, 0.3);">
-                    <source src="{% static 'feedback/como-chegar.mp4' %}" type="video/mp4">
-                    Seu navegador não suporta reprodução de vídeo.
-                </video>
             </div>
         </article>
         <article class="info-card">
@@ -1550,10 +1556,9 @@
             const video = document.getElementById('video-como-chegar');
 
             if (placeholder && video) {
-                placeholder.style.display = 'none';
-                video.style.display = 'block';
+                placeholder.classList.add('escondido');
+                video.hidden = false;
                 video.load();
-                video.play();
             }
         }
 

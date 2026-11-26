@@ -305,7 +305,16 @@ class FeedbackViewsTests(TestCase):
         self.assertNotContains(inicio_response, "QR Code para avaliação Polo Fit")
         self.assertNotContains(inicio_response, "QR Code para pesquisa Polo Fit")
         self.assertContains(inicio_response, "Como chegar à Polo Fit")
-        self.assertContains(inicio_response, "Vídeo em breve")
+        self.assertContains(
+            inicio_response,
+            'id="video-como-chegar" controls hidden',
+            html=False,
+        )
+        self.assertContains(
+            inicio_response,
+            'id="video-placeholder" type="button"',
+            html=False,
+        )
         self.assertContains(
             inicio_response,
             '<details class="planos-outras-opcoes">',
