@@ -1473,12 +1473,17 @@
                 <strong>Sábado:</strong> 11h às 19h
             </p>
             <div class="video-como-chegar" role="note" aria-label="Vídeo de como chegar à Polo Fit">
-                <div id="video-placeholder" onclick="carregarVideoComoChegar()" style="cursor: pointer; text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 1rem;">
-                    <span aria-hidden="true" style="font-size: 1.6rem;">▶</span>
-                    <strong>Como chegar à Polo Fit</strong>
-                    <span style="display: block; font-size: 0.8rem; margin-top: 0.5rem; color: var(--verde);">Clique para assistir</span>
+                <div id="video-placeholder" onclick="carregarVideoComoChegar()"
+                     style="cursor: pointer; position: relative; width: 100%; max-width: 300px; aspect-ratio: 9/16; background: rgba(0,0,0,0.6); border-radius: 12px; margin-top: 1rem; overflow: hidden; border: 2px solid rgba(163, 230, 53, 0.3);">
+                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);">
+                        <div style="width: 60px; height: 60px; background: rgba(163, 230, 53, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(163, 230, 53, 0.5); margin-bottom: 1rem;">
+                            <span style="font-size: 1.5rem; color: #0a0a0a; margin-left: 3px;">▶</span>
+                        </div>
+                        <strong style="color: white; font-size: 0.9rem; text-align: center; padding: 0 1rem;">Como chegar à Polo Fit</strong>
+                        <span style="display: block; font-size: 0.75rem; margin-top: 0.5rem; color: var(--verde);">Clique para assistir</span>
+                    </div>
                 </div>
-                <video id="video-como-chegar" controls style="width: 100%; max-width: 300px; border-radius: 8px; margin-top: 1rem; display: none;">
+                <video id="video-como-chegar" controls style="width: 100%; max-width: 300px; border-radius: 12px; margin-top: 1rem; display: none; border: 2px solid rgba(163, 230, 53, 0.3);">
                     <source src="{% static 'feedback/como-chegar.mp4' %}" type="video/mp4">
                     Seu navegador não suporta reprodução de vídeo.
                 </video>
