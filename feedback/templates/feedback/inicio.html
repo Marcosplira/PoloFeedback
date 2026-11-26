@@ -1156,15 +1156,11 @@
     <section class="video-section" aria-labelledby="video-titulo">
         <div class="video-grid">
             <div class="video-player-card">
-                <iframe id="iframe-tour" src="https://drive.google.com/file/d/1dMbcjNqjXwljGSaJdAHkax_5Sy_12_bX/preview"
-                    title="Vídeo de apresentação da Academia Polo Fit"
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen loading="lazy">
-                </iframe>
-                <div class="video-poster" id="video-poster" onclick="iniciarVideoTour()">
-                    <span class="video-badge-tour">Polo Fit</span>
-                    <div class="video-play-btn" aria-label="Assistir tour da academia">▶</div>
-                    <span class="video-badge-tour">Tour pela Polo Fit</span>
-                </div>
+                <video id="video-tour" controls poster="{% static 'feedback/academia1.png' %}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <source src="{% static 'feedback/polofit-tour.mp4' %}" type="video/mp4">
+                    Seu navegador não suporta reprodução de vídeo.
+                </video>
+            </div>
             </div>
             <div>
                 <div class="section-label">Conheça a Polo Fit</div>
@@ -1527,13 +1523,6 @@
     {% include "feedback/pwa_install.html" %}
 
     <script>
-        function iniciarVideoTour() {
-            const poster = document.getElementById('video-poster');
-            if (poster) {
-                poster.classList.add('escondido');
-            }
-        }
-
         const opcoesDePlanos = document.querySelectorAll('.plano-selecao-input');
         const statusSelecaoPlanos = document.getElementById('planos-selecao-status');
         const botaoContatoPlanos = document.getElementById('btn-contato-planos');
